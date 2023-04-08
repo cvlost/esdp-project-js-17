@@ -5,6 +5,10 @@ export interface User {
   token: string;
   role: string;
 }
+export interface LoginMutation {
+  email: string;
+  password: string;
+}
 
 export interface ValidationError {
   errors: {
