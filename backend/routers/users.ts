@@ -32,6 +32,20 @@ usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+usersRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+      return res.send({ error: 'User is not found!' });
+    }
+
+    const deletedUser = await User.deleteOne({ _id: req.params.id });
+    return res.send(deletedUser);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 usersRouter.post('/sessions', async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
