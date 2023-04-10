@@ -60,16 +60,19 @@ usersRouter.delete('/sessions', async (req, res, next) => {
 });
 
 usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
-  const page = parseInt(req.query.page as string) || 1;
+  const page = parseInt(req.query.page as string);
   const perPage = 5;
 
   try {
-    const usersLength = await User.find().limit(perPage);
+    if (!page) {
+      const allUsers = await User.find();
+      return res.send({ length: allUsers.length, allUsers });
+    }
     const users = await User.find()
       .skip((page - 1) * perPage)
       .limit(perPage);
 
-    return res.send({ length: usersLength.length, users });
+    return res.send({ length: users.length, users });
   } catch (e) {
     return next(e);
   }
