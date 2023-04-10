@@ -22,6 +22,21 @@ const run = async () => {
     token: randomUUID(),
   });
 
+  let role = 'user';
+
+  for (let i = 0; i <= 50; i++) {
+    if (i >= 45) {
+      role = 'admin';
+    }
+    await User.create({
+      displayName: `Admin${i}`,
+      email: `test${i}@test.com`,
+      role: role,
+      password: '@esdpjs17',
+      token: randomUUID(),
+    });
+  }
+
   await db.close();
 };
 
