@@ -1,5 +1,7 @@
 import express from 'express';
 import User from '../models/Users';
+import auth from '../middleware/auth';
+import permit from '../middleware/permit';
 
 const usersRouter = express.Router();
 
@@ -52,6 +54,22 @@ usersRouter.delete('/sessions', async (req, res, next) => {
     user.generateToken();
     await user.save();
     return res.send(success);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const perPage = 5;
+
+  try {
+    const usersLength = await User.find().limit(perPage);
+    const users = await User.find()
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    return res.send({ length: usersLength.length, users });
   } catch (e) {
     return next(e);
   }
