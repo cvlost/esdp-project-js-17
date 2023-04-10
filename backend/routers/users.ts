@@ -1,11 +1,32 @@
 import express from 'express';
 import User from '../models/Users';
+import auth from '../middleware/auth';
+import permit from '../middleware/permit';
 
 const usersRouter = express.Router();
 
 usersRouter.post('/', async (req, res, next) => {
   try {
     return res.send({ message: 'works' });
+  } catch (e) {
+    return next(e);
+  }
+});
+
+usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
+  const page = parseInt(req.query.page as string);
+  const perPage = 5;
+  try {
+    if (!page) {
+      const allUsers = await User.find();
+      return res.send({ length: allUsers.length, allUsers });
+    }
+
+    const users = await User.find()
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    return res.send({ length: users.length, users });
   } catch (e) {
     return next(e);
   }
