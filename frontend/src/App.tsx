@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Home from './containers/Home';
 import Login from './features/users/Login';
 import CreateUser from './features/users/CreateUser';
+import Users from './features/users/Users';
 
 function App() {
   return (
@@ -12,7 +13,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="*" element={'Not found'} />
         <Route path="/login" element={<Login />} />
-        <Route path="/createUser" element={<CreateUser />} />
+        <Route path="/users" element={<Users />}>
+          <Route path="createUser" element={<CreateUser />} />
+        </Route>
       </Routes>
     </Layout>
   );

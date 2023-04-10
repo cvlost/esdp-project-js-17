@@ -5,7 +5,7 @@ import { User } from '../../types';
 import { Button, Divider, Menu, MenuItem, Typography } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import GroupIcon from '@mui/icons-material/Groups';
 import { unsetUser } from '../../features/users/usersSlice';
 
 interface Props {
@@ -34,11 +34,11 @@ const UserMenu: React.FC<Props> = ({ user }) => {
         <MenuItem
           onClick={() => {
             handleClose();
-            navigate('/createUser');
+            navigate('/users');
           }}
         >
-          <GroupAddIcon sx={{ mr: 1 }} />
-          Создать пользователя
+          <GroupIcon sx={{ mr: 1 }} />
+          Управление пользователями
         </MenuItem>
         <Divider />
         <MenuItem
