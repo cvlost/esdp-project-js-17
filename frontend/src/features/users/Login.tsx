@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LoginMutation } from '../../types';
+import { LoginMutation } from '../../../types';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
