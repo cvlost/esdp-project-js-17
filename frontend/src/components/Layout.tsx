@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, ReactNode } from 'react';
 import AppToolbar from './AppToolbar/AppToolbar';
+import { Box, Container, CssBaseline } from '@mui/material';
 
 interface Props extends PropsWithChildren {
   children: ReactNode;
@@ -8,8 +9,11 @@ interface Props extends PropsWithChildren {
 const Layout: React.FC<Props> = ({ children }) => {
   return (
     <>
+      <CssBaseline />
       <AppToolbar />
-      <main>{children}</main>
+      <Box component="main">
+        <Container maxWidth={false}>{children}</Container>
+      </Box>
     </>
   );
 };
