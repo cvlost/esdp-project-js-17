@@ -18,7 +18,9 @@ const AppToolbar = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link to="/">ESDP-17</Link>
           </Typography>
-          <Grid item>Login menu</Grid>
+          <Grid item>
+            <Link to="/login">Войти</Link>
+          </Grid>
         </Grid>
       </Toolbar>
     </AppBar>
