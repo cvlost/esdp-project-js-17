@@ -6,7 +6,6 @@ interface Props {
 }
 
 const Protected: React.FC<Props> = ({ userRole, priority }) => {
-  console.log(userRole);
   if (
     (userRole === priority && priority === 'admin') ||
     (priority === 'user' && userRole === 'user') ||
