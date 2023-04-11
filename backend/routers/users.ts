@@ -44,6 +44,29 @@ usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+usersRouter.delete('/sessions', async (req, res, next) => {
+  try {
+    const token = req.get('Authorization');
+    const success = { message: 'ok' };
+
+    if (!token) {
+      return res.send(success);
+    }
+
+    const user = await User.findOne({ token });
+
+    if (!user) {
+      return res.send(success);
+    }
+
+    user.generateToken();
+    await user.save();
+    return res.send(success);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 usersRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
@@ -76,29 +99,6 @@ usersRouter.post('/sessions', async (req, res, next) => {
     await user.save();
 
     return res.send({ message: 'Username and password correct!', user });
-  } catch (e) {
-    return next(e);
-  }
-});
-
-usersRouter.delete('/sessions', async (req, res, next) => {
-  try {
-    const token = req.get('Authorization');
-    const success = { message: 'ok' };
-
-    if (!token) {
-      return res.send(success);
-    }
-
-    const user = await User.findOne({ token });
-
-    if (!user) {
-      return res.send(success);
-    }
-
-    user.generateToken();
-    await user.save();
-    return res.send(success);
   } catch (e) {
     return next(e);
   }
