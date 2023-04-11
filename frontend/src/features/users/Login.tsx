@@ -3,8 +3,13 @@ import { LoginMutation } from '../../types';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import { login } from './usersThunks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { selectLoginLoading } from './usersSlice';
 
 const Login = () => {
+  const dispatch = useAppDispatch();
+  const loginLoading = useAppSelector(selectLoginLoading);
   const navigate = useNavigate();
   const [state, setState] = useState<LoginMutation>({
     email: '',
@@ -17,6 +22,7 @@ const Login = () => {
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
+    await dispatch(login(state)).unwrap();
     navigate('/');
   };
   return (
@@ -61,7 +67,7 @@ const Login = () => {
           </Grid>
           <Button
             type="submit"
-            disabled={state.email === '' || state.password === ''}
+            disabled={state.email === '' || state.password === '' || loginLoading}
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
