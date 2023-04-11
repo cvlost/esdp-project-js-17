@@ -44,6 +44,15 @@ usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+usersRouter.get('/:id', auth, permit('admin'), async (req, res, next) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    return res.send(user);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 usersRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
