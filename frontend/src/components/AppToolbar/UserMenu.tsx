@@ -6,7 +6,7 @@ import { Button, Divider, Menu, MenuItem, Typography } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GroupIcon from '@mui/icons-material/Groups';
-import { unsetUser } from '../../features/users/usersSlice';
+import { logout } from '../../features/users/usersThunks';
 
 interface Props {
   user: User;
@@ -44,7 +44,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
         <MenuItem
           sx={{ justifyContent: 'center' }}
           onClick={() => {
-            dispatch(unsetUser());
+            dispatch(logout());
             handleClose();
             navigate('/');
           }}

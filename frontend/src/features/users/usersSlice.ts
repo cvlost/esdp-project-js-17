@@ -38,23 +38,28 @@ const usersSlice = createSlice({
     unsetUser: (state) => {
       state.user = null;
     },
+    resetLoginError: (state) => {
+      state.loginError = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => {
+      state.loginError = null;
       state.loginLoading = true;
     });
     builder.addCase(login.fulfilled, (state, { payload: user }) => {
-      state.loginLoading = true;
+      state.loginLoading = false;
       state.user = user;
     });
-    builder.addCase(login.rejected, (state) => {
-      state.loginLoading = true;
+    builder.addCase(login.rejected, (state, { payload: error }) => {
+      state.loginError = error || null;
+      state.loginLoading = false;
     });
   },
 });
 
 export const usersReducer = usersSlice.reducer;
-export const { unsetUser } = usersSlice.actions;
+export const { unsetUser, resetLoginError } = usersSlice.actions;
 
 export const selectUser = (state: RootState) => state.users.user;
 export const selectLoginLoading = (state: RootState) => state.users.loginLoading;

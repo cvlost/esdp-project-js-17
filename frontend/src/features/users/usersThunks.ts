@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../axios';
 import { GlobalError, LoginMutation, User, UserResponse } from '../../types';
 import { isAxiosError } from 'axios';
+import { unsetUser } from './usersSlice';
+import { RootState } from '../../app/store';
 
 export const login = createAsyncThunk<User, LoginMutation, { rejectValue: GlobalError }>(
   'users/login',
@@ -17,3 +19,8 @@ export const login = createAsyncThunk<User, LoginMutation, { rejectValue: Global
     }
   },
 );
+
+export const logout = createAsyncThunk<void, void, { state: RootState }>('users/logout', async (_, { dispatch }) => {
+  dispatch(unsetUser());
+  await axiosApi.delete('/users/sessions');
+});
