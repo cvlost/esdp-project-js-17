@@ -10,6 +10,18 @@ export interface LoginMutation {
   password: string;
 }
 
+export interface RegisterMutation {
+  email: string;
+  password: string;
+  role: 'admin' | 'user' | '';
+  displayName: string;
+}
+
+export interface IRole {
+  prettyName: string;
+  name: string;
+}
+
 export interface ValidationError {
   errors: {
     [key: string]: {
