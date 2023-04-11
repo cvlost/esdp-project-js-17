@@ -10,6 +10,11 @@ export interface LoginMutation {
   password: string;
 }
 
+export interface UserResponse {
+  message: string;
+  user: User;
+}
+
 export interface RegisterMutation {
   email: string;
   password: string;
