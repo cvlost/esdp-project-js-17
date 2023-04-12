@@ -5,6 +5,7 @@ export interface User {
   token: string;
   role: string;
 }
+
 export interface LoginMutation {
   email: string;
   password: string;
@@ -41,4 +42,9 @@ export interface ValidationError {
 
 export interface GlobalError {
   error: string;
+}
+
+export interface DeletedUserResponse {
+  acknowledged: boolean;
+  deletedCount: number;
 }
