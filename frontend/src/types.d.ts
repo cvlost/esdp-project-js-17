@@ -5,6 +5,7 @@ export interface User {
   token: string;
   role: string;
 }
+
 export interface LoginMutation {
   email: string;
   password: string;
@@ -13,6 +14,14 @@ export interface LoginMutation {
 export interface UserResponse {
   message: string;
   user: User;
+}
+
+export interface UsersListResponse {
+  users: User[];
+  page: number;
+  pages: number;
+  perPage: number;
+  count: number;
 }
 
 export interface RegisterMutation {
