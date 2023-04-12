@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { Avatar, Box, Button, Container, Grid, MenuItem, TextField, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Container, Grid, MenuItem, TextField, Typography } from '@mui/material';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { useNavigate } from 'react-router-dom';
 import { RegisterMutation } from '../../types';
 import { ROLES } from '../../constants';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { createUser } from './usersThunks';
+import { selectRegisterError, selectRegisterLoading } from './usersSlice';
 
 const CreateUser = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const creating = useAppSelector(selectRegisterLoading);
+  const error = useAppSelector(selectRegisterError);
   const [state, setState] = useState<RegisterMutation>({
     email: '',
     password: '',
@@ -21,7 +27,8 @@ const CreateUser = () => {
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    navigate('/');
+    await dispatch(createUser(state)).unwrap();
+    navigate('/users');
   };
 
   return (
@@ -40,6 +47,11 @@ const CreateUser = () => {
         <Typography component="h1" variant="h5">
           Регистрация
         </Typography>
+        {error && (
+          <Alert severity="error" sx={{ mt: 3, width: '100%' }}>
+            {error.message}
+          </Alert>
+        )}
         <Box component="form" onSubmit={submitFormHandler} sx={{ mt: 3, width: '100%' }}>
           <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
             <Grid item xs={12}>
@@ -98,7 +110,15 @@ const CreateUser = () => {
               />
             </Grid>
           </Grid>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          <Button
+            disabled={
+              state.email === '' || state.displayName === '' || state.password === '' || state.role === '' || creating
+            }
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
             Регистрировать
           </Button>
         </Box>
