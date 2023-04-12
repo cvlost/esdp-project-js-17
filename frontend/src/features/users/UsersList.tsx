@@ -17,10 +17,16 @@ const UsersList = () => {
   return (
     <Box sx={{ py: 2 }}>
       <Typography variant="h5" component="h5">
-        Список пользователей
+        Список пользователей ({usersListData.count})
       </Typography>
       <Box>
+        <Grid sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {usersListData.users.map((user) => (
+            <CardUser user={user} key={user._id} />
+          ))}
+        </Grid>
         <Pagination
+          sx={{ display: 'flex', justifyContent: 'center' }}
           disabled={usersListLoading}
           count={usersListData.pages}
           page={usersListData.page}
@@ -28,11 +34,6 @@ const UsersList = () => {
             dispatch(setCurrentPage(page));
           }}
         />
-        <Grid sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {usersListData.users.map((user) => (
-            <CardUser user={user} key={user._id} />
-          ))}
-        </Grid>
       </Box>
     </Box>
   );
