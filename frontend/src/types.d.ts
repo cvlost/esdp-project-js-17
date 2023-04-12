@@ -5,12 +5,18 @@ export interface User {
   token: string;
   role: string;
 }
+
 export interface LoginMutation {
   email: string;
   password: string;
 }
 
 export interface UserResponse {
+  message: string;
+  user: User;
+}
+
+export interface RegisterResponse {
   message: string;
   user: User;
 }

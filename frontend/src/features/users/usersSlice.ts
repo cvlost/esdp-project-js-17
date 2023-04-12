@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { GlobalError, User, ValidationError } from '../../types';
 import { RootState } from '../../app/store';
-import { login } from './usersThunks';
+import { createUser, login } from './usersThunks';
 
 interface UsersState {
   user: User | null;
@@ -54,6 +54,16 @@ const usersSlice = createSlice({
     builder.addCase(login.rejected, (state, { payload: error }) => {
       state.loginError = error || null;
       state.loginLoading = false;
+    });
+    builder.addCase(createUser.pending, (state) => {
+      state.registerLoading = true;
+    });
+    builder.addCase(createUser.fulfilled, (state) => {
+      state.registerLoading = false;
+    });
+    builder.addCase(createUser.rejected, (state, { payload: error }) => {
+      state.registerError = error || null;
+      state.registerLoading = false;
     });
   },
 });
