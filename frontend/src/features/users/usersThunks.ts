@@ -1,14 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../axios';
 import {
+  DeletedUserResponse,
   GlobalError,
   LoginMutation,
   RegisterMutation,
   RegisterResponse,
   User,
   UserResponse,
-  ValidationError,
   UsersListResponse,
+  ValidationError,
 } from '../../types';
 import { isAxiosError } from 'axios';
 import { unsetUser } from './usersSlice';
@@ -56,5 +57,10 @@ export const getUsersList = createAsyncThunk<UsersListResponse, RequestParams>('
     queryString = `?page=${params.page}&perPage=${params.perPage}`;
   }
   const response = await axiosApi.get<UsersListResponse>(`/users${queryString}`);
+  return response.data;
+});
+
+export const deleteUser = createAsyncThunk<DeletedUserResponse, string>('users/deleteOne', async (userId) => {
+  const response = await axiosApi.delete('/users/' + userId);
   return response.data;
 });
