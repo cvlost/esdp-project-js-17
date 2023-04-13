@@ -26,19 +26,24 @@ usersRouter.post('/', async (req, res, next) => {
 });
 
 usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
-  const page = parseInt(req.query.page as string);
-  const perPage = 5;
+  let page = parseInt(req.query.page as string);
+  let perPage = parseInt(req.query.perPage as string);
+
+  page = isNaN(page) || page <= 0 ? 1 : page;
+  perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
   try {
-    if (!page) {
-      const allUsers = await User.find();
-      return res.send({ length: allUsers.length, allUsers });
-    }
+    const count = await User.count();
+    let pages = Math.ceil(count / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
 
     const users = await User.find()
       .skip((page - 1) * perPage)
       .limit(perPage);
 
-    return res.send({ length: users.length, users });
+    return res.send({ users, page, pages, count, perPage });
   } catch (e) {
     return next(e);
   }
@@ -84,12 +89,34 @@ usersRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+usersRouter.delete('/sessions', async (req, res, next) => {
+  try {
+    const token = req.get('Authorization');
+    const success = { message: 'ok' };
+
+    if (!token) {
+      return res.send(success);
+    }
+
+    const user = await User.findOne({ token });
+
+    if (!user) {
+      return res.send(success);
+    }
+
+    user.generateToken();
+    await user.save();
+    return res.send(success);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 usersRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
-
     if (!user) {
-      return res.status(404).send({ error: 'No user found!' });
+      return res.send({ error: 'User is not found!' });
     }
 
     const deletedUser = await User.deleteOne({ _id: req.params.id });
@@ -117,29 +144,6 @@ usersRouter.post('/sessions', async (req, res, next) => {
     await user.save();
 
     return res.send({ message: 'Username and password correct!', user });
-  } catch (e) {
-    return next(e);
-  }
-});
-
-usersRouter.delete('/sessions', async (req, res, next) => {
-  try {
-    const token = req.get('Authorization');
-    const success = { message: 'ok' };
-
-    if (!token) {
-      return res.send(success);
-    }
-
-    const user = await User.findOne({ token });
-
-    if (!user) {
-      return res.send(success);
-    }
-
-    user.generateToken();
-    await user.save();
-    return res.send(success);
   } catch (e) {
     return next(e);
   }
