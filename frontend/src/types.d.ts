@@ -16,6 +16,19 @@ export interface UserResponse {
   user: User;
 }
 
+export interface RegisterResponse {
+  message: string;
+  user: User;
+}
+
+export interface UsersListResponse {
+  users: User[];
+  page: number;
+  pages: number;
+  perPage: number;
+  count: number;
+}
+
 export interface RegisterMutation {
   email: string;
   password: string;

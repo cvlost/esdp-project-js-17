@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { GlobalError, User, ValidationError } from '../../types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { GlobalError, User, UsersListResponse, ValidationError } from '../../types';
 import { RootState } from '../../app/store';
-import { login } from './usersThunks';
+import { getUsersList, createUser, login } from './usersThunks';
 
 interface UsersState {
   user: User | null;
-  usersList: User[];
+  usersListData: UsersListResponse;
   oneUser: User | null;
   getOneLoading: boolean;
   getAllLoading: boolean;
@@ -19,7 +19,13 @@ interface UsersState {
 
 const initialState: UsersState = {
   user: null,
-  usersList: [],
+  usersListData: {
+    users: [],
+    page: 1,
+    pages: 1,
+    count: 0,
+    perPage: 10,
+  },
   oneUser: null,
   loginError: null,
   registerError: null,
@@ -41,6 +47,9 @@ const usersSlice = createSlice({
     resetLoginError: (state) => {
       state.loginError = null;
     },
+    setCurrentPage: (state, { payload: page }: PayloadAction<number>) => {
+      state.usersListData.page = page;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => {
@@ -55,11 +64,33 @@ const usersSlice = createSlice({
       state.loginError = error || null;
       state.loginLoading = false;
     });
+
+    builder.addCase(createUser.pending, (state) => {
+      state.registerLoading = true;
+    });
+    builder.addCase(createUser.fulfilled, (state) => {
+      state.registerLoading = false;
+    });
+    builder.addCase(createUser.rejected, (state, { payload: error }) => {
+      state.registerError = error || null;
+      state.registerLoading = false;
+    });
+
+    builder.addCase(getUsersList.pending, (state) => {
+      state.getAllLoading = true;
+    });
+    builder.addCase(getUsersList.fulfilled, (state, { payload }) => {
+      state.usersListData = payload;
+      state.getAllLoading = false;
+    });
+    builder.addCase(getUsersList.rejected, (state) => {
+      state.getAllLoading = false;
+    });
   },
 });
 
 export const usersReducer = usersSlice.reducer;
-export const { unsetUser, resetLoginError } = usersSlice.actions;
+export const { unsetUser, resetLoginError, setCurrentPage } = usersSlice.actions;
 
 export const selectUser = (state: RootState) => state.users.user;
 export const selectLoginLoading = (state: RootState) => state.users.loginLoading;
@@ -68,7 +99,7 @@ export const selectOneUser = (state: RootState) => state.users.oneUser;
 export const selectOneUserLoading = (state: RootState) => state.users.getOneLoading;
 export const selectEditOneUserLoading = (state: RootState) => state.users.editOneLoading;
 export const selectDeleteOneUserLoading = (state: RootState) => state.users.deleteOneLoading;
-export const selectUsersList = (state: RootState) => state.users.usersList;
+export const selectUsersListData = (state: RootState) => state.users.usersListData;
 export const selectUsersListLoading = (state: RootState) => state.users.getAllLoading;
 export const selectRegisterLoading = (state: RootState) => state.users.registerLoading;
 export const selectRegisterError = (state: RootState) => state.users.registerError;
