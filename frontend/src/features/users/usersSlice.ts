@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GlobalError, User, UsersListResponse, ValidationError } from '../../types';
+import { DeletedUserResponse, GlobalError, User, UsersListResponse, ValidationError } from '../../types';
 import { RootState } from '../../app/store';
-import { getUsersList, createUser, login } from './usersThunks';
+import { createUser, deleteUser, getUsersList, login } from './usersThunks';
 
 interface UsersState {
   user: User | null;
   usersListData: UsersListResponse;
   oneUser: User | null;
+  deletedUserResponse: DeletedUserResponse | null;
   getOneLoading: boolean;
   getAllLoading: boolean;
   loginError: GlobalError | null;
@@ -26,6 +27,7 @@ const initialState: UsersState = {
     count: 0,
     perPage: 10,
   },
+  deletedUserResponse: null,
   oneUser: null,
   loginError: null,
   registerError: null,
@@ -86,6 +88,17 @@ const usersSlice = createSlice({
     builder.addCase(getUsersList.rejected, (state) => {
       state.getAllLoading = false;
     });
+
+    builder.addCase(deleteUser.pending, (state) => {
+      state.deleteOneLoading = true;
+    });
+    builder.addCase(deleteUser.fulfilled, (state, { payload: deletedUser }) => {
+      state.deleteOneLoading = false;
+      state.deletedUserResponse = deletedUser;
+    });
+    builder.addCase(deleteUser.rejected, (state) => {
+      state.deleteOneLoading = false;
+    });
   },
 });
 
@@ -99,6 +112,7 @@ export const selectOneUser = (state: RootState) => state.users.oneUser;
 export const selectOneUserLoading = (state: RootState) => state.users.getOneLoading;
 export const selectEditOneUserLoading = (state: RootState) => state.users.editOneLoading;
 export const selectDeleteOneUserLoading = (state: RootState) => state.users.deleteOneLoading;
+export const selectDeletedUserResponse = (state: RootState) => state.users.deletedUserResponse;
 export const selectUsersListData = (state: RootState) => state.users.usersListData;
 export const selectUsersListLoading = (state: RootState) => state.users.getAllLoading;
 export const selectRegisterLoading = (state: RootState) => state.users.registerLoading;
