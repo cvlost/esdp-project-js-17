@@ -21,6 +21,14 @@ export interface RegisterResponse {
   user: User;
 }
 
+export interface UsersListResponse {
+  users: User[];
+  page: number;
+  pages: number;
+  perPage: number;
+  count: number;
+}
+
 export interface RegisterMutation {
   email: string;
   password: string;
