@@ -16,6 +16,11 @@ export interface UserResponse {
   user: User;
 }
 
+export interface RegisterResponse {
+  message: string;
+  user: User;
+}
+
 export interface UsersListResponse {
   users: User[];
   page: number;
