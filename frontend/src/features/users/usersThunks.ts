@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../axios';
-import { GlobalError, LoginMutation, User, UserResponse } from '../../types';
+import { GlobalError, LoginMutation, User, UserResponse, UsersListResponse } from '../../types';
 import { isAxiosError } from 'axios';
 import { unsetUser } from './usersSlice';
 import { RootState } from '../../app/store';
@@ -23,4 +23,15 @@ export const login = createAsyncThunk<User, LoginMutation, { rejectValue: Global
 export const logout = createAsyncThunk<void, void, { state: RootState }>('users/logout', async (_, { dispatch }) => {
   dispatch(unsetUser());
   await axiosApi.delete('/users/sessions');
+});
+
+type RequestParams = { page: number; perPage: number } | undefined;
+
+export const getUsersList = createAsyncThunk<UsersListResponse, RequestParams>('users/getAll', async (params) => {
+  let queryString = '';
+  if (params) {
+    queryString = `?page=${params.page}&perPage=${params.perPage}`;
+  }
+  const response = await axiosApi.get<UsersListResponse>(`/users${queryString}`);
+  return response.data;
 });
