@@ -58,6 +58,37 @@ usersRouter.get('/:id', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+usersRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
+  try {
+    const id = req.params.id as string;
+    const { email, displayName, password, role } = req.body;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).send({ error: 'No user found!' });
+    }
+
+    if (email && email !== user.email) {
+      user.email = email;
+    }
+    if (displayName && displayName !== user.displayName) {
+      user.displayName = displayName;
+    }
+    if (password && password !== user.password) {
+      user.password = password;
+    }
+    if (role && role !== user.role) {
+      user.role = role;
+    }
+
+    const result = await user.save();
+
+    return res.send(result);
+  } catch (e) {
+    next(e);
+  }
+});
+
 usersRouter.delete('/sessions', async (req, res, next) => {
   try {
     const token = req.get('Authorization');
