@@ -3,11 +3,13 @@ import { User } from '../types';
 import { Button, Card, CardActions, Grid, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+
 interface Props {
   user: User;
+  onDelete: React.MouseEventHandler;
 }
 
-const CardUser: React.FC<Props> = ({ user }) => {
+const CardUser: React.FC<Props> = ({ user, onDelete }) => {
   return (
     <Card
       sx={{
@@ -33,7 +35,7 @@ const CardUser: React.FC<Props> = ({ user }) => {
         </Typography>
       </Grid>
       <CardActions>
-        <Button size="small" color="error">
+        <Button size="small" color="error" onClick={onDelete}>
           <DeleteIcon />
         </Button>
         <Button size="small" color="success">

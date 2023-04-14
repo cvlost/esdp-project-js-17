@@ -56,3 +56,8 @@ export interface ValidationError {
 export interface GlobalError {
   error: string;
 }
+
+export interface DeletedUserResponse {
+  acknowledged: boolean;
+  deletedCount: number;
+}
