@@ -1,17 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DeletedUserResponse, GlobalError, User, UsersListResponse, ValidationError } from '../../types';
+import { DeletedUserResponse, GlobalError, User, UserMutation, UsersListResponse, ValidationError } from '../../types';
 import { RootState } from '../../app/store';
-import { createUser, deleteUser, getUsersList, login } from './usersThunks';
+import { createUser, deleteUser, getEditingUser, getUsersList, login } from './usersThunks';
 
 interface UsersState {
   user: User | null;
   usersListData: UsersListResponse;
   oneUser: User | null;
+  oneEditUser: UserMutation | null;
   deletedUserResponse: DeletedUserResponse | null;
   getOneLoading: boolean;
   getAllLoading: boolean;
   loginError: GlobalError | null;
   registerError: ValidationError | null;
+  editingError: ValidationError | null;
   loginLoading: boolean;
   registerLoading: boolean;
   deleteOneLoading: boolean;
@@ -29,8 +31,10 @@ const initialState: UsersState = {
   },
   deletedUserResponse: null,
   oneUser: null,
+  oneEditUser: null,
   loginError: null,
   registerError: null,
+  editingError: null,
   getOneLoading: false,
   getAllLoading: false,
   deleteOneLoading: false,
@@ -89,6 +93,18 @@ const usersSlice = createSlice({
       state.getAllLoading = false;
     });
 
+    builder.addCase(getEditingUser.pending, (state) => {
+      state.oneEditUser = null;
+      state.getOneLoading = true;
+    });
+    builder.addCase(getEditingUser.fulfilled, (state, { payload }) => {
+      state.oneEditUser = payload;
+      state.getOneLoading = false;
+    });
+    builder.addCase(getEditingUser.rejected, (state) => {
+      state.getOneLoading = false;
+    });
+
     builder.addCase(deleteUser.pending, (state) => {
       state.deleteOneLoading = true;
     });
@@ -108,9 +124,9 @@ export const { unsetUser, resetLoginError, setCurrentPage } = usersSlice.actions
 export const selectUser = (state: RootState) => state.users.user;
 export const selectLoginLoading = (state: RootState) => state.users.loginLoading;
 export const selectLoginError = (state: RootState) => state.users.loginError;
-export const selectOneUser = (state: RootState) => state.users.oneUser;
-export const selectOneUserLoading = (state: RootState) => state.users.getOneLoading;
+export const selectOneEditingUser = (state: RootState) => state.users.oneEditUser;
 export const selectEditOneUserLoading = (state: RootState) => state.users.editOneLoading;
+export const selectOneUserLoading = (state: RootState) => state.users.getOneLoading;
 export const selectDeleteOneUserLoading = (state: RootState) => state.users.deleteOneLoading;
 export const selectDeletedUserResponse = (state: RootState) => state.users.deletedUserResponse;
 export const selectUsersListData = (state: RootState) => state.users.usersListData;

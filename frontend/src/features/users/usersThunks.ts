@@ -60,6 +60,16 @@ export const getUsersList = createAsyncThunk<UsersListResponse, RequestParams>('
   return response.data;
 });
 
+export const getEditingUser = createAsyncThunk<UserMutation, string>('users/getOne', async (id: string) => {
+  try {
+    const response = await axiosApi.get<User>('/users/' + id);
+    const { email, displayName, role } = response.data;
+    return { email, displayName, role, password: '' };
+  } catch (e) {
+    throw new Error('Not found!');
+  }
+});
+
 export const deleteUser = createAsyncThunk<DeletedUserResponse, string>('users/deleteOne', async (userId) => {
   const response = await axiosApi.delete('/users/' + userId);
   return response.data;
