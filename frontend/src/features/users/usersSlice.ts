@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DeletedUserResponse, GlobalError, User, UserMutation, UsersListResponse, ValidationError } from '../../types';
 import { RootState } from '../../app/store';
-import { createUser, deleteUser, getEditingUser, getUsersList, login } from './usersThunks';
+import { createUser, deleteUser, updateUser, getEditingUser, getUsersList, login } from './usersThunks';
 
 interface UsersState {
   user: User | null;
@@ -82,6 +82,17 @@ const usersSlice = createSlice({
       state.registerLoading = false;
     });
 
+    builder.addCase(updateUser.pending, (state) => {
+      state.editOneLoading = true;
+    });
+    builder.addCase(updateUser.fulfilled, (state) => {
+      state.editOneLoading = false;
+    });
+    builder.addCase(updateUser.rejected, (state, { payload: error }) => {
+      state.editingError = error || null;
+      state.editOneLoading = false;
+    });
+
     builder.addCase(getUsersList.pending, (state) => {
       state.getAllLoading = true;
     });
@@ -126,6 +137,7 @@ export const selectLoginLoading = (state: RootState) => state.users.loginLoading
 export const selectLoginError = (state: RootState) => state.users.loginError;
 export const selectOneEditingUser = (state: RootState) => state.users.oneEditUser;
 export const selectEditOneUserLoading = (state: RootState) => state.users.editOneLoading;
+export const selectEditingError = (state: RootState) => state.users.editingError;
 export const selectOneUserLoading = (state: RootState) => state.users.getOneLoading;
 export const selectDeleteOneUserLoading = (state: RootState) => state.users.deleteOneLoading;
 export const selectDeletedUserResponse = (state: RootState) => state.users.deletedUserResponse;

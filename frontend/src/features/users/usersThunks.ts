@@ -70,6 +70,25 @@ export const getEditingUser = createAsyncThunk<UserMutation, string>('users/getO
   }
 });
 
+interface UpdateUserParams {
+  id: string;
+  user: UserMutation;
+}
+
+export const updateUser = createAsyncThunk<void, UpdateUserParams, { rejectValue: ValidationError }>(
+  'users/editOne',
+  async (params, { rejectWithValue }) => {
+    try {
+      await axiosApi.put('users/' + params.id, params.user);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 400) {
+        return rejectWithValue(e.response.data as ValidationError);
+      }
+      throw e;
+    }
+  },
+);
+
 export const deleteUser = createAsyncThunk<DeletedUserResponse, string>('users/deleteOne', async (userId) => {
   const response = await axiosApi.delete('/users/' + userId);
   return response.data;
