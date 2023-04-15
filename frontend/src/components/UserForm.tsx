@@ -3,6 +3,8 @@ import { Alert, Avatar, Box, Button, Grid, MenuItem, TextField, Typography } fro
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { UserMutation, ValidationError } from '../types';
 import { ROLES } from '../constants';
+import { useAppSelector } from '../app/hooks';
+import { selectUser } from '../features/users/usersSlice';
 
 interface Props {
   onSubmit: (user: UserMutation) => void;
@@ -21,6 +23,7 @@ const initialState: UserMutation = {
 
 const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEdit, isLoading, error }) => {
   const [state, setState] = useState<UserMutation>(existingUser);
+  const user = useAppSelector(selectUser);
 
   const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -77,29 +80,31 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
               onChange={inputChangeHandler}
             />
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              select
-              required
-              fullWidth
-              label="Роль пользователя"
-              name="role"
-              value={state.role}
-              onChange={inputChangeHandler}
-            >
-              <MenuItem value="" disabled>
-                Выбрать роль
-              </MenuItem>
-              {ROLES.map((role) => (
-                <MenuItem key={role.name} value={role.name}>
-                  {role.prettyName}
+          {user?.role === 'admin' && (
+            <Grid item xs={12}>
+              <TextField
+                select
+                required
+                fullWidth
+                label="Роль пользователя"
+                name="role"
+                value={state.role}
+                onChange={inputChangeHandler}
+              >
+                <MenuItem value="" disabled>
+                  Выбрать роль
                 </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
+                {ROLES.map((role) => (
+                  <MenuItem key={role.name} value={role.name}>
+                    {role.prettyName}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          )}
           <Grid item xs={12}>
             <TextField
-              required
+              required={!isEdit}
               fullWidth
               label="Пароль пользователя"
               name="password"
@@ -114,9 +119,9 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
           disabled={
             state.email === '' ||
             state.displayName === '' ||
-            (isEdit && state.password === '') ||
             state.role === '' ||
-            isLoading
+            isLoading ||
+            (!isEdit && state.password === '')
           }
           type="submit"
           fullWidth
