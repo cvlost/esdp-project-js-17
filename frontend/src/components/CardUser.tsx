@@ -7,9 +7,10 @@ import EditIcon from '@mui/icons-material/Edit';
 interface Props {
   user: User;
   onDelete: React.MouseEventHandler;
+  onEditing: React.MouseEventHandler;
 }
 
-const CardUser: React.FC<Props> = ({ user, onDelete }) => {
+const CardUser: React.FC<Props> = ({ user, onDelete, onEditing }) => {
   return (
     <Card
       sx={{
@@ -38,7 +39,7 @@ const CardUser: React.FC<Props> = ({ user, onDelete }) => {
         <Button size="small" color="error" onClick={onDelete}>
           <DeleteIcon />
         </Button>
-        <Button size="small" color="success">
+        <Button size="small" color="success" onClick={onEditing}>
           <EditIcon />
         </Button>
       </CardActions>
