@@ -3,6 +3,8 @@ import { User } from '../types';
 import { Button, Card, CardActions, Grid, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useAppSelector } from '../app/hooks';
+import { selectDeleteOneUserLoading } from '../features/users/usersSlice';
 
 interface Props {
   user: User;
@@ -11,6 +13,8 @@ interface Props {
 }
 
 const CardUser: React.FC<Props> = ({ user, onDelete, onEditing }) => {
+  const deleteLoading = useAppSelector(selectDeleteOneUserLoading);
+
   return (
     <Card
       sx={{
@@ -36,7 +40,7 @@ const CardUser: React.FC<Props> = ({ user, onDelete, onEditing }) => {
         </Typography>
       </Grid>
       <CardActions>
-        <Button size="small" color="error" onClick={onDelete}>
+        <Button size="small" color="error" onClick={onDelete} disabled={deleteLoading}>
           <DeleteIcon />
         </Button>
         <Button size="small" color="success" onClick={onEditing}>
