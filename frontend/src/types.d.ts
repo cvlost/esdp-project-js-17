@@ -29,10 +29,10 @@ export interface UsersListResponse {
   count: number;
 }
 
-export interface RegisterMutation {
+export interface UserMutation {
   email: string;
   password: string;
-  role: 'admin' | 'user' | '';
+  role: string;
   displayName: string;
 }
 

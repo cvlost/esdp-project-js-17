@@ -4,9 +4,9 @@ import {
   DeletedUserResponse,
   GlobalError,
   LoginMutation,
-  RegisterMutation,
   RegisterResponse,
   User,
+  UserMutation,
   UserResponse,
   UsersListResponse,
   ValidationError,
@@ -30,7 +30,7 @@ export const login = createAsyncThunk<User, LoginMutation, { rejectValue: Global
   },
 );
 
-export const createUser = createAsyncThunk<void, RegisterMutation, { rejectValue: ValidationError }>(
+export const createUser = createAsyncThunk<void, UserMutation, { rejectValue: ValidationError }>(
   'users/create',
   async (registerMutation, { rejectWithValue }) => {
     try {
