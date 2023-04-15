@@ -83,6 +83,7 @@ const usersSlice = createSlice({
     });
 
     builder.addCase(updateUser.pending, (state) => {
+      state.editingError = null;
       state.editOneLoading = true;
     });
     builder.addCase(updateUser.fulfilled, (state) => {

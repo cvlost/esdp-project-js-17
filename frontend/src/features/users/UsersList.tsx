@@ -46,11 +46,15 @@ const UsersList = () => {
   };
 
   const onFormSubmit = async (userToChange: UserMutation) => {
-    await dispatch(updateUser({ id: userID, user: userToChange }));
-    await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
-    setIsDialogOpen(false);
-    if (user && user._id === userID) {
-      await dispatch(logout());
+    try {
+      await dispatch(updateUser({ id: userID, user: userToChange })).unwrap();
+      await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+      setIsDialogOpen(false);
+      if (user && user._id === userID) {
+        await dispatch(logout());
+      }
+    } catch (error) {
+      throw new Error(`Произошла ошибка: ${error}`);
     }
   };
 

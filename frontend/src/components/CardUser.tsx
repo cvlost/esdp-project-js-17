@@ -5,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useAppSelector } from '../app/hooks';
 import { selectDeleteOneUserLoading } from '../features/users/usersSlice';
+import { ROLES } from '../constants';
 
 interface Props {
   user: User;
@@ -14,6 +15,7 @@ interface Props {
 
 const CardUser: React.FC<Props> = ({ user, onDelete, onEditing }) => {
   const deleteLoading = useAppSelector(selectDeleteOneUserLoading);
+  const userRole = ROLES.find((role) => role.name === user.role);
 
   return (
     <Card
@@ -36,7 +38,7 @@ const CardUser: React.FC<Props> = ({ user, onDelete, onEditing }) => {
           имя: <b>{user.displayName}</b>
         </Typography>
         <Typography variant="subtitle1">
-          роль : <b>{user.role}</b>
+          роль : <b>{userRole?.prettyName}</b>
         </Typography>
       </Grid>
       <CardActions>

@@ -84,8 +84,11 @@ usersRouter.put('/:id', auth, async (req, res, next) => {
     const result = await user.save();
 
     return res.send(result);
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
   }
 });
 
