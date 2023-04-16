@@ -6,10 +6,15 @@ import { Button, Divider, Menu, MenuItem, Typography } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GroupIcon from '@mui/icons-material/Groups';
-import { getEditingUser, logout, updateUser } from '../../features/users/usersThunks';
+import { getEditingUser, getUsersList, logout, updateUser } from '../../features/users/usersThunks';
 import ModalBody from '../ModalBody';
 import UserForm from '../UserForm';
-import { selectEditingError, selectEditOneUserLoading, selectOneEditingUser } from '../../features/users/usersSlice';
+import {
+  selectEditingError,
+  selectEditOneUserLoading,
+  selectOneEditingUser,
+  selectUsersListData,
+} from '../../features/users/usersSlice';
 
 interface Props {
   user: User;
@@ -20,6 +25,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
   const navigate = useNavigate();
   const editingUser = useAppSelector(selectOneEditingUser);
   const editLoading = useAppSelector(selectEditOneUserLoading);
+  const usersListData = useAppSelector(selectUsersListData);
   const error = useAppSelector(selectEditingError);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -40,9 +46,8 @@ const UserMenu: React.FC<Props> = ({ user }) => {
   const onFormSubmit = async (userToChange: UserMutation) => {
     try {
       await dispatch(updateUser({ id: user._id, user: userToChange })).unwrap();
-      if (!error) {
-        setIsDialogOpen(false);
-      }
+      await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+      setIsDialogOpen(false);
     } catch (error) {
       throw new Error(`Произошла ошибка: ${error}`);
     }

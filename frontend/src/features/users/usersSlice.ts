@@ -50,6 +50,9 @@ const usersSlice = createSlice({
     unsetUser: (state) => {
       state.user = null;
     },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
     resetLoginError: (state) => {
       state.loginError = null;
     },
@@ -131,7 +134,7 @@ const usersSlice = createSlice({
 });
 
 export const usersReducer = usersSlice.reducer;
-export const { unsetUser, resetLoginError, setCurrentPage } = usersSlice.actions;
+export const { unsetUser, setUser, resetLoginError, setCurrentPage } = usersSlice.actions;
 
 export const selectUser = (state: RootState) => state.users.user;
 export const selectLoginLoading = (state: RootState) => state.users.loginLoading;

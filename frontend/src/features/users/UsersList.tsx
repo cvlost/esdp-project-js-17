@@ -11,7 +11,7 @@ import {
   selectUsersListLoading,
   setCurrentPage,
 } from './usersSlice';
-import { deleteUser, getEditingUser, getUsersList, logout, updateUser } from './usersThunks';
+import { deleteUser, getEditingUser, getUsersList, updateUser } from './usersThunks';
 import UserForm from '../../components/UserForm';
 import { UserMutation } from '../../types';
 import ModalBody from '../../components/ModalBody';
@@ -50,9 +50,6 @@ const UsersList = () => {
       await dispatch(updateUser({ id: userID, user: userToChange })).unwrap();
       await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
       setIsDialogOpen(false);
-      if (user && user._id === userID) {
-        await dispatch(logout());
-      }
     } catch (error) {
       throw new Error(`Произошла ошибка: ${error}`);
     }
