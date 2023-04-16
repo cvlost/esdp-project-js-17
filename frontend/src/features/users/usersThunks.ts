@@ -4,16 +4,16 @@ import {
   DeletedUserResponse,
   GlobalError,
   LoginMutation,
-  RegisterMutation,
   RegisterResponse,
   User,
+  UserMutation,
   UserResponse,
   UsersListResponse,
   ValidationError,
 } from '../../types';
 import { isAxiosError } from 'axios';
-import { unsetUser } from './usersSlice';
-import { RootState } from '../../app/store';
+import { setUser, unsetUser } from './usersSlice';
+import { AppDispatch, RootState } from '../../app/store';
 
 export const login = createAsyncThunk<User, LoginMutation, { rejectValue: GlobalError }>(
   'users/login',
@@ -30,7 +30,7 @@ export const login = createAsyncThunk<User, LoginMutation, { rejectValue: Global
   },
 );
 
-export const createUser = createAsyncThunk<void, RegisterMutation, { rejectValue: ValidationError }>(
+export const createUser = createAsyncThunk<void, UserMutation, { rejectValue: ValidationError }>(
   'users/create',
   async (registerMutation, { rejectWithValue }) => {
     try {
@@ -58,6 +58,40 @@ export const getUsersList = createAsyncThunk<UsersListResponse, RequestParams>('
   }
   const response = await axiosApi.get<UsersListResponse>(`/users${queryString}`);
   return response.data;
+});
+
+export const getEditingUser = createAsyncThunk<UserMutation, string>('users/getOne', async (id: string) => {
+  try {
+    const response = await axiosApi.get<User>('/users/' + id);
+    const { email, displayName, role } = response.data;
+    return { email, displayName, role, password: '' };
+  } catch (e) {
+    throw new Error('Not found!');
+  }
+});
+
+interface UpdateUserParams {
+  id: string;
+  user: UserMutation;
+}
+
+export const updateUser = createAsyncThunk<
+  void,
+  UpdateUserParams,
+  { rejectValue: ValidationError; dispatch: AppDispatch; state: RootState }
+>('users/editOne', async (params, { rejectWithValue, dispatch, getState }) => {
+  try {
+    const currentUser = getState().users.user;
+    const response = await axiosApi.put('users/' + params.id, params.user);
+    if (currentUser && currentUser._id === params.id) {
+      dispatch(setUser(response.data));
+    }
+  } catch (e) {
+    if (isAxiosError(e) && e.response && e.response.status === 400) {
+      return rejectWithValue(e.response.data as ValidationError);
+    }
+    throw e;
+  }
 });
 
 export const deleteUser = createAsyncThunk<DeletedUserResponse, string>('users/deleteOne', async (userId) => {

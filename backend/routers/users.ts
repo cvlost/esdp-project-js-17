@@ -49,7 +49,7 @@ usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
-usersRouter.get('/:id', auth, permit('admin'), async (req, res, next) => {
+usersRouter.get('/:id', auth, async (req, res, next) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
     return res.send(user);
@@ -58,7 +58,7 @@ usersRouter.get('/:id', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
-usersRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
+usersRouter.put('/:id', auth, async (req, res, next) => {
   try {
     const id = req.params.id as string;
     const { email, displayName, password, role } = req.body;
@@ -84,8 +84,11 @@ usersRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
     const result = await user.save();
 
     return res.send(result);
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
   }
 });
 
