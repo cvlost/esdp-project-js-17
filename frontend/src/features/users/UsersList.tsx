@@ -32,7 +32,7 @@ const UsersList = () => {
     if (user?._id !== userId) {
       if (window.confirm('Do you really want to delete this user?')) {
         await dispatch(deleteUser(userId)).unwrap();
-        dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+        await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
       }
     } else {
       window.alert('U cant delete your own account');

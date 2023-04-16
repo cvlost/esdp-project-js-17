@@ -13,6 +13,7 @@ import {
   selectEditingError,
   selectEditOneUserLoading,
   selectOneEditingUser,
+  selectUser,
   selectUsersListData,
 } from '../../features/users/usersSlice';
 
@@ -26,6 +27,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
   const editingUser = useAppSelector(selectOneEditingUser);
   const editLoading = useAppSelector(selectEditOneUserLoading);
   const usersListData = useAppSelector(selectUsersListData);
+  const mainUser = useAppSelector(selectUser);
   const error = useAppSelector(selectEditingError);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -46,7 +48,9 @@ const UserMenu: React.FC<Props> = ({ user }) => {
   const onFormSubmit = async (userToChange: UserMutation) => {
     try {
       await dispatch(updateUser({ id: user._id, user: userToChange })).unwrap();
-      await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+      if (mainUser && mainUser.role === 'admin') {
+        await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+      }
       setIsDialogOpen(false);
     } catch (error) {
       throw new Error(`Произошла ошибка: ${error}`);
