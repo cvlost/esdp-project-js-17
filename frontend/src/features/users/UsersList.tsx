@@ -3,6 +3,7 @@ import { Box, Chip, Pagination, Paper, Table, TableBody, TableContainer, TableHe
 import CardUser from '../../components/CardUser';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
+  openSnackbar,
   selectEditingError,
   selectEditOneUserLoading,
   selectOneEditingUser,
@@ -16,6 +17,7 @@ import UserForm from '../../components/UserForm';
 import { UserMutation } from '../../types';
 import ModalBody from '../../components/ModalBody';
 import { StyledTableCell } from './theme';
+import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 
 const UsersList = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +35,8 @@ const UsersList = () => {
     if (user?._id !== userId) {
       if (window.confirm('Do you really want to delete this user?')) {
         await dispatch(deleteUser(userId)).unwrap();
-        await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+        await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage })).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'remove' }));
       }
     } else {
       window.alert('U cant delete your own account');
@@ -50,6 +53,7 @@ const UsersList = () => {
     try {
       await dispatch(updateUser({ id: userID, user: userToChange })).unwrap();
       await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+      dispatch(openSnackbar({ status: true, parameter: 'edit' }));
       setIsDialogOpen(false);
     } catch (error) {
       throw new Error(`Произошла ошибка: ${error}`);
@@ -113,6 +117,7 @@ const UsersList = () => {
           <UserForm error={error} onSubmit={onFormSubmit} existingUser={editingUser} isEdit isLoading={editLoading} />
         </ModalBody>
       )}
+      <SnackbarCard />
     </>
   );
 };
