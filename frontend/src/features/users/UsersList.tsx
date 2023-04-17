@@ -84,7 +84,6 @@ const UsersList = () => {
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell>Список пользователей</StyledTableCell>
                     <StyledTableCell align="center">Почта</StyledTableCell>
                     <StyledTableCell align="center">Имя</StyledTableCell>
                     <StyledTableCell align="center">Роль</StyledTableCell>

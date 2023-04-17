@@ -20,9 +20,6 @@ const CardUser: React.FC<Props> = ({ user, onDelete, onEditing }) => {
 
   return (
     <StyledTableRow key={user._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell component="th" scope="row">
-        {user._id}
-      </TableCell>
       <TableCell align="center">{user.email}</TableCell>
       <TableCell align="center">{user.displayName}</TableCell>
       <TableCell align="center">{userRole?.prettyName}</TableCell>
