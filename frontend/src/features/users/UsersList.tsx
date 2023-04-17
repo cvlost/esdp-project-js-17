@@ -50,13 +50,17 @@ const UsersList = () => {
   };
 
   const onFormSubmit = async (userToChange: UserMutation) => {
-    try {
-      await dispatch(updateUser({ id: userID, user: userToChange })).unwrap();
-      await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
-      dispatch(openSnackbar({ status: true, parameter: 'edit' }));
-      setIsDialogOpen(false);
-    } catch (error) {
-      throw new Error(`Произошла ошибка: ${error}`);
+    if (window.confirm('Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateUser({ id: userID, user: userToChange })).unwrap();
+        await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
     }
   };
 
