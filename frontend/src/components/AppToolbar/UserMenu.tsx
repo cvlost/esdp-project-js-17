@@ -16,6 +16,8 @@ import {
   selectUser,
   selectUsersListData,
 } from '../../features/users/usersSlice';
+import ShareLocationIcon from '@mui/icons-material/ShareLocation';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 interface Props {
   user: User;
@@ -77,10 +79,24 @@ const UserMenu: React.FC<Props> = ({ user }) => {
           </MenuItem>,
           <Divider key="user-divider" />,
         ]}
+        {user && [
+          <MenuItem
+            key="user-management"
+            onClick={() => {
+              handleClose();
+              navigate('/location');
+            }}
+          >
+            <ShareLocationIcon sx={{ mr: 1 }} />
+            Управление локациями
+          </MenuItem>,
+          <Divider key="user-divider" />,
+        ]}
         <MenuItem onClick={openDialog}>
-          <GroupIcon sx={{ mr: 1 }} />
+          <AccountBoxIcon sx={{ mr: 1 }} />
           Редактировать профиль
         </MenuItem>
+        <Divider key="user-divider" />
         <MenuItem
           sx={{ justifyContent: 'center' }}
           onClick={() => {
