@@ -5,3 +5,7 @@ export interface IUser {
   role: string;
   displayName: string;
 }
+
+export interface CityType {
+  name: string;
+}
