@@ -31,4 +31,14 @@ regionsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+regionsRouter.delete('/:id', auth, permit('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Region.deleteOne({ _id: id });
+    return res.send({ remove: id });
+  } catch {
+    return res.sendStatus(500);
+  }
+});
+
 export default regionsRouter;
