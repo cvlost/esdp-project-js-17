@@ -61,3 +61,12 @@ export interface DeletedUserResponse {
   acknowledged: boolean;
   deletedCount: number;
 }
+
+export interface RegionList {
+  _id: string;
+  name: string;
+}
+
+export interface RegionMutation {
+  name: string;
+}
