@@ -21,3 +21,7 @@ export const createRegion = createAsyncThunk<void, RegionMutation, { rejectValue
     }
   },
 );
+
+export const removeRegion = createAsyncThunk<void, string>('location/remove_region', async (id) => {
+  await axiosApi.delete('/region/' + id);
+});
