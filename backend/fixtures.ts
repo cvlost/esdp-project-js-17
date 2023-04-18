@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
+import Direction from './models/Direction';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -10,6 +11,7 @@ const run = async () => {
 
   try {
     await db.dropCollection('users');
+    await db.dropCollection('directions');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -36,6 +38,21 @@ const run = async () => {
       token: randomUUID(),
     });
   }
+
+  const [North, South, West, East] = await Direction.create(
+    {
+      name: 'Север',
+    },
+    {
+      name: 'Юг',
+    },
+    {
+      name: 'Запад',
+    },
+    {
+      name: 'Восток',
+    },
+  );
 
   await db.close();
 };
