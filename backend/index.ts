@@ -12,7 +12,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 app.use('/users', usersRouter);
-app.use('/region', regionsRouter);
+app.use('/regions', regionsRouter);
 
 const run = async () => {
   mongoose.set('strictQuery', false);
