@@ -1,11 +1,13 @@
 import React from 'react';
 import { Box, Button, Grid } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutlet } from 'react-router-dom';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import AddIcon from '@mui/icons-material/Add';
+import LocationList from './LocationList';
 
 const Location = () => {
   const navigate = useNavigate();
+  const outlet = useOutlet();
 
   return (
     <Box sx={{ py: 2 }}>
@@ -33,7 +35,7 @@ const Location = () => {
           </Button>
         </Grid>
       </Grid>
-      <Box>Список локаций</Box>
+      <Box>{!outlet ? <LocationList /> : null}</Box>
     </Box>
   );
 };
