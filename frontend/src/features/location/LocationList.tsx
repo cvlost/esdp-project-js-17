@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Chip, Paper, Table, TableBody, TableContainer, TableHead } from '@mui/material';
+import { Box, Chip, Pagination, Paper, Table, TableBody, TableContainer, TableHead } from '@mui/material';
 import { styled, TableCell, tableCellClasses, TableRow } from '@mui/material';
 import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
@@ -40,6 +40,7 @@ const LocationList = () => {
           </Table>
         </TableContainer>
       </Paper>
+      <Pagination size="small" sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }} count={10} page={10} />
       <ModalBody isOpen={isOpen} onClose={() => setIsOpen(false)}>
         Редактировать
       </ModalBody>
