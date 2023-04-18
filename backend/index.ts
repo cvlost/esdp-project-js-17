@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import config from './config';
 import usersRouter from './routers/users';
+import directionRouter from './routers/direction';
 
 const app = express();
 const port = 8000;
@@ -11,6 +12,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 app.use('/users', usersRouter);
+app.use('/direction', directionRouter);
 
 const run = async () => {
   mongoose.set('strictQuery', false);
