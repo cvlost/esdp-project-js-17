@@ -8,7 +8,7 @@ interface Props {
 }
 
 const CardLocation: React.FC<Props> = ({ onClose }) => {
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  const StyledTableRow = styled(TableRow)(() => ({
     '&:nth-of-type(odd)': {
       backgroundColor: '#e3f2fd',
     },
