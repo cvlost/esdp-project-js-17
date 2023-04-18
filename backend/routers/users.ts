@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 
 const usersRouter = express.Router();
 
-usersRouter.post('/', async (req, res, next) => {
+usersRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const user = new User({
       email: req.body.email,

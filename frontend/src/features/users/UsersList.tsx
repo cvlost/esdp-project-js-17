@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Pagination, Typography } from '@mui/material';
+import { Box, Chip, Pagination, Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material';
 import CardUser from '../../components/CardUser';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
+  openSnackbar,
   selectEditingError,
   selectEditOneUserLoading,
   selectOneEditingUser,
@@ -15,6 +16,8 @@ import { deleteUser, getEditingUser, getUsersList, updateUser } from './usersThu
 import UserForm from '../../components/UserForm';
 import { UserMutation } from '../../types';
 import ModalBody from '../../components/ModalBody';
+import { StyledTableCell } from './theme';
+import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 
 const UsersList = () => {
   const dispatch = useAppDispatch();
@@ -32,7 +35,8 @@ const UsersList = () => {
     if (user?._id !== userId) {
       if (window.confirm('Do you really want to delete this user?')) {
         await dispatch(deleteUser(userId)).unwrap();
-        await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+        await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage })).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'remove' }));
       }
     } else {
       window.alert('U cant delete your own account');
@@ -46,12 +50,17 @@ const UsersList = () => {
   };
 
   const onFormSubmit = async (userToChange: UserMutation) => {
-    try {
-      await dispatch(updateUser({ id: userID, user: userToChange })).unwrap();
-      await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
-      setIsDialogOpen(false);
-    } catch (error) {
-      throw new Error(`Произошла ошибка: ${error}`);
+    if (window.confirm('Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateUser({ id: userID, user: userToChange })).unwrap();
+        await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
+        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
     }
   };
 
@@ -62,22 +71,41 @@ const UsersList = () => {
   return (
     <>
       <Box sx={{ py: 2 }}>
-        <Typography variant="h5" component="h5">
-          Список пользователей ({usersListData.count})
-        </Typography>
+        <Chip
+          sx={{ mb: 2, fontSize: '20px', p: 3 }}
+          label={'Список пользователей: ' + usersListData.count}
+          variant="outlined"
+          color="info"
+        />
+
         <Box>
-          <Grid sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {usersListData.users.map((user) => (
-              <CardUser
-                user={user}
-                key={user._id}
-                onDelete={() => removeUser(user._id)}
-                onEditing={() => openDialog(user._id)}
-              />
-            ))}
-          </Grid>
+          <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
+            <TableContainer>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell align="center">Почта</StyledTableCell>
+                    <StyledTableCell align="center">Имя</StyledTableCell>
+                    <StyledTableCell align="center">Роль</StyledTableCell>
+                    <StyledTableCell align="right">Управление</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {usersListData.users.map((user) => (
+                    <CardUser
+                      key={user._id}
+                      user={user}
+                      onDelete={() => removeUser(user._id)}
+                      onEditing={() => openDialog(user._id)}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
           <Pagination
-            sx={{ display: 'flex', justifyContent: 'center' }}
+            size="small"
+            sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
             disabled={usersListLoading}
             count={usersListData.pages}
             page={usersListData.page}
@@ -92,6 +120,7 @@ const UsersList = () => {
           <UserForm error={error} onSubmit={onFormSubmit} existingUser={editingUser} isEdit isLoading={editLoading} />
         </ModalBody>
       )}
+      <SnackbarCard />
     </>
   );
 };

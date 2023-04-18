@@ -10,6 +10,7 @@ import { getEditingUser, getUsersList, logout, updateUser } from '../../features
 import ModalBody from '../ModalBody';
 import UserForm from '../UserForm';
 import {
+  openSnackbar,
   selectEditingError,
   selectEditOneUserLoading,
   selectOneEditingUser,
@@ -51,6 +52,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
       if (mainUser && mainUser.role === 'admin') {
         await dispatch(getUsersList({ page: usersListData.page, perPage: usersListData.perPage }));
       }
+      dispatch(openSnackbar({ status: true, parameter: 'editProfile' }));
       setIsDialogOpen(false);
     } catch (error) {
       throw new Error(`Произошла ошибка: ${error}`);

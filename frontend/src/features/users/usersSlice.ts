@@ -18,6 +18,10 @@ interface UsersState {
   registerLoading: boolean;
   deleteOneLoading: boolean;
   editOneLoading: boolean;
+  snackbar: {
+    status: boolean;
+    parameter: string;
+  };
 }
 
 const initialState: UsersState = {
@@ -41,6 +45,10 @@ const initialState: UsersState = {
   editOneLoading: false,
   loginLoading: false,
   registerLoading: false,
+  snackbar: {
+    status: false,
+    parameter: '',
+  },
 };
 
 const usersSlice = createSlice({
@@ -58,6 +66,9 @@ const usersSlice = createSlice({
     },
     setCurrentPage: (state, { payload: page }: PayloadAction<number>) => {
       state.usersListData.page = page;
+    },
+    openSnackbar: (state, { payload: obj }: PayloadAction<{ status: boolean; parameter: string }>) => {
+      state.snackbar = obj;
     },
   },
   extraReducers: (builder) => {
@@ -134,7 +145,7 @@ const usersSlice = createSlice({
 });
 
 export const usersReducer = usersSlice.reducer;
-export const { unsetUser, setUser, resetLoginError, setCurrentPage } = usersSlice.actions;
+export const { unsetUser, setUser, resetLoginError, setCurrentPage, openSnackbar } = usersSlice.actions;
 
 export const selectUser = (state: RootState) => state.users.user;
 export const selectLoginLoading = (state: RootState) => state.users.loginLoading;
@@ -149,3 +160,4 @@ export const selectUsersListData = (state: RootState) => state.users.usersListDa
 export const selectUsersListLoading = (state: RootState) => state.users.getAllLoading;
 export const selectRegisterLoading = (state: RootState) => state.users.registerLoading;
 export const selectRegisterError = (state: RootState) => state.users.registerError;
+export const selectSnackbarState = (state: RootState) => state.users.snackbar;
