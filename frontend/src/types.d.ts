@@ -61,3 +61,10 @@ export interface DeletedUserResponse {
   acknowledged: boolean;
   deletedCount: number;
 }
+
+export interface DirectionType {
+  id: string;
+  name: string;
+}
+
+export type DirectionTypeMutation = Omit<DirectionType, 'id'>;
