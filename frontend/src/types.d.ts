@@ -86,4 +86,3 @@ export interface DirectionType {
 }
 
 export type DirectionTypeMutation = Omit<DirectionType, 'id'>;
-

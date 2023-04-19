@@ -7,7 +7,6 @@ import { cityReducer } from '../features/location/store_city/citySlice';
 import { regionReducer } from '../features/location/store_region/regionSlice';
 import { directionsReducer } from '../features/directions/directionsSlice';
 
-
 const usersPersistConfig = {
   key: 'ESDP-project-js-17:users',
   storage,
