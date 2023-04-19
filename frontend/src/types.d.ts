@@ -61,3 +61,12 @@ export interface DeletedUserResponse {
   acknowledged: boolean;
   deletedCount: number;
 }
+
+export interface CityType {
+  _id: string;
+  name: string;
+}
+
+export interface CityMutation {
+  name: string;
+}
