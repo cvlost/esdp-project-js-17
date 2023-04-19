@@ -1,13 +1,17 @@
 import React from 'react';
-import { IconButton, styled, TableCell, TableRow } from '@mui/material';
+import { CircularProgress, IconButton, styled, TableCell, TableRow } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { RegionList } from '../../../types';
+import { useAppSelector } from '../../../app/hooks';
+import { selectRemoveRegionLoading } from '../store_region/regionSlice';
 
 interface Props {
   region: RegionList;
+  removeCardRegion: React.MouseEventHandler;
 }
 
-const CardRegion: React.FC<Props> = ({ region }) => {
+const CardRegion: React.FC<Props> = ({ region, removeCardRegion }) => {
+  const removeLoading = useAppSelector(selectRemoveRegionLoading);
   const StyledTableRow = styled(TableRow)(() => ({
     '&:nth-of-type(odd)': {
       backgroundColor: '#f5f5f5',
@@ -29,8 +33,8 @@ const CardRegion: React.FC<Props> = ({ region }) => {
       >
         <TableCell align="left">{region.name}</TableCell>
         <TableCell align="right">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
+          <IconButton disabled={removeLoading} onClick={removeCardRegion} aria-label="delete">
+            {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
           </IconButton>
         </TableCell>
       </StyledTableRow>

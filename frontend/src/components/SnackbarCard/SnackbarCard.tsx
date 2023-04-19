@@ -20,6 +20,9 @@ const SnackbarCard = () => {
       break;
     case 'create_region':
       txt += 'Регион успешно создан';
+      break;
+    case 'remove_region':
+      txt += 'Регион успешно удален';
   }
 
   return (

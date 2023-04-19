@@ -17,7 +17,7 @@ import {
 import FormCreateRegion from './components/FormCreateRegion';
 import { RegionMutation } from '../../types';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { createRegion, fetchRegions } from './store_region/regionThunk';
+import { createRegion, fetchRegions, removeRegion } from './store_region/regionThunk';
 import { openSnackbar } from '../users/usersSlice';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 import { selectGetAllRegionLoading, selectRegionList } from './store_region/regionSlice';
@@ -36,6 +36,12 @@ const CreateRegion = () => {
     await dispatch(createRegion(region)).unwrap();
     await dispatch(fetchRegions()).unwrap();
     dispatch(openSnackbar({ status: true, parameter: 'create_region' }));
+  };
+
+  const removeCardRegion = async (id: string) => {
+    await dispatch(removeRegion(id)).unwrap();
+    await dispatch(fetchRegions()).unwrap();
+    dispatch(openSnackbar({ status: true, parameter: 'remove_region' }));
   };
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -66,7 +72,13 @@ const CreateRegion = () => {
                 <TableBody>
                   {!fetchLoading ? (
                     fetchListRegions.length !== 0 ? (
-                      fetchListRegions.map((region) => <CardRegion key={region._id} region={region} />)
+                      fetchListRegions.map((region) => (
+                        <CardRegion
+                          removeCardRegion={() => removeCardRegion(region._id)}
+                          key={region._id}
+                          region={region}
+                        />
+                      ))
                     ) : (
                       <TableRow>
                         <TableCell>
