@@ -105,7 +105,7 @@ const run = async () => {
     return arr[Math.floor(Math.random() * arr.length)];
   };
 
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 50; i++) {
     await Location.create({
       direction: randElement(directions)._id,
       city: randElement(cities)._id,

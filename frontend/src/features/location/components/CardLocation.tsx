@@ -1,29 +1,38 @@
 import React from 'react';
-import { Button, ButtonGroup, styled, TableCell, TableRow } from '@mui/material';
+import { Button, ButtonGroup, styled, TableCell, TableRow, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { ILocation } from '../../../types';
 
 interface Props {
   onClose: React.MouseEventHandler;
+  loc: ILocation;
 }
 
-const CardLocation: React.FC<Props> = ({ onClose }) => {
-  const StyledTableRow = styled(TableRow)(() => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: '#e3f2fd',
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
+const StyledTableRow = styled(TableRow)(() => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: '#e3f2fd',
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
 
+const CardLocation: React.FC<Props> = ({ loc, onClose }) => {
   return (
     <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell align="left">Бишкек/улица-толстова/юг</TableCell>
-      <TableCell align="center">Бишкек</TableCell>
-      <TableCell align="center">Ленинский</TableCell>
-      <TableCell align="center">Юг</TableCell>
+      <TableCell align="left" sx={{ py: '5px' }}>
+        {`${loc.city.name} ${loc.address}, ${loc.direction.name}`}
+        {loc.addressNote && (
+          <Typography color="gray" fontSize=".85em">
+            ({loc.addressNote})
+          </Typography>
+        )}
+      </TableCell>
+      <TableCell align="center">{loc.city.name}</TableCell>
+      <TableCell align="center">{loc.region.name}</TableCell>
+      <TableCell align="center">{loc.direction.name}</TableCell>
       <TableCell align="right">
         <ButtonGroup variant="contained" aria-label="outlined primary button group">
           <Button size="small" color="error">
