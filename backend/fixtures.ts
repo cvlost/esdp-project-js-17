@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
+import Region from './models/Region';
 import Direction from './models/Direction';
 
 const run = async () => {
@@ -39,6 +40,15 @@ const run = async () => {
     });
   }
 
+  await Region.create(
+    { name: 'Первомайский' },
+    { name: 'Ленинский' },
+    { name: 'Октябрьский' },
+    { name: 'Аламудунский' },
+    { name: 'Ыссык-Кульский' },
+    { name: 'Ысык-Атинский' },
+    );
+    
   const [North, South, West, East] = await Direction.create(
     {
       name: 'Север',

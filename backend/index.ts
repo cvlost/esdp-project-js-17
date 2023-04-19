@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import config from './config';
 import usersRouter from './routers/users';
+import regionsRouter from './routers/regions';
 import directionRouter from './routers/direction';
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 app.use('/users', usersRouter);
+app.use('/regions', regionsRouter);
 app.use('/direction', directionRouter);
 
 const run = async () => {

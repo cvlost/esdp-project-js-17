@@ -6,6 +6,10 @@ export interface IUser {
   displayName: string;
 }
 
+export interface RegionType {
+  name: string;
+}
+
 export interface DirectionType {
   name: string;
 }
