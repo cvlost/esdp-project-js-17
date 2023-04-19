@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
+import City from './models/City';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -36,6 +37,19 @@ const run = async () => {
       token: randomUUID(),
     });
   }
+
+  await City.create(
+    { name: 'Бишкек' },
+    { name: 'Ош' },
+    { name: 'Нарын' },
+    { name: 'Балыкчы' },
+    { name: 'Каракол' },
+    { name: 'Талас' },
+    { name: 'Кант' },
+    { name: 'Чолпон-Ата' },
+    { name: 'Кара-Балта' },
+    { name: 'Узген' },
+  );
 
   await db.close();
 };
