@@ -21,3 +21,7 @@ export const createCity = createAsyncThunk<void, CityMutation, { rejectValue: Va
     }
   },
 );
+
+export const removeCity = createAsyncThunk<void, string>('city/remove_city', async (id) => {
+  await axiosApi.delete('/cities/' + id);
+});
