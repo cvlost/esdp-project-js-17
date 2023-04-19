@@ -39,9 +39,13 @@ const CreateRegion = () => {
   };
 
   const removeCardRegion = async (id: string) => {
-    await dispatch(removeRegion(id)).unwrap();
-    await dispatch(fetchRegions()).unwrap();
-    dispatch(openSnackbar({ status: true, parameter: 'remove_region' }));
+    if (window.confirm('Вы действительно хотите удалить ?')) {
+      await dispatch(removeRegion(id)).unwrap();
+      await dispatch(fetchRegions()).unwrap();
+      dispatch(openSnackbar({ status: true, parameter: 'remove_region' }));
+    } else {
+      return;
+    }
   };
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
