@@ -40,6 +40,6 @@ const LocationSchema = new Schema<ILocation>({
   },
 });
 
-const Location = model('Location', LocationSchema);
+const Location = model<ILocation>('Location', LocationSchema);
 
 export default Location;
