@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 import City from './models/City';
 import Region from './models/Region';
 import Direction from './models/Direction';
+import Location from './models/Location';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -16,6 +17,7 @@ const run = async () => {
     await db.dropCollection('directions');
     await db.dropCollection('cities');
     await db.dropCollection('regions');
+    await db.dropCollection('locations');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -43,20 +45,21 @@ const run = async () => {
     });
   }
 
-  await City.create(
+  const cities = await City.create(
     { name: 'Бишкек' },
+    { name: 'Кант' },
     { name: 'Ош' },
     { name: 'Нарын' },
     { name: 'Балыкчы' },
     { name: 'Каракол' },
     { name: 'Талас' },
-    { name: 'Кант' },
     { name: 'Чолпон-Ата' },
     { name: 'Кара-Балта' },
     { name: 'Узген' },
   );
 
-  await Region.create(
+  const regions = await Region.create(
+    { name: 'Свердловский' },
     { name: 'Первомайский' },
     { name: 'Ленинский' },
     { name: 'Октябрьский' },
@@ -65,7 +68,7 @@ const run = async () => {
     { name: 'Ысык-Атинский' },
   );
 
-  await Direction.create(
+  const directions = await Direction.create(
     {
       name: 'Север',
     },
@@ -79,6 +82,38 @@ const run = async () => {
       name: 'Восток',
     },
   );
+
+  const fixtureAddresses = [
+    'пр. Чынгыза Айтматова',
+    'ул. Асаналиева / ул. Боконбаева',
+    'ул. Гагарина',
+    'ул. Байтик Баатыра / ул. Токомбаева',
+    'ул. Бакаева / ул. Льва Толстого',
+    'ул. Киевская / ул. Бейшеналиевой',
+  ];
+
+  const fixtureAddressNotes = [
+    'ТРЦ "Bishkek Park", поликлиника',
+    'супермаркет "Фрунзе"',
+    'Ортосайский р/к, БЦ "Колизей"',
+    'с. Маевка',
+    'кафе "Гренки"',
+  ];
+
+  const randElement = <T>(arr: T[]): T => {
+    if (!Array.isArray(arr) || arr.length === 0) throw new Error('Значением параметра должен быть непустой массив');
+    return arr[Math.floor(Math.random() * arr.length)];
+  };
+
+  for (let i = 0; i < 30; i++) {
+    await Location.create({
+      direction: randElement(directions)._id,
+      city: randElement(cities)._id,
+      region: randElement(regions)._id,
+      address: randElement(fixtureAddresses),
+      addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
+    });
+  }
 
   await db.close();
 };
