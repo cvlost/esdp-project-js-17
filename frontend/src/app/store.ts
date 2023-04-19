@@ -3,7 +3,7 @@ import { usersReducer } from '../features/users/usersSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
-import { locationReducer } from '../features/location/locationSlice';
+import { regionReducer } from '../features/location/store_region/regionSlice';
 
 const usersPersistConfig = {
   key: 'ESDP-project-js-17:users',
@@ -13,7 +13,7 @@ const usersPersistConfig = {
 
 const rootReducer = combineReducers({
   users: persistReducer(usersPersistConfig, usersReducer),
-  location: locationReducer,
+  region: regionReducer,
 });
 
 export const store = configureStore({

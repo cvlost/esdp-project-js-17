@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { RegionList, ValidationError } from '../../types';
-import { RootState } from '../../app/store';
-import { createRegion, fetchRegions, removeRegion } from './locationThunk';
+import { RootState } from '../../../app/store';
+import { RegionList, ValidationError } from '../../../types';
+import { createRegion, fetchRegions, removeRegion } from './regionThunk';
 
-interface locationState {
+interface regionState {
   listRegion: RegionList[];
   getAllRegionLoading: boolean;
   createRegionLoading: boolean;
@@ -11,7 +11,7 @@ interface locationState {
   regionError: ValidationError | null;
 }
 
-const initialState: locationState = {
+const initialState: regionState = {
   listRegion: [],
   getAllRegionLoading: false,
   createRegionLoading: false,
@@ -19,8 +19,8 @@ const initialState: locationState = {
   regionError: null,
 };
 
-const locationSlice = createSlice({
-  name: 'location',
+const regionSlice = createSlice({
+  name: 'region',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -58,9 +58,9 @@ const locationSlice = createSlice({
   },
 });
 
-export const locationReducer = locationSlice.reducer;
-export const selectRegionList = (state: RootState) => state.location.listRegion;
-export const selectGetAllRegionLoading = (state: RootState) => state.location.getAllRegionLoading;
-export const selectCreateRegionLoading = (state: RootState) => state.location.createRegionLoading;
-export const selectRemoveRegionLoading = (state: RootState) => state.location.removeRegionLoading;
-export const selectRegionError = (state: RootState) => state.location.regionError;
+export const regionReducer = regionSlice.reducer;
+export const selectRegionList = (state: RootState) => state.region.listRegion;
+export const selectGetAllRegionLoading = (state: RootState) => state.region.getAllRegionLoading;
+export const selectCreateRegionLoading = (state: RootState) => state.region.createRegionLoading;
+export const selectRemoveRegionLoading = (state: RootState) => state.region.removeRegionLoading;
+export const selectRegionError = (state: RootState) => state.region.regionError;
