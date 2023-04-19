@@ -9,9 +9,25 @@ import Direction from '../models/Direction';
 const locationsRouter = express.Router();
 
 locationsRouter.get('/', auth, async (req, res, next) => {
+  let perPage = parseInt(req.query.perPage as string);
+  let page = parseInt(req.query.page as string);
+
+  page = isNaN(page) || page <= 0 ? 1 : page;
+  perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
   try {
-    const locations = await Location.find().populate('region city direction');
-    return res.send(locations);
+    const count = await Location.count();
+    let pages = Math.ceil(count / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
+
+    const locations = await Location.find()
+      .populate('region city direction')
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    return res.send({ locations, page, pages, count, perPage });
   } catch (e) {
     return next(e);
   }
