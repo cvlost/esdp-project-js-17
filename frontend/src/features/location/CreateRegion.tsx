@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+  Alert,
   Box,
+  CircularProgress,
   Container,
+  Paper,
   styled,
   Table,
   TableBody,
@@ -10,18 +13,24 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material';
 import FormCreateRegion from './components/FormCreateRegion';
-import CardRegion from './components/CardRegion';
 import { RegionMutation } from '../../types';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { createRegion, fetchRegions } from './store_region/regionThunk';
 import { openSnackbar } from '../users/usersSlice';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
+import { selectGetAllRegionLoading, selectRegionList } from './store_region/regionSlice';
+import CardRegion from './components/CardRegion';
 
 const CreateRegion = () => {
   const dispatch = useAppDispatch();
+  const fetchListRegions = useAppSelector(selectRegionList);
+  const fetchLoading = useAppSelector(selectGetAllRegionLoading);
+
+  useEffect(() => {
+    dispatch(fetchRegions());
+  }, [dispatch]);
 
   const onSubmit = async (region: RegionMutation) => {
     await dispatch(createRegion(region)).unwrap();
@@ -40,12 +49,12 @@ const CreateRegion = () => {
   }));
   return (
     <>
-      <Typography variant="h5" component="h5">
+      <Box>
         <Container component="main" maxWidth="xs">
           <FormCreateRegion onSubmit={onSubmit} />
         </Container>
         <Container>
-          <Box>
+          <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
             <TableContainer>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
@@ -55,13 +64,29 @@ const CreateRegion = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <CardRegion />
+                  {!fetchLoading ? (
+                    fetchListRegions.length !== 0 ? (
+                      fetchListRegions.map((region) => <CardRegion key={region._id} region={region} />)
+                    ) : (
+                      <TableRow>
+                        <TableCell>
+                          <Alert severity="info">В данный момент районов нет</Alert>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  ) : (
+                    <TableRow>
+                      <TableCell>
+                        <CircularProgress />
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
-          </Box>
+          </Paper>
         </Container>
-      </Typography>
+      </Box>
       <SnackbarCard />
     </>
   );

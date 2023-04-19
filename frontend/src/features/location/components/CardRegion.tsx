@@ -1,8 +1,13 @@
 import React from 'react';
 import { IconButton, styled, TableCell, TableRow } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { RegionList } from '../../../types';
 
-const CardRegion = () => {
+interface Props {
+  region: RegionList;
+}
+
+const CardRegion: React.FC<Props> = ({ region }) => {
   const StyledTableRow = styled(TableRow)(() => ({
     '&:nth-of-type(odd)': {
       backgroundColor: '#f5f5f5',
@@ -13,14 +18,23 @@ const CardRegion = () => {
     },
   }));
   return (
-    <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell align="left">123</TableCell>
-      <TableCell align="right">
-        <IconButton aria-label="delete">
-          <DeleteIcon />
-        </IconButton>
-      </TableCell>
-    </StyledTableRow>
+    <>
+      <StyledTableRow
+        sx={{
+          '&:last-child td, &:last-child th': { border: 0 },
+          '&:nth-of-type(odd)': {
+            backgroundColor: '#f5f5f5',
+          },
+        }}
+      >
+        <TableCell align="left">{region.name}</TableCell>
+        <TableCell align="right">
+          <IconButton aria-label="delete">
+            <DeleteIcon />
+          </IconButton>
+        </TableCell>
+      </StyledTableRow>
+    </>
   );
 };
 
