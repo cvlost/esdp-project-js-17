@@ -26,7 +26,7 @@ function App() {
             <Route path="createUser" element={<CreateUser />} />
           </Route>
         </Route>
-        <Route element={<Protected userRole={user?.role} priority="admin" />}>
+        <Route element={<Protected userRole={user?.role} priority="user" />}>
           <Route path="/location" element={<Location />}>
             <Route path="create_location" element="Роутер на создание" />
             <Route path="create_region" element={<CreateRegion />} />
