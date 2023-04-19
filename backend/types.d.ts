@@ -9,3 +9,7 @@ export interface IUser {
 export interface RegionType {
   name: string;
 }
+
+export interface DirectionType {
+  name: string;
+}

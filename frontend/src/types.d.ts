@@ -70,3 +70,10 @@ export interface RegionList {
 export interface RegionMutation {
   name: string;
 }
+
+export interface DirectionType {
+  id: string;
+  name: string;
+}
+
+export type DirectionTypeMutation = Omit<DirectionType, 'id'>;
