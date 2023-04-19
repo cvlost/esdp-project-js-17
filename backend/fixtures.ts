@@ -3,6 +3,9 @@ import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
 import City from './models/City';
+import Region from './models/Region';
+import Direction from './models/Direction';
+
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -11,6 +14,7 @@ const run = async () => {
 
   try {
     await db.dropCollection('users');
+    await db.dropCollection('directions');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -38,6 +42,7 @@ const run = async () => {
     });
   }
 
+
   await City.create(
     { name: 'Бишкек' },
     { name: 'Ош' },
@@ -49,6 +54,30 @@ const run = async () => {
     { name: 'Чолпон-Ата' },
     { name: 'Кара-Балта' },
     { name: 'Узген' },
+
+  await Region.create(
+    { name: 'Первомайский' },
+    { name: 'Ленинский' },
+    { name: 'Октябрьский' },
+    { name: 'Аламудунский' },
+    { name: 'Ыссык-Кульский' },
+    { name: 'Ысык-Атинский' },
+    );
+    
+  const [North, South, West, East] = await Direction.create(
+    {
+      name: 'Север',
+    },
+    {
+      name: 'Юг',
+    },
+    {
+      name: 'Запад',
+    },
+    {
+      name: 'Восток',
+    },
+
   );
 
   await db.close();
