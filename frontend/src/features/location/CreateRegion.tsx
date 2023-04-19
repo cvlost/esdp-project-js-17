@@ -14,8 +14,21 @@ import {
 } from '@mui/material';
 import FormCreateRegion from './components/FormCreateRegion';
 import CardRegion from './components/CardRegion';
+import { RegionMutation } from '../../types';
+import { useAppDispatch } from '../../app/hooks';
+import { createRegion, fetchRegions } from './store_region/regionThunk';
+import { openSnackbar } from '../users/usersSlice';
+import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 
 const CreateRegion = () => {
+  const dispatch = useAppDispatch();
+
+  const onSubmit = async (region: RegionMutation) => {
+    await dispatch(createRegion(region)).unwrap();
+    await dispatch(fetchRegions()).unwrap();
+    dispatch(openSnackbar({ status: true, parameter: 'create_region' }));
+  };
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: '#8f22ff',
@@ -26,28 +39,31 @@ const CreateRegion = () => {
     },
   }));
   return (
-    <Typography variant="h5" component="h5">
-      <Container component="main" maxWidth="xs">
-        <FormCreateRegion />
-      </Container>
-      <Container>
-        <Box>
-          <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell align="left">Регион</StyledTableCell>
-                  <StyledTableCell align="right">Управление</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <CardRegion />
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      </Container>
-    </Typography>
+    <>
+      <Typography variant="h5" component="h5">
+        <Container component="main" maxWidth="xs">
+          <FormCreateRegion onSubmit={onSubmit} />
+        </Container>
+        <Container>
+          <Box>
+            <TableContainer>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell align="left">Регион</StyledTableCell>
+                    <StyledTableCell align="right">Управление</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <CardRegion />
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </Container>
+      </Typography>
+      <SnackbarCard />
+    </>
   );
 };
 
