@@ -86,3 +86,21 @@ export interface DirectionType {
 }
 
 export type DirectionTypeMutation = Omit<DirectionType, 'id'>;
+
+export interface ILocation {
+  _id: string;
+  city: CityType;
+  direction: DirectionType;
+  region: RegionList;
+  address: string;
+  addressNote?: string;
+  description?: string;
+}
+
+export interface LocationsListResponse {
+  locations: ILocation[];
+  page: number;
+  pages: number;
+  perPage: number;
+  count: number;
+}

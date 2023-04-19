@@ -6,6 +6,7 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist
 import { cityReducer } from '../features/location/store_city/citySlice';
 import { regionReducer } from '../features/location/store_region/regionSlice';
 import { directionsReducer } from '../features/directions/directionsSlice';
+import { locationsReducer } from '../features/location/locationsSlice';
 
 const usersPersistConfig = {
   key: 'ESDP-project-js-17:users',
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   city: cityReducer,
   region: regionReducer,
   directions: directionsReducer,
+  locations: locationsReducer,
 });
 
 export const store = configureStore({
