@@ -5,6 +5,7 @@ const RegionSchema = new Schema<RegionType>({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
 });
 
