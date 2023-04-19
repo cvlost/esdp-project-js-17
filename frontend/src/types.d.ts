@@ -62,8 +62,17 @@ export interface DeletedUserResponse {
   deletedCount: number;
 }
 
+export interface CityType {
+  _id: string;
+  name: string;
+}
+
 export interface RegionList {
   _id: string;
+  name: string;
+}
+
+export interface CityMutation {
   name: string;
 }
 
@@ -72,8 +81,9 @@ export interface RegionMutation {
 }
 
 export interface DirectionType {
-  id: string;
+  _id: string;
   name: string;
 }
 
 export type DirectionTypeMutation = Omit<DirectionType, 'id'>;
+

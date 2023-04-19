@@ -2,8 +2,10 @@ import mongoose from 'mongoose';
 import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
+import City from './models/City';
 import Region from './models/Region';
 import Direction from './models/Direction';
+
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -40,6 +42,19 @@ const run = async () => {
     });
   }
 
+
+  await City.create(
+    { name: 'Бишкек' },
+    { name: 'Ош' },
+    { name: 'Нарын' },
+    { name: 'Балыкчы' },
+    { name: 'Каракол' },
+    { name: 'Талас' },
+    { name: 'Кант' },
+    { name: 'Чолпон-Ата' },
+    { name: 'Кара-Балта' },
+    { name: 'Узген' },
+
   await Region.create(
     { name: 'Первомайский' },
     { name: 'Ленинский' },
@@ -62,6 +77,7 @@ const run = async () => {
     {
       name: 'Восток',
     },
+
   );
 
   await db.close();
