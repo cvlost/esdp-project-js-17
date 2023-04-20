@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 export interface IUser {
   email: string;
   password: string;
@@ -16,4 +18,13 @@ export interface RegionType {
 
 export interface DirectionType {
   name: string;
+}
+
+export interface ILocation {
+  city: Types.ObjectId;
+  region: Types.ObjectId;
+  direction: Types.ObjectId;
+  address: string;
+  addressNote?: string;
+  description?: string;
 }
