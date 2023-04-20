@@ -18,6 +18,11 @@ const SnackbarCard = () => {
     case 'editProfile':
       txt += 'Ваш профиль успешно отредактирован';
       break;
+    case 'create_region':
+      txt += 'Регион успешно создан';
+      break;
+    case 'remove_region':
+      txt += 'Регион успешно удален';
   }
 
   return (

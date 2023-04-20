@@ -4,6 +4,7 @@ import { useNavigate, useOutlet } from 'react-router-dom';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import AddIcon from '@mui/icons-material/Add';
 import LocationList from './LocationList';
+import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
 
 const Location = () => {
   const navigate = useNavigate();
@@ -34,8 +35,19 @@ const Location = () => {
             Создать локацию
           </Button>
         </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate('/location/create_region');
+            }}
+          >
+            <SouthAmericaIcon sx={{ mr: 1 }} />
+            Создать регион
+          </Button>
+        </Grid>
       </Grid>
-      <Box>{!outlet ? <LocationList /> : null}</Box>
+      <Box>{!outlet ? <LocationList /> : outlet}</Box>
     </Box>
   );
 };
