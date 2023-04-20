@@ -5,11 +5,9 @@ import {
   CircularProgress,
   Container,
   Paper,
-  styled,
   Table,
   TableBody,
   TableCell,
-  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
@@ -22,6 +20,7 @@ import { openSnackbar } from '../users/usersSlice';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 import { selectGetAllRegionLoading, selectRegionList } from './store_region/regionSlice';
 import CardRegion from './components/CardRegion';
+import { StyledTableCell } from '../../constants';
 
 const CreateRegion = () => {
   const dispatch = useAppDispatch();
@@ -48,15 +47,6 @@ const CreateRegion = () => {
     }
   };
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: '#8f22ff',
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
   return (
     <>
       <Box>

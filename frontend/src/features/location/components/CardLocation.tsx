@@ -1,23 +1,14 @@
 import React from 'react';
-import { Button, ButtonGroup, styled, TableCell, TableRow, Typography } from '@mui/material';
+import { Button, ButtonGroup, TableCell, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { ILocation } from '../../../types';
+import { StyledTableRow } from '../../../constants';
 
 interface Props {
   onClose: React.MouseEventHandler;
   loc: ILocation;
 }
-
-const StyledTableRow = styled(TableRow)(() => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: '#e3f2fd',
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
 
 const CardLocation: React.FC<Props> = ({ loc, onClose }) => {
   return (
