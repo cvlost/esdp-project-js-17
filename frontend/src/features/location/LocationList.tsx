@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Chip, Pagination, Paper, Table, TableBody, TableContainer, TableHead } from '@mui/material';
-import { styled, TableCell, tableCellClasses, TableRow } from '@mui/material';
+import { TableRow } from '@mui/material';
 import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectLocationsListData, selectLocationsListLoading, setCurrentPage } from './locationsSlice';
 import { getLocationsList } from './locationsThunks';
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#ff5722',
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+import { StyledTableCell } from '../../constants';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
