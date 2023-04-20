@@ -36,7 +36,7 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
         alignItems: 'center',
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+      <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
         <SouthAmericaIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
