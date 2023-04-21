@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createDirection, getDirectionsList } from './directionsThunks';
+import { createDirection, deleteDirection, getDirectionsList } from './directionsThunks';
 import { DirectionType, ValidationError } from '../../../types';
 import { RootState } from '../../../app/store';
 
@@ -8,6 +8,7 @@ interface DirectionState {
   getAllDirectionsLoading: boolean;
   createDirectionLoading: boolean;
   directionError: null | ValidationError;
+  deleteDirectionLoading: boolean;
 }
 
 const initialState: DirectionState = {
@@ -15,6 +16,7 @@ const initialState: DirectionState = {
   getAllDirectionsLoading: false,
   createDirectionLoading: false,
   directionError: null,
+  deleteDirectionLoading: false,
 };
 
 const directionsSlice = createSlice({
@@ -43,6 +45,16 @@ const directionsSlice = createSlice({
       state.createDirectionLoading = false;
       state.directionError = error || null;
     });
+
+    builder.addCase(deleteDirection.pending, (state) => {
+      state.deleteDirectionLoading = true;
+    });
+    builder.addCase(deleteDirection.fulfilled, (state) => {
+      state.deleteDirectionLoading = false;
+    });
+    builder.addCase(deleteDirection.rejected, (state) => {
+      state.deleteDirectionLoading = false;
+    });
   },
 });
 
@@ -52,3 +64,4 @@ export const selectDirections = (state: RootState) => state.directions.listDirec
 export const selectDirectionsLoading = (state: RootState) => state.directions.getAllDirectionsLoading;
 export const selectDirectionCreateLoading = (state: RootState) => state.directions.createDirectionLoading;
 export const selectDirectionError = (state: RootState) => state.directions.directionError;
+export const selectDirectionDeleteLoading = (state: RootState) => state.directions.deleteDirectionLoading;

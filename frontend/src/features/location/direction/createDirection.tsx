@@ -18,7 +18,7 @@ import CardDirection from './components/cardDirection';
 import FormCreateDirection from './components/FormCreateDirection';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectDirections, selectDirectionsLoading } from './directionsSlice';
-import { createDirection, getDirectionsList } from './directionsThunks';
+import { createDirection, deleteDirection, getDirectionsList } from './directionsThunks';
 import { openSnackbar } from '../../users/usersSlice';
 import { DirectionTypeMutation } from '../../../types';
 
@@ -35,6 +35,16 @@ const CreateDirection = () => {
     await dispatch(createDirection(direction)).unwrap();
     await dispatch(getDirectionsList()).unwrap();
     dispatch(openSnackbar({ status: true, parameter: 'create_direction' }));
+  };
+
+  const removeCardDirection = async (id: string) => {
+    if (window.confirm('Вы действительно хотите удалить ?')) {
+      await dispatch(deleteDirection(id)).unwrap();
+      await dispatch(getDirectionsList()).unwrap();
+      dispatch(openSnackbar({ status: true, parameter: 'remove_direction' }));
+    } else {
+      return;
+    }
   };
 
   return (
@@ -55,7 +65,13 @@ const CreateDirection = () => {
               <TableBody>
                 {!fetchLoading ? (
                   fetchListDirection.length !== 0 ? (
-                    fetchListDirection.map((direct) => <CardDirection key={direct._id} direction={direct} />)
+                    fetchListDirection.map((direct) => (
+                      <CardDirection
+                        key={direct._id}
+                        direction={direct}
+                        removeCardDirection={() => removeCardDirection(direct._id)}
+                      />
+                    ))
                   ) : (
                     <TableRow>
                       <TableCell>
