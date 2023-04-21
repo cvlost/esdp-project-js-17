@@ -28,3 +28,7 @@ export interface ILocation {
   addressNote?: string;
   description?: string;
 }
+
+export interface AreaType {
+  name: string;
+}
