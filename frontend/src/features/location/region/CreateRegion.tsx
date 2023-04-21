@@ -12,15 +12,15 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import FormCreateRegion from './components/FormCreateRegion';
-import { RegionMutation } from '../../types';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { createRegion, fetchRegions, removeRegion } from './store_region/regionThunk';
-import { openSnackbar } from '../users/usersSlice';
-import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
-import { selectGetAllRegionLoading, selectRegionList } from './store_region/regionSlice';
+import { RegionMutation } from '../../../types';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { createRegion, fetchRegions, removeRegion } from './regionThunk';
+import { openSnackbar } from '../../users/usersSlice';
+import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
+import { selectGetAllRegionLoading, selectRegionList } from './regionSlice';
+import { StyledTableCell } from '../../../constants';
 import CardRegion from './components/CardRegion';
-import { StyledTableCell } from '../../constants';
+import FormCreateRegion from './components/FormCreateRegion';
 
 const CreateRegion = () => {
   const dispatch = useAppDispatch();

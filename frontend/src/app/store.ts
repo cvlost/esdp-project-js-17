@@ -3,8 +3,8 @@ import { usersReducer } from '../features/users/usersSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
-import { cityReducer } from '../features/location/store_city/citySlice';
-import { regionReducer } from '../features/location/store_region/regionSlice';
+import { cityReducer } from '../features/location/city/citySlice';
+import { regionReducer } from '../features/location/region/regionSlice';
 import { locationsReducer } from '../features/location/locationsSlice';
 import { directionsReducer } from '../features/location/direction/directionsSlice';
 
