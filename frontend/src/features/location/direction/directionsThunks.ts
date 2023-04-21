@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { DirectionType, DirectionTypeMutation } from '../../types';
-import axiosApi from '../../axios';
+import axiosApi from '../../../axios';
+import { DirectionType, DirectionTypeMutation } from '../../../types';
 
 export const getDirectionsList = createAsyncThunk<DirectionType[]>('direction/fetchAll', async () => {
   const response = await axiosApi.get('/direction');

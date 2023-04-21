@@ -46,6 +46,17 @@ const Location = () => {
             Создать регион
           </Button>
         </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate('/location/create_direction');
+            }}
+          >
+            <SouthAmericaIcon sx={{ mr: 1 }} />
+            Создать направление
+          </Button>
+        </Grid>
       </Grid>
       <Box>{!outlet ? <LocationList /> : outlet}</Box>
     </Box>

@@ -1,7 +1,7 @@
-import { DirectionType } from '../../types';
 import { createSlice } from '@reduxjs/toolkit';
 import { createDirection, getDirectionsList } from './directionsThunks';
-import { RootState } from '../../app/store';
+import { DirectionType } from '../../../types';
+import { RootState } from '../../../app/store';
 
 interface DirectionState {
   listDirection: DirectionType[];
