@@ -6,7 +6,6 @@ const DirectionSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    enum: ['Север', 'Юг', 'Запад', 'Восток'],
   },
 });
 

@@ -85,7 +85,7 @@ export interface DirectionType {
   name: string;
 }
 
-export type DirectionTypeMutation = Omit<DirectionType, 'id'>;
+export type DirectionTypeMutation = Omit<DirectionType, '_id'>;
 
 export interface ILocation {
   _id: string;

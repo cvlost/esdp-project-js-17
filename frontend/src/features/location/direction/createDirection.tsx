@@ -18,7 +18,9 @@ import CardDirection from './components/cardDirection';
 import FormCreateDirection from './components/FormCreateDirection';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectDirections, selectDirectionsLoading } from './directionsSlice';
-import { getDirectionsList } from './directionsThunks';
+import { createDirection, getDirectionsList } from './directionsThunks';
+import { openSnackbar } from '../../users/usersSlice';
+import { DirectionTypeMutation } from '../../../types';
 
 const CreateDirection = () => {
   const dispatch = useAppDispatch();
@@ -29,10 +31,16 @@ const CreateDirection = () => {
     dispatch(getDirectionsList());
   }, [dispatch]);
 
+  const onSubmit = async (direction: DirectionTypeMutation) => {
+    await dispatch(createDirection(direction)).unwrap();
+    await dispatch(getDirectionsList()).unwrap();
+    dispatch(openSnackbar({ status: true, parameter: 'create_direction' }));
+  };
+
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <FormCreateDirection />
+        <FormCreateDirection onSubmit={onSubmit} />
       </Container>
       <Container>
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
