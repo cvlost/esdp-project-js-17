@@ -5,6 +5,7 @@ import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import AddIcon from '@mui/icons-material/Add';
 import LocationList from './LocationList';
 import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 const Location = () => {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const Location = () => {
               navigate('/location/create_direction');
             }}
           >
-            <SouthAmericaIcon sx={{ mr: 1 }} />
+            <GpsFixedIcon sx={{ mr: 1 }} />
             Создать направление
           </Button>
         </Grid>

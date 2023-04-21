@@ -3,12 +3,13 @@ import { Box, Container, Paper, Table, TableBody, TableContainer, TableHead, Tab
 import { StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import CardDirection from './components/cardDirection';
+import FormCreateDirection from './components/FormCreateDirection';
 
 const CreateDirection = () => {
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        Форма
+        <FormCreateDirection />
       </Container>
       <Container>
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
