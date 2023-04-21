@@ -21,3 +21,7 @@ export const createArea = createAsyncThunk<void, AreaMutation, { rejectValue: Va
     }
   },
 );
+
+export const removeArea = createAsyncThunk<void, string>('area/remove_area', async (id) => {
+  await axiosApi.delete('/areas/' + id);
+});
