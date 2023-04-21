@@ -31,4 +31,14 @@ areasRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+areasRouter.delete('/:id', auth, permit('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Area.deleteOne({ _id: id });
+    return res.send({ remove: id });
+  } catch {
+    return res.sendStatus(500);
+  }
+});
+
 export default areasRouter;
