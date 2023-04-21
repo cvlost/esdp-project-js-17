@@ -21,3 +21,7 @@ export const createFormat = createAsyncThunk<void, FormatMutation, { rejectValue
     }
   },
 );
+
+export const removeFormat = createAsyncThunk<void, string>('format/remove_format', async (id) => {
+  await axiosApi.delete('/formats/' + id);
+});
