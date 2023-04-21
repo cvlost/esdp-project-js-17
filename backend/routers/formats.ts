@@ -31,4 +31,14 @@ formatRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+formatRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Format.deleteOne({ _id: id });
+    return res.send({ remove: id });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 export default formatRouter;
