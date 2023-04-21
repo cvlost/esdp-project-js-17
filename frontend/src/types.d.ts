@@ -104,3 +104,9 @@ export interface LocationsListResponse {
   perPage: number;
   count: number;
 }
+
+export interface AreaList {
+  _id: string;
+  name: string;
+}
+export type AreaMutation = Omit<AreaList, '_id'>;

@@ -7,6 +7,7 @@ import citiesRouter from './routers/cities';
 import regionsRouter from './routers/regions';
 import directionRouter from './routers/direction';
 import locationsRouter from './routers/locations';
+import areasRouter from './routers/areas';
 
 const app = express();
 const port = 8000;
@@ -18,6 +19,7 @@ app.use('/users', usersRouter);
 app.use('/cities', citiesRouter);
 app.use('/regions', regionsRouter);
 app.use('/direction', directionRouter);
+app.use('/areas', areasRouter);
 app.use('/locations', locationsRouter);
 
 const run = async () => {
