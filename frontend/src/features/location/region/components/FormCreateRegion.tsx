@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
-import { RegionMutation } from '../../../types';
-import { useAppSelector } from '../../../app/hooks';
-import { selectCreateRegionLoading, selectRegionError } from '../store_region/regionSlice';
+import { RegionMutation } from '../../../../types';
+import { useAppSelector } from '../../../../app/hooks';
+import { selectCreateRegionLoading, selectRegionError } from '../regionSlice';
 
 interface Props {
   onSubmit: (region: RegionMutation) => void;

@@ -9,7 +9,8 @@ import Protected from './components/Protected';
 import { useAppSelector } from './app/hooks';
 import { selectUser } from './features/users/usersSlice';
 import Location from './features/location/Location';
-import CreateRegion from './features/location/CreateRegion';
+import CreateRegion from './features/location/region/CreateRegion';
+import CreateDirection from './features/location/direction/createDirection';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -30,6 +31,7 @@ function App() {
           <Route path="/location" element={<Location />}>
             <Route path="create_location" element="Роутер на создание" />
             <Route path="create_region" element={<CreateRegion />} />
+            <Route path="create_direction" element={<CreateDirection />} />
           </Route>
         </Route>
       </Routes>

@@ -5,8 +5,12 @@ import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import AddIcon from '@mui/icons-material/Add';
 import LocationList from './LocationList';
 import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import { useAppSelector } from '../../app/hooks';
+import { selectUser } from '../users/usersSlice';
 
 const Location = () => {
+  const user = useAppSelector(selectUser);
   const navigate = useNavigate();
   const outlet = useOutlet();
 
@@ -35,17 +39,32 @@ const Location = () => {
             Создать локацию
           </Button>
         </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            onClick={() => {
-              navigate('/location/create_region');
-            }}
-          >
-            <SouthAmericaIcon sx={{ mr: 1 }} />
-            Создать регион
-          </Button>
-        </Grid>
+        {user?.role === 'admin' ? (
+          <>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigate('/location/create_region');
+                }}
+              >
+                <SouthAmericaIcon sx={{ mr: 1 }} />
+                Создать регион
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigate('/location/create_direction');
+                }}
+              >
+                <GpsFixedIcon sx={{ mr: 1 }} />
+                Создать направление
+              </Button>
+            </Grid>
+          </>
+        ) : null}
       </Grid>
       <Box>{!outlet ? <LocationList /> : outlet}</Box>
     </Box>

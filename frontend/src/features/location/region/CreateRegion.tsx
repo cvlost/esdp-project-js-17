@@ -12,17 +12,19 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import FormCreateRegion from './components/FormCreateRegion';
-import { RegionMutation } from '../../types';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { createRegion, fetchRegions, removeRegion } from './store_region/regionThunk';
-import { openSnackbar } from '../users/usersSlice';
-import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
-import { selectGetAllRegionLoading, selectRegionList } from './store_region/regionSlice';
+import { RegionMutation } from '../../../types';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { createRegion, fetchRegions, removeRegion } from './regionThunk';
+import { openSnackbar, selectUser } from '../../users/usersSlice';
+import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
+import { selectGetAllRegionLoading, selectRegionList } from './regionSlice';
+import { StyledTableCell } from '../../../constants';
 import CardRegion from './components/CardRegion';
-import { StyledTableCell } from '../../constants';
+import FormCreateRegion from './components/FormCreateRegion';
+import { Navigate } from 'react-router-dom';
 
 const CreateRegion = () => {
+  const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const fetchListRegions = useAppSelector(selectRegionList);
   const fetchLoading = useAppSelector(selectGetAllRegionLoading);
@@ -46,6 +48,10 @@ const CreateRegion = () => {
       return;
     }
   };
+
+  if (user?.role !== 'admin') {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <>
