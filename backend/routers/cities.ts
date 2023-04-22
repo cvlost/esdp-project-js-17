@@ -33,7 +33,7 @@ citiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 citiesRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { _id } = req.params;
+    const _id = req.params.id as string;
     const city = await City.findOne({ _id });
     if (!city) {
       return res.status(404).send({ error: 'Город не существует в базе.' });

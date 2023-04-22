@@ -117,10 +117,18 @@ export interface StreetList {
   name: string;
 }
 
-export type StreetMutation = Omit<FormatList, '_id'>;
+export type StreetMutation = Omit<StreetList, '_id'>;
 
 export interface AreaList {
   _id: string;
   name: string;
 }
+
 export type AreaMutation = Omit<AreaList, '_id'>;
+
+export interface LegalEntityList {
+  _id: string;
+  name: string;
+}
+
+export type LegalEntityMutation = Omit<LegalEntityList, '_id'>;

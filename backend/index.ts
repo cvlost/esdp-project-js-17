@@ -10,6 +10,7 @@ import locationsRouter from './routers/locations';
 import formatRouter from './routers/formats';
 import areasRouter from './routers/areas';
 import streetsRouter from './routers/streets';
+import legalEntitiesRouter from './routers/legalEntities';
 
 const app = express();
 const port = 8000;
@@ -24,6 +25,7 @@ app.use('/streets', streetsRouter);
 app.use('/direction', directionRouter);
 app.use('/formats', formatRouter);
 app.use('/areas', areasRouter);
+app.use('/legalEntities', legalEntitiesRouter);
 app.use('/locations', locationsRouter);
 
 const run = async () => {

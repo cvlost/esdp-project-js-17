@@ -7,6 +7,7 @@ import Region from './models/Region';
 import Direction from './models/Direction';
 import Location from './models/Location';
 import Street from './models/Street';
+import LegalEntity from './models/LegalEntity';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -20,6 +21,7 @@ const run = async () => {
     await db.dropCollection('regions');
     await db.dropCollection('locations');
     await db.dropCollection('streets');
+    await db.dropCollection('legalentities');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -91,6 +93,8 @@ const run = async () => {
     { name: 'пр. Манаса' },
     { name: 'Шабдан-Баатыра' },
   );
+
+  await LegalEntity.create({ name: 'Шамдагай' }, { name: 'ШамдагайЮридикал' });
 
   const fixtureAddresses = [
     'пр. Чынгыза Айтматова',

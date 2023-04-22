@@ -24,6 +24,10 @@ export interface StreetType {
   name: string;
 }
 
+export interface LegalEntityType {
+  name: string;
+}
+
 export interface ILocation {
   city: Types.ObjectId;
   region: Types.ObjectId;
