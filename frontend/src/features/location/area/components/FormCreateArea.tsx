@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
 import { useAppSelector } from '../../../../app/hooks';
-import { selectCreateAreaLoading } from '../areaSlice';
+import { selectAreaError, selectCreateAreaLoading } from '../areaSlice';
 import { AreaMutation } from '../../../../types';
 
 interface Props {
@@ -12,11 +12,20 @@ interface Props {
 const FormCreateArea: React.FC<Props> = ({ onSubmit }) => {
   const [value, setValue] = useState('');
   const createLoading = useAppSelector(selectCreateAreaLoading);
+  const error = useAppSelector(selectAreaError);
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({ name: value });
     setValue('');
+  };
+
+  const getFieldError = (fieldName: string) => {
+    try {
+      return error?.errors[fieldName].message;
+    } catch {
+      return undefined;
+    }
   };
 
   return (
@@ -46,6 +55,8 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit }) => {
               type="text"
               name="name"
               autoComplete="off"
+              error={Boolean(getFieldError('name'))}
+              helperText={getFieldError('name')}
             />
           </Grid>
         </Grid>
