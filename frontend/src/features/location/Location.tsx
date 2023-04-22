@@ -63,6 +63,17 @@ const Location = () => {
                 Создать направление
               </Button>
             </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigate('/location/create_area');
+                }}
+              >
+                <SouthAmericaIcon sx={{ mr: 1 }} />
+                Создать область
+              </Button>
+            </Grid>
           </>
         ) : null}
       </Grid>

@@ -11,6 +11,7 @@ import { selectUser } from './features/users/usersSlice';
 import Location from './features/location/Location';
 import CreateRegion from './features/location/region/CreateRegion';
 import CreateDirection from './features/location/direction/createDirection';
+import CreateArea from './features/location/area/createArea';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -32,6 +33,7 @@ function App() {
             <Route path="create_location" element="Роутер на создание" />
             <Route path="create_region" element={<CreateRegion />} />
             <Route path="create_direction" element={<CreateDirection />} />
+            <Route path="create_area" element={<CreateArea />} />
           </Route>
         </Route>
       </Routes>
