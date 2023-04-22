@@ -3,6 +3,7 @@ import { Box, Container, Paper, Table, TableBody, TableContainer, TableHead, Tab
 import { StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import FormCreateArea from './components/FormCreateArea';
+import CardArea from './components/CardArea';
 
 const CreateArea = () => {
   return (
@@ -20,7 +21,9 @@ const CreateArea = () => {
                   <StyledTableCell align="right">Управление</StyledTableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>Область</TableBody>
+              <TableBody>
+                <CardArea />
+              </TableBody>
             </Table>
           </TableContainer>
         </Paper>
