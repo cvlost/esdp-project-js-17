@@ -18,7 +18,9 @@ import FormCreateArea from './components/FormCreateArea';
 import CardArea from './components/CardArea';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectAreaList, selectGetAllAreaLoading } from './areaSlice';
-import { fetchAreas } from './areaThunk';
+import { createArea, fetchAreas } from './areaThunk';
+import { AreaMutation } from '../../../types';
+import { openSnackbar } from '../../users/usersSlice';
 
 const CreateArea = () => {
   const areas = useAppSelector(selectAreaList);
@@ -28,10 +30,19 @@ const CreateArea = () => {
   useEffect(() => {
     dispatch(fetchAreas());
   }, [dispatch]);
+
+  const onSubmit = async (area: AreaMutation) => {
+    await dispatch(createArea(area)).unwrap();
+    await dispatch(fetchAreas()).unwrap();
+    dispatch(openSnackbar({ status: true, parameter: 'create_area' }));
+  };
+
+  console.log(areas);
+
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <FormCreateArea />
+        <FormCreateArea onSubmit={onSubmit} />
       </Container>
       <Container>
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
