@@ -6,6 +6,7 @@ import City from './models/City';
 import Region from './models/Region';
 import Direction from './models/Direction';
 import Location from './models/Location';
+import Street from './models/Street';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -18,6 +19,7 @@ const run = async () => {
     await db.dropCollection('cities');
     await db.dropCollection('regions');
     await db.dropCollection('locations');
+    await db.dropCollection('streets');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -68,19 +70,26 @@ const run = async () => {
     { name: 'Ысык-Атинский' },
   );
 
-  const directions = await Direction.create(
-    {
-      name: 'Север',
-    },
-    {
-      name: 'Юг',
-    },
-    {
-      name: 'Запад',
-    },
-    {
-      name: 'Восток',
-    },
+  const directions = await Direction.create({ name: 'Север' }, { name: 'Юг' }, { name: 'Запад' }, { name: 'Восток' });
+
+  await Street.create(
+    { name: 'Киевская' },
+    { name: 'Ахунбаева' },
+    { name: 'Ибраимова' },
+    { name: 'Манаса' },
+    { name: 'Московская' },
+    { name: 'Горького' },
+    { name: 'Логвиненко' },
+    { name: 'Боконбаева' },
+    { name: 'Исанова' },
+    { name: 'Тыныстанова' },
+    { name: 'Юнусалиева' },
+    { name: 'Фучика' },
+    { name: 'Медерова' },
+    { name: 'Токтогула' },
+    { name: 'Жибек-Жолу' },
+    { name: 'пр. Манаса' },
+    { name: 'Шабдан-Баатыра' },
   );
 
   const fixtureAddresses = [

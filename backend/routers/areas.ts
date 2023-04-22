@@ -6,22 +6,22 @@ import mongoose from 'mongoose';
 
 const areasRouter = express.Router();
 
-areasRouter.get('/', auth, async (req, res) => {
+areasRouter.get('/', auth, async (req, res, next) => {
   try {
     const areas = await Area.find();
     return res.send(areas);
-  } catch {
-    return res.sendStatus(500);
+  } catch (e) {
+    return next(e);
   }
 });
 
 areasRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
-    const createArea = await Area.create({
+    const areaData = await Area.create({
       name: req.body.name,
     });
 
-    return res.send(createArea);
+    return res.send(areaData);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(e);
@@ -31,13 +31,17 @@ areasRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
-areasRouter.delete('/:id', auth, permit('admin'), async (req, res) => {
+areasRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { id } = req.params;
-    await Area.deleteOne({ _id: id });
-    return res.send({ remove: id });
-  } catch {
-    return res.sendStatus(500);
+    const { _id } = req.params;
+    const area = await Area.findOne({ _id });
+    if (!area) {
+      return res.status(404).send({ error: 'Область не существует в базе.' });
+    }
+    const result = await Area.deleteOne({ _id });
+    return res.send(result);
+  } catch (e) {
+    return next(e);
   }
 });
 

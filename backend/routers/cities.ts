@@ -6,22 +6,22 @@ import mongoose from 'mongoose';
 
 const citiesRouter = express.Router();
 
-citiesRouter.get('/', auth, async (req, res) => {
+citiesRouter.get('/', auth, async (req, res, next) => {
   try {
     const cities = await City.find();
     return res.send(cities);
-  } catch {
-    return res.sendStatus(500);
+  } catch (e) {
+    return next(e);
   }
 });
 
 citiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
-    const createCity = await City.create({
+    const cityData = await City.create({
       name: req.body.name,
     });
 
-    return res.send(createCity);
+    return res.send(cityData);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(e);
@@ -31,13 +31,17 @@ citiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
-citiesRouter.delete('/:id', auth, permit('admin'), async (req, res) => {
+citiesRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { id } = req.params;
-    await City.deleteOne({ _id: id });
-    return res.send({ remove: id });
-  } catch {
-    return res.sendStatus(500);
+    const { _id } = req.params;
+    const city = await City.findOne({ _id });
+    if (!city) {
+      return res.status(404).send({ error: 'Город не существует в базе.' });
+    }
+    const result = await City.deleteOne({ _id });
+    return res.send(result);
+  } catch (e) {
+    return next(e);
   }
 });
 

@@ -48,10 +48,10 @@ locationsRouter.post('/', auth, async (req, res, next) => {
   const { address, addressNote, region, city, direction, description } = req.body;
   const dto = { address, addressNote, region, city, direction, description };
   try {
-    const location = await Location.create(dto);
+    const locationData = await Location.create(dto);
     return res.send({
       message: 'Новая локация успешно создана!',
-      location: await Location.populate(location, 'region direction city'),
+      location: await Location.populate(locationData, 'region direction city'),
     });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -116,12 +116,11 @@ locationsRouter.put('/:id', auth, async (req, res, next) => {
 });
 
 locationsRouter.delete('/:id', auth, async (req, res, next) => {
-  const _id = req.params.id as string;
-
   try {
+    const { _id } = req.params;
     const location = await Location.findById(_id);
     if (!location) {
-      return res.status(400).send({ error: 'Удаление невозможно: локация не существует в базе.' });
+      return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });
     }
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
