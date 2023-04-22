@@ -15,21 +15,25 @@ import {
 import { StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { openSnackbar } from '../../users/usersSlice';
+import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { selectFormatList, selectGetAllFormatLoading } from './formatSlice';
 import CardFormat from './components/CardFormat';
 import { createFormat, fetchFormat, removeFormat } from './formatThunk';
 import { FormatMutation } from '../../../types';
 import FormCreateFormat from './components/FormCreateFormat';
+import { Navigate } from 'react-router-dom';
 
 const CreateFormat = () => {
+  const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const formats = useAppSelector(selectFormatList);
   const formatsLoading = useAppSelector(selectGetAllFormatLoading);
 
   useEffect(() => {
-    dispatch(fetchFormat());
-  }, [dispatch]);
+    if (user?.role === 'admin') {
+      dispatch(fetchFormat());
+    }
+  }, [dispatch, user?.role]);
 
   const deleteFormat = async (id: string) => {
     if (window.confirm('Вы действительно хотите удалить ?')) {
@@ -44,6 +48,10 @@ const CreateFormat = () => {
     await dispatch(fetchFormat());
     dispatch(openSnackbar({ status: true, parameter: 'create_format' }));
   };
+
+  if (user?.role !== 'admin') {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <Box>
