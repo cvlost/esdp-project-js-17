@@ -33,12 +33,12 @@ areasRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 areasRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { _id } = req.params;
-    const area = await Area.findOne({ _id });
+    const { id } = req.params;
+    const area = await Area.findOne({ _id: id });
     if (!area) {
       return res.status(404).send({ error: 'Область не существует в базе.' });
     }
-    const result = await Area.deleteOne({ _id });
+    const result = await Area.deleteOne({ _id: id });
     return res.send(result);
   } catch (e) {
     return next(e);

@@ -8,16 +8,17 @@ import { AreaList } from '../../../../types';
 
 interface Props {
   area: AreaList;
+  removeAreaCard: React.MouseEventHandler;
 }
 
-const CardArea: React.FC<Props> = ({ area }) => {
+const CardArea: React.FC<Props> = ({ area, removeAreaCard }) => {
   const removeLoading = useAppSelector(selectRemoveAreaLoading);
   return (
     <>
       <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
         <TableCell align="left">{area.name}</TableCell>
         <TableCell align="right">
-          <IconButton disabled={removeLoading} aria-label="delete">
+          <IconButton disabled={removeLoading} onClick={removeAreaCard} aria-label="delete">
             {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
           </IconButton>
         </TableCell>

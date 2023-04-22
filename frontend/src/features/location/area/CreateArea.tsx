@@ -18,7 +18,7 @@ import FormCreateArea from './components/FormCreateArea';
 import CardArea from './components/CardArea';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectAreaList, selectGetAllAreaLoading } from './areaSlice';
-import { createArea, fetchAreas } from './areaThunk';
+import { createArea, fetchAreas, removeArea } from './areaThunk';
 import { AreaMutation } from '../../../types';
 import { openSnackbar } from '../../users/usersSlice';
 
@@ -37,7 +37,15 @@ const CreateArea = () => {
     dispatch(openSnackbar({ status: true, parameter: 'create_area' }));
   };
 
-  console.log(areas);
+  const removeAreaCard = async (id: string) => {
+    if (window.confirm('Вы действительно хотите удалить ?')) {
+      await dispatch(removeArea(id)).unwrap();
+      await dispatch(fetchAreas()).unwrap();
+      dispatch(openSnackbar({ status: true, parameter: 'remove_area' }));
+    } else {
+      return;
+    }
+  };
 
   return (
     <Box>
@@ -57,7 +65,9 @@ const CreateArea = () => {
               <TableBody>
                 {!loadingGetAllAreas ? (
                   areas.length !== 0 ? (
-                    areas.map((area) => <CardArea key={area._id} area={area} />)
+                    areas.map((area) => (
+                      <CardArea removeAreaCard={() => removeAreaCard(area._id)} key={area._id} area={area} />
+                    ))
                   ) : (
                     <TableRow>
                       <TableCell>

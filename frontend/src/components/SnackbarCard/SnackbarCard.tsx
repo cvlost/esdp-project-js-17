@@ -32,6 +32,9 @@ const SnackbarCard = () => {
       break;
     case 'create_area':
       txt += 'Область успешно создана';
+      break;
+    case 'remove_area':
+      txt += 'Область успешно удалена';
   }
 
   return (
