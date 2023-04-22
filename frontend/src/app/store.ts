@@ -6,6 +6,7 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist
 import { cityReducer } from '../features/location/city/citySlice';
 import { regionReducer } from '../features/location/region/regionSlice';
 import { locationsReducer } from '../features/location/locationsSlice';
+import { areaReducer } from '../features/location/area/areaSlice';
 import { formatReducer } from '../features/location/format/formatSlice';
 import { directionsReducer } from '../features/location/direction/directionsSlice';
 
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   directions: directionsReducer,
   locations: locationsReducer,
   format: formatReducer,
+  area: areaReducer,
 });
 
 export const store = configureStore({

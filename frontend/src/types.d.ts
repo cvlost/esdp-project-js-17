@@ -110,3 +110,9 @@ export interface FormatList {
   name: string;
 }
 export type FormatMutation = Omit<FormatList, '_id'>;
+
+export interface AreaList {
+  _id: string;
+  name: string;
+}
+export type AreaMutation = Omit<AreaList, '_id'>;

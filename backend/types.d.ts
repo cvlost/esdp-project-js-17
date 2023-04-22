@@ -29,6 +29,10 @@ export interface ILocation {
   description?: string;
 }
 
+export interface AreaType {
+  name: string;
+}
+
 export interface FormatType {
   name: string;
 }
