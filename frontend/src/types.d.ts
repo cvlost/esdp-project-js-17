@@ -109,7 +109,15 @@ export interface FormatList {
   _id: string;
   name: string;
 }
+
 export type FormatMutation = Omit<FormatList, '_id'>;
+
+export interface StreetList {
+  _id: string;
+  name: string;
+}
+
+export type StreetMutation = Omit<FormatList, '_id'>;
 
 export interface AreaList {
   _id: string;
