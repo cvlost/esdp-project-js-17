@@ -29,6 +29,12 @@ const SnackbarCard = () => {
       break;
     case 'remove_direction':
       txt += 'Направление успешно удалено';
+      break;
+    case 'create_area':
+      txt += 'Область успешно создана';
+      break;
+    case 'remove_area':
+      txt += 'Область успешно удалена';
   }
 
   return (

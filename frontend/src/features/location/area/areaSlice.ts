@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
 import { RegionList, ValidationError } from '../../../types';
+import { createArea, fetchAreas, removeArea } from './areaThunk';
 
 interface areaState {
   listArea: RegionList[];
@@ -22,7 +23,39 @@ const areaSlice = createSlice({
   name: 'area',
   initialState,
   reducers: {},
-  extraReducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchAreas.pending, (state) => {
+      state.getAllAreaLoading = true;
+    });
+    builder.addCase(fetchAreas.fulfilled, (state, { payload: areas }) => {
+      state.getAllAreaLoading = false;
+      state.listArea = areas;
+    });
+    builder.addCase(fetchAreas.rejected, (state) => {
+      state.getAllAreaLoading = false;
+    });
+
+    builder.addCase(createArea.pending, (state) => {
+      state.createAreaLoading = true;
+    });
+    builder.addCase(createArea.fulfilled, (state) => {
+      state.createAreaLoading = false;
+    });
+    builder.addCase(createArea.rejected, (state, { payload: error }) => {
+      state.createAreaLoading = false;
+      state.areaError = error || null;
+    });
+
+    builder.addCase(removeArea.pending, (state) => {
+      state.removeAreaLoading = true;
+    });
+    builder.addCase(removeArea.fulfilled, (state) => {
+      state.removeAreaLoading = false;
+    });
+    builder.addCase(removeArea.rejected, (state) => {
+      state.removeAreaLoading = false;
+    });
+  },
 });
 
 export const areaReducer = areaSlice.reducer;
