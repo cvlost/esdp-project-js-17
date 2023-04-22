@@ -104,3 +104,9 @@ export interface LocationsListResponse {
   perPage: number;
   count: number;
 }
+
+export interface FormatList {
+  _id: string;
+  name: string;
+}
+export type FormatMutation = Omit<FormatList, '_id'>;
