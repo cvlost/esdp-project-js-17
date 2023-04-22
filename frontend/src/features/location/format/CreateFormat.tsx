@@ -18,7 +18,9 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openSnackbar } from '../../users/usersSlice';
 import { selectFormatList, selectGetAllFormatLoading } from './formatSlice';
 import CardFormat from './components/CardFormat';
-import { fetchFormat, removeFormat } from './formatThunk';
+import { createFormat, fetchFormat, removeFormat } from './formatThunk';
+import { FormatMutation } from '../../../types';
+import FormCreateFormat from './components/FormCreateFormat';
 
 const CreateFormat = () => {
   const dispatch = useAppDispatch();
@@ -37,10 +39,16 @@ const CreateFormat = () => {
     }
   };
 
+  const onSubmit = async (format: FormatMutation) => {
+    await dispatch(createFormat(format)).unwrap();
+    await dispatch(fetchFormat());
+    dispatch(openSnackbar({ status: true, parameter: 'create_format' }));
+  };
+
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <div>creation form here</div>
+        <FormCreateFormat onSubmit={onSubmit} />
       </Container>
       <Container>
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
