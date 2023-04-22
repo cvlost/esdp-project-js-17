@@ -33,7 +33,7 @@ directionRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 directionRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { _id } = req.params;
+    const _id = req.params.id as string;
     const direction = await Direction.findOne({ _id });
     if (!direction) {
       return res.status(404).send({ error: 'Направление не существует в базе.' });

@@ -32,7 +32,7 @@ formatRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 formatRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { _id } = req.params;
+    const _id = req.params.id as string;
     const format = await Format.findById(_id);
     if (!format) {
       return res.status(404).send({ error: 'Формат не существует в базе.' });

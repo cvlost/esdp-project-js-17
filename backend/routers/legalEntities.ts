@@ -33,8 +33,9 @@ legalEntitiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 legalEntitiesRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { _id } = req.params;
+    const _id = req.params.id as string;
     const legalEntity = await LegalEntity.findById(_id);
+    console.log(_id);
 
     if (!legalEntity) {
       return res.status(404).send({ error: 'Юридическое лицо не существует в базе.' });
@@ -58,7 +59,7 @@ legalEntitiesRouter.put('/:id', auth, permit('admin'), async (req, res, next) =>
 
 legalEntitiesRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { _id } = req.params;
+    const _id = req.params.id as string;
     const legalEntity = await LegalEntity.findById(_id);
     if (!legalEntity) {
       return res.status(404).send({ error: 'Юридическое лицо не существует в базе.' });

@@ -117,7 +117,7 @@ locationsRouter.put('/:id', auth, async (req, res, next) => {
 
 locationsRouter.delete('/:id', auth, async (req, res, next) => {
   try {
-    const { _id } = req.params;
+    const _id = req.params.id as string;
     const location = await Location.findById(_id);
     if (!location) {
       return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });

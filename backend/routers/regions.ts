@@ -33,7 +33,7 @@ regionsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 regionsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { _id } = req.params;
+    const _id = req.params.id as string;
     const region = await Region.findById(_id);
     if (!region) {
       return res.status(404).send({ error: 'Район не существует в базе.' });

@@ -33,7 +33,7 @@ streetsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 streetsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const { _id } = req.params;
+    const _id = req.params.id as string;
     const street = await Street.findById(_id);
     if (!street) {
       return res.status(404).send({ error: 'Улица не существует в базе.' });

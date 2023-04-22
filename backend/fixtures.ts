@@ -21,7 +21,7 @@ const run = async () => {
     await db.dropCollection('regions');
     await db.dropCollection('locations');
     await db.dropCollection('streets');
-    await db.dropCollection('legalEntities');
+    await db.dropCollection('legalentities');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
