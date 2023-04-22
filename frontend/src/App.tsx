@@ -11,7 +11,7 @@ import { selectUser } from './features/users/usersSlice';
 import Location from './features/location/Location';
 import CreateRegion from './features/location/region/CreateRegion';
 import CreateDirection from './features/location/direction/createDirection';
-import CreateArea from './features/location/area/createArea';
+import CreateArea from './features/location/area/CreateArea';
 
 function App() {
   const user = useAppSelector(selectUser);

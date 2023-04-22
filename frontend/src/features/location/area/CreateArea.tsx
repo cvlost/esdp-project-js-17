@@ -2,12 +2,13 @@ import React from 'react';
 import { Box, Container, Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material';
 import { StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
+import FormCreateArea from './components/FormCreateArea';
 
 const CreateArea = () => {
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        Форма
+        <FormCreateArea />
       </Container>
       <Container>
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
