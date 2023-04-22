@@ -20,6 +20,10 @@ export interface DirectionType {
   name: string;
 }
 
+export interface StreetType {
+  name: string;
+}
+
 export interface ILocation {
   city: Types.ObjectId;
   region: Types.ObjectId;
