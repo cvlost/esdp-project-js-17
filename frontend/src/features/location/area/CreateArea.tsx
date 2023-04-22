@@ -20,9 +20,11 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectAreaList, selectGetAllAreaLoading } from './areaSlice';
 import { createArea, fetchAreas, removeArea } from './areaThunk';
 import { AreaMutation } from '../../../types';
-import { openSnackbar } from '../../users/usersSlice';
+import { openSnackbar, selectUser } from '../../users/usersSlice';
+import { Navigate } from 'react-router-dom';
 
 const CreateArea = () => {
+  const user = useAppSelector(selectUser);
   const areas = useAppSelector(selectAreaList);
   const loadingGetAllAreas = useAppSelector(selectGetAllAreaLoading);
   const dispatch = useAppDispatch();
@@ -46,6 +48,10 @@ const CreateArea = () => {
       return;
     }
   };
+
+  if (user?.role !== 'admin') {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <Box>
