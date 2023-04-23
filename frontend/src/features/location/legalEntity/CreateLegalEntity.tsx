@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { selectGetAllLegalEntityLoading, selectLegalEntityList } from './legalEntitySlice';
-import { fetchLegalEntity, removeLegalEntity } from './legalEntityThunk';
+import { createLegalEntity, fetchLegalEntity, removeLegalEntity } from './legalEntityThunk';
 import {
   Alert,
   Box,
@@ -19,6 +19,9 @@ import {
 import { StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import CardLegalEntity from './components/CardLegalEntity';
+import FormCreateLegalEntity from './components/FormCreateLegalEntity';
+import { LegalEntityMutation } from '../../../types';
+import { Navigate } from 'react-router-dom';
 
 const CreateLegalEntity = () => {
   const user = useAppSelector(selectUser);
@@ -40,10 +43,20 @@ const CreateLegalEntity = () => {
     }
   };
 
+  const onSubmit = async (entity: LegalEntityMutation) => {
+    await dispatch(createLegalEntity(entity)).unwrap();
+    await dispatch(fetchLegalEntity());
+    dispatch(openSnackbar({ status: true, parameter: 'create_legal_entity' }));
+  };
+
+  if (user?.role !== 'admin') {
+    return <Navigate to="/login" />;
+  }
+
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        form here
+        <FormCreateLegalEntity onSubmit={onSubmit} />
       </Container>
       <Container>
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
