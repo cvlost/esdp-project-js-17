@@ -42,6 +42,12 @@ const SnackbarCard = () => {
     case 'remove_format':
       txt += 'Формат успешно удален';
       break;
+    case 'create_legal_entity':
+      txt += 'Юридическое лицо успешно создано';
+      break;
+    case 'remove_legal_entity':
+      txt += 'Юридическое лицо успешно удалено';
+      break;
   }
 
   return (

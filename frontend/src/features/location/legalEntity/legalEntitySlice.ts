@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
 import { LegalEntityList, ValidationError } from '../../../types';
+import { createLegalEntity, fetchLegalEntity, removeLegalEntity } from './legalEntityThunk';
 
 interface legalEntitySlice {
   listLegalEntity: LegalEntityList[];
@@ -22,7 +23,40 @@ const legalEntitySlice = createSlice({
   name: 'legalEntity',
   initialState,
   reducers: {},
-  extraReducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchLegalEntity.pending, (state) => {
+      state.getAllLegalEntityLoading = true;
+    });
+    builder.addCase(fetchLegalEntity.fulfilled, (state, { payload: list }) => {
+      state.listLegalEntity = list;
+      state.getAllLegalEntityLoading = false;
+    });
+    builder.addCase(fetchLegalEntity.rejected, (state) => {
+      state.getAllLegalEntityLoading = false;
+    });
+
+    builder.addCase(createLegalEntity.pending, (state) => {
+      state.legalEntityError = null;
+      state.createLegalEntityLoading = true;
+    });
+    builder.addCase(createLegalEntity.fulfilled, (state) => {
+      state.createLegalEntityLoading = false;
+    });
+    builder.addCase(createLegalEntity.rejected, (state, { payload: error }) => {
+      state.legalEntityError = error || null;
+      state.createLegalEntityLoading = false;
+    });
+
+    builder.addCase(removeLegalEntity.pending, (state) => {
+      state.removeLegalEntityLoading = true;
+    });
+    builder.addCase(removeLegalEntity.fulfilled, (state) => {
+      state.removeLegalEntityLoading = false;
+    });
+    builder.addCase(removeLegalEntity.rejected, (state) => {
+      state.removeLegalEntityLoading = false;
+    });
+  },
 });
 
 export const legalEntityReducer = legalEntitySlice.reducer;
