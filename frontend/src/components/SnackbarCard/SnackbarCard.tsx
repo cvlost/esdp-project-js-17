@@ -51,6 +51,12 @@ const SnackbarCard = () => {
     case 'update_legal_entity':
       txt += 'Юридическое лицо успешно изменено';
       break;
+    case 'remove_street':
+      txt += 'Улица успешно удалена';
+      break;
+    case 'create_street':
+      txt += 'Улица успешно создана';
+      break;
   }
 
   return (

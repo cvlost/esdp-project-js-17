@@ -14,6 +14,7 @@ import CreateDirection from './features/location/direction/CreateDirection';
 import CreateArea from './features/location/area/CreateArea';
 import CreateFormat from './features/location/format/CreateFormat';
 import CreateLegalEntity from './features/location/legalEntity/CreateLegalEntity';
+import CreateStreet from './features/location/street/CreateStreet';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -38,6 +39,7 @@ function App() {
             <Route path="create_format" element={<CreateFormat />} />
             <Route path="create_area" element={<CreateArea />} />
             <Route path="create_legal_entity" element={<CreateLegalEntity />} />
+            <Route path="create_street" element={<CreateStreet />} />
           </Route>
         </Route>
       </Routes>

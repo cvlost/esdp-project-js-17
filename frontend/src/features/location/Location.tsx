@@ -10,6 +10,7 @@ import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../users/usersSlice';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DomainAddIcon from '@mui/icons-material/DomainAdd';
+import SignpostIcon from '@mui/icons-material/Signpost';
 
 const Location = () => {
   const user = useAppSelector(selectUser);
@@ -96,6 +97,17 @@ const Location = () => {
               >
                 <DomainAddIcon sx={{ mr: 1 }} />
                 Создать Юр. лицо
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigate('/location/create_street');
+                }}
+              >
+                <SignpostIcon sx={{ mr: 1 }} />
+                Создать улицу
               </Button>
             </Grid>
           </>
