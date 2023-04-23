@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
 import { StreetList, ValidationError } from '../../../types';
+import { createStreet, fetchStreet, removeStreet } from './streetThunks';
 
 interface streetSlice {
   listStreet: StreetList[];
@@ -22,7 +23,39 @@ const streetSlice = createSlice({
   name: 'street',
   initialState,
   reducers: {},
-  extraReducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchStreet.pending, (state) => {
+      state.getAllStreetLoading = true;
+    });
+    builder.addCase(fetchStreet.fulfilled, (state, { payload: streetList }) => {
+      state.getAllStreetLoading = false;
+      state.listStreet = streetList;
+    });
+    builder.addCase(fetchStreet.rejected, (state) => {
+      state.getAllStreetLoading = false;
+    });
+
+    builder.addCase(createStreet.pending, (state) => {
+      state.createStreetLoading = true;
+    });
+    builder.addCase(createStreet.fulfilled, (state) => {
+      state.createStreetLoading = false;
+    });
+    builder.addCase(createStreet.rejected, (state, { payload: error }) => {
+      state.createStreetLoading = false;
+      state.streetError = error || null;
+    });
+
+    builder.addCase(removeStreet.pending, (state) => {
+      state.removeStreetLoading = true;
+    });
+    builder.addCase(removeStreet.fulfilled, (state) => {
+      state.removeStreetLoading = false;
+    });
+    builder.addCase(removeStreet.rejected, (state) => {
+      state.removeStreetLoading = false;
+    });
+  },
 });
 
 export const streetReducer = streetSlice.reducer;

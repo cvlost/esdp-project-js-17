@@ -42,6 +42,12 @@ const SnackbarCard = () => {
     case 'remove_format':
       txt += 'Формат успешно удален';
       break;
+    case 'remove_street':
+      txt += 'Улица успешно удалена';
+      break;
+    case 'create_street':
+      txt += 'Улица успешно создана';
+      break;
   }
 
   return (
