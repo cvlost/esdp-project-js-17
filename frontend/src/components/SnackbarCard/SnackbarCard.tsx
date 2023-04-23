@@ -48,6 +48,9 @@ const SnackbarCard = () => {
     case 'remove_legal_entity':
       txt += 'Юридическое лицо успешно удалено';
       break;
+    case 'update_legal_entity':
+      txt += 'Юридическое лицо успешно изменено';
+      break;
   }
 
   return (

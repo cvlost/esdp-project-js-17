@@ -1,8 +1,13 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { openSnackbar, selectUser } from '../../users/usersSlice';
-import { selectGetAllLegalEntityLoading, selectLegalEntityList } from './legalEntitySlice';
-import { createLegalEntity, fetchLegalEntity, removeLegalEntity } from './legalEntityThunk';
+import { selectUser } from '../../users/usersSlice';
+import {
+  selectGetAllLegalEntityLoading,
+  selectLegalEntityList,
+  selectOneLegalEntity,
+  unsetOneLegalEntity,
+} from './legalEntitySlice';
+import { fetchLegalEntity } from './legalEntityThunk';
 import {
   Alert,
   Box,
@@ -19,15 +24,16 @@ import {
 import { StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import CardLegalEntity from './components/CardLegalEntity';
-import FormCreateLegalEntity from './components/FormCreateLegalEntity';
-import { LegalEntityMutation } from '../../../types';
+import FormLegalEntity from './components/FormLegalEntity';
 import { Navigate } from 'react-router-dom';
+import ModalBody from '../../../components/ModalBody';
 
 const CreateLegalEntity = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const entities = useAppSelector(selectLegalEntityList);
   const entitiesLoading = useAppSelector(selectGetAllLegalEntityLoading);
+  const oneEntity = useAppSelector(selectOneLegalEntity);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -35,19 +41,13 @@ const CreateLegalEntity = () => {
     }
   }, [dispatch, user?.role]);
 
-  const deleteEntity = async (id: string) => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
-      await dispatch(removeLegalEntity(id)).unwrap();
-      await dispatch(fetchLegalEntity());
-      dispatch(openSnackbar({ status: true, parameter: 'remove_legal_entity' }));
-    }
-  };
-
-  const onSubmit = async (entity: LegalEntityMutation) => {
-    await dispatch(createLegalEntity(entity)).unwrap();
-    await dispatch(fetchLegalEntity());
-    dispatch(openSnackbar({ status: true, parameter: 'create_legal_entity' }));
-  };
+  useEffect(() => {
+    return () => {
+      if (oneEntity) {
+        dispatch(unsetOneLegalEntity());
+      }
+    };
+  }, [dispatch, oneEntity]);
 
   if (user?.role !== 'admin') {
     return <Navigate to="/login" />;
@@ -56,7 +56,7 @@ const CreateLegalEntity = () => {
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <FormCreateLegalEntity onSubmit={onSubmit} />
+        <FormLegalEntity />
       </Container>
       <Container>
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
@@ -71,9 +71,7 @@ const CreateLegalEntity = () => {
               <TableBody>
                 {!entitiesLoading ? (
                   entities.length !== 0 ? (
-                    entities.map((entity) => (
-                      <CardLegalEntity key={entity._id} entity={entity} removeEntity={() => deleteEntity(entity._id)} />
-                    ))
+                    entities.map((entity) => <CardLegalEntity key={entity._id} {...entity} />)
                   ) : (
                     <TableRow>
                       <TableCell>
@@ -94,6 +92,9 @@ const CreateLegalEntity = () => {
         </Paper>
       </Container>
       <SnackbarCard />
+      <ModalBody isOpen={!!oneEntity} onClose={() => dispatch(unsetOneLegalEntity())}>
+        <FormLegalEntity isEdit />
+      </ModalBody>
     </Box>
   );
 };
