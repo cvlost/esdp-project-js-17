@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { CityMutation, CityType, ValidationError } from '../../../types';
+import { CityMutation, CityList, ValidationError } from '../../../types';
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 
-export const fetchCities = createAsyncThunk<CityType[]>('city/fetch_cities', async () => {
-  const response = await axiosApi.get<CityType[]>('/cities');
+export const fetchCities = createAsyncThunk<CityList[]>('city/fetch_cities', async () => {
+  const response = await axiosApi.get<CityList[]>('/cities');
   return response.data;
 });
 

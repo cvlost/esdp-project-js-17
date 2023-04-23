@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
 import { createCity, fetchCities, removeCity } from './cityThunk';
-import { CityType, ValidationError } from '../../../types';
+import { CityList, ValidationError } from '../../../types';
 
 interface CityState {
-  cityList: CityType[];
+  cityList: CityList[];
   getAllListCityLoading: boolean;
   createCityLoading: boolean;
   removeCityLoading: boolean;
