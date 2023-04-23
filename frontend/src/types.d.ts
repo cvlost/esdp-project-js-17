@@ -62,7 +62,7 @@ export interface DeletedUserResponse {
   deletedCount: number;
 }
 
-export interface CityType {
+export interface CityList {
   _id: string;
   name: string;
 }
@@ -89,7 +89,7 @@ export type DirectionTypeMutation = Omit<DirectionType, '_id'>;
 
 export interface ILocation {
   _id: string;
-  city: CityType;
+  city: CityList;
   direction: DirectionType;
   region: RegionList;
   address: string;

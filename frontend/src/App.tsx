@@ -15,6 +15,7 @@ import CreateArea from './features/location/area/CreateArea';
 import CreateFormat from './features/location/format/CreateFormat';
 import CreateLegalEntity from './features/location/legalEntity/CreateLegalEntity';
 import CreateStreet from './features/location/street/CreateStreet';
+import CreateCity from './features/location/city/CreateCity';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -35,6 +36,7 @@ function App() {
           <Route path="/location" element={<Location />}>
             <Route path="create_location" element="Роутер на создание" />
             <Route path="create_region" element={<CreateRegion />} />
+            <Route path="create_city" element={<CreateCity />} />
             <Route path="create_direction" element={<CreateDirection />} />
             <Route path="create_format" element={<CreateFormat />} />
             <Route path="create_area" element={<CreateArea />} />

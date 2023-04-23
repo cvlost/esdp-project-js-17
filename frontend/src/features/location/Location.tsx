@@ -59,6 +59,17 @@ const Location = () => {
               <Button
                 variant="contained"
                 onClick={() => {
+                  navigate('/location/create_city');
+                }}
+              >
+                <SouthAmericaIcon sx={{ mr: 1 }} />
+                Создать город
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={() => {
                   navigate('/location/create_direction');
                 }}
               >

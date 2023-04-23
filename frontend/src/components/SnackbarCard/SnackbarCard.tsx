@@ -57,6 +57,12 @@ const SnackbarCard = () => {
     case 'create_street':
       txt += 'Улица успешно создана';
       break;
+    case 'create_city':
+      txt += 'Город успешно создан';
+      break;
+    case 'remove_city':
+      txt += 'Город успешно удален';
+      break;
   }
 
   return (
