@@ -9,6 +9,7 @@ import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../users/usersSlice';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import DomainAddIcon from '@mui/icons-material/DomainAdd';
 
 const Location = () => {
   const user = useAppSelector(selectUser);
@@ -84,6 +85,17 @@ const Location = () => {
               >
                 <SouthAmericaIcon sx={{ mr: 1 }} />
                 Создать область
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigate('/location/create_legal_entity');
+                }}
+              >
+                <DomainAddIcon sx={{ mr: 1 }} />
+                Создать Юр. лицо
               </Button>
             </Grid>
           </>

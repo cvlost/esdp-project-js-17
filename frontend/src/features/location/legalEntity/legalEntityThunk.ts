@@ -8,6 +8,11 @@ export const fetchLegalEntity = createAsyncThunk<LegalEntityList[]>('legalEntity
   return response.data;
 });
 
+export const fetchOneLegalEntity = createAsyncThunk<LegalEntityList, string>('legalEntity/fetch_one', async (id) => {
+  const response = await axiosApi.get<LegalEntityList>(`/legalEntities/${id}`);
+  return response.data;
+});
+
 export const createLegalEntity = createAsyncThunk<void, LegalEntityMutation, { rejectValue: ValidationError }>(
   'legalEntity/create_legalEntity',
   async (legalEntityMutation, { rejectWithValue }) => {
