@@ -22,10 +22,26 @@ locationsRouter.get('/', auth, async (req, res, next) => {
     if (pages === 0) pages = 1;
     if (page > pages) page = pages;
 
-    const locations = await Location.find()
-      .populate('region city direction')
-      .skip((page - 1) * perPage)
-      .limit(perPage);
+    const locations = await Location.aggregate([
+      { $skip: (page - 1) * perPage },
+      { $limit: perPage },
+      { $lookup: { from: 'cities', localField: 'city', foreignField: '_id', as: 'city' } },
+      { $lookup: { from: 'regions', localField: 'region', foreignField: '_id', as: 'region' } },
+      { $lookup: { from: 'streets', localField: 'street', foreignField: '_id', as: 'street' } },
+      { $lookup: { from: 'areas', localField: 'area', foreignField: '_id', as: 'area' } },
+      { $lookup: { from: 'formats', localField: 'format', foreignField: '_id', as: 'format' } },
+      { $lookup: { from: 'directions', localField: 'direction', foreignField: '_id', as: 'direction' } },
+      { $lookup: { from: 'legalentities', localField: 'legalEntity', foreignField: '_id', as: 'legalEntity' } },
+      { $set: { city: { $first: '$city.name' } } },
+      { $set: { region: { $first: '$region.name' } } },
+      { $set: { street: { $first: '$street.name' } } },
+      { $set: { direction: { $first: '$direction.name' } } },
+      { $set: { area: { $first: '$area.name' } } },
+      { $set: { format: { $first: '$format.name' } } },
+      { $set: { legalEntity: { $first: '$legalEntity.name' } } },
+      { $set: { price: { $convert: { input: '$price', to: 'string' } } } },
+      { $project: { country: 0, description: 0 } },
+    ]);
 
     return res.send({ locations, page, pages, count, perPage });
   } catch (e) {
@@ -63,7 +79,7 @@ locationsRouter.post('/', auth, async (req, res, next) => {
 
 locationsRouter.put('/:id', auth, async (req, res, next) => {
   const id = req.params.id as string;
-  const { address, addressNote, region, city, direction, description } = req.body;
+  const { addressNote, region, city, direction, description } = req.body;
 
   try {
     const location = await Location.findById(id);
@@ -94,10 +110,6 @@ locationsRouter.put('/:id', auth, async (req, res, next) => {
         return res.status(400).send({ error: 'Редактирование невозможно: неверый id направления.' });
       }
       location.direction = anotherDirection._id;
-    }
-
-    if (address && address !== location.address) {
-      location.address = address;
     }
 
     if (typeof addressNote === 'string' && addressNote !== location.addressNote) {
