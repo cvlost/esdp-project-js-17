@@ -28,11 +28,27 @@ export interface LegalEntityType {
   name: string;
 }
 
+export interface IPeriod {
+  start: Date;
+  end: Date;
+}
+
 export interface ILocation {
-  city: Types.ObjectId;
+  country: string;
+  area: Types.ObjectId;
   region: Types.ObjectId;
+  city: Types.ObjectId;
+  street: Types.ObjectId;
   direction: Types.ObjectId;
-  address: string;
+  legalEntity: Types.ObjectId;
+  format: Types.ObjectId;
+  price: Types.Decimal128;
+  rent: IPeriod | null;
+  reserve: IPeriod | null;
+  lighting: string;
+  placement: boolean;
+  size: string;
+  image: string;
   addressNote?: string;
   description?: string;
 }
