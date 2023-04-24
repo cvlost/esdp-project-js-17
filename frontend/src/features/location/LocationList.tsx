@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Chip, Pagination, Paper, Table, TableBody, TableContainer, TableHead } from '@mui/material';
+import { Box, Chip, Grid, Pagination, Paper, Table, TableBody, TableContainer, TableHead } from '@mui/material';
 import { TableRow } from '@mui/material';
 import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectLocationsListData, selectLocationsListLoading, setCurrentPage } from './locationsSlice';
+import {
+  selectLocationsColumnSettings,
+  selectLocationsListData,
+  selectLocationsListLoading,
+  setCurrentPage,
+} from './locationsSlice';
 import { getLocationsList } from './locationsThunks';
 import { StyledTableCell } from '../../constants';
+import ColumnSelect from './components/ColumnSelect';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
   const locationsListData = useAppSelector(selectLocationsListData);
   const locationsListLoading = useAppSelector(selectLocationsListLoading);
+  const columns = useAppSelector(selectLocationsColumnSettings);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -20,33 +27,31 @@ const LocationList = () => {
 
   return (
     <Box sx={{ py: 2 }}>
-      <Chip
-        sx={{ mb: 2, fontSize: '20px', p: 3 }}
-        label={`Список локаций: ${locationsListData.count}`}
-        variant="outlined"
-        color="info"
-      />
-
+      <Grid container alignItems="center" mb={2}>
+        <Grid item>
+          <Chip
+            sx={{ fontSize: '20px', p: 3 }}
+            label={`Список локаций: ${locationsListData.count}`}
+            variant="outlined"
+            color="info"
+          />
+        </Grid>
+        <Grid item>
+          <ColumnSelect />
+        </Grid>
+      </Grid>
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
         <TableContainer>
-          <Table sx={{ minWidth: 650 }} stickyHeader>
+          <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
-                <StyledTableCell align="center">№</StyledTableCell>
-                <StyledTableCell align="left">Полный адрес</StyledTableCell>
-                <StyledTableCell align="center">Область</StyledTableCell>
-                <StyledTableCell align="center">Город</StyledTableCell>
-                <StyledTableCell align="center">Район</StyledTableCell>
-                <StyledTableCell align="center">Улица</StyledTableCell>
-                <StyledTableCell align="center">Направление</StyledTableCell>
-                <StyledTableCell align="center">Юр. лицо</StyledTableCell>
-                <StyledTableCell align="center">Размер</StyledTableCell>
-                <StyledTableCell align="center">Формат</StyledTableCell>
-                <StyledTableCell align="center">Освещение</StyledTableCell>
-                <StyledTableCell align="center">Расположение</StyledTableCell>
-                <StyledTableCell align="center">Цена за месяц (сом)</StyledTableCell>
-                <StyledTableCell align="center">Аренда</StyledTableCell>
-                <StyledTableCell align="center">Бронь</StyledTableCell>
+                {columns
+                  .filter((col) => col.show)
+                  .map((col) => (
+                    <StyledTableCell align="center" key={col.id}>
+                      {col.prettyName}
+                    </StyledTableCell>
+                  ))}
                 <StyledTableCell align="right">Управление</StyledTableCell>
               </TableRow>
             </TableHead>

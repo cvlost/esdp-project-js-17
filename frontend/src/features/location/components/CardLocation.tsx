@@ -5,6 +5,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { ILocation } from '../../../types';
 import { StyledTableRow } from '../../../constants';
 import dayjs from 'dayjs';
+import { useAppSelector } from '../../../app/hooks';
+import { selectLocationsColumnSettings } from '../locationsSlice';
 
 interface Props {
   onClose: React.MouseEventHandler;
@@ -13,44 +15,62 @@ interface Props {
 }
 
 const CardLocation: React.FC<Props> = ({ loc, onClose, number }) => {
-  return (
-    <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell align="center">{number}</TableCell>
-      <TableCell align="left" sx={{ py: '5px' }}>
+  const columns = useAppSelector(selectLocationsColumnSettings);
+
+  const cells: Record<string, React.ReactNode> = {
+    number: <>{number}</>,
+    address: (
+      <>
         {`${loc.city} ${loc.street}, ${loc.direction}`}
         {loc.addressNote && (
           <Typography color="gray" fontSize=".85em">
             ({loc.addressNote})
           </Typography>
         )}
-      </TableCell>
-      <TableCell align="center">{loc.area}</TableCell>
-      <TableCell align="center">{loc.city}</TableCell>
-      <TableCell align="center">{loc.region}</TableCell>
-      <TableCell align="center">{loc.street}</TableCell>
-      <TableCell align="center">{loc.direction}</TableCell>
-      <TableCell align="center">{loc.legalEntity}</TableCell>
-      <TableCell align="center">{loc.size}</TableCell>
-      <TableCell align="center">{loc.format}</TableCell>
-      <TableCell align="center">{loc.lighting}</TableCell>
-      <TableCell align="center">{loc.placement ? 'По направлению' : 'Не по направлению'}</TableCell>
-      <TableCell align="center">{loc.price}</TableCell>
-      <TableCell align="center">
+      </>
+    ),
+    area: <>{loc.area}</>,
+    city: <>{loc.city}</>,
+    region: <>{loc.region}</>,
+    street: <>{loc.street}</>,
+    direction: <>{loc.direction}</>,
+    legalEntity: <>{loc.legalEntity}</>,
+    size: <>{loc.size}</>,
+    format: <>{loc.format}</>,
+    lighting: <>{loc.lighting}</>,
+    placement: <>{loc.placement ? 'По направлению' : 'Не по направлению'}</>,
+    price: <>{loc.price}</>,
+    rent: (
+      <>
         {loc.rent && (
           <>
             <Typography>{dayjs(loc.rent.start).format('DD.MM.YYYY')}</Typography>
             <Typography>{dayjs(loc.rent.end).format('DD.MM.YYYY')}</Typography>
           </>
         )}
-      </TableCell>
-      <TableCell align="center">
+      </>
+    ),
+    reserve: (
+      <>
         {loc.reserve && (
           <>
             <Typography>{dayjs(loc.reserve.start).format('DD.MM.YYYY')}</Typography>
             <Typography>{dayjs(loc.reserve.end).format('DD.MM.YYYY')}</Typography>
           </>
         )}
-      </TableCell>
+      </>
+    ),
+  };
+
+  return (
+    <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+      {columns
+        .filter((col) => col.show)
+        .map((col) => (
+          <TableCell key={col.prettyName} align="center" sx={{ whiteSpace: 'nowrap' }}>
+            {cells[col.name]}
+          </TableCell>
+        ))}
       <TableCell align="right">
         <ButtonGroup variant="contained" aria-label="outlined primary button group">
           <Button size="small" color="error">
