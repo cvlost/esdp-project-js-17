@@ -48,7 +48,7 @@ export interface ILocation {
   lighting: string;
   placement: boolean;
   size: string;
-  image: string;
+  image?: string;
   addressNote?: string;
   description?: string;
 }

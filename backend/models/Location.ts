@@ -44,16 +44,8 @@ const LocationSchema = new Schema<ILocation>({
       message: 'Цена не может быть меньше нуля',
     },
   },
-  rent: {
-    type: PeriodSchema,
-    required: false,
-    default: null,
-  },
-  reserve: {
-    type: PeriodSchema,
-    required: false,
-    default: null,
-  },
+  rent: PeriodSchema,
+  reserve: PeriodSchema,
   description: String,
   addressNote: String,
   image: String,
