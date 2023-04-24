@@ -29,19 +29,35 @@ const LocationList = () => {
 
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
         <TableContainer>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 650 }} stickyHeader>
             <TableHead>
               <TableRow>
+                <StyledTableCell align="center">№</StyledTableCell>
                 <StyledTableCell align="left">Полный адрес</StyledTableCell>
+                <StyledTableCell align="center">Область</StyledTableCell>
                 <StyledTableCell align="center">Город</StyledTableCell>
                 <StyledTableCell align="center">Район</StyledTableCell>
+                <StyledTableCell align="center">Улица</StyledTableCell>
                 <StyledTableCell align="center">Направление</StyledTableCell>
+                <StyledTableCell align="center">Юр. лицо</StyledTableCell>
+                <StyledTableCell align="center">Размер</StyledTableCell>
+                <StyledTableCell align="center">Формат</StyledTableCell>
+                <StyledTableCell align="center">Освещение</StyledTableCell>
+                <StyledTableCell align="center">Расположение</StyledTableCell>
+                <StyledTableCell align="center">Цена за месяц (сом)</StyledTableCell>
+                <StyledTableCell align="center">Аренда</StyledTableCell>
+                <StyledTableCell align="center">Бронь</StyledTableCell>
                 <StyledTableCell align="right">Управление</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {locationsListData.locations.map((loc) => (
-                <CardLocation key={loc._id} loc={loc} onClose={() => setIsOpen(true)} />
+              {locationsListData.locations.map((loc, i) => (
+                <CardLocation
+                  key={loc._id}
+                  loc={loc}
+                  number={(locationsListData.page - 1) * locationsListData.perPage + i + 1}
+                  onClose={() => setIsOpen(true)}
+                />
               ))}
             </TableBody>
           </Table>

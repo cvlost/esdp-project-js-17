@@ -87,12 +87,28 @@ export interface DirectionType {
 
 export type DirectionTypeMutation = Omit<DirectionType, '_id'>;
 
+export interface IPeriod {
+  start: string;
+  end: string;
+}
+
 export interface ILocation {
+  price: string;
+  rent: null | IPeriod;
+  reserve: null | IPeriod;
   _id: string;
-  city: CityList;
-  direction: DirectionType;
-  region: RegionList;
-  address: string;
+  city: string;
+  area: string;
+  street: string;
+  direction: string;
+  region: string;
+  legalEntity: string;
+  size: string;
+  lighting: string;
+  format: string;
+  placement: boolean;
+  country?: string;
+  image?: string;
   addressNote?: string;
   description?: string;
 }
