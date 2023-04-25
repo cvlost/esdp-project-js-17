@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { LocationsListResponse } from '../../types';
-import { getLocationsList } from './locationsThunks';
+import { ILocation, LocationsListResponse } from '../../types';
+import { getLocationsList, getOneLocation } from './locationsThunks';
 
 interface LocationColumn {
   id: string;
@@ -17,6 +17,8 @@ interface LocationsState {
   settings: {
     columns: LocationColumn[];
   };
+  oneLocation: ILocation | null;
+  oneLocationLoading: boolean;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -48,6 +50,8 @@ const initialState: LocationsState = {
   settings: {
     columns: initialColumns,
   },
+  oneLocation: null,
+  oneLocationLoading: false,
 };
 
 const locationsSlice = createSlice({
@@ -76,6 +80,18 @@ const locationsSlice = createSlice({
     builder.addCase(getLocationsList.rejected, (state) => {
       state.locationsListLoading = false;
     });
+
+    builder.addCase(getOneLocation.pending, (state) => {
+      state.oneLocation = null;
+      state.oneLocationLoading = true;
+    });
+    builder.addCase(getOneLocation.fulfilled, (state, { payload: loc }) => {
+      state.oneLocation = loc;
+      state.oneLocationLoading = false;
+    });
+    builder.addCase(getOneLocation.rejected, (state) => {
+      state.oneLocationLoading = false;
+    });
   },
 });
 
@@ -85,3 +101,5 @@ export const { setCurrentPage, setPerPage, toggleColumn } = locationsSlice.actio
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;
+export const selectOneLocation = (state: RootState) => state.locations.oneLocation;
+export const selectOneLocationLoading = (state: RootState) => state.locations.oneLocationLoading;

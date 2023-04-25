@@ -71,7 +71,22 @@ const LocationList = () => {
                 <StyledTableCell align="right">Управление</StyledTableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody
+              sx={{
+                '& tr': {
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                },
+                '& tr:hover:nth-of-type(even)': {
+                  bgcolor: '#f1f1f1',
+                  transition: 'background-color 0.2s',
+                },
+                '& tr:hover:nth-of-type(odd)': {
+                  bgcolor: '#cfe5f5',
+                  transition: 'background-color 0.2s',
+                },
+              }}
+            >
               {locationsListData.locations.map((loc, i) => (
                 <CardLocation
                   key={loc._id}
