@@ -18,7 +18,6 @@ const CardLocation: React.FC<Props> = ({ loc, onClose, number }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
 
   const cells: Record<string, React.ReactNode> = {
-    number: <>{number}</>,
     address: (
       <>
         {`${loc.city} ${loc.street}, ${loc.direction}`}
@@ -64,6 +63,7 @@ const CardLocation: React.FC<Props> = ({ loc, onClose, number }) => {
 
   return (
     <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+      <TableCell align="center">{number}</TableCell>
       {columns
         .filter((col) => col.show)
         .map((col) => (

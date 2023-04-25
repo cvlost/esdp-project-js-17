@@ -7,6 +7,7 @@ interface LocationColumn {
   id: string;
   name: string;
   prettyName: string;
+  type: 'location' | 'billboard';
   show: boolean;
 }
 
@@ -19,21 +20,20 @@ interface LocationsState {
 }
 
 export const initialColumns: LocationColumn[] = [
-  { id: '0', name: 'number', prettyName: '№', show: true },
-  { id: '1', name: 'address', prettyName: 'Полный адрес', show: true },
-  { id: '2', name: 'area', prettyName: 'Область', show: true },
-  { id: '3', name: 'city', prettyName: 'Город', show: true },
-  { id: '4', name: 'region', prettyName: 'Регион', show: true },
-  { id: '5', name: 'street', prettyName: 'Улица', show: true },
-  { id: '6', name: 'direction', prettyName: 'Направление', show: true },
-  { id: '7', name: 'legalEntity', prettyName: 'Юр. лицо', show: true },
-  { id: '8', name: 'size', prettyName: 'Размер', show: true },
-  { id: '9', name: 'format', prettyName: 'Формат', show: true },
-  { id: '10', name: 'lighting', prettyName: 'Освещение', show: true },
-  { id: '11', name: 'placement', prettyName: 'Расположение', show: true },
-  { id: '12', name: 'price', prettyName: 'Цена', show: true },
-  { id: '13', name: 'rent', prettyName: 'Аренда', show: true },
-  { id: '14', name: 'reserve', prettyName: 'Бронь', show: true },
+  { id: '1', name: 'address', prettyName: 'Полный адрес', show: true, type: 'location' },
+  { id: '2', name: 'area', prettyName: 'Область', show: true, type: 'location' },
+  { id: '3', name: 'city', prettyName: 'Город', show: true, type: 'location' },
+  { id: '4', name: 'region', prettyName: 'Регион', show: true, type: 'location' },
+  { id: '5', name: 'street', prettyName: 'Улица', show: true, type: 'location' },
+  { id: '6', name: 'direction', prettyName: 'Направление', show: true, type: 'location' },
+  { id: '7', name: 'legalEntity', prettyName: 'Юр. лицо', show: true, type: 'location' },
+  { id: '8', name: 'size', prettyName: 'Размер', show: true, type: 'billboard' },
+  { id: '9', name: 'format', prettyName: 'Формат', show: true, type: 'billboard' },
+  { id: '10', name: 'lighting', prettyName: 'Освещение', show: true, type: 'billboard' },
+  { id: '11', name: 'placement', prettyName: 'Расположение', show: true, type: 'billboard' },
+  { id: '12', name: 'price', prettyName: 'Цена', show: true, type: 'billboard' },
+  { id: '13', name: 'rent', prettyName: 'Аренда', show: true, type: 'billboard' },
+  { id: '14', name: 'reserve', prettyName: 'Бронь', show: true, type: 'billboard' },
 ];
 
 const initialState: LocationsState = {

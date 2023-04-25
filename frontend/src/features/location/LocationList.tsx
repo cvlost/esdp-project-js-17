@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Chip, Grid, Pagination, Paper, Table, TableBody, TableContainer, TableHead } from '@mui/material';
-import { TableRow } from '@mui/material';
+import {
+  Box,
+  Chip,
+  Grid,
+  IconButton,
+  Pagination,
+  Paper,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material';
 import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -12,13 +23,15 @@ import {
 } from './locationsSlice';
 import { getLocationsList } from './locationsThunks';
 import { StyledTableCell } from '../../constants';
-import ColumnSelect from './components/ColumnSelect';
+import LocationDrawer from './components/LocationDrawer';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
   const locationsListData = useAppSelector(selectLocationsListData);
   const locationsListLoading = useAppSelector(selectLocationsListLoading);
   const columns = useAppSelector(selectLocationsColumnSettings);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -37,7 +50,9 @@ const LocationList = () => {
           />
         </Grid>
         <Grid item>
-          <ColumnSelect />
+          <IconButton onClick={() => setIsDrawerOpen(true)} sx={{ mx: 1 }}>
+            <SettingsIcon />
+          </IconButton>
         </Grid>
       </Grid>
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
@@ -45,6 +60,7 @@ const LocationList = () => {
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
+                <StyledTableCell align="right">№</StyledTableCell>
                 {columns
                   .filter((col) => col.show)
                   .map((col) => (
@@ -79,6 +95,7 @@ const LocationList = () => {
       <ModalBody isOpen={isOpen} onClose={() => setIsOpen(false)}>
         Редактировать
       </ModalBody>
+      <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
     </Box>
   );
 };
