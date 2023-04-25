@@ -57,6 +57,9 @@ const locationsSlice = createSlice({
     setCurrentPage: (state, { payload: page }: PayloadAction<number>) => {
       state.locationsListData.page = page;
     },
+    setPerPage: (state, { payload: perPage }: PayloadAction<number>) => {
+      state.locationsListData.perPage = perPage;
+    },
     toggleColumn: (state, { payload: id }: PayloadAction<string>) => {
       const index = state.settings.columns.findIndex((col) => col.id === id);
       state.settings.columns[index].show = !state.settings.columns[index].show;
@@ -77,7 +80,7 @@ const locationsSlice = createSlice({
 });
 
 export const locationsReducer = locationsSlice.reducer;
-export const { setCurrentPage, toggleColumn } = locationsSlice.actions;
+export const { setCurrentPage, setPerPage, toggleColumn } = locationsSlice.actions;
 
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
