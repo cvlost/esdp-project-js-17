@@ -1,17 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Chip, Pagination, Paper, Table, TableBody, TableContainer, TableHead } from '@mui/material';
-import { TableRow } from '@mui/material';
+import {
+  Box,
+  Chip,
+  Grid,
+  IconButton,
+  Pagination,
+  Paper,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material';
 import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectLocationsListData, selectLocationsListLoading, setCurrentPage } from './locationsSlice';
+import {
+  selectLocationsColumnSettings,
+  selectLocationsListData,
+  selectLocationsListLoading,
+  setCurrentPage,
+} from './locationsSlice';
 import { getLocationsList } from './locationsThunks';
 import { StyledTableCell } from '../../constants';
+import LocationDrawer from './components/LocationDrawer';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
   const locationsListData = useAppSelector(selectLocationsListData);
   const locationsListLoading = useAppSelector(selectLocationsListLoading);
+  const columns = useAppSelector(selectLocationsColumnSettings);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -20,28 +40,60 @@ const LocationList = () => {
 
   return (
     <Box sx={{ py: 2 }}>
-      <Chip
-        sx={{ mb: 2, fontSize: '20px', p: 3 }}
-        label={`Список локаций: ${locationsListData.count}`}
-        variant="outlined"
-        color="info"
-      />
-
+      <Grid container alignItems="center" mb={2}>
+        <Grid item>
+          <Chip
+            sx={{ fontSize: '20px', p: 3 }}
+            label={`Список локаций: ${locationsListData.count}`}
+            variant="outlined"
+            color="info"
+          />
+        </Grid>
+        <Grid item>
+          <IconButton onClick={() => setIsDrawerOpen(true)} sx={{ mx: 1 }}>
+            <SettingsIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
         <TableContainer>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
-                <StyledTableCell align="left">Полный адрес</StyledTableCell>
-                <StyledTableCell align="center">Город</StyledTableCell>
-                <StyledTableCell align="center">Район</StyledTableCell>
-                <StyledTableCell align="center">Направление</StyledTableCell>
+                <StyledTableCell align="right">№</StyledTableCell>
+                {columns
+                  .filter((col) => col.show)
+                  .map((col) => (
+                    <StyledTableCell align="center" key={col.id}>
+                      {col.prettyName}
+                    </StyledTableCell>
+                  ))}
                 <StyledTableCell align="right">Управление</StyledTableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {locationsListData.locations.map((loc) => (
-                <CardLocation key={loc._id} loc={loc} onClose={() => setIsOpen(true)} />
+            <TableBody
+              sx={{
+                '& tr': {
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                },
+                '& tr:hover:nth-of-type(even)': {
+                  bgcolor: '#f1f1f1',
+                  transition: 'background-color 0.2s',
+                },
+                '& tr:hover:nth-of-type(odd)': {
+                  bgcolor: '#cfe5f5',
+                  transition: 'background-color 0.2s',
+                },
+              }}
+            >
+              {locationsListData.locations.map((loc, i) => (
+                <CardLocation
+                  key={loc._id}
+                  loc={loc}
+                  number={(locationsListData.page - 1) * locationsListData.perPage + i + 1}
+                  onClose={() => setIsOpen(true)}
+                />
               ))}
             </TableBody>
           </Table>
@@ -58,6 +110,7 @@ const LocationList = () => {
       <ModalBody isOpen={isOpen} onClose={() => setIsOpen(false)}>
         Редактировать
       </ModalBody>
+      <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
     </Box>
   );
 };

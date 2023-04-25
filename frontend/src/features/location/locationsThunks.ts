@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { LocationsListResponse } from '../../types';
+import { ILocation, LocationsListResponse } from '../../types';
 import axiosApi from '../../axios';
 
 type RequestParams = { page: number; perPage: number } | undefined;
@@ -15,3 +15,8 @@ export const getLocationsList = createAsyncThunk<LocationsListResponse, RequestP
     return response.data;
   },
 );
+
+export const getOneLocation = createAsyncThunk<ILocation, string>('locations/getOne', async (id) => {
+  const response = await axiosApi.get(`/locations/${id}`);
+  return response.data;
+});

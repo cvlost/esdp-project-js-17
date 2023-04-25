@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
@@ -8,6 +8,9 @@ import Direction from './models/Direction';
 import Location from './models/Location';
 import Street from './models/Street';
 import LegalEntity from './models/LegalEntity';
+import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from './constants';
+import Format from './models/Format';
+import Area from './models/Area';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -22,6 +25,8 @@ const run = async () => {
     await db.dropCollection('locations');
     await db.dropCollection('streets');
     await db.dropCollection('legalentities');
+    await db.dropCollection('formats');
+    await db.dropCollection('areas');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -74,7 +79,7 @@ const run = async () => {
 
   const directions = await Direction.create({ name: 'Север' }, { name: 'Юг' }, { name: 'Запад' }, { name: 'Восток' });
 
-  await Street.create(
+  const streets = await Street.create(
     { name: 'Киевская' },
     { name: 'Ахунбаева' },
     { name: 'Ибраимова' },
@@ -94,16 +99,27 @@ const run = async () => {
     { name: 'Шабдан-Баатыра' },
   );
 
-  await LegalEntity.create({ name: 'Шамдагай' }, { name: 'ШамдагайЮридикал' });
+  const legalEntities = await LegalEntity.create({ name: 'Шамдагай' }, { name: 'ШамдагайЮридикал' });
 
-  const fixtureAddresses = [
-    'пр. Чынгыза Айтматова',
-    'ул. Асаналиева / ул. Боконбаева',
-    'ул. Гагарина',
-    'ул. Байтик Баатыра / ул. Токомбаева',
-    'ул. Бакаева / ул. Льва Толстого',
-    'ул. Киевская / ул. Бейшеналиевой',
-  ];
+  const formats = await Format.create(
+    { name: 'V-образный' },
+    { name: 'Г-образный' },
+    { name: 'П-образный' },
+    { name: 'Т-образный' },
+    { name: 'Т-образный со смещ.' },
+    { name: 'Ф-образный' },
+    { name: 'Трехсторонний' },
+  );
+
+  const areas = await Area.create(
+    { name: 'Чуйская' },
+    { name: 'Таласская' },
+    { name: 'Нарынская' },
+    { name: 'Ошская' },
+    { name: 'Баткенская' },
+    { name: 'Ыссык-Кульская' },
+    { name: 'Джалал-Абадская' },
+  );
 
   const fixtureAddressNotes = [
     'ТРЦ "Bishkek Park", поликлиника',
@@ -113,17 +129,63 @@ const run = async () => {
     'кафе "Гренки"',
   ];
 
+  const randNum = (from: number, to: number) => Math.floor(Math.random() * (to - from + 1) + from);
+
   const randElement = <T>(arr: T[]): T => {
     if (!Array.isArray(arr) || arr.length === 0) throw new Error('Значением параметра должен быть непустой массив');
     return arr[Math.floor(Math.random() * arr.length)];
   };
 
+  const lightings = BILLBOARD_LIGHTINGS.slice();
+  const sizes = BILLBOARD_SIZES.slice();
+
   for (let i = 0; i < 50; i++) {
     await Location.create({
+      area: randElement(areas)._id,
       direction: randElement(directions)._id,
       city: randElement(cities)._id,
       region: randElement(regions)._id,
-      address: randElement(fixtureAddresses),
+      street: randElement(streets)._id,
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings),
+      size: randElement(sizes),
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent:
+        Math.random() > 0.5
+          ? null
+          : {
+              start: new Date(
+                `2023-${String(randNum(1, 3)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
+                  2,
+                  '0',
+                )}T00:00:00.000Z`,
+              ),
+              end: new Date(
+                `2023-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
+                  2,
+                  '0',
+                )}T00:00:00.000Z`,
+              ),
+            },
+      reserve:
+        Math.random() > 0.5
+          ? null
+          : {
+              start: new Date(
+                `2024-${String(randNum(1, 6)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
+                  2,
+                  '0',
+                )}T00:00:00.000Z`,
+              ),
+              end: new Date(
+                `2024-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
+                  2,
+                  '0',
+                )}T00:00:00.000Z`,
+              ),
+            },
+      placement: Math.random() > 0.5,
       addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
     });
   }
