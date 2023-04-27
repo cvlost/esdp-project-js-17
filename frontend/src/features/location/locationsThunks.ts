@@ -20,3 +20,7 @@ export const getOneLocation = createAsyncThunk<ILocation, string>('locations/get
   const response = await axiosApi.get(`/locations/${id}`);
   return response.data;
 });
+
+export const removeLocation = createAsyncThunk<void, string>('locations/remove_location', async (id) => {
+  await axiosApi.delete('/locations/' + id);
+});

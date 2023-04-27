@@ -9,12 +9,14 @@ import { useAppSelector } from '../../../app/hooks';
 import { selectLocationsColumnSettings } from '../locationsSlice';
 
 interface Props {
+  onDelete: React.MouseEventHandler;
+  deleteLoading: false | string;
   onClose: React.MouseEventHandler;
   loc: ILocation;
   number: number;
 }
 
-const CardLocation: React.FC<Props> = ({ loc, onClose, number }) => {
+const CardLocation: React.FC<Props> = ({ loc, onClose, number, onDelete, deleteLoading }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
 
   const cells: Record<string, React.ReactNode> = {
@@ -73,7 +75,12 @@ const CardLocation: React.FC<Props> = ({ loc, onClose, number }) => {
         ))}
       <TableCell align="right">
         <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button size="small" color="error">
+          <Button
+            size="small"
+            color="error"
+            onClick={onDelete}
+            disabled={deleteLoading ? deleteLoading === loc._id : false}
+          >
             <DeleteIcon />
           </Button>
           <Button size="small" color="success" onClick={onClose}>
