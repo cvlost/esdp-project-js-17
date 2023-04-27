@@ -16,6 +16,7 @@ import CreateFormat from './features/location/format/CreateFormat';
 import CreateLegalEntity from './features/location/legalEntity/CreateLegalEntity';
 import CreateStreet from './features/location/street/CreateStreet';
 import CreateCity from './features/location/city/CreateCity';
+import LocationPage from './features/location/components/LocationPage';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -42,6 +43,7 @@ function App() {
             <Route path="create_area" element={<CreateArea />} />
             <Route path="create_legal_entity" element={<CreateLegalEntity />} />
             <Route path="create_street" element={<CreateStreet />} />
+            <Route path=":id" element={<LocationPage />} />
           </Route>
         </Route>
       </Routes>

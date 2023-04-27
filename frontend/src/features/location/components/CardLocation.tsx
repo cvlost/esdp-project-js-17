@@ -7,6 +7,7 @@ import { StyledTableRow } from '../../../constants';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../../app/hooks';
 import { selectLocationsColumnSettings } from '../locationsSlice';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   onClose: React.MouseEventHandler;
@@ -16,6 +17,7 @@ interface Props {
 
 const CardLocation: React.FC<Props> = ({ loc, onClose, number }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
+  const navigate = useNavigate();
 
   const cells: Record<string, React.ReactNode> = {
     address: (
@@ -62,7 +64,10 @@ const CardLocation: React.FC<Props> = ({ loc, onClose, number }) => {
   };
 
   return (
-    <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+    <StyledTableRow
+      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+      onClick={() => navigate(`/location/${loc._id}`)}
+    >
       <TableCell align="center">{number}</TableCell>
       {columns
         .filter((col) => col.show)
