@@ -19,7 +19,7 @@ interface LocationsState {
   };
   oneLocation: ILocation | null;
   oneLocationLoading: boolean;
-  locationDeleteLoading: boolean;
+  locationDeleteLoading: false | string;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -94,8 +94,8 @@ const locationsSlice = createSlice({
     builder.addCase(getOneLocation.rejected, (state) => {
       state.oneLocationLoading = false;
     });
-    builder.addCase(removeLocation.pending, (state) => {
-      state.locationDeleteLoading = true;
+    builder.addCase(removeLocation.pending, (state, { meta: { arg: id } }) => {
+      state.locationDeleteLoading = id;
     });
     builder.addCase(removeLocation.fulfilled, (state) => {
       state.locationDeleteLoading = false;

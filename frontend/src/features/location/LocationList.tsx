@@ -17,14 +17,16 @@ import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   selectLocationsColumnSettings,
+  selectLocationsDeleteLoading,
   selectLocationsListData,
   selectLocationsListLoading,
   setCurrentPage,
 } from './locationsSlice';
-import { getLocationsList } from './locationsThunks';
+import { getLocationsList, removeLocation } from './locationsThunks';
 import { StyledTableCell } from '../../constants';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { openSnackbar } from '../users/usersSlice';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -33,10 +35,19 @@ const LocationList = () => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
 
   useEffect(() => {
     dispatch(getLocationsList({ page: locationsListData.page, perPage: locationsListData.perPage }));
   }, [dispatch, locationsListData.page, locationsListData.perPage]);
+
+  const DeleteLocations = async (_id: string) => {
+    if (window.confirm('Вы действительно хотите удалить ?')) {
+      await dispatch(removeLocation(_id)).unwrap();
+      await dispatch(getLocationsList());
+      dispatch(openSnackbar({ status: true, parameter: 'remove_locations' }));
+    }
+  };
 
   return (
     <Box sx={{ py: 2 }}>
@@ -89,6 +100,8 @@ const LocationList = () => {
             >
               {locationsListData.locations.map((loc, i) => (
                 <CardLocation
+                  onDelete={() => DeleteLocations(loc._id)}
+                  deleteLoading={deleteLoading}
                   key={loc._id}
                   loc={loc}
                   number={(locationsListData.page - 1) * locationsListData.perPage + i + 1}
