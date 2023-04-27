@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { ILocation, LocationsListResponse } from '../../types';
-import { getLocationsList, getOneLocation } from './locationsThunks';
+import { getLocationsList, getOneLocation, removeLocation } from './locationsThunks';
 
 interface LocationColumn {
   id: string;
@@ -19,6 +19,7 @@ interface LocationsState {
   };
   oneLocation: ILocation | null;
   oneLocationLoading: boolean;
+  locationDeleteLoading: boolean;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -52,6 +53,7 @@ const initialState: LocationsState = {
   },
   oneLocation: null,
   oneLocationLoading: false,
+  locationDeleteLoading: false,
 };
 
 const locationsSlice = createSlice({
@@ -92,6 +94,15 @@ const locationsSlice = createSlice({
     builder.addCase(getOneLocation.rejected, (state) => {
       state.oneLocationLoading = false;
     });
+    builder.addCase(removeLocation.pending, (state) => {
+      state.locationDeleteLoading = true;
+    });
+    builder.addCase(removeLocation.fulfilled, (state) => {
+      state.locationDeleteLoading = false;
+    });
+    builder.addCase(removeLocation.rejected, (state) => {
+      state.locationDeleteLoading = false;
+    });
   },
 });
 
@@ -103,3 +114,4 @@ export const selectLocationsListLoading = (state: RootState) => state.locations.
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;
 export const selectOneLocation = (state: RootState) => state.locations.oneLocation;
 export const selectOneLocationLoading = (state: RootState) => state.locations.oneLocationLoading;
+export const selectLocationsDeleteLoading = (state: RootState) => state.locations.locationDeleteLoading;
