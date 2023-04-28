@@ -1,10 +1,16 @@
 import React from 'react';
-import { Box, Tab, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
-import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { Box, Grid, Tab, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import { LoadingButton, TabContext, TabList, TabPanel } from '@mui/lab';
 import { useAppSelector } from '../../../app/hooks';
 import { selectOneLocation } from '../locationsSlice';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
+import { selectUser } from '../../users/usersSlice';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 const LocationPageTabs = () => {
+  const user = useAppSelector(selectUser);
+  const { confirm } = useConfirm();
   const [value, setValue] = React.useState('1');
   const loc = useAppSelector(selectOneLocation);
 
@@ -19,10 +25,21 @@ const LocationPageTabs = () => {
           <TabList onChange={handleChange}>
             <Tab label="Описание" value="1" />
             <Tab label="Характеристики" value="2" />
-            <Tab label="Управление" value="3" />
+            {user?.role === 'admin' && <Tab label="Управление" value="3" />}
           </TabList>
         </Box>
         <TabPanel value="1">
+          <Typography
+            component="h6"
+            variant="h6"
+            color="#333"
+            fontWeight="bold"
+            textAlign="center"
+            maxWidth="sm"
+            mx="auto"
+            mt={2}
+            mb={5}
+          >{`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}</Typography>
           <Typography mb={2}>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur debitis distinctio ea
             enim eum ex excepturi ipsa iure laudantium minima nulla odio officia officiis perferendis perspiciatis porro
@@ -114,7 +131,42 @@ const LocationPageTabs = () => {
             </TableBody>
           </Table>
         </TabPanel>
-        <TabPanel value="3">Управление</TabPanel>
+        {user?.role === 'admin' && (
+          <TabPanel value="3">
+            <Grid container spacing={1}>
+              <Grid item>
+                <LoadingButton
+                  loading={false}
+                  variant="contained"
+                  loadingPosition="start"
+                  startIcon={<EditIcon />}
+                  onClick={async () => {
+                    if (await confirm('Редактирование локации', 'Приступить к редактированию этой локации?')) {
+                      console.log('confirmed');
+                    }
+                  }}
+                >
+                  Изменить
+                </LoadingButton>
+              </Grid>
+              <Grid item>
+                <LoadingButton
+                  loading={false}
+                  variant="contained"
+                  loadingPosition="start"
+                  startIcon={<DeleteIcon />}
+                  onClick={async () => {
+                    if (await confirm('Удаление локации', 'Вы действительно хотите удалить эту локацию?')) {
+                      console.log('confirmed');
+                    }
+                  }}
+                >
+                  Удалить
+                </LoadingButton>
+              </Grid>
+            </Grid>
+          </TabPanel>
+        )}
       </TabContext>
     </Box>
   );
