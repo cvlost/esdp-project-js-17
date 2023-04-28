@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectDirections, selectDirectionsLoading } from './directionsSlice';
 import { createDirection, deleteDirection, getDirectionsList } from './directionsThunks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
-import { DirectionTypeMutation } from '../../../types';
+import { DirectionMutation } from '../../../types';
 import { Navigate } from 'react-router-dom';
 
 const CreateDirection = () => {
@@ -33,7 +33,7 @@ const CreateDirection = () => {
     dispatch(getDirectionsList());
   }, [dispatch]);
 
-  const onSubmit = async (direction: DirectionTypeMutation) => {
+  const onSubmit = async (direction: DirectionMutation) => {
     await dispatch(createDirection(direction)).unwrap();
     await dispatch(getDirectionsList()).unwrap();
     dispatch(openSnackbar({ status: true, parameter: 'create_direction' }));

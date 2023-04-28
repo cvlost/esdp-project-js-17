@@ -2,12 +2,12 @@ import React from 'react';
 import { StyledTableRow } from '../../../../constants';
 import { CircularProgress, IconButton, TableCell } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DirectionType } from '../../../../types';
+import { DirectionList } from '../../../../types';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectDirectionDeleteLoading } from '../directionsSlice';
 
 interface Props {
-  direction: DirectionType;
+  direction: DirectionList;
   removeCardDirection: React.MouseEventHandler;
 }
 
