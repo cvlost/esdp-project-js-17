@@ -7,6 +7,7 @@ import { createLocation } from './locationsThunks';
 import { Avatar, Box, Container, Typography } from '@mui/material';
 import LocationForm from './components/LocationForm';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
+import { openSnackbar } from '../users/usersSlice';
 
 const CreateLocation = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const CreateLocation = () => {
 
   const submitFormHandler = async (location: LocationMutation) => {
     await dispatch(createLocation(location)).unwrap();
+    dispatch(openSnackbar({ status: true, parameter: 'create_location' }));
     navigate('/');
   };
 

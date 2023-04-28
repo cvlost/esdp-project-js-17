@@ -71,6 +71,25 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     onSubmit(state);
+    setState({
+      addressNote: '',
+      description: '',
+      country: 'Кыргызстан',
+      area: '',
+      region: '',
+      city: '',
+      street: '',
+      direction: '',
+      legalEntity: '',
+      size: '',
+      format: '',
+      lighting: false,
+      placement: false,
+      rent: null,
+      price: '',
+      dayImage: null,
+      schemaImage: null,
+    });
   };
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
