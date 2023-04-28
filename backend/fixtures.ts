@@ -192,5 +192,5 @@ const run = async () => {
 
   await db.close();
 };
-
 void run();
+console.log('Success');
