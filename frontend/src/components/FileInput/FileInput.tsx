@@ -37,10 +37,10 @@ const FileInput: React.FC<Props> = ({ onChange, name, label }) => {
       />
       <Grid container direction="row" spacing={2} alignItems="center">
         <Grid item xs>
-          <TextField disabled label={label} value={filename} onClick={activateInput} />
+          <TextField fullWidth disabled label={label} value={filename} onClick={activateInput} />
         </Grid>
         <Grid item>
-          <Button variant="contained" color="secondary" onClick={activateInput}>
+          <Button variant="contained" color="primary" onClick={activateInput}>
             Загрузить
           </Button>
         </Grid>

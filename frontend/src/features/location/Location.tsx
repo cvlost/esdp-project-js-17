@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Button, Grid } from '@mui/material';
 import { useNavigate, useOutlet } from 'react-router-dom';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
-import AddIcon from '@mui/icons-material/Add';
 import LocationList from './LocationList';
 import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
@@ -11,6 +10,8 @@ import { selectUser } from '../users/usersSlice';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DomainAddIcon from '@mui/icons-material/DomainAdd';
 import SignpostIcon from '@mui/icons-material/Signpost';
+import AddLocationIcon from '@mui/icons-material/AddLocation';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
 
 const Location = () => {
   const user = useAppSelector(selectUser);
@@ -38,7 +39,7 @@ const Location = () => {
               navigate('/location/create_location');
             }}
           >
-            <AddIcon sx={{ mr: 1 }} />
+            <AddLocationIcon sx={{ mr: 1 }} />
             Создать локацию
           </Button>
         </Grid>
@@ -62,7 +63,7 @@ const Location = () => {
                   navigate('/location/create_city');
                 }}
               >
-                <SouthAmericaIcon sx={{ mr: 1 }} />
+                <LocationCityIcon sx={{ mr: 1 }} />
                 Создать город
               </Button>
             </Grid>
