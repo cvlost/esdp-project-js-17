@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Chip, Pagination, Paper, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material';
-import CardUser from '../../components/CardUser';
+import CardUser from './components/CardUser';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   openSnackbar,
@@ -13,7 +13,7 @@ import {
   setCurrentPage,
 } from './usersSlice';
 import { deleteUser, getEditingUser, getUsersList, updateUser } from './usersThunks';
-import UserForm from '../../components/UserForm';
+import UserForm from './components/UserForm';
 import { UserMutation } from '../../types';
 import ModalBody from '../../components/ModalBody';
 import { StyledTableCell } from './theme';

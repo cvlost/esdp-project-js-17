@@ -8,7 +8,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import GroupIcon from '@mui/icons-material/Groups';
 import { getEditingUser, getUsersList, logout, updateUser } from '../../features/users/usersThunks';
 import ModalBody from '../ModalBody';
-import UserForm from '../UserForm';
+import UserForm from '../../features/users/components/UserForm';
 import {
   openSnackbar,
   selectEditingError,
