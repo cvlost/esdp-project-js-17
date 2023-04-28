@@ -129,6 +129,9 @@ const run = async () => {
     'кафе "Гренки"',
   ];
 
+  const fixtureDescription =
+    'Объект расположен на перекрестке улиц, соединяющих западную и центральную часть города, охватывая мини рынок, аптеки, магазины, места общественного питания. ';
+
   const randNum = (from: number, to: number) => Math.floor(Math.random() * (to - from + 1) + from);
 
   const randElement = <T>(arr: T[]): T => {
@@ -187,6 +190,7 @@ const run = async () => {
             },
       placement: Math.random() > 0.5,
       addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
+      description: Math.random() > 0.5 ? fixtureDescription : null,
     });
   }
 

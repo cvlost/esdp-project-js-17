@@ -6,6 +6,7 @@ import { getOneLocation } from '../locationsThunks';
 import { useParams } from 'react-router-dom';
 import imagePlaceholder from '../../../assets/billboard-placeholder.jpg';
 import LocationPageTabs from './LocationPageTabs';
+import { apiURL } from '../../../constants';
 
 const LocationPage = () => {
   const dispatch = useAppDispatch();
@@ -36,7 +37,7 @@ const LocationPage = () => {
               <Box sx={{ position: 'sticky', top: '1em' }}>
                 <img
                   alt={`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}
-                  src={imagePlaceholder}
+                  src={loc?.image ? `${apiURL}/${loc.image}` : imagePlaceholder}
                   style={{
                     maxWidth: '100%',
                     boxShadow: '0 0 15px gainsboro',

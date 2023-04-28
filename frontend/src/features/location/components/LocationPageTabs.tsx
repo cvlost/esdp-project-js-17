@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Tab, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import { Alert, Box, Grid, Tab, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { LoadingButton, TabContext, TabList, TabPanel } from '@mui/lab';
 import { useAppSelector } from '../../../app/hooks';
 import { selectOneLocation } from '../locationsSlice';
@@ -7,6 +7,7 @@ import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 import { selectUser } from '../../users/usersSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import dayjs from 'dayjs';
 
 const LocationPageTabs = () => {
   const user = useAppSelector(selectUser);
@@ -40,21 +41,30 @@ const LocationPageTabs = () => {
             mt={2}
             mb={5}
           >{`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}</Typography>
-          <Typography mb={2}>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur debitis distinctio ea
-            enim eum ex excepturi ipsa iure laudantium minima nulla odio officia officiis perferendis perspiciatis porro
-            qui quibusdam, quod sit soluta tempora temporibus! Aliquid et iure rerum velit.
-          </Typography>
-          <Typography mb={2}>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur debitis distinctio ea
-            enim eum ex excepturi ipsa iure laudantium minima nulla odio officia officiis perferendis perspiciatis porro
-            qui quibusdam, quod sit soluta tempora temporibus! Aliquid et iure rerum velit.
-          </Typography>
-          <Typography mb={2}>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur debitis distinctio ea
-            enim eum ex excepturi ipsa iure laudantium minima nulla odio officia officiis perferendis perspiciatis porro
-            qui quibusdam, quod sit soluta tempora temporibus! Aliquid et iure rerum velit.
-          </Typography>
+          {loc?.description ? (
+            <Typography>{loc.description}</Typography>
+          ) : (
+            <Box sx={{ textAlign: 'center' }}>
+              <Alert severity="info" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', mb: 3 }}>
+                <Typography>Описание локации отсутствует</Typography>
+              </Alert>
+              {user?.role === 'admin' && (
+                <LoadingButton
+                  loading={false}
+                  sx={{ fontWeight: 'bold' }}
+                  loadingPosition="start"
+                  startIcon={<EditIcon />}
+                  onClick={async () => {
+                    if (await confirm('Редактирование локации', 'Приступить к редактированию этой локации?')) {
+                      console.log('confirmed');
+                    }
+                  }}
+                >
+                  Добавить
+                </LoadingButton>
+              )}
+            </Box>
+          )}
         </TabPanel>
         <TabPanel value="2">
           <Typography fontWeight="bold" color="gray" my={1}>
@@ -68,11 +78,28 @@ const LocationPageTabs = () => {
               </TableRow>
               <TableRow>
                 <TableCell>В аренде</TableCell>
-                <TableCell>{loc.rent ? `Да` : `Нет`}</TableCell>
+                <TableCell>
+                  {loc.rent ? (
+                    <>
+                      Да (с {dayjs(loc.rent.start).format('DD.MM.YYYY')} до {dayjs(loc.rent.end).format('DD.MM.YYYY')})
+                    </>
+                  ) : (
+                    `Нет`
+                  )}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Забронирован</TableCell>
-                <TableCell>{loc.reserve ? `Да` : `Нет`}</TableCell>
+                <TableCell>
+                  {loc.reserve ? (
+                    <>
+                      Да (с {dayjs(loc.reserve.start).format('DD.MM.YYYY')} до{' '}
+                      {dayjs(loc.reserve.end).format('DD.MM.YYYY')})
+                    </>
+                  ) : (
+                    `Нет`
+                  )}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Расположение</TableCell>
