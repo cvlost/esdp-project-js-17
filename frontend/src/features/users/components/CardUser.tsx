@@ -1,12 +1,12 @@
 import React from 'react';
-import { User } from '../types';
+import { User } from '../../../types';
 import { Button, ButtonGroup, CircularProgress, TableCell } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useAppSelector } from '../app/hooks';
-import { selectDeleteOneUserLoading } from '../features/users/usersSlice';
-import { ROLES } from '../constants';
-import { StyledTableRow } from '../features/users/theme';
+import { useAppSelector } from '../../../app/hooks';
+import { selectDeleteOneUserLoading } from '../usersSlice';
+import { ROLES } from '../../../constants';
+import { StyledTableRow } from '../theme';
 
 interface Props {
   user: User;

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Alert, Avatar, Box, Button, Grid, MenuItem, TextField, Typography } from '@mui/material';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import { UserMutation, ValidationError } from '../types';
-import { ROLES } from '../constants';
-import { useAppSelector } from '../app/hooks';
-import { selectUser } from '../features/users/usersSlice';
+import { UserMutation, ValidationError } from '../../../types';
+import { ROLES } from '../../../constants';
+import { useAppSelector } from '../../../app/hooks';
+import { selectUser } from '../usersSlice';
 
 interface Props {
   onSubmit: (user: UserMutation) => void;

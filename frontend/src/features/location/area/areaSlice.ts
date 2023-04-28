@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
-import { RegionList, ValidationError } from '../../../types';
+import { AreaList, ValidationError } from '../../../types';
 import { createArea, fetchAreas, removeArea } from './areaThunk';
 
 interface areaState {
-  listArea: RegionList[];
+  listArea: AreaList[];
   getAllAreaLoading: boolean;
   createAreaLoading: boolean;
   removeAreaLoading: boolean;

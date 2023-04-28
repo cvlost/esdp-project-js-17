@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createDirection, deleteDirection, getDirectionsList } from './directionsThunks';
-import { DirectionType, ValidationError } from '../../../types';
+import { DirectionList, ValidationError } from '../../../types';
 import { RootState } from '../../../app/store';
 
 interface DirectionState {
-  listDirection: DirectionType[];
+  listDirection: DirectionList[];
   getAllDirectionsLoading: boolean;
   createDirectionLoading: boolean;
   directionError: null | ValidationError;

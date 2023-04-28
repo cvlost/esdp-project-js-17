@@ -5,7 +5,7 @@ import { UserMutation } from '../../types';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { createUser } from './usersThunks';
 import { selectRegisterError, selectRegisterLoading } from './usersSlice';
-import UserForm from '../../components/UserForm';
+import UserForm from './components/UserForm';
 
 const CreateUser = () => {
   const navigate = useNavigate();

@@ -66,8 +66,8 @@ const SnackbarCard = () => {
     case 'remove_locations':
       txt += 'Локация успешно удалена';
       break;
-    case 'create_locations':
-      txt += 'Локация успешно созданна';
+    case 'create_location':
+      txt += 'Локация успешно создана';
       break;
   }
 

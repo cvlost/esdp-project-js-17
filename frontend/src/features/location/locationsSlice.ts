@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ILocation, LocationsListResponse } from '../../types';
-import { getLocationsList, getOneLocation, removeLocation } from './locationsThunks';
+import { ILocation, LocationsListResponse, ValidationError } from '../../types';
+import { createLocation, getLocationsList, getOneLocation, removeLocation } from './locationsThunks';
 
 interface LocationColumn {
   id: string;
@@ -19,6 +19,8 @@ interface LocationsState {
   };
   oneLocation: ILocation | null;
   oneLocationLoading: boolean;
+  createLocationLoading: boolean;
+  createError: ValidationError | null;
   locationDeleteLoading: false | string;
 }
 
@@ -53,6 +55,8 @@ const initialState: LocationsState = {
   },
   oneLocation: null,
   oneLocationLoading: false,
+  createLocationLoading: false,
+  createError: null,
   locationDeleteLoading: false,
 };
 
@@ -94,6 +98,17 @@ const locationsSlice = createSlice({
     builder.addCase(getOneLocation.rejected, (state) => {
       state.oneLocationLoading = false;
     });
+
+    builder.addCase(createLocation.pending, (state) => {
+      state.createLocationLoading = true;
+    });
+    builder.addCase(createLocation.fulfilled, (state) => {
+      state.createLocationLoading = false;
+    });
+    builder.addCase(createLocation.rejected, (state, { payload: error }) => {
+      state.createLocationLoading = false;
+      state.createError = error || null;
+    });
     builder.addCase(removeLocation.pending, (state, { meta: { arg: id } }) => {
       state.locationDeleteLoading = id;
     });
@@ -114,4 +129,6 @@ export const selectLocationsListLoading = (state: RootState) => state.locations.
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;
 export const selectOneLocation = (state: RootState) => state.locations.oneLocation;
 export const selectOneLocationLoading = (state: RootState) => state.locations.oneLocationLoading;
+export const selectCreateLocationLoading = (state: RootState) => state.locations.createLocationLoading;
+export const selectCreateLocationError = (state: RootState) => state.locations.createError;
 export const selectLocationsDeleteLoading = (state: RootState) => state.locations.locationDeleteLoading;
