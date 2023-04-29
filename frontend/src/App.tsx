@@ -22,9 +22,7 @@ function App() {
   return (
     <Layout>
       <Routes>
-        <Route element={<Protected userRole={user?.role} priority="user" />}>
-          <Route path="/" element={<Home />} />
-        </Route>
+        <Route path="/" element={<Home />} />
         <Route path="*" element={'Not found'} />
         <Route path="/login" element={<Login />} />
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
