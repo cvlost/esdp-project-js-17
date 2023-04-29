@@ -15,7 +15,7 @@ const Footer = () => {
           }}
         >
           <div>
-            <img src={logo} width="270px" height="100px" alt="Logo" />
+            <img src={logo} width="270px" height="65px" alt="Logo" />
           </div>
         </Box>
         <Box
