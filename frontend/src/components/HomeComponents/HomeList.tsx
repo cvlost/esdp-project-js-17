@@ -34,7 +34,7 @@ const HomeList = () => {
         <Grid item>
           <Chip
             sx={{ fontSize: '20px', p: 3 }}
-            label={`Список локаций: ${locationsListData.count}`}
+            label={`Список баннеров: ${locationsListData.count}`}
             variant="outlined"
             color="info"
           />

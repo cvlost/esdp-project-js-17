@@ -20,7 +20,7 @@ const HomeItem: React.FC<Props> = ({ loc, number }) => {
           alt={'г.' + loc.city + ' ' + loc.region + '  ул.' + loc.street}
         />
       </TableCell>
-      <TableCell align="center">{'г.' + loc.city + ' ' + loc.region + '  ул.' + loc.street}</TableCell>
+      <TableCell align="center">{'г.' + loc.city + ' ' + loc.region + ' район' + '  ул.' + loc.street}</TableCell>
       <TableCell align="center">{loc.region}</TableCell>
       <TableCell align="center">{loc.size}</TableCell>
       <TableCell align="center">{loc.lighting}</TableCell>
