@@ -1,11 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { LoginMutation } from '../../types';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Avatar, Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Grid,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+  Typography,
+} from '@mui/material';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { login } from './usersThunks';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { resetLoginError, selectLoginError, selectLoginLoading } from './usersSlice';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +30,12 @@ const Login = () => {
     email: '',
     password: '',
   });
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
   const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (loginError) dispatch(resetLoginError());
     const { name, value } = event.target;
@@ -59,10 +78,10 @@ const Login = () => {
         <Box component="form" onSubmit={submitFormHandler} sx={{ mt: 3, width: '100%' }}>
           <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
             <Grid item xs={12}>
+              <InputLabel htmlFor="outlined-adornment-password">Введите ваш email</InputLabel>
               <TextField
                 required
                 fullWidth
-                label="Введите ваш email"
                 name="email"
                 autoComplete="current-username"
                 value={state.email}
@@ -70,15 +89,27 @@ const Login = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <InputLabel htmlFor="outlined-adornment-password">Введите ваш пароль</InputLabel>
+              <OutlinedInput
                 required
                 fullWidth
-                label="Введите ваш пароль"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 value={state.password}
                 onChange={inputChangeHandler}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
             </Grid>
           </Grid>

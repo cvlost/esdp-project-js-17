@@ -1,5 +1,5 @@
 import React from 'react';
-import HomeList from '../components/Home/HomeList';
+import HomeList from '../components/HomeComponents/HomeList';
 
 const Home = () => {
   return (
