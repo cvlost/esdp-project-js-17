@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 
 export interface IUser {
   email: string;
@@ -9,6 +9,7 @@ export interface IUser {
 }
 
 export interface CityType {
+  area: Schema.Types.ObjectId | string;
   name: string;
 }
 

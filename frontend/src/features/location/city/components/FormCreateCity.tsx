@@ -1,23 +1,46 @@
-import React, { useState } from 'react';
-import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Avatar, Box, Button, CircularProgress, Grid, MenuItem, TextField, Typography } from '@mui/material';
 import { CityMutation } from '../../../../types';
-import { useAppSelector } from '../../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectCityError, selectCreateCityLoading } from '../citySlice';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import { fetchAreas } from '../../area/areaThunk';
+import { selectAreaList } from '../../area/areaSlice';
+import { fetchCities } from '../cityThunk';
 
 interface Props {
   onSubmit: (city: CityMutation) => void;
 }
 
 const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
+  const dispatch = useAppDispatch();
+  const areas = useAppSelector(selectAreaList);
   const createLoading = useAppSelector(selectCreateCityLoading);
   const error = useAppSelector(selectCityError);
-  const [value, setValue] = useState('');
+  const [state, setState] = useState<CityMutation>({
+    area: '',
+    name: '',
+  });
+
+  useEffect(() => {
+    dispatch(fetchAreas());
+  }, [dispatch]);
+
+  const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setState((prevState) => {
+      return { ...prevState, [name]: value };
+    });
+  };
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name: value });
-    setValue('');
+    onSubmit(state);
+    dispatch(fetchCities());
+    setState({
+      area: '',
+      name: '',
+    });
   };
 
   const getFieldError = (fieldName: string) => {
@@ -46,8 +69,31 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
           <Grid item xs={12}>
             <TextField
-              value={value}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+              fullWidth
+              select
+              value={state.area}
+              name="area"
+              label="Область"
+              onChange={inputChangeHandler}
+              error={Boolean(getFieldError('area'))}
+              helperText={getFieldError('area')}
+              required
+            >
+              <MenuItem value="" disabled>
+                Выберите область
+              </MenuItem>
+              {areas &&
+                areas.map((area) => (
+                  <MenuItem key={area._id} value={area._id}>
+                    {area.name}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.name}
+              onChange={inputChangeHandler}
               required
               fullWidth
               label="Название города"
