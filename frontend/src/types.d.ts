@@ -70,6 +70,7 @@ export interface CityList {
 
 export interface CityMutation {
   name: string;
+  area: string;
 }
 
 export interface RegionList {
