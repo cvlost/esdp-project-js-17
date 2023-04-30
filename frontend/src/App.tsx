@@ -24,6 +24,8 @@ function App() {
   return (
     <Layout>
       <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="*" element={'Not found'} />
         <Route element={<Protected userRole={user?.role} priority="user" />}>
           <Route path="/" element={<Home />} />
         </Route>
@@ -45,7 +47,6 @@ function App() {
             <Route path="create_street" element={<CreateStreet />} />
           </Route>
         </Route>
-        <Route path="*" element={'Not found'} />
       </Routes>
     </Layout>
   );

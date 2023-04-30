@@ -26,7 +26,7 @@ const flattenLookup: PipelineStage[] = [
   { $set: { price: { $convert: { input: '$price', to: 'string' } } } },
 ];
 
-locationsRouter.get('/', auth, async (req, res, next) => {
+locationsRouter.get('/', async (req, res, next) => {
   let perPage = parseInt(req.query.perPage as string);
   let page = parseInt(req.query.page as string);
 
@@ -53,7 +53,7 @@ locationsRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
-locationsRouter.get('/:id', auth, async (req, res, next) => {
+locationsRouter.get('/:id', async (req, res, next) => {
   const _id = req.params.id as string;
 
   try {

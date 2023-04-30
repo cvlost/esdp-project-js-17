@@ -13,8 +13,8 @@ const AppToolbar = () => {
     <AppBar position="static">
       <Toolbar>
         <Grid container sx={{ alignItems: 'center' }}>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <StyledLink to="/">ESDP-17</StyledLink>
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1, alignItems: 'center' }}>
+            <StyledLink to="/">Шамдагай</StyledLink>
           </Typography>
           <Grid item>{user ? <UserMenu user={user} /> : <AnonymousMenu />}</Grid>
         </Grid>
