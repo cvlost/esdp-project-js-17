@@ -1,23 +1,46 @@
-import React, { useState } from 'react';
-import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Avatar, Box, Button, CircularProgress, Grid, MenuItem, TextField, Typography } from '@mui/material';
 import { StreetMutation } from '../../../../types';
-import { useAppSelector } from '../../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectCreateStreetLoading, selectStreetError } from '../streetSlice';
 import SignpostIcon from '@mui/icons-material/Signpost';
+import { selectCityList } from '../../city/citySlice';
+import { fetchStreet } from '../streetThunks';
+import { fetchCities } from '../../city/cityThunk';
 
 interface Props {
   onSubmit: (street: StreetMutation) => void;
 }
 
 const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
+  const dispatch = useAppDispatch();
+  const cities = useAppSelector(selectCityList);
   const createLoading = useAppSelector(selectCreateStreetLoading);
   const error = useAppSelector(selectStreetError);
-  const [value, setValue] = useState('');
+  const [state, setState] = useState<StreetMutation>({
+    city: '',
+    name: '',
+  });
+
+  useEffect(() => {
+    dispatch(fetchCities());
+  }, [dispatch]);
+
+  const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setState((prevState) => {
+      return { ...prevState, [name]: value };
+    });
+  };
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name: value });
-    setValue('');
+    onSubmit(state);
+    dispatch(fetchStreet());
+    setState({
+      city: '',
+      name: '',
+    });
   };
 
   const getFieldError = (fieldName: string) => {
@@ -46,8 +69,32 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
           <Grid item xs={12}>
             <TextField
-              value={value}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+              fullWidth
+              select
+              value={state.city}
+              name="city"
+              label="Город/село"
+              onChange={inputChangeHandler}
+              autoComplete="off"
+              error={Boolean(getFieldError('city'))}
+              helperText={getFieldError('city')}
+              required
+            >
+              <MenuItem value="" disabled>
+                Выберите город/село
+              </MenuItem>
+              {cities &&
+                cities.map((city) => (
+                  <MenuItem key={city._id} value={city._id}>
+                    {city.name}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.name}
+              onChange={inputChangeHandler}
               required
               fullWidth
               label="Название улицы"
