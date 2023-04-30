@@ -9,7 +9,7 @@ import GroupIcon from '@mui/icons-material/Groups';
 import CottageIcon from '@mui/icons-material/Cottage';
 import { getEditingUser, getUsersList, logout, updateUser } from '../../features/users/usersThunks';
 import ModalBody from '../ModalBody';
-import UserForm from '../UserForm';
+import UserForm from '../../features/users/components/UserForm';
 import {
   openSnackbar,
   selectEditingError,

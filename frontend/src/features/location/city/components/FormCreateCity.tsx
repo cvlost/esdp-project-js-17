@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
-import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
 import { CityMutation } from '../../../../types';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectCityError, selectCreateCityLoading } from '../citySlice';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
 
 interface Props {
   onSubmit: (city: CityMutation) => void;
@@ -37,7 +37,7 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
       }}
     >
       <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
-        <SouthAmericaIcon />
+        <LocationCityIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
         Создать город

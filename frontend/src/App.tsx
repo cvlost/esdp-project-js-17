@@ -16,6 +16,8 @@ import CreateFormat from './features/location/format/CreateFormat';
 import CreateLegalEntity from './features/location/legalEntity/CreateLegalEntity';
 import CreateStreet from './features/location/street/CreateStreet';
 import CreateCity from './features/location/city/CreateCity';
+import CreateLocation from './features/location/CreateLocation';
+import 'rsuite/dist/rsuite.min.css';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -24,15 +26,18 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={'Not found'} />
+        <Route element={<Protected userRole={user?.role} priority="user" />}>
+          <Route path="/" element={<Home />} />
+        </Route>
         <Route path="/login" element={<Login />} />
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/users" element={<Users />}>
             <Route path="createUser" element={<CreateUser />} />
           </Route>
         </Route>
-        <Route element={<Protected userRole={user?.role} priority="user" />}>
+        <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/location" element={<Location />}>
-            <Route path="create_location" element="Роутер на создание" />
+            <Route path="create_location" element={<CreateLocation />} />
             <Route path="create_region" element={<CreateRegion />} />
             <Route path="create_city" element={<CreateCity />} />
             <Route path="create_direction" element={<CreateDirection />} />

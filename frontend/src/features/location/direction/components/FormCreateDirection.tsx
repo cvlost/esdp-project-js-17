@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import { DirectionTypeMutation } from '../../../../types';
+import { DirectionMutation } from '../../../../types';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectDirectionCreateLoading, selectDirectionError } from '../directionsSlice';
 
 interface Props {
-  onSubmit: (direction: DirectionTypeMutation) => void;
+  onSubmit: (direction: DirectionMutation) => void;
 }
 
 const FormCreateDirection: React.FC<Props> = ({ onSubmit }) => {

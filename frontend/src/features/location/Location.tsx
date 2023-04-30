@@ -1,16 +1,26 @@
 import React from 'react';
-import { Box, Button, Grid } from '@mui/material';
+import { Autocomplete, Box, Button, Grid, TextField } from '@mui/material';
 import { useNavigate, useOutlet } from 'react-router-dom';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
-import AddIcon from '@mui/icons-material/Add';
 import LocationList from './LocationList';
-import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
-import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../users/usersSlice';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import DomainAddIcon from '@mui/icons-material/DomainAdd';
-import SignpostIcon from '@mui/icons-material/Signpost';
+
+interface LinkOption {
+  label: string;
+  link: string;
+}
+
+const link_options: LinkOption[] = [
+  { label: 'Создать Локацию', link: '/location/create_location' },
+  { label: 'Создать Область', link: '/location/create_area' },
+  { label: 'Создать Регион', link: '/location/create_region' },
+  { label: 'Создать Город', link: '/location/create_city' },
+  { label: 'Создать Направление', link: '/location/create_direction' },
+  { label: 'Создать Формат', link: '/location/create_format' },
+  { label: 'Создать Юр.лицо', link: '/location/create_legal_entity' },
+  { label: 'Создать Улицу', link: '/location/create_street' },
+];
 
 const Location = () => {
   const user = useAppSelector(selectUser);
@@ -19,7 +29,7 @@ const Location = () => {
 
   return (
     <Box sx={{ py: 2 }}>
-      <Grid container spacing={1}>
+      <Grid container spacing={1} alignItems="center">
         <Grid item>
           <Button
             variant="contained"
@@ -31,95 +41,20 @@ const Location = () => {
             Список локаций
           </Button>
         </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            onClick={() => {
-              navigate('/location/create_location');
-            }}
-          >
-            <AddIcon sx={{ mr: 1 }} />
-            Создать локацию
-          </Button>
-        </Grid>
         {user?.role === 'admin' ? (
           <>
             <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  navigate('/location/create_region');
+              <Autocomplete
+                onChange={(event, newValue: LinkOption | null) => {
+                  if (newValue?.link !== undefined) {
+                    navigate(newValue.link);
+                  }
                 }}
-              >
-                <SouthAmericaIcon sx={{ mr: 1 }} />
-                Создать регион
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  navigate('/location/create_city');
-                }}
-              >
-                <SouthAmericaIcon sx={{ mr: 1 }} />
-                Создать город
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  navigate('/location/create_direction');
-                }}
-              >
-                <GpsFixedIcon sx={{ mr: 1 }} />
-                Создать направление
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  navigate('/location/create_format');
-                }}
-              >
-                <DashboardIcon sx={{ mr: 1 }} />
-                Создать формат
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  navigate('/location/create_area');
-                }}
-              >
-                <SouthAmericaIcon sx={{ mr: 1 }} />
-                Создать область
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  navigate('/location/create_legal_entity');
-                }}
-              >
-                <DomainAddIcon sx={{ mr: 1 }} />
-                Создать Юр. лицо
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  navigate('/location/create_street');
-                }}
-              >
-                <SignpostIcon sx={{ mr: 1 }} />
-                Создать улицу
-              </Button>
+                options={link_options}
+                noOptionsText={'Нет совпадений'}
+                sx={{ width: 250 }}
+                renderInput={(params) => <TextField {...params} label="Создание" />}
+              />
             </Grid>
           </>
         ) : null}

@@ -65,27 +65,29 @@ export interface DeletedUserResponse {
 export interface CityList {
   _id: string;
   name: string;
-}
-
-export interface RegionList {
-  _id: string;
-  name: string;
+  area: string;
 }
 
 export interface CityMutation {
   name: string;
 }
 
+export interface RegionList {
+  _id: string;
+  name: string;
+  area: string;
+}
+
 export interface RegionMutation {
   name: string;
 }
 
-export interface DirectionType {
+export interface DirectionList {
   _id: string;
   name: string;
 }
 
-export type DirectionTypeMutation = Omit<DirectionType, '_id'>;
+export type DirectionMutation = Omit<DirectionList, '_id'>;
 
 export interface IPeriod {
   start: string;
@@ -93,10 +95,10 @@ export interface IPeriod {
 }
 
 export interface ILocation {
+  _id: string;
   price: string;
   rent: null | IPeriod;
   reserve: null | IPeriod;
-  _id: string;
   city: string;
   area: string;
   street: string;
@@ -148,3 +150,25 @@ export interface LegalEntityList {
 }
 
 export type LegalEntityMutation = Omit<LegalEntityList, '_id'>;
+
+export type DateRange = [Date, Date];
+
+export interface LocationMutation {
+  addressNote: string;
+  description: string;
+  country: string;
+  area: string;
+  region: string;
+  city: string;
+  street: string;
+  direction: string;
+  legalEntity: string;
+  size: string;
+  format: string;
+  lighting: boolean;
+  placement: boolean;
+  rent: DateRange | null;
+  price: string;
+  dayImage: File | null;
+  schemaImage: File | null;
+}
