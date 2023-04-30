@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 
 export interface IUser {
   email: string;
@@ -21,6 +21,7 @@ export interface DirectionType {
 }
 
 export interface StreetType {
+  city: Schema.Types.ObjectId | string;
   name: string;
 }
 

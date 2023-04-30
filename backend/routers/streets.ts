@@ -18,6 +18,7 @@ streetsRouter.get('/', auth, async (req, res, next) => {
 streetsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const streetData = await Street.create({
+      city: req.body.city,
       name: req.body.name,
     });
 
