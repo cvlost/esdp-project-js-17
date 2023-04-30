@@ -18,6 +18,7 @@ citiesRouter.get('/', auth, async (req, res, next) => {
 citiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const cityData = await City.create({
+      area: req.body.name,
       name: req.body.name,
     });
 
