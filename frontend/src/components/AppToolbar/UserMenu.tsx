@@ -84,17 +84,6 @@ const UserMenu: React.FC<Props> = ({ user }) => {
         ]}
         {user && [
           <MenuItem
-            key="user-main"
-            onClick={() => {
-              handleClose();
-              navigate('/');
-            }}
-          >
-            <CottageIcon sx={{ mr: 1 }} />
-            Главная страница
-          </MenuItem>,
-          <Divider key="user-divider" />,
-          <MenuItem
             key="user-management"
             onClick={() => {
               handleClose();
@@ -103,6 +92,19 @@ const UserMenu: React.FC<Props> = ({ user }) => {
           >
             <ShareLocationIcon sx={{ mr: 1 }} />
             Управление локациями
+          </MenuItem>,
+          <Divider key="user-divider" />,
+        ]}
+        {user && [
+          <MenuItem
+            key="user-main"
+            onClick={() => {
+              handleClose();
+              navigate('/');
+            }}
+          >
+            <CottageIcon sx={{ mr: 1 }} />
+            Главная страница
           </MenuItem>,
           <Divider key="user-divider" />,
         ]}
