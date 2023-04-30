@@ -54,17 +54,27 @@ const run = async () => {
     });
   }
 
+  const areas = await Area.create(
+    { name: 'Чуйская' },
+    { name: 'Таласская' },
+    { name: 'Нарынская' },
+    { name: 'Ошская' },
+    { name: 'Баткенская' },
+    { name: 'Ыссык-Кульская' },
+    { name: 'Джалал-Абадская' },
+  );
+
   const cities = await City.create(
-    { name: 'Бишкек' },
-    { name: 'Кант' },
-    { name: 'Ош' },
-    { name: 'Нарын' },
-    { name: 'Балыкчы' },
-    { name: 'Каракол' },
-    { name: 'Талас' },
-    { name: 'Чолпон-Ата' },
-    { name: 'Кара-Балта' },
-    { name: 'Узген' },
+    { name: 'Бишкек', area: areas[0]._id },
+    { name: 'Кант', area: areas[0]._id },
+    { name: 'Ош', area: areas[3]._id },
+    { name: 'Нарын', area: areas[2]._id },
+    { name: 'Балыкчы', area: areas[5]._id },
+    { name: 'Каракол', area: areas[5]._id },
+    { name: 'Талас', area: areas[1]._id },
+    { name: 'Чолпон-Ата', area: areas[5]._id },
+    { name: 'Кара-Балта', area: areas[0]._id },
+    { name: 'Узген', area: areas[3]._id },
   );
 
   const regions = await Region.create(
@@ -80,23 +90,23 @@ const run = async () => {
   const directions = await Direction.create({ name: 'Север' }, { name: 'Юг' }, { name: 'Запад' }, { name: 'Восток' });
 
   const streets = await Street.create(
-    { name: 'Киевская' },
-    { name: 'Ахунбаева' },
-    { name: 'Ибраимова' },
-    { name: 'Манаса' },
-    { name: 'Московская' },
-    { name: 'Горького' },
-    { name: 'Логвиненко' },
-    { name: 'Боконбаева' },
-    { name: 'Исанова' },
-    { name: 'Тыныстанова' },
-    { name: 'Юнусалиева' },
-    { name: 'Фучика' },
-    { name: 'Медерова' },
-    { name: 'Токтогула' },
-    { name: 'Жибек-Жолу' },
-    { name: 'пр. Манаса' },
-    { name: 'Шабдан-Баатыра' },
+    { name: 'Киевская', city: cities[0]._id },
+    { name: 'Ахунбаева', city: cities[0]._id },
+    { name: 'Ибраимова', city: cities[0]._id },
+    { name: 'Манаса', city: cities[0]._id },
+    { name: 'Московская', city: cities[0]._id },
+    { name: 'Горького', city: cities[0]._id },
+    { name: 'Логвиненко', city: cities[0]._id },
+    { name: 'Боконбаева', city: cities[0]._id },
+    { name: 'Исанова', city: cities[0]._id },
+    { name: 'Тыныстанова', city: cities[0]._id },
+    { name: 'Юнусалиева', city: cities[0]._id },
+    { name: 'Фучика', city: cities[0]._id },
+    { name: 'Медерова', city: cities[0]._id },
+    { name: 'Токтогула', city: cities[0]._id },
+    { name: 'Жибек-Жолу', city: cities[0]._id },
+    { name: 'пр. Манаса', city: cities[0]._id },
+    { name: 'Шабдан-Баатыра', city: cities[0]._id },
   );
 
   const legalEntities = await LegalEntity.create({ name: 'Шамдагай' }, { name: 'ШамдагайЮридикал' });
@@ -109,16 +119,6 @@ const run = async () => {
     { name: 'Т-образный со смещ.' },
     { name: 'Ф-образный' },
     { name: 'Трехсторонний' },
-  );
-
-  const areas = await Area.create(
-    { name: 'Чуйская' },
-    { name: 'Таласская' },
-    { name: 'Нарынская' },
-    { name: 'Ошская' },
-    { name: 'Баткенская' },
-    { name: 'Ыссык-Кульская' },
-    { name: 'Джалал-Абадская' },
   );
 
   const fixtureAddressNotes = [
