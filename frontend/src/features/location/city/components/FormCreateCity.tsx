@@ -21,7 +21,6 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
     area: '',
     name: '',
   });
-  console.log(state);
 
   useEffect(() => {
     dispatch(fetchAreas());
