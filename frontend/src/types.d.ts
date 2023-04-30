@@ -133,6 +133,7 @@ export type FormatMutation = Omit<FormatList, '_id'>;
 export interface StreetList {
   _id: string;
   name: string;
+  city: string;
 }
 
 export type StreetMutation = Omit<StreetList, '_id'>;
