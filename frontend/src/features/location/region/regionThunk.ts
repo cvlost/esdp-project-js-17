@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { isAxiosError } from 'axios';
-import { RegionList, RegionMutation, ValidationError } from '../../../types';
+import { GlobalError, RegionList, RegionMutation, ValidationError } from '../../../types';
 import axiosApi from '../../../axios';
 
 export const fetchRegions = createAsyncThunk<RegionList[]>('location/fetch_regions', async () => {
@@ -22,6 +22,16 @@ export const createRegion = createAsyncThunk<void, RegionMutation, { rejectValue
   },
 );
 
-export const removeRegion = createAsyncThunk<void, string>('location/remove_region', async (id) => {
-  await axiosApi.delete('/regions/' + id);
-});
+export const removeRegion = createAsyncThunk<void, string, { rejectValue: GlobalError }>(
+  'location/remove_region',
+  async (id, { rejectWithValue }) => {
+    try {
+      await axiosApi.delete('/regions/' + id);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 404) {
+        return rejectWithValue(e.response.data as GlobalError);
+      }
+      throw e;
+    }
+  },
+);
