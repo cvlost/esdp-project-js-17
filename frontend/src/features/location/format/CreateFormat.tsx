@@ -3,7 +3,9 @@ import {
   Alert,
   Box,
   CircularProgress,
+  Collapse,
   Container,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -16,18 +18,27 @@ import { StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
-import { selectFormatList, selectGetAllFormatLoading } from './formatSlice';
+import {
+  controlModal,
+  selectErrorRemove,
+  selectFormatList,
+  selectGetAllFormatLoading,
+  selectModal,
+} from './formatSlice';
 import CardFormat from './components/CardFormat';
 import { createFormat, fetchFormat, removeFormat } from './formatThunk';
 import { FormatMutation } from '../../../types';
 import FormCreateFormat from './components/FormCreateFormat';
 import { Navigate } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateFormat = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const formats = useAppSelector(selectFormatList);
   const formatsLoading = useAppSelector(selectGetAllFormatLoading);
+  const errorRemove = useAppSelector(selectErrorRemove);
+  const open = useAppSelector(selectModal);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -59,6 +70,28 @@ const CreateFormat = () => {
         <FormCreateFormat onSubmit={onSubmit} />
       </Container>
       <Container>
+        {open && (
+          <Collapse in={open}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    dispatch(controlModal(false));
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+              severity="error"
+            >
+              {errorRemove?.error}
+            </Alert>
+          </Collapse>
+        )}
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
           <TableContainer>
             <Table sx={{ minWidth: 650 }}>
