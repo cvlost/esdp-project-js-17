@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
 import { createCity, fetchCities, removeCity } from './cityThunk';
-import { CityList, ValidationError } from '../../../types';
+import { CityList, GlobalError, ValidationError } from '../../../types';
 
 interface CityState {
   cityList: CityList[];
@@ -9,6 +9,8 @@ interface CityState {
   createCityLoading: boolean;
   removeCityLoading: boolean;
   cityError: null | ValidationError;
+  errorRemove: GlobalError | null;
+  modal: boolean;
 }
 
 const initialState: CityState = {
@@ -17,12 +19,18 @@ const initialState: CityState = {
   createCityLoading: false,
   removeCityLoading: false,
   cityError: null,
+  errorRemove: null,
+  modal: false,
 };
 
 export const citySlice = createSlice({
   name: 'city',
   initialState,
-  reducers: {},
+  reducers: {
+    controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
+      state.modal = type;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchCities.pending, (state) => {
       state.getAllListCityLoading = true;
@@ -52,15 +60,20 @@ export const citySlice = createSlice({
     builder.addCase(removeCity.fulfilled, (state) => {
       state.removeCityLoading = false;
     });
-    builder.addCase(removeCity.rejected, (state) => {
+    builder.addCase(removeCity.rejected, (state, { payload: error }) => {
       state.removeCityLoading = false;
+      state.errorRemove = error || null;
+      state.modal = true;
     });
   },
 });
 
 export const cityReducer = citySlice.reducer;
+export const { controlModal } = citySlice.actions;
 export const selectCityList = (state: RootState) => state.city.cityList;
 export const selectGetAllCitiesLoading = (state: RootState) => state.city.getAllListCityLoading;
 export const selectCreateCityLoading = (state: RootState) => state.city.createCityLoading;
 export const selectRemoveCityLoading = (state: RootState) => state.city.removeCityLoading;
 export const selectCityError = (state: RootState) => state.city.cityError;
+export const selectErrorRemove = (state: RootState) => state.city.errorRemove;
+export const selectModal = (state: RootState) => state.city.modal;

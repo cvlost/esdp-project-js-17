@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { CityMutation, CityList, ValidationError } from '../../../types';
+import { CityMutation, CityList, ValidationError, GlobalError } from '../../../types';
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 
@@ -22,6 +22,16 @@ export const createCity = createAsyncThunk<void, CityMutation, { rejectValue: Va
   },
 );
 
-export const removeCity = createAsyncThunk<void, string>('city/remove_city', async (id) => {
-  await axiosApi.delete('/cities/' + id);
-});
+export const removeCity = createAsyncThunk<void, string, { rejectValue: GlobalError }>(
+  'city/remove_city',
+  async (id, { rejectWithValue }) => {
+    try {
+      await axiosApi.delete('/cities/' + id);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 404) {
+        return rejectWithValue(e.response.data as GlobalError);
+      }
+      throw e;
+    }
+  },
+);
