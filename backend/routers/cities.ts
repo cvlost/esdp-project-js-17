@@ -3,6 +3,7 @@ import auth from '../middleware/auth';
 import City from '../models/City';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
+import Location from '../models/Location';
 
 const citiesRouter = express.Router();
 
@@ -36,8 +37,11 @@ citiesRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
     const _id = req.params.id as string;
     const city = await City.findOne({ _id });
+    const location = await Location.find({ city: _id });
     if (!city) {
       return res.status(404).send({ error: 'Город не существует в базе.' });
+    } else if (location.length > 0) {
+      return res.status(404).send({ error: 'Город привязан к локациям ! удаление запрещено' });
     }
     const result = await City.deleteOne({ _id });
     return res.send(result);

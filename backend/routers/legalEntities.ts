@@ -3,6 +3,7 @@ import auth from '../middleware/auth';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
 import LegalEntity from '../models/LegalEntity';
+import Location from '../models/Location';
 
 const legalEntitiesRouter = express.Router();
 
@@ -69,8 +70,11 @@ legalEntitiesRouter.delete('/:id', auth, permit('admin'), async (req, res, next)
   try {
     const _id = req.params.id as string;
     const legalEntity = await LegalEntity.findById(_id);
+    const location = await Location.find({ legalEntity: _id });
     if (!legalEntity) {
       return res.status(404).send({ error: 'Юридическое лицо не существует в базе.' });
+    } else if (location.length > 0) {
+      return res.status(404).send({ error: 'Юр лицо привязано к локациям ! удаление запрещено' });
     }
 
     const result = await LegalEntity.deleteOne({ _id });

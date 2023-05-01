@@ -3,6 +3,7 @@ import auth from '../middleware/auth';
 import Region from '../models/Region';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
+import Location from '../models/Location';
 
 const regionsRouter = express.Router();
 
@@ -35,8 +36,11 @@ regionsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
     const _id = req.params.id as string;
     const region = await Region.findById(_id);
+    const location = await Location.find({ region: _id });
     if (!region) {
       return res.status(404).send({ error: 'Район не существует в базе.' });
+    } else if (location.length > 0) {
+      return res.status(404).send({ error: 'Регион привязан к локациям ! удаление запрещено' });
     }
 
     const result = await Region.deleteOne({ _id });

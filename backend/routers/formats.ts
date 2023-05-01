@@ -3,6 +3,7 @@ import auth from '../middleware/auth';
 import permit from '../middleware/permit';
 import Format from '../models/Format';
 import mongoose from 'mongoose';
+import Location from '../models/Location';
 
 const formatRouter = express.Router();
 
@@ -34,8 +35,11 @@ formatRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
     const _id = req.params.id as string;
     const format = await Format.findById(_id);
+    const location = await Location.find({ format: _id });
     if (!format) {
       return res.status(404).send({ error: 'Формат не существует в базе.' });
+    } else if (location.length > 0) {
+      return res.status(404).send({ error: 'Формат привязан к локациям ! удаление запрещено' });
     }
 
     const result = await Format.deleteOne({ _id });

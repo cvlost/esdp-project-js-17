@@ -3,6 +3,7 @@ import auth from '../middleware/auth';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
 import Street from '../models/Street';
+import Location from '../models/Location';
 
 const streetsRouter = express.Router();
 
@@ -36,8 +37,11 @@ streetsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
     const _id = req.params.id as string;
     const street = await Street.findById(_id);
+    const location = await Location.find({ street: _id });
     if (!street) {
       return res.status(404).send({ error: 'Улица не существует в базе.' });
+    } else if (location.length > 0) {
+      return res.status(404).send({ error: 'Улицы привязаны к локациям ! удаление запрещено' });
     }
 
     const result = await Street.deleteOne({ _id });
