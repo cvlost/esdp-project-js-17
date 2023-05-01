@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AreaList, AreaMutation, ValidationError } from '../../../types';
+import { AreaList, AreaMutation, GlobalError, ValidationError } from '../../../types';
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 
@@ -22,6 +22,16 @@ export const createArea = createAsyncThunk<void, AreaMutation, { rejectValue: Va
   },
 );
 
-export const removeArea = createAsyncThunk<void, string>('area/remove_area', async (id) => {
-  await axiosApi.delete('/areas/' + id);
-});
+export const removeArea = createAsyncThunk<void, string, { rejectValue: GlobalError }>(
+  'area/remove_area',
+  async (id, { rejectWithValue }) => {
+    try {
+      await axiosApi.delete('/areas/' + id);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 404) {
+        return rejectWithValue(e.response.data as GlobalError);
+      }
+      throw e;
+    }
+  },
+);
