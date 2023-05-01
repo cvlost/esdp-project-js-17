@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectUser } from '../../users/usersSlice';
 import {
+  controlModal,
+  selectErrorRemove,
   selectGetAllLegalEntityLoading,
   selectLegalEntityList,
+  selectModal,
   selectOneLegalEntity,
   unsetOneLegalEntity,
 } from './legalEntitySlice';
@@ -12,7 +15,9 @@ import {
   Alert,
   Box,
   CircularProgress,
+  Collapse,
   Container,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -27,6 +32,7 @@ import CardLegalEntity from './components/CardLegalEntity';
 import FormLegalEntity from './components/FormLegalEntity';
 import { Navigate } from 'react-router-dom';
 import ModalBody from '../../../components/ModalBody';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateLegalEntity = () => {
   const user = useAppSelector(selectUser);
@@ -34,6 +40,8 @@ const CreateLegalEntity = () => {
   const entities = useAppSelector(selectLegalEntityList);
   const entitiesLoading = useAppSelector(selectGetAllLegalEntityLoading);
   const oneEntity = useAppSelector(selectOneLegalEntity);
+  const errorRemove = useAppSelector(selectErrorRemove);
+  const open = useAppSelector(selectModal);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -59,6 +67,28 @@ const CreateLegalEntity = () => {
         <FormLegalEntity />
       </Container>
       <Container>
+        {open && (
+          <Collapse in={open}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    dispatch(controlModal(false));
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+              severity="error"
+            >
+              {errorRemove?.error}
+            </Alert>
+          </Collapse>
+        )}
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
           <TableContainer>
             <Table>

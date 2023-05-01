@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { LegalEntityList, LegalEntityMutation, ValidationError } from '../../../types';
+import { GlobalError, LegalEntityList, LegalEntityMutation, ValidationError } from '../../../types';
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 
@@ -46,6 +46,16 @@ export const updateLegalEntity = createAsyncThunk<void, UpdateLegalEntityParams,
   },
 );
 
-export const removeLegalEntity = createAsyncThunk<void, string>('legalEntity/remove_legalEntity', async (id) => {
-  await axiosApi.delete('/legalEntities/' + id);
-});
+export const removeLegalEntity = createAsyncThunk<void, string, { rejectValue: GlobalError }>(
+  'legalEntity/remove_legalEntity',
+  async (id, { rejectWithValue }) => {
+    try {
+      await axiosApi.delete('/legalEntities/' + id);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 404) {
+        return rejectWithValue(e.response.data as GlobalError);
+      }
+      throw e;
+    }
+  },
+);

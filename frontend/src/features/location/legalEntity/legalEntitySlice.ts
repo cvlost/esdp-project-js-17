@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
-import { LegalEntityList, ValidationError } from '../../../types';
+import { GlobalError, LegalEntityList, ValidationError } from '../../../types';
 import {
   createLegalEntity,
   fetchLegalEntity,
@@ -19,6 +19,8 @@ interface legalEntitySlice {
   oneLegalEntityLoading: boolean;
   legalEntityError: ValidationError | null;
   legalEntityUpdateError: ValidationError | null;
+  errorRemove: GlobalError | null;
+  modal: boolean;
 }
 
 const initialState: legalEntitySlice = {
@@ -31,6 +33,8 @@ const initialState: legalEntitySlice = {
   oneLegalEntityLoading: false,
   legalEntityError: null,
   legalEntityUpdateError: null,
+  errorRemove: null,
+  modal: false,
 };
 
 const legalEntitySlice = createSlice({
@@ -39,6 +43,9 @@ const legalEntitySlice = createSlice({
   reducers: {
     unsetOneLegalEntity: (state) => {
       state.oneLegalEntity = null;
+    },
+    controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
+      state.modal = type;
     },
   },
   extraReducers: (builder) => {
@@ -82,8 +89,10 @@ const legalEntitySlice = createSlice({
     builder.addCase(removeLegalEntity.fulfilled, (state) => {
       state.removeLegalEntityLoading = false;
     });
-    builder.addCase(removeLegalEntity.rejected, (state) => {
+    builder.addCase(removeLegalEntity.rejected, (state, { payload: error }) => {
       state.removeLegalEntityLoading = false;
+      state.errorRemove = error || null;
+      state.modal = true;
     });
 
     builder.addCase(updateLegalEntity.pending, (state) => {
@@ -101,7 +110,7 @@ const legalEntitySlice = createSlice({
 });
 
 export const legalEntityReducer = legalEntitySlice.reducer;
-export const { unsetOneLegalEntity } = legalEntitySlice.actions;
+export const { unsetOneLegalEntity, controlModal } = legalEntitySlice.actions;
 
 export const selectLegalEntityList = (state: RootState) => state.legalEntity.listLegalEntity;
 export const selectGetAllLegalEntityLoading = (state: RootState) => state.legalEntity.getAllLegalEntityLoading;
@@ -112,3 +121,5 @@ export const selectOneLegalEntity = (state: RootState) => state.legalEntity.oneL
 export const selectOneLegalEntityLoading = (state: RootState) => state.legalEntity.oneLegalEntityLoading;
 export const selectUpdateLegalEntityLoading = (state: RootState) => state.legalEntity.updateLegalEntityLoading;
 export const selectLegalEntityUpdateError = (state: RootState) => state.legalEntity.legalEntityUpdateError;
+export const selectErrorRemove = (state: RootState) => state.legalEntity.errorRemove;
+export const selectModal = (state: RootState) => state.legalEntity.modal;
