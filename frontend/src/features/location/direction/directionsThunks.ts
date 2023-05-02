@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../../axios';
-import { DirectionList, DirectionMutation, ValidationError } from '../../../types';
+import { DirectionList, DirectionMutation, GlobalError, ValidationError } from '../../../types';
 import { isAxiosError } from 'axios';
 
 export const getDirectionsList = createAsyncThunk<DirectionList[]>('direction/fetchAll', async () => {
@@ -8,9 +8,19 @@ export const getDirectionsList = createAsyncThunk<DirectionList[]>('direction/fe
   return response.data;
 });
 
-export const deleteDirection = createAsyncThunk<void, string>('direction/delete', async (directionID) => {
-  await axiosApi.delete('/direction/' + directionID);
-});
+export const deleteDirection = createAsyncThunk<void, string, { rejectValue: GlobalError }>(
+  'direction/delete',
+  async (directionID, { rejectWithValue }) => {
+    try {
+      await axiosApi.delete('/direction/' + directionID);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 404) {
+        return rejectWithValue(e.response.data as GlobalError);
+      }
+      throw e;
+    }
+  },
+);
 
 export const createDirection = createAsyncThunk<void, DirectionMutation, { rejectValue: ValidationError }>(
   'direction/create',

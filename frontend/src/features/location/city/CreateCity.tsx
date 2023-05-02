@@ -3,7 +3,9 @@ import {
   Alert,
   Box,
   CircularProgress,
+  Collapse,
   Container,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -18,16 +20,19 @@ import { openSnackbar, selectUser } from '../../users/usersSlice';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import { StyledTableCell } from '../../../constants';
 import { Navigate } from 'react-router-dom';
-import { selectCityList, selectGetAllCitiesLoading } from './citySlice';
+import { controlModal, selectCityList, selectErrorRemove, selectGetAllCitiesLoading, selectModal } from './citySlice';
 import CardCity from './components/CardCity';
 import { createCity, fetchCities, removeCity } from './cityThunk';
 import FormCreateCity from './components/FormCreateCity';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateCity = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const fetchListCities = useAppSelector(selectCityList);
   const fetchLoading = useAppSelector(selectGetAllCitiesLoading);
+  const errorRemove = useAppSelector(selectErrorRemove);
+  const open = useAppSelector(selectModal);
 
   useEffect(() => {
     dispatch(fetchCities());
@@ -60,6 +65,28 @@ const CreateCity = () => {
           <FormCreateCity onSubmit={onSubmit} />
         </Container>
         <Container>
+          {open && (
+            <Collapse in={open}>
+              <Alert
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      dispatch(controlModal(false));
+                    }}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ mb: 2 }}
+                severity="error"
+              >
+                {errorRemove?.error}
+              </Alert>
+            </Collapse>
+          )}
           <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
             <TableContainer>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">

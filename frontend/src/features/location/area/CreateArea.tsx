@@ -3,7 +3,9 @@ import {
   Alert,
   Box,
   CircularProgress,
+  Collapse,
   Container,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -17,17 +19,20 @@ import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import FormCreateArea from './components/FormCreateArea';
 import CardArea from './components/CardArea';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { selectAreaList, selectGetAllAreaLoading } from './areaSlice';
+import { controlModal, selectAreaList, selectErrorRemove, selectGetAllAreaLoading, selectModal } from './areaSlice';
 import { createArea, fetchAreas, removeArea } from './areaThunk';
 import { AreaMutation } from '../../../types';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { Navigate } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateArea = () => {
   const user = useAppSelector(selectUser);
   const areas = useAppSelector(selectAreaList);
   const loadingGetAllAreas = useAppSelector(selectGetAllAreaLoading);
   const dispatch = useAppDispatch();
+  const errorRemove = useAppSelector(selectErrorRemove);
+  const open = useAppSelector(selectModal);
 
   useEffect(() => {
     dispatch(fetchAreas());
@@ -59,6 +64,28 @@ const CreateArea = () => {
         <FormCreateArea onSubmit={onSubmit} />
       </Container>
       <Container>
+        {open && (
+          <Collapse in={open}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    dispatch(controlModal(false));
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+              severity="error"
+            >
+              {errorRemove?.error}
+            </Alert>
+          </Collapse>
+        )}
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
           <TableContainer>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">

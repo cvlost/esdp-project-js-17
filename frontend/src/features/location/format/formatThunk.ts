@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FormatList, FormatMutation, ValidationError } from '../../../types';
+import { FormatList, FormatMutation, GlobalError, ValidationError } from '../../../types';
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 
@@ -22,6 +22,16 @@ export const createFormat = createAsyncThunk<void, FormatMutation, { rejectValue
   },
 );
 
-export const removeFormat = createAsyncThunk<void, string>('format/remove_format', async (id) => {
-  await axiosApi.delete('/formats/' + id);
-});
+export const removeFormat = createAsyncThunk<void, string, { rejectValue: GlobalError }>(
+  'format/remove_format',
+  async (id, { rejectWithValue }) => {
+    try {
+      await axiosApi.delete('/formats/' + id);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 404) {
+        return rejectWithValue(e.response.data as GlobalError);
+      }
+      throw e;
+    }
+  },
+);

@@ -3,7 +3,9 @@ import {
   Alert,
   Box,
   CircularProgress,
+  Collapse,
   Container,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -16,18 +18,27 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import { StyledTableCell } from '../../../constants';
-import { selectGetAllStreetsLoading, selectStreetList } from './streetSlice';
+import {
+  controlModal,
+  selectErrorRemove,
+  selectGetAllStreetsLoading,
+  selectModal,
+  selectStreetList,
+} from './streetSlice';
 import { Navigate } from 'react-router-dom';
 import { createStreet, fetchStreet, removeStreet } from './streetThunks';
 import FormCreateStreet from './components/FormCreateStreet';
 import CardStreet from './components/CardStreet';
 import { StreetMutation } from '../../../types';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateStreet = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const fetchListStreets = useAppSelector(selectStreetList);
   const fetchLoading = useAppSelector(selectGetAllStreetsLoading);
+  const errorRemove = useAppSelector(selectErrorRemove);
+  const open = useAppSelector(selectModal);
 
   useEffect(() => {
     dispatch(fetchStreet());
@@ -60,6 +71,28 @@ const CreateStreet = () => {
           <FormCreateStreet onSubmit={onSubmit} />
         </Container>
         <Container>
+          {open && (
+            <Collapse in={open}>
+              <Alert
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      dispatch(controlModal(false));
+                    }}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ mb: 2 }}
+                severity="error"
+              >
+                {errorRemove?.error}
+              </Alert>
+            </Collapse>
+          )}
           <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
             <TableContainer>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">

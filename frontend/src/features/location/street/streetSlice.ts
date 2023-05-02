@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
-import { StreetList, ValidationError } from '../../../types';
+import { GlobalError, StreetList, ValidationError } from '../../../types';
 import { createStreet, fetchStreet, removeStreet } from './streetThunks';
 
 interface streetSlice {
@@ -9,6 +9,8 @@ interface streetSlice {
   createStreetLoading: boolean;
   removeStreetLoading: boolean;
   streetError: ValidationError | null;
+  errorRemove: GlobalError | null;
+  modal: boolean;
 }
 
 const initialState: streetSlice = {
@@ -17,12 +19,18 @@ const initialState: streetSlice = {
   createStreetLoading: false,
   removeStreetLoading: false,
   streetError: null,
+  errorRemove: null,
+  modal: false,
 };
 
 const streetSlice = createSlice({
   name: 'street',
   initialState,
-  reducers: {},
+  reducers: {
+    controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
+      state.modal = type;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchStreet.pending, (state) => {
       state.getAllStreetLoading = true;
@@ -52,15 +60,20 @@ const streetSlice = createSlice({
     builder.addCase(removeStreet.fulfilled, (state) => {
       state.removeStreetLoading = false;
     });
-    builder.addCase(removeStreet.rejected, (state) => {
+    builder.addCase(removeStreet.rejected, (state, { payload: error }) => {
       state.removeStreetLoading = false;
+      state.errorRemove = error || null;
+      state.modal = true;
     });
   },
 });
 
 export const streetReducer = streetSlice.reducer;
+export const { controlModal } = streetSlice.actions;
 export const selectStreetList = (state: RootState) => state.street.listStreet;
 export const selectGetAllStreetsLoading = (state: RootState) => state.street.getAllStreetLoading;
 export const selectCreateStreetLoading = (state: RootState) => state.street.createStreetLoading;
 export const selectRemoveStreetLoading = (state: RootState) => state.street.removeStreetLoading;
 export const selectStreetError = (state: RootState) => state.street.streetError;
+export const selectErrorRemove = (state: RootState) => state.street.errorRemove;
+export const selectModal = (state: RootState) => state.street.modal;
