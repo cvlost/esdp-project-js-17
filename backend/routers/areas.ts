@@ -4,6 +4,7 @@ import Area from '../models/Area';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
 import Location from '../models/Location';
+import City from '../models/City';
 
 const areasRouter = express.Router();
 
@@ -37,10 +38,11 @@ areasRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
     const _id = req.params.id as string;
     const area = await Area.findOne({ _id });
     const location = await Location.find({ area: _id });
+    const cities = await City.find({ area: _id });
     if (!area) {
       return res.status(404).send({ error: 'Область не существует в базе.' });
-    } else if (location.length > 0) {
-      return res.status(404).send({ error: 'Область привязан к локациям ! удаление запрещено' });
+    } else if (location.length > 0 || cities.length > 0) {
+      return res.status(404).send({ error: 'Область привязана к другим сущностям ! удаление запрещено' });
     }
     const result = await Area.deleteOne({ _id });
     return res.send(result);
