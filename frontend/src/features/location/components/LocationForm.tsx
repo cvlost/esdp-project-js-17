@@ -73,8 +73,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     schemaImage: null,
   });
 
-  console.log(state);
-
   useEffect(() => {
     if (state.area !== '' && idState.area !== state.area) {
       dispatch(fetchCities(state.area));
@@ -109,25 +107,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     };
 
     onSubmit(initial);
-    setState({
-      addressNote: '',
-      description: '',
-      country: 'Кыргызстан',
-      area: '',
-      region: '',
-      city: '',
-      street: '',
-      direction: '',
-      legalEntity: '',
-      size: '',
-      format: '',
-      lighting: '',
-      placement: false,
-      rent: null,
-      price: '',
-      dayImage: null,
-      schemaImage: null,
-    });
   };
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
