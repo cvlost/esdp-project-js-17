@@ -43,6 +43,7 @@ locationsRouter.get('/', async (req, res, next) => {
     if (page > pages) page = pages;
 
     const locations = await Location.aggregate([
+      { $sort: { _id: -1 } },
       { $skip: (page - 1) * perPage },
       { $limit: perPage },
       ...flattenLookup,
