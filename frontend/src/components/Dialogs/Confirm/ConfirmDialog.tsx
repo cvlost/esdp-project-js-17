@@ -12,7 +12,9 @@ const Confirm = () => {
         <DialogContentText>{text}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onConfirm}>Подтверждаю</Button>
+        <Button color="warning" onClick={onConfirm}>
+          Подтверждаю
+        </Button>
         <Button onClick={onCancel}>Отмена</Button>
       </DialogActions>
     </Dialog>

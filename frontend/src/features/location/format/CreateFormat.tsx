@@ -31,6 +31,7 @@ import { FormatMutation } from '../../../types';
 import FormCreateFormat from './components/FormCreateFormat';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 const CreateFormat = () => {
   const user = useAppSelector(selectUser);
@@ -39,6 +40,7 @@ const CreateFormat = () => {
   const formatsLoading = useAppSelector(selectGetAllFormatLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -47,7 +49,7 @@ const CreateFormat = () => {
   }, [dispatch, user?.role]);
 
   const deleteFormat = async (id: string) => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данный формат?')) {
       await dispatch(removeFormat(id)).unwrap();
       await dispatch(fetchFormat());
       dispatch(openSnackbar({ status: true, parameter: 'remove_format' }));
