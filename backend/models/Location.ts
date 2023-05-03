@@ -63,7 +63,7 @@ const LocationSchema = new Schema<ILocation>({
     enum: BILLBOARD_SIZES,
   },
   lighting: {
-    type: Boolean,
+    type: String,
     required: true,
     enum: BILLBOARD_LIGHTINGS,
   },

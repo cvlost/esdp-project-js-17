@@ -86,7 +86,7 @@ locationsRouter.post(
       price: mongoose.Types.Decimal128.fromString(req.body.price),
       rent: JSON.parse(req.body.rent),
       reserve: req.body.reserve,
-      lighting: JSON.parse(req.body.lighting),
+      lighting: req.body.lighting,
       placement: JSON.parse(req.body.placement),
       size: req.body.size,
       addressNote: req.body.addressNote,

@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { LocationMutation, LocationSubmit, ValidationError } from '../../../types';
-import { Alert, Button, Checkbox, CircularProgress, FormControlLabel, Grid, MenuItem, TextField } from '@mui/material';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  FormControlLabel,
+  Grid,
+  MenuItem,
+  TextField,
+} from '@mui/material';
 import { selectAreaList } from '../area/areaSlice';
 import { selectRegionList } from '../region/regionSlice';
 import { selectCityList } from '../city/citySlice';
@@ -9,7 +19,7 @@ import { selectStreetList } from '../street/streetSlice';
 import { selectDirections } from '../direction/directionsSlice';
 import { selectLegalEntityList } from '../legalEntity/legalEntitySlice';
 import FileInput from '../../../components/FileInput/FileInput';
-import { BILLBOARD_SIZES } from '../../../constants';
+import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../../../constants';
 import { selectFormatList } from '../format/formatSlice';
 import { DateRange } from 'rsuite/DateRangePicker';
 import { fetchAreas } from '../area/areaThunk';
@@ -55,7 +65,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     legalEntity: '',
     size: '',
     format: '',
-    lighting: false,
+    lighting: '',
     placement: false,
     rent: null,
     price: '',
@@ -111,7 +121,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
       legalEntity: '',
       size: '',
       format: '',
-      lighting: false,
+      lighting: '',
       placement: false,
       rent: null,
       price: '',
@@ -139,13 +149,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     setState((prevState) => ({
       ...prevState,
       rent: value,
-    }));
-  };
-
-  const ligthingInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState((prevState) => ({
-      ...prevState,
-      lighting: e.target.checked,
     }));
   };
 
@@ -356,16 +359,32 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           </TextField>
         </Grid>
         <Grid item>
-          <FormControlLabel
-            control={<Checkbox checked={state.lighting} onChange={ligthingInputChangeHandler} required />}
-            label="Внутреннее / внешнее освещение"
-          />
+          <TextField
+            fullWidth
+            select
+            value={state.lighting}
+            name="lighting"
+            label="Освещение"
+            onChange={inputChangeHandler}
+            required
+          >
+            <MenuItem value="" disabled>
+              Выберите освещение
+            </MenuItem>
+            {BILLBOARD_LIGHTINGS &&
+              BILLBOARD_LIGHTINGS.map((lighting) => (
+                <MenuItem key={lighting} value={lighting}>
+                  {lighting}
+                </MenuItem>
+              ))}
+          </TextField>
         </Grid>
         <Grid item>
           <FormControlLabel
-            control={<Checkbox checked={state.placement} onChange={placementInputChangHandler} required />}
+            control={<Checkbox checked={state.placement} onChange={placementInputChangHandler} />}
             label="По направление / не по направлению"
           />
+          <Chip label={state.placement ? 'по направлению' : 'не по направлению'} variant="outlined" />
         </Grid>
         <Grid item>
           <TextField

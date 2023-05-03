@@ -33,7 +33,7 @@ export const createLocation = createAsyncThunk<void, LocationSubmit, { rejectVal
       formData.append('legalEntity', locationSubmit.legalEntity);
       formData.append('size', locationSubmit.size);
       formData.append('format', locationSubmit.format);
-      formData.append('lighting', JSON.stringify(locationSubmit.lighting));
+      formData.append('lighting', locationSubmit.lighting);
       formData.append('placement', JSON.stringify(locationSubmit.placement));
       formData.append('rent', JSON.stringify(locationSubmit.rent));
       formData.append('price', locationSubmit.price);

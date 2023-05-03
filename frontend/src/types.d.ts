@@ -167,7 +167,7 @@ export interface LocationMutation {
   legalEntity: string;
   size: string;
   format: string;
-  lighting: boolean;
+  lighting: string;
   placement: boolean;
   rent: DateRange | null;
   price: string;
@@ -187,7 +187,7 @@ export interface LocationSubmit {
   legalEntity: string;
   size: string;
   format: string;
-  lighting: boolean;
+  lighting: string;
   placement: boolean;
   rent: {
     start: Date | null;
