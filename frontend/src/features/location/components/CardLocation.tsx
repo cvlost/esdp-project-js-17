@@ -66,15 +66,19 @@ const CardLocation: React.FC<Props> = ({ loc, onClose, number, onDelete, deleteL
   };
 
   return (
-    <StyledTableRow
-      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-      onClick={() => navigate(`/location/${loc._id}`)}
-    >
-      <TableCell align="center">{number}</TableCell>
+    <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+      <TableCell onClick={() => navigate(`/location/${loc._id}`)} align="center">
+        {number}
+      </TableCell>
       {columns
         .filter((col) => col.show)
         .map((col) => (
-          <TableCell key={col.prettyName} align="center" sx={{ whiteSpace: 'nowrap' }}>
+          <TableCell
+            onClick={() => navigate(`/location/${loc._id}`)}
+            key={col.prettyName}
+            align="center"
+            sx={{ whiteSpace: 'nowrap' }}
+          >
             {cells[col.name]}
           </TableCell>
         ))}
