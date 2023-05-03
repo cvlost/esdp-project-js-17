@@ -174,3 +174,26 @@ export interface LocationMutation {
   dayImage: File | null;
   schemaImage: File | null;
 }
+
+export interface LocationSubmit {
+  addressNote: string;
+  description: string;
+  country: string;
+  area: string;
+  region: string;
+  city: string;
+  street: string;
+  direction: string;
+  legalEntity: string;
+  size: string;
+  format: string;
+  lighting: boolean;
+  placement: boolean;
+  rent: {
+    start: Date | null;
+    end: Date | null;
+  };
+  price: string;
+  dayImage: File | null;
+  schemaImage: File | null;
+}

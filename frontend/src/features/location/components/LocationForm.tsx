@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { LocationMutation, ValidationError } from '../../../types';
+import { LocationMutation, LocationSubmit, ValidationError } from '../../../types';
 import { Alert, Button, Checkbox, CircularProgress, FormControlLabel, Grid, MenuItem, TextField } from '@mui/material';
 import { selectAreaList } from '../area/areaSlice';
 import { selectRegionList } from '../region/regionSlice';
@@ -23,7 +23,7 @@ import { DateRangePicker, CustomProvider } from 'rsuite';
 import ruRu from 'rsuite/locales/ru_RU';
 
 interface Props {
-  onSubmit: (location: LocationMutation) => void;
+  onSubmit: (location: LocationSubmit) => void;
   isLoading: boolean;
   error: ValidationError | null;
 }
@@ -70,7 +70,16 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    onSubmit(state);
+
+    const initial: LocationSubmit = {
+      ...state,
+      rent: {
+        start: state.rent ? state.rent[0] : null,
+        end: state.rent ? state.rent[1] : null,
+      },
+    };
+
+    onSubmit(initial);
     setState({
       addressNote: '',
       description: '',

@@ -27,6 +27,7 @@ import { StyledTableCell } from '../../constants';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { openSnackbar } from '../users/usersSlice';
+import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -124,6 +125,7 @@ const LocationList = () => {
         Редактировать
       </ModalBody>
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
+      <SnackbarCard />
     </Box>
   );
 };
