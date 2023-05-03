@@ -15,7 +15,6 @@ import { DateRange } from 'rsuite/DateRangePicker';
 import { fetchAreas } from '../area/areaThunk';
 import { fetchRegions } from '../region/regionThunk';
 import { fetchCities } from '../city/cityThunk';
-import { fetchStreet } from '../street/streetThunks';
 import { fetchFormat } from '../format/formatThunk';
 import { fetchLegalEntity } from '../legalEntity/legalEntityThunk';
 import { getDirectionsList } from '../direction/directionsThunks';
@@ -59,14 +58,16 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
   });
 
   useEffect(() => {
-    dispatch(fetchAreas());
-    dispatch(fetchRegions());
-    dispatch(fetchCities());
-    dispatch(fetchStreet());
-    dispatch(fetchFormat());
-    dispatch(fetchLegalEntity());
-    dispatch(getDirectionsList());
-  }, [dispatch]);
+    if (state.area) {
+      dispatch(fetchCities(state.area));
+    } else {
+      dispatch(fetchAreas());
+      dispatch(fetchRegions());
+      dispatch(fetchFormat());
+      dispatch(fetchLegalEntity());
+      dispatch(getDirectionsList());
+    }
+  }, [dispatch, state.area]);
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();

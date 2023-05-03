@@ -3,8 +3,8 @@ import { CityMutation, CityList, ValidationError, GlobalError } from '../../../t
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 
-export const fetchCities = createAsyncThunk<CityList[]>('city/fetch_cities', async () => {
-  const response = await axiosApi.get<CityList[]>('/cities');
+export const fetchCities = createAsyncThunk<CityList[], string | undefined>('city/fetch_cities', async (id) => {
+  const response = await axiosApi.get<CityList[]>(id ? '/cities?areaId=' + id : '/cities');
   return response.data;
 });
 
