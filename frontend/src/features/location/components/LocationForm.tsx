@@ -138,6 +138,14 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     }));
   };
 
+  const getFieldError = (fieldName: string) => {
+    try {
+      return error?.errors[fieldName].message;
+    } catch {
+      return undefined;
+    }
+  };
+
   return (
     <>
       {error && (
@@ -156,6 +164,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             value={state.addressNote}
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('addressNote'))}
+            helperText={getFieldError('addressNote')}
           />
         </Grid>
         <Grid item>
@@ -167,6 +177,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             value={state.description}
             onChange={inputChangeHandler}
             name="description"
+            error={Boolean(getFieldError('description'))}
+            helperText={getFieldError('description')}
           />
         </Grid>
         <Grid item>
@@ -178,6 +190,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Область"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('area'))}
+            helperText={getFieldError('area')}
           >
             <MenuItem value="" disabled>
               Выберите область
@@ -199,6 +213,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Район"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('region'))}
+            helperText={getFieldError('region')}
           >
             <MenuItem value="" disabled>
               Выберите район
@@ -220,6 +236,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Город/село"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('city'))}
+            helperText={getFieldError('city')}
           >
             <MenuItem value="" disabled>
               Выберите город/село
@@ -241,6 +259,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Улица"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('street'))}
+            helperText={getFieldError('street')}
           >
             <MenuItem value="" disabled>
               Выберите улицу
@@ -262,6 +282,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Направление"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('direction'))}
+            helperText={getFieldError('direction')}
           >
             <MenuItem value="" disabled>
               Выберите направление
@@ -283,6 +305,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Юридическое лицо"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('legalEntity'))}
+            helperText={getFieldError('legalEntity')}
           >
             <MenuItem value="" disabled>
               Выберите юрлицо
@@ -304,6 +328,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Размер"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('size'))}
+            helperText={getFieldError('size')}
           >
             <MenuItem value="" disabled>
               Выберите размер
@@ -325,6 +351,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Формат"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('format'))}
+            helperText={getFieldError('format')}
           >
             <MenuItem value="" disabled>
               Выберите формат
@@ -346,6 +374,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Освещение"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('lighting'))}
+            helperText={getFieldError('lighting')}
           >
             <MenuItem value="" disabled>
               Выберите освещение
@@ -374,6 +404,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             value={state.price}
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('price'))}
+            helperText={getFieldError('price')}
           />
         </Grid>
         <Grid item>
