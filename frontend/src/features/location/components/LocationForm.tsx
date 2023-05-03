@@ -4,6 +4,9 @@ import { LocationMutation, LocationSubmit, ValidationError } from '../../../type
 import {
   Alert,
   Button,
+  Card,
+  CardContent,
+  CardMedia,
   Checkbox,
   Chip,
   CircularProgress,
@@ -11,6 +14,7 @@ import {
   Grid,
   MenuItem,
   TextField,
+  Typography,
 } from '@mui/material';
 import { selectAreaList } from '../area/areaSlice';
 import { selectRegionList } from '../region/regionSlice';
@@ -31,6 +35,7 @@ import { getDirectionsList } from '../direction/directionsThunks';
 import { DateRangePicker, CustomProvider } from 'rsuite';
 import ruRu from 'rsuite/locales/ru_RU';
 import { fetchStreet } from '../street/streetThunks';
+import noImage from '../../../assets/noImage.png';
 
 interface Props {
   onSubmit: (location: LocationSubmit) => void;
@@ -39,6 +44,10 @@ interface Props {
 }
 
 const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
+  const [image, setImage] = useState<{ imageDay: string | null; imageSchema: null | string }>({
+    imageDay: null,
+    imageSchema: null,
+  });
   const [idState, setIdState] = useState({
     city: '',
     area: '',
@@ -116,12 +125,23 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     });
   };
 
-  const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
     const { name, files } = e.target;
     setState((prevState) => ({
       ...prevState,
       [name]: files && files[0] ? files[0] : null,
     }));
+    if (files) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (type === 'day') {
+          setImage((prev) => ({ ...prev, imageDay: reader.result as string }));
+        } else if (type === 'schema') {
+          setImage((prev) => ({ ...prev, imageSchema: reader.result as string }));
+        }
+      };
+      reader.readAsDataURL(files[0]);
+    }
   };
 
   const handleDateChange = (value: DateRange | null) => {
@@ -416,7 +436,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
         </Grid>
         <Grid item>
           <FileInput
-            onChange={fileInputChangeHandler}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => fileInputChangeHandler(e, 'day')}
             name="dayImage"
             label="Фото дневного баннера"
             error={Boolean(getFieldError('dayImage'))}
@@ -424,12 +444,32 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
         </Grid>
         <Grid item>
           <FileInput
-            onChange={fileInputChangeHandler}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => fileInputChangeHandler(e, 'schema')}
             name="schemaImage"
             label="Фото схемы"
             error={Boolean(getFieldError('schemaImage'))}
           />
         </Grid>
+        {image.imageDay !== null || image.imageSchema !== null ? (
+          <Grid display="flex" flexWrap="wrap" justifyContent="space-between" item>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardMedia component="img" height="194" image={image.imageDay || noImage} alt="Paella dish" />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  День
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardMedia component="img" height="194" image={image.imageSchema || noImage} alt="Paella dish" />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Cхема
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ) : null}
         <Grid item>
           <Button
             disabled={isLoading || state.rent === null || state.dayImage === null || state.schemaImage === null}

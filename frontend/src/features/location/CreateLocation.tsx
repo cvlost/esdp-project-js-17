@@ -22,7 +22,7 @@ const CreateLocation = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mb: 4 }}>
+    <Container maxWidth="md" sx={{ mb: 4 }}>
       <Box
         sx={{
           mt: 6,
