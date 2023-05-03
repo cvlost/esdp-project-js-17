@@ -20,6 +20,7 @@ import { fetchLegalEntity } from '../legalEntity/legalEntityThunk';
 import { getDirectionsList } from '../direction/directionsThunks';
 import { DateRangePicker, CustomProvider } from 'rsuite';
 import ruRu from 'rsuite/locales/ru_RU';
+import { fetchStreet } from '../street/streetThunks';
 
 interface Props {
   onSubmit: (location: LocationSubmit) => void;
@@ -28,6 +29,11 @@ interface Props {
 }
 
 const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
+  const [idState, setIdState] = useState({
+    city: '',
+    area: '',
+  });
+
   const dispatch = useAppDispatch();
   const areas = useAppSelector(selectAreaList);
   const regions = useAppSelector(selectRegionList);
@@ -57,17 +63,29 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     schemaImage: null,
   });
 
+  console.log(state);
+
   useEffect(() => {
-    if (state.area) {
+    if (state.area !== '' && idState.area !== state.area) {
       dispatch(fetchCities(state.area));
-    } else {
+      setIdState((prev) => ({ ...prev, area: state.area }));
+      setState((prev) => ({ ...prev, street: '', city: '' }));
+    }
+
+    if (state.city && idState.city !== state.city) {
+      dispatch(fetchStreet(state.city));
+      setIdState((prev) => ({ ...prev, city: state.city }));
+      setState((prev) => ({ ...prev, street: '' }));
+    }
+
+    if (state.area === '' && state.city === '') {
       dispatch(fetchAreas());
       dispatch(fetchRegions());
       dispatch(fetchFormat());
       dispatch(fetchLegalEntity());
       dispatch(getDirectionsList());
     }
-  }, [dispatch, state.area]);
+  }, [dispatch, state.area, state.city, idState]);
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
