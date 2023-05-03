@@ -47,7 +47,7 @@ export interface ILocation {
   price: Types.Decimal128;
   rent: IPeriod | null;
   reserve: IPeriod | null;
-  lighting: string;
+  lighting: boolean;
   placement: boolean;
   size: string;
   addressNote?: string;

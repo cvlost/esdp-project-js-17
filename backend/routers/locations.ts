@@ -5,6 +5,8 @@ import mongoose, { PipelineStage, Types } from 'mongoose';
 import Region from '../models/Region';
 import City from '../models/City';
 import Direction from '../models/Direction';
+import { imagesUpload } from '../multer';
+import { ILocation } from '../types';
 
 const locationsRouter = express.Router();
 
@@ -64,22 +66,48 @@ locationsRouter.get('/:id', async (req, res, next) => {
   }
 });
 
-locationsRouter.post('/', auth, async (req, res, next) => {
-  const { address, addressNote, region, city, direction, description } = req.body;
-  const dto = { address, addressNote, region, city, direction, description };
-  try {
-    const locationData = await Location.create(dto);
-    return res.send({
-      message: 'Новая локация успешно создана!',
-      location: await Location.populate(locationData, 'region direction city'),
-    });
-  } catch (e) {
-    if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+locationsRouter.post(
+  '/',
+  imagesUpload.fields([{ name: 'dayImage', maxCount: 1 }, { name: 'schemaImage' }]),
+  auth,
+  async (req, res, next) => {
+    const files = req.files as { [filename: string]: Express.Multer.File[] };
+
+    const locationObj: ILocation = {
+      country: req.body.country,
+      area: req.body.area,
+      region: req.body.region,
+      city: req.body.city,
+      street: req.body.street,
+      direction: req.body.direction,
+      legalEntity: req.body.legalEntity,
+      format: req.body.format,
+      price: mongoose.Types.Decimal128.fromString(req.body.price),
+      rent: JSON.parse(req.body.rent),
+      reserve: req.body.reserve,
+      lighting: JSON.parse(req.body.lighting),
+      placement: JSON.parse(req.body.placement),
+      size: req.body.size,
+      addressNote: req.body.addressNote,
+      description: req.body.description,
+      dayImage: files['dayImage'][0].filename,
+      schemaImage: files['schemaImage'][0].filename,
+    };
+
+    try {
+      const locationData = await Location.create(locationObj);
+      return res.send({
+        message: 'Новая локация успешно создана!',
+        location: await Location.populate(locationData, 'region direction city'),
+      });
+    } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError) {
+        return res.status(400).send(e);
+      }
+      return next(e);
     }
-    return next(e);
-  }
-});
+  },
+);
 
 locationsRouter.put('/:id', auth, async (req, res, next) => {
   const id = req.params.id as string;
