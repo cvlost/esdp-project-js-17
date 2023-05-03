@@ -415,13 +415,29 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           <Chip sx={{ ml: 2 }} label="Аренда" variant="outlined" />
         </Grid>
         <Grid item>
-          <FileInput onChange={fileInputChangeHandler} name="dayImage" label="Фото дневного баннера" />
+          <FileInput
+            onChange={fileInputChangeHandler}
+            name="dayImage"
+            label="Фото дневного баннера"
+            error={Boolean(getFieldError('dayImage'))}
+          />
         </Grid>
         <Grid item>
-          <FileInput onChange={fileInputChangeHandler} name="schemaImage" label="Фото схемы" />
+          <FileInput
+            onChange={fileInputChangeHandler}
+            name="schemaImage"
+            label="Фото схемы"
+            error={Boolean(getFieldError('schemaImage'))}
+          />
         </Grid>
         <Grid item>
-          <Button type="submit" color="primary" variant="contained" fullWidth>
+          <Button
+            disabled={isLoading || state.rent === null || state.dayImage === null || state.schemaImage === null}
+            type="submit"
+            color="primary"
+            variant="contained"
+            fullWidth
+          >
             {isLoading ? <CircularProgress /> : 'Создать'}
           </Button>
         </Grid>
