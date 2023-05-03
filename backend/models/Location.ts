@@ -131,6 +131,14 @@ const LocationSchema = new Schema<ILocation>({
       message: 'Неверный id направления.',
     },
   },
+  dayImage: {
+    type: String,
+    required: true,
+  },
+  schemaImage: {
+    type: String,
+    required: true,
+  },
 });
 
 const Location = model<ILocation>('Location', LocationSchema);

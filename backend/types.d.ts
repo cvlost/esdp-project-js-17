@@ -53,6 +53,8 @@ export interface ILocation {
   image?: string;
   addressNote?: string;
   description?: string;
+  dayImage: null | string;
+  schemaImage: null | string;
 }
 
 export interface AreaType {
