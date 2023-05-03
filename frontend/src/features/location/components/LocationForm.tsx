@@ -412,6 +412,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           <CustomProvider locale={ruRu}>
             <DateRangePicker placement="topStart" showWeekNumbers onChange={handleDateChange} />
           </CustomProvider>
+          <Chip sx={{ ml: 2 }} label="Аренда" variant="outlined" />
         </Grid>
         <Grid item>
           <FileInput onChange={fileInputChangeHandler} name="dayImage" label="Фото дневного баннера" />
