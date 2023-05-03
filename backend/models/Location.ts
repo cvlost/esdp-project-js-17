@@ -48,7 +48,6 @@ const LocationSchema = new Schema<ILocation>({
   reserve: PeriodSchema,
   description: String,
   addressNote: String,
-  image: String,
   placement: {
     type: Boolean,
     required: true,
