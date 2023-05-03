@@ -10,8 +10,13 @@ const citiesRouter = express.Router();
 
 citiesRouter.get('/', auth, async (req, res, next) => {
   try {
-    const cities = await City.find();
-    return res.send(cities);
+    if (req.query.areaId !== undefined) {
+      const cities = await City.find({ area: req.query.areaId });
+      return res.send(cities);
+    } else {
+      const cities = await City.find();
+      return res.send(cities);
+    }
   } catch (e) {
     return next(e);
   }
