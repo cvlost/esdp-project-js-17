@@ -25,15 +25,12 @@ import { selectLegalEntityList } from '../legalEntity/legalEntitySlice';
 import FileInput from '../../../components/FileInput/FileInput';
 import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../../../constants';
 import { selectFormatList } from '../format/formatSlice';
-import { DateRange } from 'rsuite/DateRangePicker';
 import { fetchAreas } from '../area/areaThunk';
 import { fetchRegions } from '../region/regionThunk';
 import { fetchCities } from '../city/cityThunk';
 import { fetchFormat } from '../format/formatThunk';
 import { fetchLegalEntity } from '../legalEntity/legalEntityThunk';
 import { getDirectionsList } from '../direction/directionsThunks';
-import { DateRangePicker, CustomProvider } from 'rsuite';
-import ruRu from 'rsuite/locales/ru_RU';
 import { fetchStreet } from '../street/streetThunks';
 import noImage from '../../../assets/noImage.png';
 
@@ -76,7 +73,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     format: '',
     lighting: '',
     placement: false,
-    rent: null,
     price: '',
     dayImage: null,
     schemaImage: null,
@@ -106,16 +102,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    const initial: LocationSubmit = {
-      ...state,
-      rent: {
-        start: state.rent ? state.rent[0] : null,
-        end: state.rent ? state.rent[1] : null,
-      },
-    };
-
-    onSubmit(initial);
+    onSubmit(state);
   };
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -144,13 +131,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     }
   };
 
-  const handleDateChange = (value: DateRange | null) => {
-    setState((prevState) => ({
-      ...prevState,
-      rent: value,
-    }));
-  };
-
   const placementInputChangHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setState((prevState) => ({
       ...prevState,
@@ -174,33 +154,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
         </Alert>
       )}
       <Grid component="form" onSubmit={submitFormHandler} container direction="column" spacing={2}>
-        <Grid item>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            label="Полный адрес"
-            name="addressNote"
-            value={state.addressNote}
-            onChange={inputChangeHandler}
-            required
-            error={Boolean(getFieldError('addressNote'))}
-            helperText={getFieldError('addressNote')}
-          />
-        </Grid>
-        <Grid item>
-          <TextField
-            fullWidth
-            multiline
-            rows={5}
-            label="Дополнительная информация"
-            value={state.description}
-            onChange={inputChangeHandler}
-            name="description"
-            error={Boolean(getFieldError('description'))}
-            helperText={getFieldError('description')}
-          />
-        </Grid>
         <Grid item>
           <TextField
             fullWidth
@@ -292,6 +245,33 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
                 </MenuItem>
               ))}
           </TextField>
+        </Grid>
+        <Grid item>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Заметка к адресу"
+            name="addressNote"
+            value={state.addressNote}
+            onChange={inputChangeHandler}
+            required
+            error={Boolean(getFieldError('addressNote'))}
+            helperText={getFieldError('addressNote')}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            fullWidth
+            multiline
+            rows={5}
+            label="Описание"
+            value={state.description}
+            onChange={inputChangeHandler}
+            name="description"
+            error={Boolean(getFieldError('description'))}
+            helperText={getFieldError('description')}
+          />
         </Grid>
         <Grid item>
           <TextField
@@ -429,12 +409,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           />
         </Grid>
         <Grid item>
-          <CustomProvider locale={ruRu}>
-            <DateRangePicker placement="topStart" showWeekNumbers onChange={handleDateChange} />
-          </CustomProvider>
-          <Chip sx={{ ml: 2 }} label="Аренда" variant="outlined" />
-        </Grid>
-        <Grid item>
           <FileInput
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => fileInputChangeHandler(e, 'day')}
             name="dayImage"
@@ -472,7 +446,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
         ) : null}
         <Grid item>
           <Button
-            disabled={isLoading || state.rent === null || state.dayImage === null || state.schemaImage === null}
+            disabled={isLoading || state.dayImage === null || state.schemaImage === null}
             type="submit"
             color="primary"
             variant="contained"

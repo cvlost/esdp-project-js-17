@@ -35,7 +35,6 @@ export const createLocation = createAsyncThunk<void, LocationSubmit, { rejectVal
       formData.append('format', locationSubmit.format);
       formData.append('lighting', locationSubmit.lighting);
       formData.append('placement', JSON.stringify(locationSubmit.placement));
-      formData.append('rent', JSON.stringify(locationSubmit.rent));
       formData.append('price', locationSubmit.price);
       if (locationSubmit.dayImage) {
         formData.append('dayImage', locationSubmit.dayImage);

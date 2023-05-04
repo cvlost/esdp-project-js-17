@@ -169,7 +169,6 @@ export interface LocationMutation {
   format: string;
   lighting: string;
   placement: boolean;
-  rent: DateRange | null;
   price: string;
   dayImage: File | null;
   schemaImage: File | null;
@@ -189,10 +188,6 @@ export interface LocationSubmit {
   format: string;
   lighting: string;
   placement: boolean;
-  rent: {
-    start: Date | null;
-    end: Date | null;
-  };
   price: string;
   dayImage: File | null;
   schemaImage: File | null;
