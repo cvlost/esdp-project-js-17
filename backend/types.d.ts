@@ -62,3 +62,10 @@ export interface AreaType {
 export interface FormatType {
   name: string;
 }
+
+export interface ClientType {
+  name: string;
+  phone: string;
+  email?: string;
+  description?: string;
+}
