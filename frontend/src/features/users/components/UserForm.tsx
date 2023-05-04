@@ -5,6 +5,8 @@ import { UserMutation, ValidationError } from '../../../types';
 import { ROLES } from '../../../constants';
 import { useAppSelector } from '../../../app/hooks';
 import { selectUser } from '../usersSlice';
+import useAlert from '../../../components/Dialogs/Alert/useAlert';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 interface Props {
   onSubmit: (user: UserMutation) => void;
@@ -24,6 +26,8 @@ const initialState: UserMutation = {
 const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEdit, isLoading, error }) => {
   const [state, setState] = useState<UserMutation>(existingUser);
   const user = useAppSelector(selectUser);
+  const { alert } = useAlert();
+  const { confirm } = useConfirm();
 
   const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -32,7 +36,12 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    onSubmit(state);
+    if (await confirm('Предупреждение', 'Вы дейтсвительно хотите сохранить настройки?')) {
+      onSubmit(state);
+      alert('Уведомление', 'Настройки успешно сохранены');
+    } else {
+      return;
+    }
   };
 
   return (
