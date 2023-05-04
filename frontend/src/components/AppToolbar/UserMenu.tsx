@@ -20,6 +20,7 @@ import {
 } from '../../features/users/usersSlice';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import useConfirm from '../Dialogs/Confirm/useConfirm';
 
 interface Props {
   user: User;
@@ -35,6 +36,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
   const error = useAppSelector(selectEditingError);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { confirm } = useConfirm();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -116,10 +118,12 @@ const UserMenu: React.FC<Props> = ({ user }) => {
         <Divider key="user-divider" />
         <MenuItem
           sx={{ justifyContent: 'center' }}
-          onClick={() => {
-            dispatch(logout());
-            handleClose();
-            navigate('/');
+          onClick={async () => {
+            if (await confirm('Выход', 'Вы действительно хотите выйти? Так быстро?')) {
+              dispatch(logout());
+              handleClose();
+              navigate('/');
+            }
           }}
         >
           Выйти
