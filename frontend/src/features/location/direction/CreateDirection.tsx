@@ -31,6 +31,7 @@ import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { DirectionMutation } from '../../../types';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 const CreateDirection = () => {
   const user = useAppSelector(selectUser);
@@ -39,6 +40,7 @@ const CreateDirection = () => {
   const fetchLoading = useAppSelector(selectDirectionsLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     dispatch(getDirectionsList());
@@ -51,7 +53,7 @@ const CreateDirection = () => {
   };
 
   const removeCardDirection = async (id: string) => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данное направление?')) {
       await dispatch(deleteDirection(id)).unwrap();
       await dispatch(getDirectionsList()).unwrap();
       dispatch(openSnackbar({ status: true, parameter: 'remove_direction' }));

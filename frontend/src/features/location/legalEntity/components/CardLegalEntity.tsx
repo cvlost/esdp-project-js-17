@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectOneLegalEntityLoading, selectRemoveLegalEntityLoading } from '../legalEntitySlice';
 import { openSnackbar, selectEditOneUserLoading } from '../../../users/usersSlice';
 import { fetchLegalEntity, fetchOneLegalEntity, removeLegalEntity } from '../legalEntityThunk';
+import useConfirm from '../../../../components/Dialogs/Confirm/useConfirm';
 
 const CardLegalEntity: React.FC<LegalEntityList> = ({ name, _id }) => {
   const dispatch = useAppDispatch();
@@ -15,9 +16,10 @@ const CardLegalEntity: React.FC<LegalEntityList> = ({ name, _id }) => {
   const editLoading = useAppSelector(selectEditOneUserLoading);
   const oneEntityLoading = useAppSelector(selectOneLegalEntityLoading);
   const anyLoading = removeLoading || editLoading;
+  const { confirm } = useConfirm();
 
   const removeEntity = async () => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данное Юр.лицо?')) {
       await dispatch(removeLegalEntity(_id)).unwrap();
       await dispatch(fetchLegalEntity());
       dispatch(openSnackbar({ status: true, parameter: 'remove_legal_entity' }));

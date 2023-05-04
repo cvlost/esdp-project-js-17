@@ -25,6 +25,7 @@ import { AreaMutation } from '../../../types';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 const CreateArea = () => {
   const user = useAppSelector(selectUser);
@@ -33,6 +34,7 @@ const CreateArea = () => {
   const dispatch = useAppDispatch();
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     dispatch(fetchAreas());
@@ -45,7 +47,7 @@ const CreateArea = () => {
   };
 
   const removeAreaCard = async (id: string) => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить даунную область?')) {
       await dispatch(removeArea(id)).unwrap();
       await dispatch(fetchAreas()).unwrap();
       dispatch(openSnackbar({ status: true, parameter: 'remove_area' }));

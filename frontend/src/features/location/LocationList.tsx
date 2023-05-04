@@ -27,6 +27,7 @@ import { StyledTableCell } from '../../constants';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { openSnackbar } from '../users/usersSlice';
+import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -36,13 +37,14 @@ const LocationList = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     dispatch(getLocationsList({ page: locationsListData.page, perPage: locationsListData.perPage }));
   }, [dispatch, locationsListData.page, locationsListData.perPage]);
 
   const DeleteLocations = async (_id: string) => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную локацию?')) {
       await dispatch(removeLocation(_id)).unwrap();
       await dispatch(getLocationsList());
       dispatch(openSnackbar({ status: true, parameter: 'remove_locations' }));

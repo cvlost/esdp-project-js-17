@@ -31,6 +31,7 @@ import FormCreateStreet from './components/FormCreateStreet';
 import CardStreet from './components/CardStreet';
 import { StreetMutation } from '../../../types';
 import CloseIcon from '@mui/icons-material/Close';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 const CreateStreet = () => {
   const user = useAppSelector(selectUser);
@@ -39,6 +40,7 @@ const CreateStreet = () => {
   const fetchLoading = useAppSelector(selectGetAllStreetsLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     dispatch(fetchStreet());
@@ -51,7 +53,7 @@ const CreateStreet = () => {
   };
 
   const removeCardStreet = async (id: string) => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную улицу?')) {
       await dispatch(removeStreet(id)).unwrap();
       await dispatch(fetchStreet()).unwrap();
       dispatch(openSnackbar({ status: true, parameter: 'remove_street' }));

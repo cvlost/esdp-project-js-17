@@ -14,7 +14,7 @@ interface LinkOption {
 const link_options: LinkOption[] = [
   { label: 'Создать Локацию', link: '/location/create_location' },
   { label: 'Создать Область', link: '/location/create_area' },
-  { label: 'Создать Регион', link: '/location/create_region' },
+  { label: 'Создать Район', link: '/location/create_region' },
   { label: 'Создать Город', link: '/location/create_city' },
   { label: 'Создать Направление', link: '/location/create_direction' },
   { label: 'Создать Формат', link: '/location/create_format' },
