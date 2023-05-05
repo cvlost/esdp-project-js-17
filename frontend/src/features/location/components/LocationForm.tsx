@@ -255,7 +255,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             name="addressNote"
             value={state.addressNote}
             onChange={inputChangeHandler}
-            required
             error={Boolean(getFieldError('addressNote'))}
             helperText={getFieldError('addressNote')}
           />
