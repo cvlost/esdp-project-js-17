@@ -31,6 +31,7 @@ import CardRegion from './components/CardRegion';
 import FormCreateRegion from './components/FormCreateRegion';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 const CreateRegion = () => {
   const user = useAppSelector(selectUser);
@@ -39,6 +40,7 @@ const CreateRegion = () => {
   const fetchLoading = useAppSelector(selectGetAllRegionLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     dispatch(fetchRegions());
@@ -51,7 +53,7 @@ const CreateRegion = () => {
   };
 
   const removeCardRegion = async (id: string) => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данный район ?')) {
       await dispatch(removeRegion(id)).unwrap();
       await dispatch(fetchRegions()).unwrap();
       dispatch(openSnackbar({ status: true, parameter: 'remove_region' }));

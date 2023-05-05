@@ -25,6 +25,7 @@ import CardCity from './components/CardCity';
 import { createCity, fetchCities, removeCity } from './cityThunk';
 import FormCreateCity from './components/FormCreateCity';
 import CloseIcon from '@mui/icons-material/Close';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 const CreateCity = () => {
   const user = useAppSelector(selectUser);
@@ -33,6 +34,7 @@ const CreateCity = () => {
   const fetchLoading = useAppSelector(selectGetAllCitiesLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     dispatch(fetchCities());
@@ -45,7 +47,7 @@ const CreateCity = () => {
   };
 
   const removeCardCity = async (id: string) => {
-    if (window.confirm('Вы действительно хотите удалить ?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данный город?')) {
       await dispatch(removeCity(id)).unwrap();
       await dispatch(fetchCities()).unwrap();
       dispatch(openSnackbar({ status: true, parameter: 'remove_city' }));
