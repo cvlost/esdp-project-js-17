@@ -38,7 +38,7 @@ export interface IPeriod {
 export interface ILocation {
   client: Schema.Types.ObjectId;
   booking: Schema.Types.ObjectId;
-  nearest_booking_date: Schema.Types.Date[];
+  nearest_booking_date: [Schema.Types.Date];
   country: string;
   area: Types.ObjectId;
   region: Types.ObjectId;
@@ -76,5 +76,5 @@ export interface ClientType {
 export interface BookingType {
   clientId: Schema.Types.ObjectId;
   locationId: Schema.Types.ObjectId;
-  booking_date: Schema.Types.Date[];
+  booking_date: [Schema.Types.Date];
 }
