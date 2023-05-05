@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectCreateLocationError, selectCreateLocationLoading } from './locationsSlice';
-import { LocationMutation } from '../../types';
+import { LocationSubmit } from '../../types';
 import { createLocation } from './locationsThunks';
 import { Avatar, Box, Container, Typography } from '@mui/material';
 import LocationForm from './components/LocationForm';
@@ -15,14 +15,14 @@ const CreateLocation = () => {
   const creating = useAppSelector(selectCreateLocationLoading);
   const error = useAppSelector(selectCreateLocationError);
 
-  const submitFormHandler = async (location: LocationMutation) => {
+  const submitFormHandler = async (location: LocationSubmit) => {
     await dispatch(createLocation(location)).unwrap();
     dispatch(openSnackbar({ status: true, parameter: 'create_location' }));
-    navigate('/');
+    navigate('/location');
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mb: 4 }}>
+    <Container maxWidth="md" sx={{ mb: 4 }}>
       <Box
         sx={{
           mt: 6,

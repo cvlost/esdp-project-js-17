@@ -48,7 +48,6 @@ const LocationSchema = new Schema<ILocation>({
   reserve: PeriodSchema,
   description: String,
   addressNote: String,
-  image: String,
   placement: {
     type: Boolean,
     required: true,
@@ -130,6 +129,14 @@ const LocationSchema = new Schema<ILocation>({
       validator: (id: Types.ObjectId) => Direction.findById(id),
       message: 'Неверный id направления.',
     },
+  },
+  dayImage: {
+    type: String,
+    required: true,
+  },
+  schemaImage: {
+    type: String,
+    required: true,
   },
 });
 

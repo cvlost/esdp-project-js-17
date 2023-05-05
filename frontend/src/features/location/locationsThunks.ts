@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ILocation, LocationMutation, LocationsListResponse, ValidationError } from '../../types';
+import { ILocation, LocationsListResponse, LocationSubmit, ValidationError } from '../../types';
 import axiosApi from '../../axios';
 import { isAxiosError } from 'axios';
 
@@ -17,36 +17,30 @@ export const getLocationsList = createAsyncThunk<LocationsListResponse, RequestP
   },
 );
 
-export const createLocation = createAsyncThunk<void, LocationMutation, { rejectValue: ValidationError }>(
+export const createLocation = createAsyncThunk<void, LocationSubmit, { rejectValue: ValidationError }>(
   'locations/create',
-  async (locatMutation, { rejectWithValue }) => {
+  async (locationSubmit, { rejectWithValue }) => {
     try {
       const formData = new FormData();
-      formData.append('addressNote', locatMutation.addressNote);
-      formData.append('description', locatMutation.description);
-      formData.append('country', locatMutation.country);
-      formData.append('area', locatMutation.area);
-      formData.append('region', locatMutation.region);
-      formData.append('city', locatMutation.city);
-      formData.append('street', locatMutation.street);
-      formData.append('direction', locatMutation.direction);
-      formData.append('legalEntity', locatMutation.legalEntity);
-      formData.append('size', locatMutation.size);
-      formData.append('format', locatMutation.format);
-      formData.append('lighting', JSON.stringify(locatMutation.lighting));
-      formData.append('placement', JSON.stringify(locatMutation.placement));
-      if (locatMutation.rent) {
-        const startDate = locatMutation.rent[0]?.toISOString();
-        const endDate = locatMutation.rent[1]?.toISOString();
-        const rentObject = { startDate, endDate };
-        formData.append('rent', JSON.stringify(rentObject));
+      formData.append('addressNote', locationSubmit.addressNote);
+      formData.append('description', locationSubmit.description);
+      formData.append('country', locationSubmit.country);
+      formData.append('area', locationSubmit.area);
+      formData.append('region', locationSubmit.region);
+      formData.append('city', locationSubmit.city);
+      formData.append('street', locationSubmit.street);
+      formData.append('direction', locationSubmit.direction);
+      formData.append('legalEntity', locationSubmit.legalEntity);
+      formData.append('size', locationSubmit.size);
+      formData.append('format', locationSubmit.format);
+      formData.append('lighting', locationSubmit.lighting);
+      formData.append('placement', JSON.stringify(locationSubmit.placement));
+      formData.append('price', locationSubmit.price);
+      if (locationSubmit.dayImage) {
+        formData.append('dayImage', locationSubmit.dayImage);
       }
-      formData.append('price', locatMutation.price);
-      if (locatMutation.dayImage) {
-        formData.append('dayImage', locatMutation.dayImage);
-      }
-      if (locatMutation.schemaImage) {
-        formData.append('schemaImage', locatMutation.schemaImage);
+      if (locationSubmit.schemaImage) {
+        formData.append('schemaImage', locationSubmit.schemaImage);
       }
 
       await axiosApi.post('/locations', formData);

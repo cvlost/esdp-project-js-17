@@ -191,6 +191,8 @@ const run = async () => {
       placement: Math.random() > 0.5,
       addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
       description: Math.random() > 0.5 ? fixtureDescription : null,
+      dayImage: 'fixtures/banner.jpeg',
+      schemaImage: 'fixtures/banner.jpeg',
     });
   }
 

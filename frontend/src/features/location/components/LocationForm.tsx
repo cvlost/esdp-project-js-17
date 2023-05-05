@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { LocationMutation, ValidationError } from '../../../types';
-import { Alert, Button, Checkbox, CircularProgress, FormControlLabel, Grid, MenuItem, TextField } from '@mui/material';
+import { LocationMutation, LocationSubmit, ValidationError } from '../../../types';
+import {
+  Alert,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  FormControlLabel,
+  Grid,
+  MenuItem,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { selectAreaList } from '../area/areaSlice';
 import { selectRegionList } from '../region/regionSlice';
 import { selectCityList } from '../city/citySlice';
@@ -9,26 +23,33 @@ import { selectStreetList } from '../street/streetSlice';
 import { selectDirections } from '../direction/directionsSlice';
 import { selectLegalEntityList } from '../legalEntity/legalEntitySlice';
 import FileInput from '../../../components/FileInput/FileInput';
-import { BILLBOARD_SIZES } from '../../../constants';
+import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../../../constants';
 import { selectFormatList } from '../format/formatSlice';
-import { DateRange } from 'rsuite/DateRangePicker';
 import { fetchAreas } from '../area/areaThunk';
 import { fetchRegions } from '../region/regionThunk';
 import { fetchCities } from '../city/cityThunk';
-import { fetchStreet } from '../street/streetThunks';
 import { fetchFormat } from '../format/formatThunk';
 import { fetchLegalEntity } from '../legalEntity/legalEntityThunk';
 import { getDirectionsList } from '../direction/directionsThunks';
-import { DateRangePicker, CustomProvider } from 'rsuite';
-import ruRu from 'rsuite/locales/ru_RU';
+import { fetchStreet } from '../street/streetThunks';
+import noImage from '../../../assets/noImage.png';
 
 interface Props {
-  onSubmit: (location: LocationMutation) => void;
+  onSubmit: (location: LocationSubmit) => void;
   isLoading: boolean;
   error: ValidationError | null;
 }
 
 const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
+  const [image, setImage] = useState<{ imageDay: string | null; imageSchema: null | string }>({
+    imageDay: null,
+    imageSchema: null,
+  });
+  const [idState, setIdState] = useState({
+    city: '',
+    area: '',
+  });
+
   const dispatch = useAppDispatch();
   const areas = useAppSelector(selectAreaList);
   const regions = useAppSelector(selectRegionList);
@@ -50,46 +71,38 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     legalEntity: '',
     size: '',
     format: '',
-    lighting: false,
+    lighting: '',
     placement: false,
-    rent: null,
     price: '',
     dayImage: null,
     schemaImage: null,
   });
 
   useEffect(() => {
-    dispatch(fetchAreas());
-    dispatch(fetchRegions());
-    dispatch(fetchCities());
-    dispatch(fetchStreet());
-    dispatch(fetchFormat());
-    dispatch(fetchLegalEntity());
-    dispatch(getDirectionsList());
-  }, [dispatch]);
+    if (state.area !== '' && idState.area !== state.area) {
+      dispatch(fetchCities(state.area));
+      setIdState((prev) => ({ ...prev, area: state.area }));
+      setState((prev) => ({ ...prev, street: '', city: '' }));
+    }
+
+    if (state.city && idState.city !== state.city) {
+      dispatch(fetchStreet(state.city));
+      setIdState((prev) => ({ ...prev, city: state.city }));
+      setState((prev) => ({ ...prev, street: '' }));
+    }
+
+    if (state.area === '' && state.city === '') {
+      dispatch(fetchAreas());
+      dispatch(fetchRegions());
+      dispatch(fetchFormat());
+      dispatch(fetchLegalEntity());
+      dispatch(getDirectionsList());
+    }
+  }, [dispatch, state.area, state.city, idState]);
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     onSubmit(state);
-    setState({
-      addressNote: '',
-      description: '',
-      country: 'Кыргызстан',
-      area: '',
-      region: '',
-      city: '',
-      street: '',
-      direction: '',
-      legalEntity: '',
-      size: '',
-      format: '',
-      lighting: false,
-      placement: false,
-      rent: null,
-      price: '',
-      dayImage: null,
-      schemaImage: null,
-    });
   };
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -99,26 +112,23 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     });
   };
 
-  const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
     const { name, files } = e.target;
     setState((prevState) => ({
       ...prevState,
       [name]: files && files[0] ? files[0] : null,
     }));
-  };
-
-  const handleDateChange = (value: DateRange | null) => {
-    setState((prevState) => ({
-      ...prevState,
-      rent: value,
-    }));
-  };
-
-  const ligthingInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState((prevState) => ({
-      ...prevState,
-      lighting: e.target.checked,
-    }));
+    if (files) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (type === 'day') {
+          setImage((prev) => ({ ...prev, imageDay: reader.result as string }));
+        } else if (type === 'schema') {
+          setImage((prev) => ({ ...prev, imageSchema: reader.result as string }));
+        }
+      };
+      reader.readAsDataURL(files[0]);
+    }
   };
 
   const placementInputChangHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +136,14 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
       ...prevState,
       placement: e.target.checked,
     }));
+  };
+
+  const getFieldError = (fieldName: string) => {
+    try {
+      return error?.errors[fieldName].message;
+    } catch {
+      return undefined;
+    }
   };
 
   return (
@@ -139,35 +157,14 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
         <Grid item>
           <TextField
             fullWidth
-            multiline
-            rows={3}
-            label="Полный адрес"
-            name="addressNote"
-            value={state.addressNote}
-            onChange={inputChangeHandler}
-            required
-          />
-        </Grid>
-        <Grid item>
-          <TextField
-            fullWidth
-            multiline
-            rows={5}
-            label="Дополнительная информация"
-            value={state.description}
-            onChange={inputChangeHandler}
-            name="description"
-          />
-        </Grid>
-        <Grid item>
-          <TextField
-            fullWidth
             select
             value={state.area}
             name="area"
             label="Область"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('area'))}
+            helperText={getFieldError('area')}
           >
             <MenuItem value="" disabled>
               Выберите область
@@ -189,6 +186,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Район"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('region'))}
+            helperText={getFieldError('region')}
           >
             <MenuItem value="" disabled>
               Выберите район
@@ -210,6 +209,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Город/село"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('city'))}
+            helperText={getFieldError('city')}
           >
             <MenuItem value="" disabled>
               Выберите город/село
@@ -231,6 +232,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Улица"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('street'))}
+            helperText={getFieldError('street')}
           >
             <MenuItem value="" disabled>
               Выберите улицу
@@ -246,12 +249,40 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
         <Grid item>
           <TextField
             fullWidth
+            multiline
+            rows={3}
+            label="Заметка к адресу"
+            name="addressNote"
+            value={state.addressNote}
+            onChange={inputChangeHandler}
+            error={Boolean(getFieldError('addressNote'))}
+            helperText={getFieldError('addressNote')}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            fullWidth
+            multiline
+            rows={5}
+            label="Описание"
+            value={state.description}
+            onChange={inputChangeHandler}
+            name="description"
+            error={Boolean(getFieldError('description'))}
+            helperText={getFieldError('description')}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            fullWidth
             select
             value={state.direction}
             name="direction"
             label="Направление"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('direction'))}
+            helperText={getFieldError('direction')}
           >
             <MenuItem value="" disabled>
               Выберите направление
@@ -273,6 +304,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Юридическое лицо"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('legalEntity'))}
+            helperText={getFieldError('legalEntity')}
           >
             <MenuItem value="" disabled>
               Выберите юрлицо
@@ -294,6 +327,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Размер"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('size'))}
+            helperText={getFieldError('size')}
           >
             <MenuItem value="" disabled>
               Выберите размер
@@ -315,6 +350,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             label="Формат"
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('format'))}
+            helperText={getFieldError('format')}
           >
             <MenuItem value="" disabled>
               Выберите формат
@@ -328,16 +365,34 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           </TextField>
         </Grid>
         <Grid item>
-          <FormControlLabel
-            control={<Checkbox checked={state.lighting} onChange={ligthingInputChangeHandler} required />}
-            label="Внутреннее / внешнее освещение"
-          />
+          <TextField
+            fullWidth
+            select
+            value={state.lighting}
+            name="lighting"
+            label="Освещение"
+            onChange={inputChangeHandler}
+            required
+            error={Boolean(getFieldError('lighting'))}
+            helperText={getFieldError('lighting')}
+          >
+            <MenuItem value="" disabled>
+              Выберите освещение
+            </MenuItem>
+            {BILLBOARD_LIGHTINGS &&
+              BILLBOARD_LIGHTINGS.map((lighting) => (
+                <MenuItem key={lighting} value={lighting}>
+                  {lighting}
+                </MenuItem>
+              ))}
+          </TextField>
         </Grid>
         <Grid item>
           <FormControlLabel
-            control={<Checkbox checked={state.placement} onChange={placementInputChangHandler} required />}
+            control={<Checkbox checked={state.placement} onChange={placementInputChangHandler} />}
             label="По направление / не по направлению"
           />
+          <Chip label={state.placement ? 'по направлению' : 'не по направлению'} variant="outlined" />
         </Grid>
         <Grid item>
           <TextField
@@ -348,21 +403,54 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             value={state.price}
             onChange={inputChangeHandler}
             required
+            error={Boolean(getFieldError('price'))}
+            helperText={getFieldError('price')}
           />
         </Grid>
         <Grid item>
-          <CustomProvider locale={ruRu}>
-            <DateRangePicker placement="topStart" showWeekNumbers onChange={handleDateChange} />
-          </CustomProvider>
+          <FileInput
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => fileInputChangeHandler(e, 'day')}
+            name="dayImage"
+            label="Фото дневного баннера"
+            error={Boolean(getFieldError('dayImage'))}
+          />
         </Grid>
         <Grid item>
-          <FileInput onChange={fileInputChangeHandler} name="dayImage" label="Фото дневного баннера" />
+          <FileInput
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => fileInputChangeHandler(e, 'schema')}
+            name="schemaImage"
+            label="Фото схемы"
+            error={Boolean(getFieldError('schemaImage'))}
+          />
         </Grid>
+        {image.imageDay !== null || image.imageSchema !== null ? (
+          <Grid display="flex" flexWrap="wrap" justifyContent="space-between" item>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardMedia component="img" height="194" image={image.imageDay || noImage} alt="Paella dish" />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  День
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardMedia component="img" height="194" image={image.imageSchema || noImage} alt="Paella dish" />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Cхема
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ) : null}
         <Grid item>
-          <FileInput onChange={fileInputChangeHandler} name="schemaImage" label="Фото схемы" />
-        </Grid>
-        <Grid item>
-          <Button type="submit" color="primary" variant="contained" fullWidth>
+          <Button
+            disabled={isLoading || state.dayImage === null || state.schemaImage === null}
+            type="submit"
+            color="primary"
+            variant="contained"
+            fullWidth
+          >
             {isLoading ? <CircularProgress /> : 'Создать'}
           </Button>
         </Grid>

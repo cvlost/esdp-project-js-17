@@ -50,9 +50,10 @@ export interface ILocation {
   lighting: string;
   placement: boolean;
   size: string;
-  image?: string;
   addressNote?: string;
   description?: string;
+  dayImage: File | string;
+  schemaImage: File | string;
 }
 
 export interface AreaType {

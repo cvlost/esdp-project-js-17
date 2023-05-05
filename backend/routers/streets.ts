@@ -9,8 +9,13 @@ const streetsRouter = express.Router();
 
 streetsRouter.get('/', auth, async (req, res, next) => {
   try {
-    const streets = await Street.find();
-    return res.send(streets);
+    if (req.query.citiId !== undefined) {
+      const streets = await Street.find({ city: req.query.citiId });
+      return res.send(streets);
+    } else {
+      const streets = await Street.find();
+      return res.send(streets);
+    }
   } catch (e) {
     return next(e);
   }
