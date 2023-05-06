@@ -15,6 +15,7 @@ export interface CityType {
 
 export interface RegionType {
   name: string;
+  city: Schema.Types.ObjectId | string;
 }
 
 export interface DirectionType {
