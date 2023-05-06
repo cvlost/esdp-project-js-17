@@ -7,6 +7,11 @@ import City from '../models/City';
 import Direction from '../models/Direction';
 import { imagesUpload } from '../multer';
 import { ILocation } from '../types';
+import Street from '../models/Street';
+import Area from '../models/Area';
+import Format from '../models/Format';
+import LegalEntity from '../models/LegalEntity';
+import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../constants';
 
 const locationsRouter = express.Router();
 
@@ -54,6 +59,48 @@ locationsRouter.post('/', async (req, res, next) => {
     ]);
 
     return res.send({ locations, filtered: !!req.body.filterQuery, page, pages, count, perPage });
+  } catch (e) {
+    return next(e);
+  }
+});
+
+locationsRouter.post('/filter', async (req, res, next) => {
+  const filter: FilterQuery<ILocation> = req.body.filterQuery ? req.body.filterQuery : {};
+
+  try {
+    const [allLocations, filteredLocations] = await Promise.all([Location.find().lean(), Location.find(filter).lean()]);
+    const [streets, areas, directions, regions, cities, formats, legalEntities] = await Promise.all([
+      Street.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.street))] } }).lean(),
+      Area.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.area))] } }).lean(),
+      Direction.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.direction))] } }).lean(),
+      Region.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.region))] } }).lean(),
+      City.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.city))] } }).lean(),
+      Format.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.format))] } }).lean(),
+      LegalEntity.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.legalEntity))] } }).lean(),
+    ]);
+    const sizes = BILLBOARD_SIZES;
+    const lightings = BILLBOARD_LIGHTINGS;
+
+    const count = filteredLocations.length;
+    const locationsId = filteredLocations.map((loc) => loc._id);
+    const priceRange = filteredLocations.map((loc) => loc.price.toString()).sort((a, b) => Number(a) - Number(b));
+
+    res.send({
+      count,
+      priceRange,
+      locationsId,
+      criteria: {
+        streets,
+        areas,
+        directions,
+        regions,
+        cities,
+        formats,
+        sizes,
+        legalEntities,
+        lightings,
+      },
+    });
   } catch (e) {
     return next(e);
   }
