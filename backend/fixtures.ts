@@ -78,13 +78,13 @@ const run = async () => {
   );
 
   const regions = await Region.create(
-    { name: 'Свердловский' },
-    { name: 'Первомайский' },
-    { name: 'Ленинский' },
-    { name: 'Октябрьский' },
-    { name: 'Аламудунский' },
-    { name: 'Ыссык-Кульский' },
-    { name: 'Ысык-Атинский' },
+    { name: 'Свердловский', city: cities[0]._id },
+    { name: 'Первомайский', city: cities[0]._id },
+    { name: 'Ленинский', city: cities[0]._id },
+    { name: 'Октябрьский', city: cities[0]._id },
+    { name: 'Аламудунский', city: cities[0]._id },
+    { name: 'Ыссык-Кульский', city: cities[0]._id },
+    { name: 'Ысык-Атинский', city: cities[0]._id },
   );
 
   const directions = await Direction.create({ name: 'Север' }, { name: 'Юг' }, { name: 'Запад' }, { name: 'Восток' });
