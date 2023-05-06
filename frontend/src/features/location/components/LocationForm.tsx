@@ -83,17 +83,23 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     if (state.area !== '' && idState.area !== state.area) {
       dispatch(fetchCities(state.area));
       setIdState((prev) => ({ ...prev, area: state.area }));
-      setState((prev) => ({ ...prev, street: '', city: '' }));
+      setState((prev) => ({ ...prev, street: '', city: '', region: '' }));
     }
 
     if (state.city && idState.city !== state.city) {
       if (cities.find((item) => item._id === state.city)?.name === 'Бишкек') {
         dispatch(fetchRegions(state.city));
       } else {
-        dispatch(fetchStreet(state.city));
+        dispatch(fetchStreet({ cityId: state.city }));
       }
-      setIdState((prev) => ({ ...prev, city: state.city }));
       setState((prev) => ({ ...prev, street: '', region: '' }));
+      setIdState((prev) => ({ ...prev, city: state.city }));
+    }
+
+    if (state.region && idState.region !== state.region) {
+      console.log(idState);
+      dispatch(fetchStreet({ regionId: state.region }));
+      setIdState((prev) => ({ ...prev, region: state.region }));
     }
 
     if (state.area === '' && state.city === '') {
@@ -162,8 +168,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
   } else if (state.region.length > 0) {
     style.display = 'block';
   }
-
-  console.log(state);
 
   return (
     <>

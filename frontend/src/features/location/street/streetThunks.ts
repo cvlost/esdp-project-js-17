@@ -3,8 +3,24 @@ import { GlobalError, StreetList, StreetMutation, ValidationError } from '../../
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 
-export const fetchStreet = createAsyncThunk<StreetList[], string | undefined>('street/fetch_streets', async (id) => {
-  const response = await axiosApi.get<StreetList[]>(id ? '/streets?citiId=' + id : '/streets');
+type StreetType =
+  | {
+      cityId?: string;
+      regionId?: string;
+    }
+  | undefined;
+
+export const fetchStreet = createAsyncThunk<StreetList[], StreetType>('street/fetch_streets', async (arg) => {
+  let url = '/streets';
+  if (arg) {
+    if (arg.cityId) {
+      url = `/streets?citiId=${arg.cityId}`;
+    } else if (arg.regionId) {
+      url = `/streets?regionId=${arg.regionId}`;
+    }
+  }
+
+  const response = await axiosApi.get<StreetList[]>(url);
   return response.data;
 });
 
