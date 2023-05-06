@@ -48,6 +48,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
   const [idState, setIdState] = useState({
     city: '',
     area: '',
+    region: '',
   });
 
   const dispatch = useAppDispatch();
@@ -86,9 +87,19 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     }
 
     if (state.city && idState.city !== state.city) {
-      dispatch(fetchStreet(state.city));
+      if (state.city === '6453804b54c59ef0a2578a9a') {
+        dispatch(fetchRegions(state.city));
+      } else {
+        dispatch(fetchStreet(state.city));
+      }
       setIdState((prev) => ({ ...prev, city: state.city }));
       setState((prev) => ({ ...prev, street: '' }));
+    }
+
+    if (state.region && idState.region !== state.region) {
+      dispatch(fetchRegions(state.city));
+      setIdState((prev) => ({ ...prev, region: state.region }));
+      setState((prev) => ({ ...prev, region: '' }));
     }
 
     if (state.area === '' && state.city === '') {
@@ -98,7 +109,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
       dispatch(fetchLegalEntity());
       dispatch(getDirectionsList());
     }
-  }, [dispatch, state.area, state.city, idState]);
+  }, [dispatch, state.area, state.city, idState, state.region]);
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -177,30 +188,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
               ))}
           </TextField>
         </Grid>
-        <Grid item>
-          <TextField
-            fullWidth
-            select
-            value={state.region}
-            name="region"
-            label="Район"
-            onChange={inputChangeHandler}
-            required
-            error={Boolean(getFieldError('region'))}
-            helperText={getFieldError('region')}
-          >
-            <MenuItem value="" disabled>
-              Выберите район
-            </MenuItem>
-            {regions &&
-              regions.map((region) => (
-                <MenuItem key={region._id} value={region._id}>
-                  {region.name}
-                </MenuItem>
-              ))}
-          </TextField>
-        </Grid>
-        <Grid item>
+        <Grid sx={{ display: idState.area.length > 0 ? 'block' : 'none' }} item>
           <TextField
             fullWidth
             select
@@ -223,7 +211,36 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
               ))}
           </TextField>
         </Grid>
-        <Grid item>
+        <Grid
+          sx={{ display: state.city.length > 0 && state.city === '6453804b54c59ef0a2578a9a' ? 'block' : 'none' }}
+          item
+        >
+          <TextField
+            fullWidth
+            select
+            value={state.region}
+            name="region"
+            label="Район"
+            onChange={inputChangeHandler}
+            required
+            error={Boolean(getFieldError('region'))}
+            helperText={getFieldError('region')}
+          >
+            <MenuItem value="" disabled>
+              Выберите район
+            </MenuItem>
+            {regions &&
+              regions.map((region) => (
+                <MenuItem key={region._id} value={region._id}>
+                  {region.name}
+                </MenuItem>
+              ))}
+          </TextField>
+        </Grid>
+        <Grid
+          sx={{ display: state.city.length > 0 && state.city !== '6453804b54c59ef0a2578a9a' ? 'block' : 'none' }}
+          item
+        >
           <TextField
             fullWidth
             select
