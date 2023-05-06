@@ -29,6 +29,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { openSnackbar } from '../users/usersSlice';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
+import TuneIcon from '@mui/icons-material/Tune';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +38,7 @@ const LocationList = () => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
   const { confirm } = useConfirm();
 
@@ -64,8 +66,13 @@ const LocationList = () => {
           />
         </Grid>
         <Grid item>
-          <IconButton onClick={() => setIsDrawerOpen(true)} sx={{ mx: 1 }}>
+          <IconButton onClick={() => setIsDrawerOpen(true)} sx={{ ml: 1 }}>
             <SettingsIcon />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton onClick={() => setIsFilterOpen(true)} sx={{ ml: 1 }}>
+            <TuneIcon />
           </IconButton>
         </Grid>
       </Grid>
@@ -125,6 +132,9 @@ const LocationList = () => {
       />
       <ModalBody isOpen={isOpen} onClose={() => setIsOpen(false)}>
         Редактировать
+      </ModalBody>
+      <ModalBody isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} maxWidth="md">
+        Filter modal
       </ModalBody>
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />

@@ -192,3 +192,81 @@ export interface LocationSubmit {
   dayImage: File | null;
   schemaImage: File | null;
 }
+
+/***** START: Filter types *****/
+
+export interface StreetFilter {
+  streets: StreetList[];
+}
+
+export interface AreaFilter {
+  areas: AreaList[];
+}
+
+export interface CityFilter {
+  cities: CityList[];
+}
+
+export interface FormatFilter {
+  formats: FormatList[];
+}
+
+export interface DirectionFilter {
+  directions: DirectionList[];
+}
+
+export interface RegionFilter {
+  regions: RegionList[];
+}
+
+export interface LegalEntityFilter {
+  legalEntities: LegalEntityList[];
+}
+
+export interface SizeFilter {
+  sizes: string[];
+}
+
+export interface LightingFilter {
+  lightings: string[];
+}
+
+export type FilterEntity =
+  | RegionFilter
+  | DirectionFilter
+  | FormatFilter
+  | CityFilter
+  | AreaFilter
+  | StreetFilter
+  | LegalEntityFilter
+  | LightingFilter
+  | SizFilter;
+
+export type FilterState = RegionFilter &
+  DirectionFilter &
+  FormatFilter &
+  CityFilter &
+  AreaFilter &
+  StreetFilter &
+  LegalEntityFilter &
+  LightingFilter &
+  SizeFilter;
+
+export type FilterCriteria = RegionFilter &
+  DirectionFilter &
+  FormatFilter &
+  CityFilter &
+  AreaFilter &
+  StreetFilter &
+  LegalEntityFilter &
+  LightingFilter &
+  SizeFilter;
+
+interface FilterCriteriaResponse {
+  count: number;
+  locationsId: string[];
+  priceRange: string[];
+  criteria: FilterCriteria;
+}
+
+/***** END: Filter types *****/
