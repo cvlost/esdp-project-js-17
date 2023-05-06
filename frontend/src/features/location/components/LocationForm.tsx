@@ -87,19 +87,13 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
     }
 
     if (state.city && idState.city !== state.city) {
-      if (state.city === '6453804b54c59ef0a2578a9a') {
+      if (cities.find((item) => item._id === state.city)?.name === 'Бишкек') {
         dispatch(fetchRegions(state.city));
       } else {
         dispatch(fetchStreet(state.city));
       }
       setIdState((prev) => ({ ...prev, city: state.city }));
-      setState((prev) => ({ ...prev, street: '' }));
-    }
-
-    if (state.region && idState.region !== state.region) {
-      dispatch(fetchRegions(state.city));
-      setIdState((prev) => ({ ...prev, region: state.region }));
-      setState((prev) => ({ ...prev, region: '' }));
+      setState((prev) => ({ ...prev, street: '', region: '' }));
     }
 
     if (state.area === '' && state.city === '') {
@@ -109,7 +103,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
       dispatch(fetchLegalEntity());
       dispatch(getDirectionsList());
     }
-  }, [dispatch, state.area, state.city, idState, state.region]);
+  }, [dispatch, state.area, state.city, idState, state.region, cities]);
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -156,6 +150,20 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
       return undefined;
     }
   };
+
+  const style: React.CSSProperties = {
+    display: 'none',
+  };
+
+  const name = cities.find((item) => item._id === state.city);
+
+  if (name && name.name !== 'Бишкек') {
+    style.display = 'block';
+  } else if (state.region.length > 0) {
+    style.display = 'block';
+  }
+
+  console.log(state);
 
   return (
     <>
@@ -212,7 +220,12 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           </TextField>
         </Grid>
         <Grid
-          sx={{ display: state.city.length > 0 && state.city === '6453804b54c59ef0a2578a9a' ? 'block' : 'none' }}
+          sx={{
+            display:
+              state.city.length > 0 && cities.find((item) => item._id === state.city)?.name === 'Бишкек'
+                ? 'block'
+                : 'none',
+          }}
           item
         >
           <TextField
@@ -237,10 +250,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
               ))}
           </TextField>
         </Grid>
-        <Grid
-          sx={{ display: state.city.length > 0 && state.city !== '6453804b54c59ef0a2578a9a' ? 'block' : 'none' }}
-          item
-        >
+        <Grid sx={style} item>
           <TextField
             fullWidth
             select
