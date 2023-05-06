@@ -1,7 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { FilterCriteriaResponse, FilterState, ILocation, LocationsListResponse, ValidationError } from '../../types';
-import { createLocation, getLocationsList, getOneLocation, removeLocation } from './locationsThunks';
+import {
+  FilterCriteriaResponse,
+  FilterEntity,
+  FilterState,
+  ILocation,
+  LocationsListResponse,
+  ValidationError,
+} from '../../types';
+import {
+  createLocation,
+  getFilterCriteriaData,
+  getLocationsList,
+  getOneLocation,
+  removeLocation,
+} from './locationsThunks';
 
 interface LocationColumn {
   id: string;
@@ -76,6 +89,7 @@ const initialFilterCriteria: FilterCriteriaResponse = {
 const initialState: LocationsState = {
   locationsListData: {
     locations: [],
+    filtered: false,
     page: 1,
     pages: 1,
     count: 0,
@@ -108,6 +122,13 @@ const locationsSlice = createSlice({
     toggleColumn: (state, { payload: id }: PayloadAction<string>) => {
       const index = state.settings.columns.findIndex((col) => col.id === id);
       state.settings.columns[index].show = !state.settings.columns[index].show;
+    },
+    setFilter: (state, { payload }: PayloadAction<FilterEntity>) => {
+      state.settings.filter = { ...state.settings.filter, ...payload };
+    },
+    resetFilter: (state) => {
+      state.settings.filter = initialFilterState;
+      state.locationsListData.filtered = false;
     },
   },
   extraReducers: (builder) => {
@@ -153,6 +174,17 @@ const locationsSlice = createSlice({
     });
     builder.addCase(removeLocation.rejected, (state) => {
       state.locationDeleteLoading = false;
+    });
+
+    builder.addCase(getFilterCriteriaData.pending, (state) => {
+      state.filterCriteriaLoading = true;
+    });
+    builder.addCase(getFilterCriteriaData.fulfilled, (state, { payload: data }) => {
+      state.filterCriteriaData = data;
+      state.filterCriteriaLoading = false;
+    });
+    builder.addCase(getFilterCriteriaData.rejected, (state) => {
+      state.filterCriteriaLoading = false;
     });
   },
 });

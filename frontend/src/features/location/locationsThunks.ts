@@ -1,15 +1,50 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ILocation, LocationsListResponse, LocationSubmit, ValidationError } from '../../types';
+import {
+  FilterCriteriaResponse,
+  FilterState,
+  ILocation,
+  LocationsListResponse,
+  LocationSubmit,
+  ValidationError,
+} from '../../types';
 import axiosApi from '../../axios';
 import { isAxiosError } from 'axios';
+import { RootState } from '../../app/store';
 
-type RequestParams = { page: number; perPage: number } | undefined;
+const combineFilterQuery = (filter: FilterState) => {
+  const combinedQuery: object[] = [];
 
-export const getLocationsList = createAsyncThunk<LocationsListResponse, RequestParams>(
+  const streetFilter = { street: { $in: filter.streets.map((street) => street._id) } };
+  const areaFilter = { area: { $in: filter.areas.map((area) => area._id) } };
+  const cityFilter = { city: { $in: filter.cities.map((city) => city._id) } };
+  const formatFilter = { format: { $in: filter.formats.map((format) => format._id) } };
+  const directionFilter = { direction: { $in: filter.directions.map((direction) => direction._id) } };
+  const regionFilter = { region: { $in: filter.regions.map((region) => region._id) } };
+  const sizeFilter = { size: { $in: filter.sizes } };
+  const legalEntitiesFilter = { legalEntity: { $in: filter.legalEntities.map((le) => le._id) } };
+  const lightingsFilter = { lighting: { $in: filter.lightings } };
+
+  if (streetFilter.street.$in.length) combinedQuery.push(streetFilter);
+  if (areaFilter.area.$in.length) combinedQuery.push(areaFilter);
+  if (cityFilter.city.$in.length) combinedQuery.push(cityFilter);
+  if (formatFilter.format.$in.length) combinedQuery.push(formatFilter);
+  if (directionFilter.direction.$in.length) combinedQuery.push(directionFilter);
+  if (regionFilter.region.$in.length) combinedQuery.push(regionFilter);
+  if (sizeFilter.size.$in.length) combinedQuery.push(sizeFilter);
+  if (legalEntitiesFilter.legalEntity.$in.length) combinedQuery.push(legalEntitiesFilter);
+  if (lightingsFilter.lighting.$in.length) combinedQuery.push(lightingsFilter);
+
+  return combinedQuery.length ? { $and: combinedQuery } : undefined;
+};
+
+type RequestParams = { page: number; perPage: number; filter?: boolean } | undefined;
+
+export const getLocationsList = createAsyncThunk<LocationsListResponse, RequestParams, { state: RootState }>(
   'locations/getAll',
-  async (params) => {
+  async (params, { getState }) => {
     const queryString = params ? `?page=${params.page}&perPage=${params.perPage}` : '';
-    const response = await axiosApi.post<LocationsListResponse>(`/locations${queryString}`);
+    const filterQuery = params?.filter ? combineFilterQuery(getState().locations.settings.filter) : undefined;
+    const response = await axiosApi.post<LocationsListResponse>(`/locations${queryString}`, { filterQuery });
     return response.data;
   },
 );
@@ -58,3 +93,12 @@ export const getOneLocation = createAsyncThunk<ILocation, string>('locations/get
 export const removeLocation = createAsyncThunk<void, string>('locations/remove_location', async (id) => {
   await axiosApi.delete('/locations/' + id);
 });
+
+export const getFilterCriteriaData = createAsyncThunk<FilterCriteriaResponse, void, { state: RootState }>(
+  'locations/getFilterCriteriaData',
+  async (_, { getState }) => {
+    const filterQuery = combineFilterQuery(getState().locations.settings.filter);
+    const response = await axiosApi.post<FilterCriteriaResponse>(`/locations/filter`, { filterQuery });
+    return response.data;
+  },
+);

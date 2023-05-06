@@ -122,6 +122,7 @@ export interface LocationsListResponse {
   pages: number;
   perPage: number;
   count: number;
+  filtered: boolean;
 }
 
 export interface FormatList {
