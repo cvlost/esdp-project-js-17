@@ -12,6 +12,9 @@ streetsRouter.get('/', auth, async (req, res, next) => {
     if (req.query.citiId !== undefined) {
       const streets = await Street.find({ city: req.query.citiId });
       return res.send(streets);
+    } else if (req.query.regionId !== undefined) {
+      const streets = await Street.find({ city: req.query.regionId });
+      return res.send(streets);
     } else {
       const streets = await Street.find();
       return res.send(streets);
