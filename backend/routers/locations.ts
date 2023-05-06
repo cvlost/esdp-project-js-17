@@ -1,7 +1,7 @@
 import express from 'express';
 import auth from '../middleware/auth';
 import Location from '../models/Location';
-import mongoose, { PipelineStage, Types } from 'mongoose';
+import mongoose, { FilterQuery, PipelineStage, Types } from 'mongoose';
 import Region from '../models/Region';
 import City from '../models/City';
 import Direction from '../models/Direction';
@@ -28,29 +28,32 @@ const flattenLookup: PipelineStage[] = [
   { $set: { price: { $convert: { input: '$price', to: 'string' } } } },
 ];
 
-locationsRouter.get('/', async (req, res, next) => {
+locationsRouter.post('/', async (req, res, next) => {
   let perPage = parseInt(req.query.perPage as string);
   let page = parseInt(req.query.page as string);
+  const filter: FilterQuery<ILocation> = req.body.filterQuery ? req.body.filterQuery : {};
 
   page = isNaN(page) || page <= 0 ? 1 : page;
   perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
 
   try {
-    const count = await Location.count();
+    const filteredLocations = await Location.find(filter);
+    const count = filteredLocations.length;
     let pages = Math.ceil(count / perPage);
 
     if (pages === 0) pages = 1;
     if (page > pages) page = pages;
 
     const locations = await Location.aggregate([
-      { $sort: { _id: -1 } },
+      { $match: { _id: { $in: filteredLocations.map((loc) => loc._id) } } },
       { $skip: (page - 1) * perPage },
       { $limit: perPage },
+      { $sort: { _id: -1 } },
       ...flattenLookup,
       { $project: { country: 0, description: 0 } },
     ]);
 
-    return res.send({ locations, page, pages, count, perPage });
+    return res.send({ locations, filtered: !!req.body.filterQuery, page, pages, count, perPage });
   } catch (e) {
     return next(e);
   }
