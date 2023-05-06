@@ -1,6 +1,7 @@
 import { model, Schema, Types } from 'mongoose';
 import { StreetType } from '../types';
 import City from './City';
+import Region from './Region';
 
 const StreetSchema = new Schema<StreetType>({
   city: {
@@ -10,6 +11,15 @@ const StreetSchema = new Schema<StreetType>({
     validate: {
       validator: async (value: Types.ObjectId) => City.findById(value),
       message: 'Данный город не существует!',
+    },
+  },
+  region: {
+    type: Schema.Types.ObjectId,
+    ref: 'Region',
+    required: false,
+    validate: {
+      validator: async (value: Types.ObjectId) => Region.findById(value),
+      message: 'Данный район не существует!',
     },
   },
   name: {
