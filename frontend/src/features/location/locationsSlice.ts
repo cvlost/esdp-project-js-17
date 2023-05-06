@@ -190,7 +190,7 @@ const locationsSlice = createSlice({
 });
 
 export const locationsReducer = locationsSlice.reducer;
-export const { setCurrentPage, setPerPage, toggleColumn } = locationsSlice.actions;
+export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter } = locationsSlice.actions;
 
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
