@@ -100,6 +100,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
       console.log(idState);
       dispatch(fetchStreet({ regionId: state.region }));
       setIdState((prev) => ({ ...prev, region: state.region }));
+      setState((prev) => ({ ...prev, street: '' }));
     }
 
     if (state.area === '' && state.city === '') {
