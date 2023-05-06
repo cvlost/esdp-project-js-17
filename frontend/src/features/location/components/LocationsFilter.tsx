@@ -1,5 +1,15 @@
 import React, { useEffect } from 'react';
-import { Autocomplete, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import {
   resetFilter,
@@ -16,6 +26,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import RoomIcon from '@mui/icons-material/Room';
 import ViewQuiltIcon from '@mui/icons-material/ViewQuilt';
 import TuneIcon from '@mui/icons-material/Tune';
+import { FilterEntity } from '../../../types';
 
 interface Props {
   onClose: () => void;
@@ -30,6 +41,11 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
   const perPage = useAppSelector(selectLocationsListData).perPage;
   const { streets, areas, formats, regions, cities, directions, sizes, legalEntities, lightings } =
     criteriaData.criteria;
+
+  const handleFilterChange = (filterSlice: FilterEntity) => {
+    dispatch(setFilter(filterSlice));
+    dispatch(getFilterCriteriaData());
+  };
 
   useEffect(() => {
     dispatch(getFilterCriteriaData());
@@ -111,10 +127,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.areas}
                   options={areas}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ areas: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ areas: value })}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Области" placeholder="Области" />
@@ -129,10 +142,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.cities}
                   options={cities}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ cities: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ cities: value })}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Город/Село" placeholder="Город/Село" />
@@ -147,10 +157,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.regions}
                   options={regions}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ regions: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ regions: value })}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Районы" placeholder="Районы" />
@@ -165,10 +172,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.streets}
                   options={streets}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ streets: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ streets: value })}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Улицы" placeholder="Улицы" />
@@ -183,10 +187,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.directions}
                   options={directions}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ directions: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ directions: value })}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Направления" placeholder="Направления" />
@@ -201,10 +202,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.legalEntities}
                   options={legalEntities}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ legalEntities: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ legalEntities: value })}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Юр. лицо" placeholder="Юр. лицо" />
@@ -233,10 +231,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.formats}
                   options={formats}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ formats: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ formats: value })}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Форматы" placeholder="Форматы" />
@@ -250,10 +245,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   multiple
                   value={filter.sizes}
                   options={sizes}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ sizes: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ sizes: value })}
                   getOptionLabel={(option) => option}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Размеры" placeholder="Размеры" />
@@ -267,15 +259,52 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   multiple
                   value={filter.lightings}
                   options={lightings}
-                  onChange={(event, value) => {
-                    dispatch(setFilter({ lightings: value }));
-                    dispatch(getFilterCriteriaData());
-                  }}
+                  onChange={(event, value) => handleFilterChange({ lightings: value })}
                   getOptionLabel={(option) => option}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Освещение" placeholder="Освещение" />
                   )}
                 />
+              </Grid>
+              <Grid item xs={12} container justifyContent="space-around">
+                <Grid item>
+                  <Typography color="gray" my={1} textAlign="center">
+                    Расположение
+                  </Typography>
+                  <ToggleButtonGroup
+                    orientation="vertical"
+                    size="small"
+                    color="primary"
+                    value={filter.placement}
+                    exclusive
+                    onChange={(event, value: string | null) => {
+                      if (value !== null) handleFilterChange({ placement: value });
+                    }}
+                  >
+                    <ToggleButton value="all">Все</ToggleButton>
+                    <ToggleButton value="placementTrueOnly">По напрвлению</ToggleButton>
+                    <ToggleButton value="placementFalseOnly">Не по напрвлению</ToggleButton>
+                  </ToggleButtonGroup>
+                </Grid>
+                <Grid item>
+                  <Typography color="gray" my={1} textAlign="center">
+                    Аренда
+                  </Typography>
+                  <ToggleButtonGroup
+                    orientation="vertical"
+                    size="small"
+                    color="primary"
+                    value={filter.rent}
+                    exclusive
+                    onChange={(event, value: string | null) => {
+                      if (value !== null) handleFilterChange({ rent: value });
+                    }}
+                  >
+                    <ToggleButton value="all">Все</ToggleButton>
+                    <ToggleButton value="rentedOnly">В аренде</ToggleButton>
+                    <ToggleButton value="freeOnly">Свободные</ToggleButton>
+                  </ToggleButtonGroup>
+                </Grid>
               </Grid>
             </Grid>
           </Box>

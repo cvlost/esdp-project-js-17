@@ -23,6 +23,14 @@ const combineFilterQuery = (filter: FilterState) => {
   const sizeFilter = { size: { $in: filter.sizes } };
   const legalEntitiesFilter = { legalEntity: { $in: filter.legalEntities.map((le) => le._id) } };
   const lightingsFilter = { lighting: { $in: filter.lightings } };
+  const rentFilter =
+    filter.rent === 'rentedOnly' ? { rent: { $ne: null } } : filter.rent === 'freeOnly' ? { rent: null } : null;
+  const placement =
+    filter.placement === 'placementTrueOnly'
+      ? { placement: true }
+      : filter.placement === 'placementFalseOnly'
+      ? { placement: false }
+      : null;
 
   if (streetFilter.street.$in.length) combinedQuery.push(streetFilter);
   if (areaFilter.area.$in.length) combinedQuery.push(areaFilter);
@@ -33,6 +41,8 @@ const combineFilterQuery = (filter: FilterState) => {
   if (sizeFilter.size.$in.length) combinedQuery.push(sizeFilter);
   if (legalEntitiesFilter.legalEntity.$in.length) combinedQuery.push(legalEntitiesFilter);
   if (lightingsFilter.lighting.$in.length) combinedQuery.push(lightingsFilter);
+  if (rentFilter) combinedQuery.push(rentFilter);
+  if (placement) combinedQuery.push(placement);
 
   return combinedQuery.length ? { $and: combinedQuery } : undefined;
 };

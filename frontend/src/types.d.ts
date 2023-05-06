@@ -232,6 +232,14 @@ export interface LightingFilter {
   lightings: string[];
 }
 
+export interface PlacementFilter {
+  placement: string;
+}
+
+export interface RentFilter {
+  rent: string;
+}
+
 export type FilterEntity =
   | RegionFilter
   | DirectionFilter
@@ -241,7 +249,9 @@ export type FilterEntity =
   | StreetFilter
   | LegalEntityFilter
   | LightingFilter
-  | SizFilter;
+  | SizeFilter
+  | PlacementFilter
+  | RentFilter;
 
 export type FilterState = RegionFilter &
   DirectionFilter &
@@ -251,7 +261,9 @@ export type FilterState = RegionFilter &
   StreetFilter &
   LegalEntityFilter &
   LightingFilter &
-  SizeFilter;
+  SizeFilter &
+  PlacementFilter &
+  RentFilter;
 
 export type FilterCriteria = RegionFilter &
   DirectionFilter &

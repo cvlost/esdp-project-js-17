@@ -67,6 +67,8 @@ const initialFilterState: FilterState = {
   sizes: [],
   legalEntities: [],
   lightings: [],
+  rent: 'all',
+  placement: 'all',
 };
 
 const initialFilterCriteria: FilterCriteriaResponse = {
