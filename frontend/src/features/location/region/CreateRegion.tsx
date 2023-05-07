@@ -100,7 +100,7 @@ const CreateRegion = () => {
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell align="left">Регион</StyledTableCell>
+                    <StyledTableCell align="left">Район</StyledTableCell>
                     <StyledTableCell align="right">Управление</StyledTableCell>
                   </TableRow>
                 </TableHead>

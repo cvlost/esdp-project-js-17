@@ -12,14 +12,14 @@ interface LinkOption {
 }
 
 const link_options: LinkOption[] = [
-  { label: 'Создать Локацию', link: '/location/create_location' },
-  { label: 'Создать Область', link: '/location/create_area' },
-  { label: 'Создать Район', link: '/location/create_region' },
-  { label: 'Создать Город', link: '/location/create_city' },
-  { label: 'Создать Направление', link: '/location/create_direction' },
-  { label: 'Создать Формат', link: '/location/create_format' },
-  { label: 'Создать Юр.лицо', link: '/location/create_legal_entity' },
-  { label: 'Создать Улицу', link: '/location/create_street' },
+  { label: 'Создать Локацию', link: '/create_location' },
+  { label: 'Создать Область', link: '/create_area' },
+  { label: 'Создать Район', link: '/create_region' },
+  { label: 'Создать Город', link: '/create_city' },
+  { label: 'Создать Направление', link: '/create_direction' },
+  { label: 'Создать Формат', link: '/create_format' },
+  { label: 'Создать Юр.лицо', link: '/create_legal_entity' },
+  { label: 'Создать Улицу', link: '/create_street' },
 ];
 
 const Location = () => {
@@ -32,9 +32,10 @@ const Location = () => {
       <Grid container spacing={1} alignItems="center">
         <Grid item>
           <Button
+            color="success"
             variant="contained"
             onClick={() => {
-              navigate('/location');
+              navigate('/');
             }}
           >
             <ShareLocationIcon sx={{ mr: 1 }} />

@@ -5,12 +5,13 @@ import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../../features/users/usersSlice';
 import UserMenu from './UserMenu';
 import AnonymousMenu from './AnonymousMenu';
+import { MainColorGreen } from '../../constants';
 
 const AppToolbar = () => {
   const user = useAppSelector(selectUser);
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ bgcolor: MainColorGreen }}>
       <Toolbar>
         <Grid container sx={{ alignItems: 'center' }}>
           <Typography variant="h5" component="div" sx={{ flexGrow: 1, alignItems: 'center' }}>

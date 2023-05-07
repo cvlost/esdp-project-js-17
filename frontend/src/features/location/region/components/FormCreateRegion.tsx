@@ -40,7 +40,7 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
         <SouthAmericaIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Создать регион
+        Создать район
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
