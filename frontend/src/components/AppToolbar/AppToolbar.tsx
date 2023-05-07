@@ -1,11 +1,11 @@
 import React from 'react';
 import { AppBar, Grid, Toolbar, Typography } from '@mui/material';
-import { StyledLink } from './StyledLink';
 import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../../features/users/usersSlice';
 import UserMenu from './UserMenu';
 import AnonymousMenu from './AnonymousMenu';
 import { MainColorGreen } from '../../constants';
+import { Link } from 'react-router-dom';
 
 const AppToolbar = () => {
   const user = useAppSelector(selectUser);
@@ -14,8 +14,10 @@ const AppToolbar = () => {
     <AppBar position="static" sx={{ bgcolor: MainColorGreen }}>
       <Toolbar>
         <Grid container sx={{ alignItems: 'center' }}>
-          <Typography variant="h5" component="div" sx={{ flexGrow: 1, alignItems: 'center' }}>
-            <StyledLink to="/">Шамдагай</StyledLink>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, alignItems: 'center' }}>
+            <Link style={{ color: '#fff', textDecoration: 'none' }} to="/">
+              Шамдагай
+            </Link>
           </Typography>
           <Grid item>{user ? <UserMenu user={user} /> : <AnonymousMenu />}</Grid>
         </Grid>

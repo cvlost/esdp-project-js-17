@@ -14,6 +14,7 @@ const Users = () => {
       <Grid container spacing={1}>
         <Grid item>
           <Button
+            color="success"
             variant="contained"
             onClick={() => {
               navigate('/users');
@@ -25,6 +26,7 @@ const Users = () => {
         </Grid>
         <Grid item>
           <Button
+            color="success"
             variant="contained"
             onClick={() => {
               navigate('/users/createUser');
