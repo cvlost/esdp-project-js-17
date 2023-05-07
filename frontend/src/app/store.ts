@@ -18,12 +18,18 @@ const usersPersistConfig = {
   whitelist: ['user'],
 };
 
+const locationsPersistConfig = {
+  key: 'ESDP-project-js-17:locations',
+  storage,
+  whitelist: ['settings'],
+};
+
 const rootReducer = combineReducers({
   users: persistReducer(usersPersistConfig, usersReducer),
+  locations: persistReducer(locationsPersistConfig, locationsReducer),
   city: cityReducer,
   region: regionReducer,
   directions: directionsReducer,
-  locations: locationsReducer,
   format: formatReducer,
   area: areaReducer,
   street: streetReducer,
