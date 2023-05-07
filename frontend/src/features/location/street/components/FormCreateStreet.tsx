@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectCreateStreetLoading, selectStreetError } from '../streetSlice';
 import SignpostIcon from '@mui/icons-material/Signpost';
 import { selectCityList } from '../../city/citySlice';
-import { fetchStreet } from '../streetThunks';
 import { fetchCities } from '../../city/cityThunk';
 import { fetchRegions } from '../../region/regionThunk';
 import { selectRegionList } from '../../region/regionSlice';
@@ -40,8 +39,13 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(state);
-    dispatch(fetchStreet());
+
+    const obj = {
+      ...state,
+      region: state.region ? state.region : null,
+    };
+
+    onSubmit(obj);
     setState({
       city: '',
       name: '',
