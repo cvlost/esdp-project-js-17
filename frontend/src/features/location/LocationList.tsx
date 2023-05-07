@@ -16,29 +16,59 @@ import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
+  selectEditLocationError,
   selectLocationsColumnSettings,
   selectLocationsDeleteLoading,
   selectLocationsListData,
   selectLocationsListLoading,
+  selectOneLocationEditLoading,
+  selectOneLocationToEdit,
   setCurrentPage,
 } from './locationsSlice';
-import { getLocationsList, removeLocation } from './locationsThunks';
+import { getLocationsList, getToEditOneLocation, removeLocation, updateLocation } from './locationsThunks';
 import { StyledTableCell } from '../../constants';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { openSnackbar } from '../users/usersSlice';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
+import LocationForm from './components/LocationForm';
+import { LocationMutation } from '../../types';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
   const locationsListData = useAppSelector(selectLocationsListData);
   const locationsListLoading = useAppSelector(selectLocationsListLoading);
+  const existingLocation = useAppSelector(selectOneLocationToEdit);
+  const editingError = useAppSelector(selectEditLocationError);
+  const editingLoading = useAppSelector(selectOneLocationEditLoading);
   const columns = useAppSelector(selectLocationsColumnSettings);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [locationID, setLocationID] = useState('');
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
   const { confirm } = useConfirm();
+
+  const openDialog = async (id: string) => {
+    await dispatch(getToEditOneLocation(id));
+    setLocationID(id);
+    setIsOpen(true);
+  };
+
+  const onFormSubmit = async (location: LocationMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateLocation({ id: locationID, locEdit: location })).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'edit_location' }));
+        setIsOpen(false);
+        await dispatch(getLocationsList());
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
 
   useEffect(() => {
     dispatch(getLocationsList({ page: locationsListData.page, perPage: locationsListData.perPage }));
@@ -108,7 +138,7 @@ const LocationList = () => {
                   key={loc._id}
                   loc={loc}
                   number={(locationsListData.page - 1) * locationsListData.perPage + i + 1}
-                  onClose={() => setIsOpen(true)}
+                  onEdit={() => openDialog(loc._id)}
                 />
               ))}
             </TableBody>
@@ -123,9 +153,17 @@ const LocationList = () => {
         page={locationsListData.page}
         onChange={(event, page) => dispatch(setCurrentPage(page))}
       />
-      <ModalBody isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        Редактировать
-      </ModalBody>
+      {existingLocation && (
+        <ModalBody isOpen={isOpen} onClose={() => setIsOpen(false)}>
+          <LocationForm
+            onSubmit={onFormSubmit}
+            isLoading={editingLoading}
+            error={editingError}
+            existingLocation={existingLocation}
+            isEdit
+          />
+        </ModalBody>
+      )}
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />
     </Box>
