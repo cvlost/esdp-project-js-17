@@ -23,7 +23,7 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
   const [state, setState] = useState<StreetMutation>({
     city: '',
     name: '',
-    region: null,
+    region: '',
   });
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
     setState({
       city: '',
       name: '',
-      region: null,
+      region: '',
     });
   };
 
