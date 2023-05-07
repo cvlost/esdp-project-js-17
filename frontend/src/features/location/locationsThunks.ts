@@ -58,6 +58,51 @@ export const getOneLocation = createAsyncThunk<ILocation, string>('locations/get
   return response.data;
 });
 
+export const getToEditOneLocation = createAsyncThunk<LocationMutation, string>('locations/getOneToEdit', async (id) => {
+  const response = await axiosApi.get(`/locations/edit/${id}`);
+  return response.data;
+});
+
+interface UpdateLocationParams {
+  id: string;
+  locEdit: LocationMutation;
+}
+
+export const updateLocation = createAsyncThunk<void, UpdateLocationParams, { rejectValue: ValidationError }>(
+  'locations/edit',
+  async ({ id, locEdit }, { rejectWithValue }) => {
+    try {
+      const formData = new FormData();
+      formData.append('addressNote', locEdit.addressNote);
+      formData.append('description', locEdit.description);
+      formData.append('country', locEdit.country);
+      formData.append('area', locEdit.area);
+      formData.append('region', locEdit.region);
+      formData.append('city', locEdit.city);
+      formData.append('street', locEdit.street);
+      formData.append('direction', locEdit.direction);
+      formData.append('legalEntity', locEdit.legalEntity);
+      formData.append('size', locEdit.size);
+      formData.append('format', locEdit.format);
+      formData.append('lighting', locEdit.lighting);
+      formData.append('placement', JSON.stringify(locEdit.placement));
+      formData.append('price', locEdit.price);
+      if (locEdit.dayImage) {
+        formData.append('dayImage', locEdit.dayImage);
+      }
+      if (locEdit.schemaImage) {
+        formData.append('schemaImage', locEdit.schemaImage);
+      }
+      await axiosApi.put(`/locations/edit/${id}`, formData);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 400) {
+        return rejectWithValue(e.response.data as ValidationError);
+      }
+      throw e;
+    }
+  },
+);
+
 export const removeLocation = createAsyncThunk<void, string>('locations/remove_location', async (id) => {
   await axiosApi.delete('/locations/' + id);
 });

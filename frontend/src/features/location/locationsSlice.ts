@@ -1,7 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ILocation, LocationsListResponse, ValidationError } from '../../types';
-import { createLocation, getLocationsList, getOneLocation, removeLocation } from './locationsThunks';
+import { ILocation, LocationMutation, LocationsListResponse, ValidationError } from '../../types';
+import {
+  createLocation,
+  getLocationsList,
+  getOneLocation,
+  getToEditOneLocation,
+  removeLocation,
+  updateLocation,
+} from './locationsThunks';
 
 interface LocationColumn {
   id: string;
@@ -19,6 +26,9 @@ interface LocationsState {
   };
   oneLocation: ILocation | null;
   oneLocationLoading: boolean;
+  oneLocationEdit: LocationMutation | null;
+  oneLocationEditLoading: boolean;
+  oneLocationEditError: ValidationError | null;
   createLocationLoading: boolean;
   createError: ValidationError | null;
   locationDeleteLoading: false | string;
@@ -55,6 +65,9 @@ const initialState: LocationsState = {
   },
   oneLocation: null,
   oneLocationLoading: false,
+  oneLocationEdit: null,
+  oneLocationEditLoading: false,
+  oneLocationEditError: null,
   createLocationLoading: false,
   createError: null,
   locationDeleteLoading: false,
@@ -99,6 +112,28 @@ const locationsSlice = createSlice({
       state.oneLocationLoading = false;
     });
 
+    builder.addCase(getToEditOneLocation.pending, (state) => {
+      state.oneLocationEdit = null;
+    });
+    builder.addCase(getToEditOneLocation.fulfilled, (state, { payload: loc }) => {
+      state.oneLocationEdit = loc;
+    });
+    builder.addCase(getToEditOneLocation.rejected, (state) => {
+      state.oneLocationEditLoading = false;
+    });
+
+    builder.addCase(updateLocation.pending, (state) => {
+      state.oneLocationEditError = null;
+      state.oneLocationEditLoading = true;
+    });
+    builder.addCase(updateLocation.fulfilled, (state) => {
+      state.oneLocationEditLoading = false;
+    });
+    builder.addCase(updateLocation.rejected, (state, { payload: error }) => {
+      state.oneLocationEditError = error || null;
+      state.oneLocationEditLoading = false;
+    });
+
     builder.addCase(createLocation.pending, (state) => {
       state.createLocationLoading = true;
     });
@@ -129,6 +164,9 @@ export const selectLocationsListLoading = (state: RootState) => state.locations.
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;
 export const selectOneLocation = (state: RootState) => state.locations.oneLocation;
 export const selectOneLocationLoading = (state: RootState) => state.locations.oneLocationLoading;
+export const selectOneLocationToEdit = (state: RootState) => state.locations.oneLocationEdit;
+export const selectOneLocationEditLoading = (state: RootState) => state.locations.oneLocationEditLoading;
+export const selectEditLocationError = (state: RootState) => state.locations.oneLocationEditError;
 export const selectCreateLocationLoading = (state: RootState) => state.locations.createLocationLoading;
 export const selectCreateLocationError = (state: RootState) => state.locations.createError;
 export const selectLocationsDeleteLoading = (state: RootState) => state.locations.locationDeleteLoading;
