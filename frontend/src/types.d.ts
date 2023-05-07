@@ -153,28 +153,7 @@ export interface LegalEntityList {
 
 export type LegalEntityMutation = Omit<LegalEntityList, '_id'>;
 
-export type DateRange = [Date, Date];
-
 export interface LocationMutation {
-  addressNote: string;
-  description: string;
-  country: string;
-  area: string;
-  region: string;
-  city: string;
-  street: string;
-  direction: string;
-  legalEntity: string;
-  size: string;
-  format: string;
-  lighting: string;
-  placement: boolean;
-  price: string;
-  dayImage: File | null;
-  schemaImage: File | null;
-}
-
-export interface LocationSubmit {
   addressNote: string;
   description: string;
   country: string;

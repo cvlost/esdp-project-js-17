@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ILocation, LocationsListResponse, LocationSubmit, ValidationError } from '../../types';
+import { ILocation, LocationMutation, LocationsListResponse, ValidationError } from '../../types';
 import axiosApi from '../../axios';
 import { isAxiosError } from 'axios';
 
@@ -17,7 +17,7 @@ export const getLocationsList = createAsyncThunk<LocationsListResponse, RequestP
   },
 );
 
-export const createLocation = createAsyncThunk<void, LocationSubmit, { rejectValue: ValidationError }>(
+export const createLocation = createAsyncThunk<void, LocationMutation, { rejectValue: ValidationError }>(
   'locations/create',
   async (locationSubmit, { rejectWithValue }) => {
     try {

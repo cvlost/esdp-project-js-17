@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { LocationMutation, LocationSubmit, ValidationError } from '../../../types';
+import { LocationMutation, ValidationError } from '../../../types';
 import {
-  Alert,
+  Avatar,
+  Box,
   Button,
   Card,
   CardContent,
@@ -33,9 +34,10 @@ import { fetchLegalEntity } from '../legalEntity/legalEntityThunk';
 import { getDirectionsList } from '../direction/directionsThunks';
 import { fetchStreet } from '../street/streetThunks';
 import noImage from '../../../assets/noImage.png';
+import AddLocationIcon from '@mui/icons-material/AddLocation';
 
 interface Props {
-  onSubmit: (location: LocationSubmit) => void;
+  onSubmit: (location: LocationMutation) => void;
   isLoading: boolean;
   error: ValidationError | null;
 }
@@ -148,11 +150,21 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
 
   return (
     <>
-      {error && (
-        <Alert severity="error" sx={{ mt: 3, width: '100%' }}>
-          {error.message}
-        </Alert>
-      )}
+      <Box
+        sx={{
+          mt: 6,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
+          <AddLocationIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+          Создание локации
+        </Typography>
+      </Box>
       <Grid component="form" onSubmit={submitFormHandler} container direction="column" spacing={2}>
         <Grid item>
           <TextField
@@ -181,29 +193,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           <TextField
             fullWidth
             select
-            value={state.region}
-            name="region"
-            label="Район"
-            onChange={inputChangeHandler}
-            required
-            error={Boolean(getFieldError('region'))}
-            helperText={getFieldError('region')}
-          >
-            <MenuItem value="" disabled>
-              Выберите район
-            </MenuItem>
-            {regions &&
-              regions.map((region) => (
-                <MenuItem key={region._id} value={region._id}>
-                  {region.name}
-                </MenuItem>
-              ))}
-          </TextField>
-        </Grid>
-        <Grid item>
-          <TextField
-            fullWidth
-            select
             value={state.city}
             name="city"
             label="Город/село"
@@ -219,6 +208,29 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
               cities.map((city) => (
                 <MenuItem key={city._id} value={city._id}>
                   {city.name}
+                </MenuItem>
+              ))}
+          </TextField>
+        </Grid>
+        <Grid item>
+          <TextField
+            fullWidth
+            select
+            value={state.region}
+            name="region"
+            label="Район"
+            onChange={inputChangeHandler}
+            required
+            error={Boolean(getFieldError('region'))}
+            helperText={getFieldError('region')}
+          >
+            <MenuItem value="" disabled>
+              Выберите район
+            </MenuItem>
+            {regions &&
+              regions.map((region) => (
+                <MenuItem key={region._id} value={region._id}>
+                  {region.name}
                 </MenuItem>
               ))}
           </TextField>
