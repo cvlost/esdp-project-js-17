@@ -238,8 +238,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             value={state.region}
             name="region"
             label="Район"
+            required={cities.find((item) => item._id === state.city)?.name === 'Бишкек'}
             onChange={inputChangeHandler}
-            required
             error={Boolean(getFieldError('region'))}
             helperText={getFieldError('region')}
           >

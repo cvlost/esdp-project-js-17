@@ -77,7 +77,7 @@ locationsRouter.post(
     const locationObj: ILocation = {
       country: req.body.country,
       area: req.body.area,
-      region: req.body.region,
+      region: req.body.region.length > 0 ? req.body.region : null,
       city: req.body.city,
       street: req.body.street,
       direction: req.body.direction,

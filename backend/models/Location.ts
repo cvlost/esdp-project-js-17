@@ -1,7 +1,6 @@
 import { HydratedDocument, model, Schema, Types } from 'mongoose';
 import { ILocation, IPeriod } from '../types';
 import City from './City';
-import Region from './Region';
 import Direction from './Direction';
 import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../constants';
 import Area from './Area';
@@ -114,12 +113,8 @@ const LocationSchema = new Schema<ILocation>({
   },
   region: {
     type: Schema.Types.ObjectId,
-    required: true,
     ref: 'Region',
-    validate: {
-      validator: (id: Types.ObjectId) => Region.findById(id),
-      message: 'Неверный id района.',
-    },
+    required: false,
   },
   direction: {
     type: Schema.Types.ObjectId,
