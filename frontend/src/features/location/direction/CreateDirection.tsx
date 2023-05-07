@@ -7,14 +7,16 @@ import {
   Container,
   IconButton,
   Paper,
+  styled,
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
 } from '@mui/material';
-import { StyledTableCell } from '../../../constants';
+import { MainColorGreen, StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import CardDirection from './components/cardDirection';
 import FormCreateDirection from './components/FormCreateDirection';
@@ -41,6 +43,12 @@ const CreateDirection = () => {
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: MainColorGreen,
+      color: theme.palette.common.white,
+    },
+  }));
 
   useEffect(() => {
     dispatch(getDirectionsList());
