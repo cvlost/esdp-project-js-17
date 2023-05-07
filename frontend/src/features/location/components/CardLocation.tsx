@@ -12,12 +12,12 @@ import { useNavigate } from 'react-router-dom';
 interface Props {
   onDelete: React.MouseEventHandler;
   deleteLoading: false | string;
-  onClose: React.MouseEventHandler;
+  onEdit: React.MouseEventHandler;
   loc: ILocation;
   number: number;
 }
 
-const CardLocation: React.FC<Props> = ({ loc, onClose, number, onDelete, deleteLoading }) => {
+const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLoading }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
 
@@ -92,7 +92,7 @@ const CardLocation: React.FC<Props> = ({ loc, onClose, number, onDelete, deleteL
           >
             <DeleteIcon />
           </Button>
-          <Button size="small" color="success" onClick={onClose}>
+          <Button size="small" color="success" onClick={onEdit}>
             <EditIcon />
           </Button>
         </ButtonGroup>
