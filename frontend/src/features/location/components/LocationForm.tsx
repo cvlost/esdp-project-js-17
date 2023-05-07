@@ -40,9 +40,30 @@ interface Props {
   onSubmit: (location: LocationMutation) => void;
   isLoading: boolean;
   error: ValidationError | null;
+  isEdit?: boolean;
+  existingLocation?: LocationMutation;
 }
 
-const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
+const initialState = {
+  addressNote: '',
+  description: '',
+  country: 'Кыргызстан',
+  area: '',
+  region: '',
+  city: '',
+  street: '',
+  direction: '',
+  legalEntity: '',
+  size: '',
+  format: '',
+  lighting: '',
+  placement: false,
+  price: '',
+  dayImage: null,
+  schemaImage: null,
+};
+
+const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLocation = initialState, isEdit }) => {
   const [image, setImage] = useState<{ imageDay: string | null; imageSchema: null | string }>({
     imageDay: null,
     imageSchema: null,
@@ -61,24 +82,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
   const legalEntities = useAppSelector(selectLegalEntityList);
   const sizes = BILLBOARD_SIZES;
   const formats = useAppSelector(selectFormatList);
-  const [state, setState] = useState<LocationMutation>({
-    addressNote: '',
-    description: '',
-    country: 'Кыргызстан',
-    area: '',
-    region: '',
-    city: '',
-    street: '',
-    direction: '',
-    legalEntity: '',
-    size: '',
-    format: '',
-    lighting: '',
-    placement: false,
-    price: '',
-    dayImage: null,
-    schemaImage: null,
-  });
+  const [state, setState] = useState<LocationMutation>(existingLocation);
 
   useEffect(() => {
     if (state.area !== '' && idState.area !== state.area) {
@@ -162,7 +166,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           <AddLocationIcon />
         </Avatar>
         <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          Создание локации
+          {isEdit ? 'Редактирование локации' : 'Создание локации'}
         </Typography>
       </Box>
       <Grid component="form" onSubmit={submitFormHandler} container direction="column" spacing={2}>
@@ -463,7 +467,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
             variant="contained"
             fullWidth
           >
-            {isLoading ? <CircularProgress /> : 'Создать'}
+            {isLoading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
           </Button>
         </Grid>
       </Grid>
