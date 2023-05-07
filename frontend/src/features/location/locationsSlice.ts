@@ -58,6 +58,8 @@ export const initialColumns: LocationColumn[] = [
 ];
 
 const initialFilterState: FilterState = {
+  filtered: false,
+  empty: true,
   streets: [],
   areas: [],
   cities: [],
@@ -69,6 +71,22 @@ const initialFilterState: FilterState = {
   lightings: [],
   rent: 'all',
   placement: 'all',
+};
+
+const isFilterEmpty = (filter: FilterState) => {
+  return (
+    !filter.streets.length &&
+    !filter.areas.length &&
+    !filter.cities.length &&
+    !filter.regions.length &&
+    !filter.directions.length &&
+    !filter.formats.length &&
+    !filter.sizes.length &&
+    !filter.legalEntities.length &&
+    !filter.lightings.length &&
+    filter.rent === 'all' &&
+    filter.placement === 'all'
+  );
 };
 
 const initialFilterCriteria: FilterCriteriaResponse = {
@@ -127,6 +145,7 @@ const locationsSlice = createSlice({
     },
     setFilter: (state, { payload }: PayloadAction<FilterEntity>) => {
       state.settings.filter = { ...state.settings.filter, ...payload };
+      state.settings.filter.empty = isFilterEmpty(state.settings.filter);
     },
     resetFilter: (state) => {
       state.settings.filter = initialFilterState;

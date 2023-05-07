@@ -240,7 +240,12 @@ export interface RentFilter {
   rent: string;
 }
 
+export interface FilteredAction {
+  filtered: boolean;
+}
+
 export type FilterEntity =
+  | FilteredAction
   | RegionFilter
   | DirectionFilter
   | FormatFilter
@@ -253,7 +258,8 @@ export type FilterEntity =
   | PlacementFilter
   | RentFilter;
 
-export type FilterState = RegionFilter &
+export type FilterState = { empty: boolean } & FilteredAction &
+  RegionFilter &
   DirectionFilter &
   FormatFilter &
   CityFilter &

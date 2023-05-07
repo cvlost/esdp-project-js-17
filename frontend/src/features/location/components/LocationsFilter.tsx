@@ -98,6 +98,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
               loadingPosition="start"
               startIcon={<SearchIcon />}
               onClick={async () => {
+                dispatch(setFilter({ filtered: true }));
                 await dispatch(getLocationsList({ filtered: true, page: 1, perPage }));
                 onClose();
               }}

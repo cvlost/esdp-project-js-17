@@ -21,6 +21,7 @@ import {
   resetFilter,
   selectLocationsColumnSettings,
   selectLocationsDeleteLoading,
+  selectLocationsFilter,
   selectLocationsListData,
   selectLocationsListLoading,
   setCurrentPage,
@@ -44,6 +45,7 @@ const LocationList = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
+  const filter = useAppSelector(selectLocationsFilter);
   const { confirm } = useConfirm();
 
   useEffect(() => {
@@ -51,10 +53,10 @@ const LocationList = () => {
       getLocationsList({
         page: locationsListData.page,
         perPage: locationsListData.perPage,
-        filtered: locationsListData.filtered,
+        filtered: filter.filtered,
       }),
     );
-  }, [dispatch, locationsListData.filtered, locationsListData.page, locationsListData.perPage]);
+  }, [dispatch, filter.filtered, locationsListData.page, locationsListData.perPage]);
 
   const DeleteLocations = async (_id: string) => {
     if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную локацию?')) {
