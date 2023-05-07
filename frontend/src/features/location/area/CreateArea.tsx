@@ -7,14 +7,16 @@ import {
   Container,
   IconButton,
   Paper,
+  styled,
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
 } from '@mui/material';
-import { StyledTableCell } from '../../../constants';
+import { MainColorGreen, StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import FormCreateArea from './components/FormCreateArea';
 import CardArea from './components/CardArea';
@@ -35,6 +37,13 @@ const CreateArea = () => {
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: MainColorGreen,
+      color: theme.palette.common.white,
+    },
+  }));
 
   useEffect(() => {
     dispatch(fetchAreas());

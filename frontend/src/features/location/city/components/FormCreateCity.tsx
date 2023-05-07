@@ -59,8 +59,8 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
         alignItems: 'center',
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
-        <LocationCityIcon />
+      <Avatar sx={{ m: 1 }}>
+        <LocationCityIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
         Создать город
@@ -105,7 +105,14 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button disabled={createLoading} type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+        <Button
+          disabled={createLoading}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="success"
+          sx={{ mt: 3, mb: 2 }}
+        >
           {!createLoading ? 'Создать город' : <CircularProgress />}
         </Button>
       </Box>

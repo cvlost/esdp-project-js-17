@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
-import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
+import SouthAmericaOutlinedIcon from '@mui/icons-material/SouthAmericaOutlined';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectAreaError, selectCreateAreaLoading } from '../areaSlice';
 import { AreaMutation } from '../../../../types';
+import { MainColorGreen } from '../../../../constants';
 
 interface Props {
   onSubmit: (area: AreaMutation) => void;
@@ -37,8 +38,8 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit }) => {
         alignItems: 'center',
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
-        <SouthAmericaIcon />
+      <Avatar sx={{ m: 1 }}>
+        <SouthAmericaOutlinedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
         Создать область
@@ -60,7 +61,14 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button disabled={createLoading} type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+        <Button
+          disabled={createLoading}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="success"
+          sx={{ mt: 3, mb: 2 }}
+        >
           {!createLoading ? 'Создать область' : <CircularProgress />}
         </Button>
       </Box>

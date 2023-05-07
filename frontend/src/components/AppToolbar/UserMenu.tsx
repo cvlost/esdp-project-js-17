@@ -6,7 +6,6 @@ import { Button, Divider, Menu, MenuItem, Typography } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GroupIcon from '@mui/icons-material/Groups';
-import CottageIcon from '@mui/icons-material/Cottage';
 import { getEditingUser, getUsersList, logout, updateUser } from '../../features/users/usersThunks';
 import ModalBody from '../ModalBody';
 import UserForm from '../../features/users/components/UserForm';
