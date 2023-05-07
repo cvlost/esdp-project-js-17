@@ -12,6 +12,8 @@ import Area from '../models/Area';
 import Format from '../models/Format';
 import LegalEntity from '../models/LegalEntity';
 import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../constants';
+import { promises as fs } from 'fs';
+import config from '../config';
 
 const locationsRouter = express.Router();
 
@@ -160,55 +162,142 @@ locationsRouter.post(
   },
 );
 
-locationsRouter.put('/:id', auth, async (req, res, next) => {
-  const id = req.params.id as string;
-  const { addressNote, region, city, direction, description } = req.body;
+locationsRouter.put(
+  '/edit/:id',
+  auth,
+  imagesUpload.fields([{ name: 'dayImage', maxCount: 1 }, { name: 'schemaImage' }]),
+  async (req, res, next) => {
+    const files = req.files as { [filename: string]: Express.Multer.File[] };
+    const id = req.params.id as string;
+    const {
+      addressNote,
+      area,
+      region,
+      city,
+      street,
+      format,
+      size,
+      legalEntity,
+      lighting,
+      placement,
+      direction,
+      description,
+      price,
+    } = req.body;
 
-  try {
-    const location = await Location.findById(id);
+    try {
+      const location = await Location.findById(id);
 
-    if (!location) {
-      return res.status(400).send({ error: 'Редактирование невозможно: локация не существует в базе.' });
-    }
-
-    if (region && region !== location.region.toString()) {
-      const anotherRegion = await Region.findById(region);
-      if (!anotherRegion) {
-        return res.status(400).send({ error: 'Редактирование невозможно: неверый id региона.' });
+      if (!location) {
+        return res.status(400).send({ error: 'Редактирование невозможно: локация не существует в базе.' });
       }
-      location.region = anotherRegion._id;
-    }
-
-    if (city && city !== location.city.toString()) {
-      const anotherCity = await City.findById(city);
-      if (!anotherCity) {
-        return res.status(400).send({ error: 'Редактирование невозможно: неверый id города.' });
+      if (area && area !== location.area.toString()) {
+        const anotherArea = await Area.findById(area);
+        if (!anotherArea) {
+          return res.status(400).send({ error: 'Редактирование невозможно: неверный id области.' });
+        }
+        location.area = anotherArea._id;
       }
-      location.city = anotherCity._id;
-    }
 
-    if (direction && direction !== location.city.toString()) {
-      const anotherDirection = await Direction.findById(direction);
-      if (!anotherDirection) {
-        return res.status(400).send({ error: 'Редактирование невозможно: неверый id направления.' });
+      if (region && region !== location.region.toString()) {
+        const anotherRegion = await Region.findById(region);
+        if (!anotherRegion) {
+          return res.status(400).send({ error: 'Редактирование невозможно: неверый id района.' });
+        }
+        location.region = anotherRegion._id;
       }
-      location.direction = anotherDirection._id;
-    }
 
-    if (typeof addressNote === 'string' && addressNote !== location.addressNote) {
-      location.addressNote = addressNote;
-    }
+      if (city && city !== location.city.toString()) {
+        const anotherCity = await City.findById(city);
+        if (!anotherCity) {
+          return res.status(400).send({ error: 'Редактирование невозможно: неверый id города.' });
+        }
+        location.city = anotherCity._id;
+      }
+      if (street && street !== location.street.toString()) {
+        const anotherStreet = await Street.findById(street);
+        if (!anotherStreet) {
+          return res.status(400).send({ error: 'Редактирование невозможно: неверный id улицы.' });
+        }
+        location.street = anotherStreet._id;
+      }
 
-    if (typeof description === 'string' && description !== location.description) {
-      location.description = description;
-    }
+      if (direction && direction !== location.direction.toString()) {
+        const anotherDirection = await Direction.findById(direction);
+        if (!anotherDirection) {
+          return res.status(400).send({ error: 'Редактирование невозможно: неверый id направления.' });
+        }
+        location.direction = anotherDirection._id;
+      }
 
-    const result = await location.save();
-    return res.send(await Location.populate(result, 'direction city region'));
-  } catch (e) {
-    return next(e);
-  }
-});
+      if (size && size !== location.size) {
+        location.size = size;
+      }
+
+      if (format && format !== location.format.toString()) {
+        const anotherFormat = await Format.findById(format);
+        if (!anotherFormat) {
+          return res.status(400).send({ error: 'Редактирование невозможно: неверный id формата.' });
+        }
+        location.format = anotherFormat._id;
+      }
+
+      if (legalEntity && legalEntity !== location.legalEntity.toString()) {
+        const anotherLG = await LegalEntity.findById(legalEntity);
+        if (!anotherLG) {
+          return res.status(400).send({ error: 'Редактирование невозможно: неверный id юр лица.' });
+        }
+        location.legalEntity = anotherLG._id;
+      }
+
+      if (lighting && lighting !== location.lighting) {
+        location.lighting = lighting;
+      }
+
+      if (placement && placement !== location.placement.toString()) {
+        location.placement = !location.placement;
+      }
+
+      if (price)
+        if (typeof addressNote === 'string' && addressNote !== location.addressNote) {
+          location.addressNote = addressNote;
+        }
+
+      if (typeof description === 'string' && description !== location.description) {
+        location.description = description;
+      }
+
+      if (price && price !== location.price.toString()) {
+        location.price = mongoose.Types.Decimal128.fromString(price);
+      }
+
+      if (req.files) {
+        if (location.dayImage !== null && files['dayImage']) {
+          await fs.unlink(config.publicPath + '/' + location.dayImage);
+        }
+        if (location.schemaImage !== null && files['schemaImage']) {
+          await fs.unlink(config.publicPath + '/' + location.schemaImage);
+        }
+        location.dayImage = req.files && files['dayImage'] && 'images/day/' + files['dayImage'][0].filename;
+        location.schemaImage = req.files && files['schemaImage'] && 'images/schema/' + files['schemaImage'][0].filename;
+      }
+
+      const result = await location.save();
+      return res.send(await Location.populate(result, 'direction city region'));
+    } catch (e) {
+      if (req.files) {
+        if (files['dayImage'][0]) {
+          await fs.unlink(files['dayImage'][0].path);
+        }
+
+        if (files['schemaImage'][0]) {
+          await fs.unlink(files['schemaImage'][0].path);
+        }
+      }
+      return next(e);
+    }
+  },
+);
 
 locationsRouter.delete('/:id', auth, async (req, res, next) => {
   try {
@@ -217,10 +306,20 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
     if (!location) {
       return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });
     }
+    if (location.dayImage) {
+      await fs.unlink(config.publicPath + '/' + location.dayImage);
+    }
+
+    if (location.schemaImage) {
+      await fs.unlink(config.publicPath + '/' + location.schemaImage);
+    }
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
   } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(e);
+    }
     return next(e);
   }
 });
