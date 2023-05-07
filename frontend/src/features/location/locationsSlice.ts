@@ -1,13 +1,22 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ILocation, LocationMutation, LocationsListResponse, ValidationError } from '../../types';
+import {
+  FilterCriteriaResponse,
+  FilterEntity,
+  FilterState,
+  ILocation,
+  LocationsListResponse,
+  ValidationError,
+  LocationMutation,
+} from '../../types';
 import {
   createLocation,
+  getFilterCriteriaData,
   getLocationsList,
   getOneLocation,
-  getToEditOneLocation,
   removeLocation,
   updateLocation,
+  getToEditOneLocation,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -23,7 +32,10 @@ interface LocationsState {
   locationsListLoading: boolean;
   settings: {
     columns: LocationColumn[];
+    filter: FilterState;
   };
+  filterCriteriaData: FilterCriteriaResponse;
+  filterCriteriaLoading: boolean;
   oneLocation: ILocation | null;
   oneLocationLoading: boolean;
   oneLocationEdit: LocationMutation | null;
@@ -51,6 +63,55 @@ export const initialColumns: LocationColumn[] = [
   { id: '14', name: 'reserve', prettyName: 'Бронь', show: true, type: 'billboard' },
 ];
 
+const initialFilterState: FilterState = {
+  filtered: false,
+  empty: true,
+  streets: [],
+  areas: [],
+  cities: [],
+  regions: [],
+  directions: [],
+  formats: [],
+  sizes: [],
+  legalEntities: [],
+  lightings: [],
+  rent: 'all',
+  placement: 'all',
+};
+
+const isFilterEmpty = (filter: FilterState) => {
+  return (
+    !filter.streets.length &&
+    !filter.areas.length &&
+    !filter.cities.length &&
+    !filter.regions.length &&
+    !filter.directions.length &&
+    !filter.formats.length &&
+    !filter.sizes.length &&
+    !filter.legalEntities.length &&
+    !filter.lightings.length &&
+    filter.rent === 'all' &&
+    filter.placement === 'all'
+  );
+};
+
+const initialFilterCriteria: FilterCriteriaResponse = {
+  count: 0,
+  priceRange: [],
+  locationsId: [],
+  criteria: {
+    streets: [],
+    areas: [],
+    cities: [],
+    regions: [],
+    directions: [],
+    formats: [],
+    sizes: [],
+    lightings: [],
+    legalEntities: [],
+  },
+};
+
 const initialState: LocationsState = {
   locationsListData: {
     locations: [],
@@ -58,19 +119,23 @@ const initialState: LocationsState = {
     pages: 1,
     count: 0,
     perPage: 10,
+    filtered: false,
   },
   locationsListLoading: false,
   settings: {
     columns: initialColumns,
+    filter: initialFilterState,
   },
+  filterCriteriaData: initialFilterCriteria,
+  filterCriteriaLoading: false,
   oneLocation: null,
   oneLocationLoading: false,
-  oneLocationEdit: null,
-  oneLocationEditLoading: false,
-  oneLocationEditError: null,
   createLocationLoading: false,
   createError: null,
   locationDeleteLoading: false,
+  oneLocationEdit: null,
+  oneLocationEditLoading: false,
+  oneLocationEditError: null,
 };
 
 const locationsSlice = createSlice({
@@ -86,6 +151,14 @@ const locationsSlice = createSlice({
     toggleColumn: (state, { payload: id }: PayloadAction<string>) => {
       const index = state.settings.columns.findIndex((col) => col.id === id);
       state.settings.columns[index].show = !state.settings.columns[index].show;
+    },
+    setFilter: (state, { payload }: PayloadAction<FilterEntity>) => {
+      state.settings.filter = { ...state.settings.filter, ...payload };
+      state.settings.filter.empty = isFilterEmpty(state.settings.filter);
+    },
+    resetFilter: (state) => {
+      state.settings.filter = initialFilterState;
+      state.locationsListData.filtered = false;
     },
   },
   extraReducers: (builder) => {
@@ -112,6 +185,25 @@ const locationsSlice = createSlice({
       state.oneLocationLoading = false;
     });
 
+    builder.addCase(createLocation.pending, (state) => {
+      state.createLocationLoading = true;
+    });
+    builder.addCase(createLocation.fulfilled, (state) => {
+      state.createLocationLoading = false;
+    });
+    builder.addCase(createLocation.rejected, (state, { payload: error }) => {
+      state.createLocationLoading = false;
+      state.createError = error || null;
+    });
+    builder.addCase(removeLocation.pending, (state, { meta: { arg: id } }) => {
+      state.locationDeleteLoading = id;
+    });
+    builder.addCase(removeLocation.fulfilled, (state) => {
+      state.locationDeleteLoading = false;
+    });
+    builder.addCase(removeLocation.rejected, (state) => {
+      state.locationDeleteLoading = false;
+    });
     builder.addCase(getToEditOneLocation.pending, (state) => {
       state.oneLocationEdit = null;
     });
@@ -133,32 +225,22 @@ const locationsSlice = createSlice({
       state.oneLocationEditError = error || null;
       state.oneLocationEditLoading = false;
     });
-
-    builder.addCase(createLocation.pending, (state) => {
-      state.createLocationLoading = true;
+    builder.addCase(getFilterCriteriaData.pending, (state) => {
+      state.filterCriteriaLoading = true;
     });
-    builder.addCase(createLocation.fulfilled, (state) => {
-      state.createLocationLoading = false;
+    builder.addCase(getFilterCriteriaData.fulfilled, (state, { payload: data }) => {
+      state.filterCriteriaData = data;
+      state.filterCriteriaLoading = false;
     });
-    builder.addCase(createLocation.rejected, (state, { payload: error }) => {
-      state.createLocationLoading = false;
-      state.createError = error || null;
-    });
-    builder.addCase(removeLocation.pending, (state, { meta: { arg: id } }) => {
-      state.locationDeleteLoading = id;
-    });
-    builder.addCase(removeLocation.fulfilled, (state) => {
-      state.locationDeleteLoading = false;
-    });
-    builder.addCase(removeLocation.rejected, (state) => {
-      state.locationDeleteLoading = false;
+    builder.addCase(getFilterCriteriaData.rejected, (state) => {
+      state.filterCriteriaLoading = false;
     });
   },
 });
 
 export const locationsReducer = locationsSlice.reducer;
-export const { setCurrentPage, setPerPage, toggleColumn } = locationsSlice.actions;
 
+export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter } = locationsSlice.actions;
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;
@@ -170,3 +252,6 @@ export const selectEditLocationError = (state: RootState) => state.locations.one
 export const selectCreateLocationLoading = (state: RootState) => state.locations.createLocationLoading;
 export const selectCreateLocationError = (state: RootState) => state.locations.createError;
 export const selectLocationsDeleteLoading = (state: RootState) => state.locations.locationDeleteLoading;
+export const selectLocationsFilter = (state: RootState) => state.locations.settings.filter;
+export const selectLocationsFilterCriteriaData = (state: RootState) => state.locations.filterCriteriaData;
+export const selectLocationsFilterCriteriaLoading = (state: RootState) => state.locations.filterCriteriaLoading;

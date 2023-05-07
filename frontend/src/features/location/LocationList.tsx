@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
+  Button,
   Chip,
+  Dialog,
   Grid,
   IconButton,
   Pagination,
@@ -17,8 +19,10 @@ import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   selectEditLocationError,
+  resetFilter,
   selectLocationsColumnSettings,
   selectLocationsDeleteLoading,
+  selectLocationsFilter,
   selectLocationsListData,
   selectLocationsListLoading,
   selectOneLocationEditLoading,
@@ -32,6 +36,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { openSnackbar } from '../users/usersSlice';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
+import TuneIcon from '@mui/icons-material/Tune';
+import LocationFilter from './components/LocationsFilter';
 import LocationForm from './components/LocationForm';
 import { LocationMutation } from '../../types';
 
@@ -45,8 +51,10 @@ const LocationList = () => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [locationID, setLocationID] = useState('');
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
+  const filter = useAppSelector(selectLocationsFilter);
   const { confirm } = useConfirm();
 
   const openDialog = async (id: string) => {
@@ -71,8 +79,14 @@ const LocationList = () => {
   };
 
   useEffect(() => {
-    dispatch(getLocationsList({ page: locationsListData.page, perPage: locationsListData.perPage }));
-  }, [dispatch, locationsListData.page, locationsListData.perPage]);
+    dispatch(
+      getLocationsList({
+        page: locationsListData.page,
+        perPage: locationsListData.perPage,
+        filtered: filter.filtered,
+      }),
+    );
+  }, [dispatch, filter.filtered, locationsListData.page, locationsListData.perPage]);
 
   const DeleteLocations = async (_id: string) => {
     if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную локацию?')) {
@@ -88,16 +102,26 @@ const LocationList = () => {
         <Grid item>
           <Chip
             sx={{ fontSize: '20px', p: 3 }}
-            label={`Список локаций: ${locationsListData.count}`}
+            label={(locationsListData.filtered ? `Подходящие локации: ` : `Список локаций: `) + locationsListData.count}
             variant="outlined"
             color="info"
           />
         </Grid>
         <Grid item>
-          <IconButton onClick={() => setIsDrawerOpen(true)} sx={{ mx: 1 }}>
+          <IconButton onClick={() => setIsDrawerOpen(true)} sx={{ ml: 1 }}>
             <SettingsIcon />
           </IconButton>
         </Grid>
+        <Grid item>
+          <IconButton onClick={() => setIsFilterOpen(true)} sx={{ ml: 1 }}>
+            <TuneIcon />
+          </IconButton>
+        </Grid>
+        {locationsListData.filtered && (
+          <Grid item>
+            <Button onClick={() => dispatch(resetFilter())}>Сбросить фильтр</Button>
+          </Grid>
+        )}
       </Grid>
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
         <TableContainer>
@@ -164,6 +188,9 @@ const LocationList = () => {
           />
         </ModalBody>
       )}
+      <Dialog open={isFilterOpen} onClose={() => setIsFilterOpen(false)} fullWidth maxWidth="md">
+        <LocationFilter onClose={() => setIsFilterOpen(false)} />
+      </Dialog>
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />
     </Box>
