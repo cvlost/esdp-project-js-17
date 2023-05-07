@@ -306,20 +306,10 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
     if (!location) {
       return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });
     }
-    if (location.dayImage) {
-      await fs.unlink(config.publicPath + '/' + location.dayImage);
-    }
-
-    if (location.schemaImage) {
-      await fs.unlink(config.publicPath + '/' + location.schemaImage);
-    }
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
   } catch (e) {
-    if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
-    }
     return next(e);
   }
 });

@@ -1,4 +1,4 @@
-import { Schema, Types } from 'mongoose';
+import { Schema } from 'mongoose';
 
 export interface IUser {
   email: string;
@@ -35,6 +35,14 @@ export interface IPeriod {
   end: Date;
 }
 
+export interface AreaType {
+  name: string;
+}
+
+export interface FormatType {
+  name: string;
+}
+
 export interface ILocation {
   country: string;
   area: Types.ObjectId;
@@ -54,12 +62,4 @@ export interface ILocation {
   description?: string;
   dayImage: File | string;
   schemaImage: File | string;
-}
-
-export interface AreaType {
-  name: string;
-}
-
-export interface FormatType {
-  name: string;
 }
