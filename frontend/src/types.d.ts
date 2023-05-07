@@ -111,7 +111,8 @@ export interface ILocation {
   format: string;
   placement: boolean;
   country?: string;
-  image?: string;
+  dayImage?: string;
+  schemaImage?: string;
   addressNote?: string;
   description?: string;
 }
