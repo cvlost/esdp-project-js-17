@@ -85,26 +85,36 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
   const [state, setState] = useState<LocationMutation>(existingLocation);
 
   useEffect(() => {
-    if (state.area !== '' && idState.area !== state.area) {
-      dispatch(fetchCities(state.area));
-      setIdState((prev) => ({ ...prev, area: state.area }));
-      setState((prev) => ({ ...prev, street: '', city: '' }));
-    }
-
-    if (state.city && idState.city !== state.city) {
-      dispatch(fetchStreet(state.city));
-      setIdState((prev) => ({ ...prev, city: state.city }));
-      setState((prev) => ({ ...prev, street: '' }));
-    }
-
-    if (state.area === '' && state.city === '') {
+    if (isEdit) {
+      dispatch(fetchCities());
+      dispatch(fetchStreet());
       dispatch(fetchAreas());
       dispatch(fetchRegions());
       dispatch(fetchFormat());
       dispatch(fetchLegalEntity());
       dispatch(getDirectionsList());
+    } else {
+      if (state.area !== '' && idState.area !== state.area) {
+        dispatch(fetchCities(state.area));
+        setIdState((prev) => ({ ...prev, area: state.area }));
+        setState((prev) => ({ ...prev, street: '', city: '' }));
+      }
+
+      if (state.city && idState.city !== state.city) {
+        dispatch(fetchStreet(state.city));
+        setIdState((prev) => ({ ...prev, city: state.city }));
+        setState((prev) => ({ ...prev, street: '' }));
+      }
+
+      if (state.area === '' && state.city === '') {
+        dispatch(fetchAreas());
+        dispatch(fetchRegions());
+        dispatch(fetchFormat());
+        dispatch(fetchLegalEntity());
+        dispatch(getDirectionsList());
+      }
     }
-  }, [dispatch, state.area, state.city, idState]);
+  }, [dispatch, isEdit, state.area, state.city, idState]);
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -269,7 +279,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             rows={3}
             label="Заметка к адресу"
             name="addressNote"
-            value={state.addressNote}
+            value={state.addressNote || ''}
             onChange={inputChangeHandler}
             error={Boolean(getFieldError('addressNote'))}
             helperText={getFieldError('addressNote')}
@@ -281,7 +291,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             multiline
             rows={5}
             label="Описание"
-            value={state.description}
+            value={state.description || ''}
             onChange={inputChangeHandler}
             name="description"
             error={Boolean(getFieldError('description'))}
@@ -460,13 +470,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
           </Grid>
         ) : null}
         <Grid item>
-          <Button
-            disabled={isLoading || state.dayImage === null || state.schemaImage === null}
-            type="submit"
-            color="primary"
-            variant="contained"
-            fullWidth
-          >
+          <Button disabled={isLoading} type="submit" color="primary" variant="contained" fullWidth>
             {isLoading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
           </Button>
         </Grid>
