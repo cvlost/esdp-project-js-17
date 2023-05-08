@@ -68,7 +68,7 @@ locationsRouter.get('/:id', async (req, res, next) => {
 });
 
 locationsRouter.post(
-  '/',
+  '/create',
   imagesUpload.fields([{ name: 'dayImage', maxCount: 1 }, { name: 'schemaImage' }]),
   auth,
   async (req, res, next) => {

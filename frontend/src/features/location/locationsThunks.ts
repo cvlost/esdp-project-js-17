@@ -43,7 +43,7 @@ export const createLocation = createAsyncThunk<void, LocationSubmit, { rejectVal
         formData.append('schemaImage', locationSubmit.schemaImage);
       }
 
-      await axiosApi.post('/locations', formData);
+      await axiosApi.post('/locations/create', formData);
     } catch (e) {
       if (isAxiosError(e) && e.response && e.response.status === 400) {
         return rejectWithValue(e.response.data as ValidationError);
