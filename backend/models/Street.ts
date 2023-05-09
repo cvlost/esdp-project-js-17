@@ -12,6 +12,11 @@ const StreetSchema = new Schema<StreetType>({
       message: 'Данный город не существует!',
     },
   },
+  region: {
+    type: Schema.Types.ObjectId,
+    ref: 'Region',
+    required: false,
+  },
   name: {
     type: String,
     required: true,

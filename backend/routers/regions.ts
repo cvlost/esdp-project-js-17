@@ -9,8 +9,13 @@ const regionsRouter = express.Router();
 
 regionsRouter.get('/', auth, async (req, res, next) => {
   try {
-    const regions = await Region.find();
-    return res.send(regions);
+    if (req.query.cityId !== undefined) {
+      const regions = await Region.find({ city: req.query.cityId });
+      return res.send(regions);
+    } else {
+      const regions = await Region.find();
+      return res.send(regions);
+    }
   } catch (e) {
     return next(e);
   }

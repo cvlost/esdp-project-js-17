@@ -15,6 +15,7 @@ export interface CityType {
 
 export interface RegionType {
   name: string;
+  city: Schema.Types.ObjectId | string;
 }
 
 export interface DirectionType {
@@ -24,6 +25,7 @@ export interface DirectionType {
 export interface StreetType {
   city: Schema.Types.ObjectId | string;
   name: string;
+  region: Types.ObjectId;
 }
 
 export interface LegalEntityType {

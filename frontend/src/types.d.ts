@@ -136,6 +136,7 @@ export interface StreetList {
   _id: string;
   name: string;
   city: string;
+  region: string | null;
 }
 
 export type StreetMutation = Omit<StreetList, '_id'>;
