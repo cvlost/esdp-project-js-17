@@ -143,6 +143,9 @@ locationsRouter.post(
       description: req.body.description,
       dayImage: files['dayImage'][0].filename,
       schemaImage: files['schemaImage'][0].filename,
+      client: req.body.client,
+      booking: req.body.booking,
+      nearest_booking_date: req.body.nearest_booking_date,
     };
 
     try {
