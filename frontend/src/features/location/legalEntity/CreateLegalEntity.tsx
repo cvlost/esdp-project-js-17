@@ -19,14 +19,16 @@ import {
   Container,
   IconButton,
   Paper,
+  styled,
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
 } from '@mui/material';
-import { StyledTableCell } from '../../../constants';
+import { MainColorGreen, StyledTableCell } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import CardLegalEntity from './components/CardLegalEntity';
 import FormLegalEntity from './components/FormLegalEntity';
@@ -42,6 +44,13 @@ const CreateLegalEntity = () => {
   const oneEntity = useAppSelector(selectOneLegalEntity);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: MainColorGreen,
+      color: theme.palette.common.white,
+    },
+  }));
 
   useEffect(() => {
     if (user?.role === 'admin') {

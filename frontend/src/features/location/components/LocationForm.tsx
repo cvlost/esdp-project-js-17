@@ -478,7 +478,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error }) => {
           <Button
             disabled={isLoading || state.dayImage === null || state.schemaImage === null}
             type="submit"
-            color="primary"
+            color="success"
             variant="contained"
             fullWidth
           >

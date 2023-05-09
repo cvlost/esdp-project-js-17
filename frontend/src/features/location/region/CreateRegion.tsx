@@ -7,9 +7,11 @@ import {
   Container,
   IconButton,
   Paper,
+  styled,
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
@@ -26,7 +28,7 @@ import {
   selectModal,
   selectRegionList,
 } from './regionSlice';
-import { StyledTableCell } from '../../../constants';
+import { MainColorGreen, StyledTableCell } from '../../../constants';
 import CardRegion from './components/CardRegion';
 import FormCreateRegion from './components/FormCreateRegion';
 import { Navigate } from 'react-router-dom';
@@ -41,6 +43,12 @@ const CreateRegion = () => {
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: MainColorGreen,
+      color: theme.palette.common.white,
+    },
+  }));
 
   useEffect(() => {
     dispatch(fetchRegions());
@@ -100,7 +108,7 @@ const CreateRegion = () => {
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell align="left">Регион</StyledTableCell>
+                    <StyledTableCell align="left">Район</StyledTableCell>
                     <StyledTableCell align="right">Управление</StyledTableCell>
                   </TableRow>
                 </TableHead>

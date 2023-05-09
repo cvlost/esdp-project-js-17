@@ -36,11 +36,11 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
         alignItems: 'center',
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
-        <SouthAmericaIcon />
+      <Avatar sx={{ m: 1 }}>
+        <SouthAmericaIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Создать регион
+        Создать район
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -59,7 +59,14 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button disabled={createLoading} type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+        <Button
+          disabled={createLoading}
+          color="success"
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
           {!createLoading ? 'Создать регион' : <CircularProgress />}
         </Button>
       </Box>

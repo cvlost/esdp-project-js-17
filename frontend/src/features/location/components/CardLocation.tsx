@@ -74,7 +74,7 @@ const CardLocation: React.FC<Props> = ({ loc, onClose, number, onDelete, deleteL
         .filter((col) => col.show)
         .map((col) => (
           <TableCell
-            onClick={() => navigate(`/location/${loc._id}`)}
+            onClick={() => navigate(`/${loc._id}`)}
             key={col.prettyName}
             align="center"
             sx={{ whiteSpace: 'nowrap' }}

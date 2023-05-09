@@ -44,8 +44,8 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
         alignItems: 'center',
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-        <LockOpenIcon />
+      <Avatar sx={{ m: 1 }}>
+        <LockOpenIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
         {isEdit ? 'Редактирование' : 'Регистрация'}
@@ -127,6 +127,7 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          color="success"
         >
           {isEdit ? 'Редактировать' : 'Регистрировать'}
         </Button>
