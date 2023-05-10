@@ -119,6 +119,21 @@ locationsRouter.get('/:id', async (req, res, next) => {
   }
 });
 
+locationsRouter.get('/edit/:id', async (req, res, next) => {
+  const id = req.params.id as string;
+
+  try {
+    const location = await Location.findById(id);
+    if (!location) {
+      return res.sendStatus(400).send('Данная локация не найдена!');
+    }
+    const newLocation = location.toJSON();
+    return res.send(newLocation);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 locationsRouter.post(
   '/create',
   imagesUpload.fields([{ name: 'dayImage', maxCount: 1 }, { name: 'schemaImage' }]),

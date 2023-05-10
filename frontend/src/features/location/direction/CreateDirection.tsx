@@ -16,7 +16,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { MainColorGreen, StyledTableCell } from '../../../constants';
+import { MainColorGreen } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import CardDirection from './components/cardDirection';
 import FormCreateDirection from './components/FormCreateDirection';

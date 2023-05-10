@@ -20,7 +20,7 @@ import { CityMutation } from '../../../types';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
-import { MainColorGreen, StyledTableCell } from '../../../constants';
+import { MainColorGreen } from '../../../constants';
 import { Navigate } from 'react-router-dom';
 import { controlModal, selectCityList, selectErrorRemove, selectGetAllCitiesLoading, selectModal } from './citySlice';
 import CardCity from './components/CardCity';

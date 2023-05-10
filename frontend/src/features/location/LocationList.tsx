@@ -43,6 +43,13 @@ import TuneIcon from '@mui/icons-material/Tune';
 import LocationFilter from './components/LocationsFilter';
 import LocationForm from './components/LocationForm';
 import { LocationMutation } from '../../types';
+import { fetchCities } from './city/cityThunk';
+import { fetchStreet } from './street/streetThunks';
+import { fetchAreas } from './area/areaThunk';
+import { fetchRegions } from './region/regionThunk';
+import { fetchFormat } from './format/formatThunk';
+import { fetchLegalEntity } from './legalEntity/legalEntityThunk';
+import { getDirectionsList } from './direction/directionsThunks';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -61,6 +68,13 @@ const LocationList = () => {
   const { confirm } = useConfirm();
 
   const openDialog = async (id: string) => {
+    await dispatch(fetchCities());
+    await dispatch(fetchStreet());
+    await dispatch(fetchAreas());
+    await dispatch(fetchRegions());
+    await dispatch(fetchFormat());
+    await dispatch(fetchLegalEntity());
+    await dispatch(getDirectionsList());
     await dispatch(getToEditOneLocation(id));
     setLocationID(id);
     setIsOpen(true);
@@ -72,9 +86,15 @@ const LocationList = () => {
         await dispatch(updateLocation({ id: locationID, locEdit: location })).unwrap();
         dispatch(openSnackbar({ status: true, parameter: 'edit_location' }));
         setIsOpen(false);
-        await dispatch(getLocationsList());
+        await dispatch(
+          getLocationsList({
+            page: locationsListData.page,
+            perPage: locationsListData.perPage,
+            filtered: filter.filtered,
+          }),
+        );
       } catch (error) {
-        throw new Error(`Произошла ошибка: ${error}`);
+        console.error(error);
       }
     } else {
       return;
@@ -189,7 +209,7 @@ const LocationList = () => {
         page={locationsListData.page}
         onChange={(event, page) => dispatch(setCurrentPage(page))}
       />
-      {existingLocation && (
+      {existingLocation !== null && (
         <ModalBody isOpen={isOpen} onClose={() => setIsOpen(false)}>
           <LocationForm
             onSubmit={onFormSubmit}

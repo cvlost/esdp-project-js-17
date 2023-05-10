@@ -4,7 +4,6 @@ import SouthAmericaOutlinedIcon from '@mui/icons-material/SouthAmericaOutlined';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectAreaError, selectCreateAreaLoading } from '../areaSlice';
 import { AreaMutation } from '../../../../types';
-import { MainColorGreen } from '../../../../constants';
 
 interface Props {
   onSubmit: (area: AreaMutation) => void;

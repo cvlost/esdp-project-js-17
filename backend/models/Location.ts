@@ -38,12 +38,10 @@ const PeriodSchema = new Schema<IPeriod>(
 const LocationSchema = new Schema<ILocation>({
   client: {
     type: Schema.Types.ObjectId,
-    required: true,
   },
   booking: {
     type: Schema.Types.ObjectId,
     ref: 'Booking',
-    required: true,
     validate: {
       validator: async (value: Types.ObjectId) => Booking.findById(value),
       message: 'Данная бронь не существует!',
@@ -147,6 +145,20 @@ const LocationSchema = new Schema<ILocation>({
   schemaImage: {
     type: String,
     required: true,
+  },
+});
+
+LocationSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    ret.price = ret.price.toString();
+    ret.description = ret.description === null ? '' : ret.description;
+    ret.addressNote = ret.addressNote === null ? '' : ret.addressNote;
+    ret.dayImage = null;
+    ret.schemaImage = null;
+    delete ret.__v;
+    delete ret.rent;
+    delete ret.reserve;
+    return ret;
   },
 });
 

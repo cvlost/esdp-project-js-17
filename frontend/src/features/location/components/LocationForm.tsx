@@ -86,15 +86,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
   const [state, setState] = useState<LocationMutation>(existingLocation);
 
   useEffect(() => {
-    if (isEdit) {
-      dispatch(fetchCities());
-      dispatch(fetchStreet());
-      dispatch(fetchAreas());
-      dispatch(fetchRegions());
-      dispatch(fetchFormat());
-      dispatch(fetchLegalEntity());
-      dispatch(getDirectionsList());
-    } else {
+    if (!isEdit) {
       if (state.area !== '' && idState.area !== state.area) {
         dispatch(fetchCities(state.area));
         setIdState((prev) => ({ ...prev, area: state.area }));
@@ -226,7 +218,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
               ))}
           </TextField>
         </Grid>
-        <Grid sx={{ display: idState.area.length > 0 ? 'block' : 'none' }} item>
+        <Grid sx={{ display: isEdit ? 'block' : idState.area.length > 0 ? 'block' : 'none' }} item>
           <TextField
             fullWidth
             select
@@ -251,10 +243,11 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
         </Grid>
         <Grid
           sx={{
-            display:
-              state.city.length > 0 && cities.find((item) => item._id === state.city)?.name === 'Бишкек'
-                ? 'block'
-                : 'none',
+            display: isEdit
+              ? 'block'
+              : cities.find((item) => item._id === state.city)?.name === 'Бишкек'
+              ? 'block'
+              : 'none',
           }}
           item
         >

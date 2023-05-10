@@ -28,7 +28,7 @@ import {
   selectModal,
   selectRegionList,
 } from './regionSlice';
-import { MainColorGreen, StyledTableCell } from '../../../constants';
+import { MainColorGreen } from '../../../constants';
 import CardRegion from './components/CardRegion';
 import FormCreateRegion from './components/FormCreateRegion';
 import { Navigate } from 'react-router-dom';
