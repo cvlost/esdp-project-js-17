@@ -71,6 +71,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
   const [idState, setIdState] = useState({
     city: '',
     area: '',
+    region: '',
   });
 
   const dispatch = useAppDispatch();
@@ -97,12 +98,22 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
       if (state.area !== '' && idState.area !== state.area) {
         dispatch(fetchCities(state.area));
         setIdState((prev) => ({ ...prev, area: state.area }));
-        setState((prev) => ({ ...prev, street: '', city: '' }));
+        setState((prev) => ({ ...prev, street: '', city: '', region: '' }));
       }
 
       if (state.city && idState.city !== state.city) {
-        dispatch(fetchStreet(state.city));
+        if (cities.find((item) => item._id === state.city)?.name === 'Бишкек') {
+          dispatch(fetchRegions(state.city));
+        } else {
+          dispatch(fetchStreet({ cityId: state.city }));
+        }
+        setState((prev) => ({ ...prev, street: '', region: '' }));
         setIdState((prev) => ({ ...prev, city: state.city }));
+      }
+
+      if (state.region && idState.region !== state.region) {
+        dispatch(fetchStreet({ regionId: state.region }));
+        setIdState((prev) => ({ ...prev, region: state.region }));
         setState((prev) => ({ ...prev, street: '' }));
       }
 
@@ -114,7 +125,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
         dispatch(getDirectionsList());
       }
     }
-  }, [dispatch, isEdit, state.area, state.city, idState]);
+  }, [dispatch, isEdit, state.area, state.city, idState, state.region, cities]);
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -162,6 +173,18 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
     }
   };
 
+  const style: React.CSSProperties = {
+    display: 'none',
+  };
+
+  const name = cities.find((item) => item._id === state.city);
+
+  if (name && name.name !== 'Бишкек') {
+    style.display = 'block';
+  } else if (state.region.length > 0) {
+    style.display = 'block';
+  }
+
   return (
     <>
       <Box
@@ -203,7 +226,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
               ))}
           </TextField>
         </Grid>
-        <Grid item>
+        <Grid sx={{ display: idState.area.length > 0 ? 'block' : 'none' }} item>
           <TextField
             fullWidth
             select
@@ -226,15 +249,23 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
               ))}
           </TextField>
         </Grid>
-        <Grid item>
+        <Grid
+          sx={{
+            display:
+              state.city.length > 0 && cities.find((item) => item._id === state.city)?.name === 'Бишкек'
+                ? 'block'
+                : 'none',
+          }}
+          item
+        >
           <TextField
             fullWidth
             select
             value={state.region}
             name="region"
             label="Район"
+            required={cities.find((item) => item._id === state.city)?.name === 'Бишкек'}
             onChange={inputChangeHandler}
-            required
             error={Boolean(getFieldError('region'))}
             helperText={getFieldError('region')}
           >
@@ -249,7 +280,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
               ))}
           </TextField>
         </Grid>
-        <Grid item>
+        <Grid sx={style} item>
           <TextField
             fullWidth
             select
@@ -279,7 +310,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             rows={3}
             label="Заметка к адресу"
             name="addressNote"
-            value={state.addressNote || ''}
+            value={state.addressNote}
             onChange={inputChangeHandler}
             error={Boolean(getFieldError('addressNote'))}
             helperText={getFieldError('addressNote')}
@@ -291,7 +322,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             multiline
             rows={5}
             label="Описание"
-            value={state.description || ''}
+            value={state.description}
             onChange={inputChangeHandler}
             name="description"
             error={Boolean(getFieldError('description'))}
@@ -470,7 +501,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
           </Grid>
         ) : null}
         <Grid item>
-          <Button disabled={isLoading} type="submit" color="primary" variant="contained" fullWidth>
+          <Button disabled={isLoading} type="submit" color="success" variant="contained" fullWidth>
             {isLoading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
           </Button>
         </Grid>

@@ -1,13 +1,13 @@
 import { HydratedDocument, model, Schema, Types } from 'mongoose';
 import { ILocation, IPeriod } from '../types';
 import City from './City';
-import Region from './Region';
 import Direction from './Direction';
 import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../constants';
 import Area from './Area';
 import Street from './Street';
 import LegalEntity from './LegalEntity';
 import Format from './Format';
+import Booking from './Booking';
 
 const PeriodSchema = new Schema<IPeriod>(
   {
@@ -36,6 +36,20 @@ const PeriodSchema = new Schema<IPeriod>(
 );
 
 const LocationSchema = new Schema<ILocation>({
+  client: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
+  booking: {
+    type: Schema.Types.ObjectId,
+    ref: 'Booking',
+    required: true,
+    validate: {
+      validator: async (value: Types.ObjectId) => Booking.findById(value),
+      message: 'Данная бронь не существует!',
+    },
+  },
+  nearest_booking_date: [Schema.Types.Date],
   price: {
     type: Schema.Types.Decimal128,
     required: true,
@@ -114,12 +128,8 @@ const LocationSchema = new Schema<ILocation>({
   },
   region: {
     type: Schema.Types.ObjectId,
-    required: true,
     ref: 'Region',
-    validate: {
-      validator: (id: Types.ObjectId) => Region.findById(id),
-      message: 'Неверный id района.',
-    },
+    required: false,
   },
   direction: {
     type: Schema.Types.ObjectId,

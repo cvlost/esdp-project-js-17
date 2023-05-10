@@ -12,6 +12,9 @@ streetsRouter.get('/', auth, async (req, res, next) => {
     if (req.query.citiId !== undefined) {
       const streets = await Street.find({ city: req.query.citiId });
       return res.send(streets);
+    } else if (req.query.regionId !== undefined) {
+      const streets = await Street.find({ region: req.query.regionId });
+      return res.send(streets);
     } else {
       const streets = await Street.find();
       return res.send(streets);
@@ -26,6 +29,7 @@ streetsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
     const streetData = await Street.create({
       city: req.body.city,
       name: req.body.name,
+      region: req.body.region,
     });
 
     return res.send(streetData);

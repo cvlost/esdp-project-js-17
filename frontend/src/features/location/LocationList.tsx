@@ -8,8 +8,11 @@ import {
   IconButton,
   Pagination,
   Paper,
+  styled,
   Table,
   TableBody,
+  TableCell,
+  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
@@ -29,8 +32,8 @@ import {
   selectOneLocationToEdit,
   setCurrentPage,
 } from './locationsSlice';
+import { MainColorGreen } from '../../constants';
 import { getLocationsList, getToEditOneLocation, removeLocation, updateLocation } from './locationsThunks';
-import { StyledTableCell } from '../../constants';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { openSnackbar } from '../users/usersSlice';
@@ -96,15 +99,22 @@ const LocationList = () => {
     }
   };
 
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: MainColorGreen,
+      color: theme.palette.common.white,
+    },
+  }));
+
   return (
     <Box sx={{ py: 2 }}>
       <Grid container alignItems="center" mb={2}>
         <Grid item>
           <Chip
-            sx={{ fontSize: '20px', p: 3 }}
+            sx={{ fontSize: '20px', p: 3, color: MainColorGreen }}
             label={(locationsListData.filtered ? `Подходящие локации: ` : `Список локаций: `) + locationsListData.count}
             variant="outlined"
-            color="info"
+            color="success"
           />
         </Grid>
         <Grid item>
@@ -128,7 +138,9 @@ const LocationList = () => {
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
-                <StyledTableCell align="right">№</StyledTableCell>
+                <StyledTableCell align="right" sx={{ bgcolor: MainColorGreen }}>
+                  №
+                </StyledTableCell>
                 {columns
                   .filter((col) => col.show)
                   .map((col) => (

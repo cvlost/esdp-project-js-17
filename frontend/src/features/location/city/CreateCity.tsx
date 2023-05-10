@@ -7,9 +7,11 @@ import {
   Container,
   IconButton,
   Paper,
+  styled,
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
@@ -18,7 +20,7 @@ import { CityMutation } from '../../../types';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
-import { StyledTableCell } from '../../../constants';
+import { MainColorGreen, StyledTableCell } from '../../../constants';
 import { Navigate } from 'react-router-dom';
 import { controlModal, selectCityList, selectErrorRemove, selectGetAllCitiesLoading, selectModal } from './citySlice';
 import CardCity from './components/CardCity';
@@ -35,6 +37,12 @@ const CreateCity = () => {
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: MainColorGreen,
+      color: theme.palette.common.white,
+    },
+  }));
 
   useEffect(() => {
     dispatch(fetchCities());

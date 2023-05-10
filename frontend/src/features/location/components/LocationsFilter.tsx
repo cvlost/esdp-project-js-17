@@ -96,6 +96,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
               disabled={!criteriaData.count || criteriaDataLoading}
               variant="contained"
               loadingPosition="start"
+              color="success"
               startIcon={<SearchIcon />}
               onClick={async () => {
                 dispatch(setFilter({ filtered: true }));

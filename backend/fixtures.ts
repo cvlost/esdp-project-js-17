@@ -78,35 +78,35 @@ const run = async () => {
   );
 
   const regions = await Region.create(
-    { name: 'Свердловский' },
-    { name: 'Первомайский' },
-    { name: 'Ленинский' },
-    { name: 'Октябрьский' },
-    { name: 'Аламудунский' },
-    { name: 'Ыссык-Кульский' },
-    { name: 'Ысык-Атинский' },
+    { name: 'Свердловский', city: cities[0]._id },
+    { name: 'Первомайский', city: cities[0]._id },
+    { name: 'Ленинский', city: cities[0]._id },
+    { name: 'Октябрьский', city: cities[0]._id },
+    { name: 'Аламудунский', city: cities[0]._id },
+    { name: 'Ыссык-Кульский', city: cities[0]._id },
+    { name: 'Ысык-Атинский', city: cities[0]._id },
   );
 
   const directions = await Direction.create({ name: 'Север' }, { name: 'Юг' }, { name: 'Запад' }, { name: 'Восток' });
 
   const streets = await Street.create(
-    { name: 'Киевская', city: cities[0]._id },
-    { name: 'Ахунбаева', city: cities[0]._id },
-    { name: 'Ибраимова', city: cities[0]._id },
-    { name: 'Манаса', city: cities[0]._id },
-    { name: 'Московская', city: cities[0]._id },
-    { name: 'Горького', city: cities[0]._id },
-    { name: 'Логвиненко', city: cities[0]._id },
-    { name: 'Боконбаева', city: cities[0]._id },
-    { name: 'Исанова', city: cities[0]._id },
-    { name: 'Тыныстанова', city: cities[0]._id },
-    { name: 'Юнусалиева', city: cities[0]._id },
-    { name: 'Фучика', city: cities[0]._id },
-    { name: 'Медерова', city: cities[0]._id },
-    { name: 'Токтогула', city: cities[0]._id },
-    { name: 'Жибек-Жолу', city: cities[0]._id },
-    { name: 'пр. Манаса', city: cities[0]._id },
-    { name: 'Шабдан-Баатыра', city: cities[0]._id },
+    { name: 'Киевская', city: cities[0]._id, region: regions[0]._id },
+    { name: 'Ахунбаева', city: cities[0]._id, region: regions[1]._id },
+    { name: 'Ибраимова', city: cities[0]._id, region: regions[2]._id },
+    { name: 'Манаса', city: cities[0]._id, region: regions[3]._id },
+    { name: 'Московская', city: cities[0]._id, region: regions[4]._id },
+    { name: 'Горького', city: cities[0]._id, region: regions[5]._id },
+    { name: 'Логвиненко', city: cities[0]._id, region: regions[6]._id },
+    { name: 'Боконбаева', city: cities[0]._id, region: regions[0]._id },
+    { name: 'Исанова', city: cities[0]._id, region: regions[1]._id },
+    { name: 'Тыныстанова', city: cities[0]._id, region: regions[2]._id },
+    { name: 'Юнусалиева', city: cities[0]._id, region: regions[3]._id },
+    { name: 'Фучика', city: cities[0]._id, region: regions[4]._id },
+    { name: 'Медерова', city: cities[0]._id, region: regions[5]._id },
+    { name: 'Токтогула', city: cities[0]._id, region: regions[6]._id },
+    { name: 'Жибек-Жолу', city: cities[0]._id, region: regions[0]._id },
+    { name: 'пр. Манаса', city: cities[0]._id, region: regions[1]._id },
+    { name: 'Шабдан-Баатыра', city: cities[0]._id, region: regions[2]._id },
   );
 
   const legalEntities = await LegalEntity.create({ name: 'Шамдагай' }, { name: 'ШамдагайЮридикал' });

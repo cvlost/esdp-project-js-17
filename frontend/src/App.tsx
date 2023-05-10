@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
-import Home from './containers/Home';
 import Login from './features/users/Login';
 import CreateUser from './features/users/CreateUser';
 import Users from './features/users/Users';
@@ -25,11 +24,7 @@ function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="*" element={'Not found'} />
-        <Route element={<Protected userRole={user?.role} priority="user" />}>
-          <Route path="/" element={<Home />} />
-        </Route>
         <Route path="/login" element={<Login />} />
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/users" element={<Users />}>
@@ -37,7 +32,7 @@ function App() {
           </Route>
         </Route>
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
-          <Route path="/location" element={<Location />}>
+          <Route path="/" element={<Location />}>
             <Route path="create_location" element={<CreateLocation />} />
             <Route path="create_region" element={<CreateRegion />} />
             <Route path="create_city" element={<CreateCity />} />
@@ -46,7 +41,7 @@ function App() {
             <Route path="create_area" element={<CreateArea />} />
             <Route path="create_legal_entity" element={<CreateLegalEntity />} />
             <Route path="create_street" element={<CreateStreet />} />
-            <Route path=":id" element={<LocationPage />} />
+            <Route path="/:id" element={<LocationPage />} />
           </Route>
         </Route>
       </Routes>

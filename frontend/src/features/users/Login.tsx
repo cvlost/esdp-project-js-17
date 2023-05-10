@@ -64,8 +64,8 @@ const Login = () => {
           alignItems: 'center',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-          <LockOpenIcon />
+        <Avatar sx={{ m: 1 }}>
+          <LockOpenIcon color="success" />
         </Avatar>
         <Typography component="h1" variant="h5">
           Авторизация
@@ -119,6 +119,7 @@ const Login = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            color="success"
           >
             Войти
           </Button>

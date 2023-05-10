@@ -37,8 +37,8 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit }) => {
         alignItems: 'center',
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
-        <GpsFixedIcon />
+      <Avatar sx={{ m: 1 }}>
+        <GpsFixedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
         Создать направление
@@ -60,7 +60,14 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button disabled={createLoading} type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+        <Button
+          disabled={createLoading}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="success"
+          sx={{ mt: 3, mb: 2 }}
+        >
           {!createLoading ? 'Создать направление' : <CircularProgress />}
         </Button>
       </Box>

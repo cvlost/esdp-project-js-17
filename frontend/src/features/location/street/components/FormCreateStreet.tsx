@@ -5,8 +5,9 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectCreateStreetLoading, selectStreetError } from '../streetSlice';
 import SignpostIcon from '@mui/icons-material/Signpost';
 import { selectCityList } from '../../city/citySlice';
-import { fetchStreet } from '../streetThunks';
 import { fetchCities } from '../../city/cityThunk';
+import { fetchRegions } from '../../region/regionThunk';
+import { selectRegionList } from '../../region/regionSlice';
 
 interface Props {
   onSubmit: (street: StreetMutation) => void;
@@ -17,13 +18,16 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
   const cities = useAppSelector(selectCityList);
   const createLoading = useAppSelector(selectCreateStreetLoading);
   const error = useAppSelector(selectStreetError);
+  const regions = useAppSelector(selectRegionList);
   const [state, setState] = useState<StreetMutation>({
     city: '',
     name: '',
+    region: '',
   });
 
   useEffect(() => {
     dispatch(fetchCities());
+    dispatch(fetchRegions());
   }, [dispatch]);
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -35,11 +39,17 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(state);
-    dispatch(fetchStreet());
+
+    const obj = {
+      ...state,
+      region: state.region ? state.region : null,
+    };
+
+    onSubmit(obj);
     setState({
       city: '',
       name: '',
+      region: '',
     });
   };
 
@@ -59,8 +69,8 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
         alignItems: 'center',
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
-        <SignpostIcon />
+      <Avatar sx={{ m: 1 }}>
+        <SignpostIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
         Создать улицу
@@ -91,6 +101,34 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
                 ))}
             </TextField>
           </Grid>
+          <Grid
+            sx={{ display: cities.find((item) => item._id === state.city)?.name === 'Бишкек' ? 'block' : 'none' }}
+            item
+            xs={12}
+          >
+            <TextField
+              fullWidth
+              select
+              value={state.region}
+              name="region"
+              label="Район"
+              onChange={inputChangeHandler}
+              autoComplete="off"
+              error={Boolean(getFieldError('region'))}
+              helperText={getFieldError('region')}
+              required={cities.find((item) => item._id === state.city)?.name === 'Бишкек'}
+            >
+              <MenuItem value="" disabled>
+                Выберите район
+              </MenuItem>
+              {regions &&
+                regions.map((region) => (
+                  <MenuItem key={region._id} value={region._id}>
+                    {region.name}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Grid>
           <Grid item xs={12}>
             <TextField
               value={state.name}
@@ -106,7 +144,14 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button disabled={createLoading} type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+        <Button
+          disabled={createLoading}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="success"
+          sx={{ mt: 3, mb: 2 }}
+        >
           {!createLoading ? 'Создать улицу' : <CircularProgress />}
         </Button>
       </Box>

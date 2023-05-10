@@ -3,8 +3,8 @@ import { isAxiosError } from 'axios';
 import { GlobalError, RegionList, RegionMutation, ValidationError } from '../../../types';
 import axiosApi from '../../../axios';
 
-export const fetchRegions = createAsyncThunk<RegionList[]>('location/fetch_regions', async () => {
-  const response = await axiosApi.get<RegionList[]>('/regions');
+export const fetchRegions = createAsyncThunk<RegionList[], string | undefined>('location/fetch_regions', async (id) => {
+  const response = await axiosApi.get<RegionList[]>(id ? '/regions?cityId=' + id : '/regions');
   return response.data;
 });
 
