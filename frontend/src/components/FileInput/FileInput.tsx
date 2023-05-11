@@ -6,9 +6,10 @@ interface Props {
   name: string;
   label: string;
   error?: boolean;
+  value?: File | null;
 }
 
-const FileInput: React.FC<Props> = ({ onChange, name, label, error }) => {
+const FileInput: React.FC<Props> = ({ onChange, name, label, error, value }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [filename, setFilename] = useState('');
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +39,7 @@ const FileInput: React.FC<Props> = ({ onChange, name, label, error }) => {
       />
       <Grid container direction="row" spacing={2} alignItems="center">
         <Grid item xs>
-          <TextField error={error} fullWidth disabled label={label} value={filename} onClick={activateInput} />
+          <TextField error={error} fullWidth disabled label={label} value={value || filename} onClick={activateInput} />
         </Grid>
         <Grid item>
           <Button variant="contained" color="primary" onClick={activateInput}>

@@ -69,6 +69,8 @@ const SnackbarCard = () => {
     case 'create_location':
       txt += 'Локация успешно создана';
       break;
+    case 'edit_location':
+      txt += 'Локация успешно отредактирована';
   }
 
   return (

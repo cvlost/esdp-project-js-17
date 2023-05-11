@@ -14,6 +14,7 @@ import LegalEntity from '../models/LegalEntity';
 import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../constants';
 import { promises as fs } from 'fs';
 import config from '../config';
+import path from 'path';
 
 const locationsRouter = express.Router();
 
@@ -120,15 +121,11 @@ locationsRouter.get('/:id', async (req, res, next) => {
 });
 
 locationsRouter.get('/edit/:id', async (req, res, next) => {
-  const id = req.params.id as string;
+  const id = req.params.id;
 
   try {
-    const location = await Location.findById(id);
-    if (!location) {
-      return res.sendStatus(400).send('Данная локация не найдена!');
-    }
-    const newLocation = location.toJSON();
-    return res.send(newLocation);
+    const location = await Location.findOne({ _id: id });
+    return res.send(location);
   } catch (e) {
     return next(e);
   }
@@ -187,131 +184,55 @@ locationsRouter.put(
   async (req, res, next) => {
     const files = req.files as { [filename: string]: Express.Multer.File[] };
     const id = req.params.id as string;
-    const {
-      addressNote,
-      area,
-      region,
-      city,
-      street,
-      format,
-      size,
-      legalEntity,
-      lighting,
-      placement,
-      direction,
-      description,
-      price,
-    } = req.body;
+
+    const locationEdit = {
+      country: req.body.country,
+      area: req.body.area,
+      region: req.body.region.length > 0 ? req.body.region : null,
+      city: req.body.city,
+      street: req.body.street,
+      direction: req.body.direction,
+      legalEntity: req.body.legalEntity,
+      format: req.body.format,
+      price: mongoose.Types.Decimal128.fromString(req.body.price),
+      rent: null,
+      reserve: req.body.reserve,
+      lighting: req.body.lighting,
+      placement: JSON.parse(req.body.placement),
+      size: req.body.size,
+      addressNote: req.body.addressNote,
+      description: req.body.description,
+      client: req.body.client,
+      booking: req.body.booking,
+      nearest_booking_date: req.body.nearest_booking_date,
+    };
 
     try {
-      const location = await Location.findById(id);
+      const locationOne: ILocation | null = await Location.findOne({ _id: id });
 
-      if (!location) {
-        return res.status(400).send({ error: 'Редактирование невозможно: локация не существует в базе.' });
-      }
-      if (area && area !== location.area.toString()) {
-        const anotherArea = await Area.findById(area);
-        if (!anotherArea) {
-          return res.status(400).send({ error: 'Редактирование невозможно: неверный id области.' });
-        }
-        location.area = anotherArea._id;
-      }
+      const images = {
+        dayImage: files['dayImage'] ? files['dayImage'][0].filename : req.body.dayImage,
+        schemaImage: files['schemaImage'] ? files['schemaImage'][0].filename : req.body.schemaImage,
+      };
 
-      if (region && region !== location.region.toString()) {
-        const anotherRegion = await Region.findById(region);
-        if (!anotherRegion) {
-          return res.status(400).send({ error: 'Редактирование невозможно: неверый id района.' });
-        }
-        location.region = anotherRegion._id;
-      }
-
-      if (city && city !== location.city.toString()) {
-        const anotherCity = await City.findById(city);
-        if (!anotherCity) {
-          return res.status(400).send({ error: 'Редактирование невозможно: неверый id города.' });
-        }
-        location.city = anotherCity._id;
-      }
-      if (street && street !== location.street.toString()) {
-        const anotherStreet = await Street.findById(street);
-        if (!anotherStreet) {
-          return res.status(400).send({ error: 'Редактирование невозможно: неверный id улицы.' });
-        }
-        location.street = anotherStreet._id;
-      }
-
-      if (direction && direction !== location.direction.toString()) {
-        const anotherDirection = await Direction.findById(direction);
-        if (!anotherDirection) {
-          return res.status(400).send({ error: 'Редактирование невозможно: неверый id направления.' });
-        }
-        location.direction = anotherDirection._id;
-      }
-
-      if (size && size !== location.size) {
-        location.size = size;
-      }
-
-      if (format && format !== location.format.toString()) {
-        const anotherFormat = await Format.findById(format);
-        if (!anotherFormat) {
-          return res.status(400).send({ error: 'Редактирование невозможно: неверный id формата.' });
-        }
-        location.format = anotherFormat._id;
-      }
-
-      if (legalEntity && legalEntity !== location.legalEntity.toString()) {
-        const anotherLG = await LegalEntity.findById(legalEntity);
-        if (!anotherLG) {
-          return res.status(400).send({ error: 'Редактирование невозможно: неверный id юр лица.' });
-        }
-        location.legalEntity = anotherLG._id;
-      }
-
-      if (lighting && lighting !== location.lighting) {
-        location.lighting = lighting;
-      }
-
-      if (placement && placement !== location.placement.toString()) {
-        location.placement = !location.placement;
-      }
-
-      if (price)
-        if (typeof addressNote === 'string' && addressNote !== location.addressNote) {
-          location.addressNote = addressNote;
+      if (locationOne) {
+        if (images.dayImage !== locationOne.dayImage) {
+          await fs.unlink(path.join(config.publicPath, `images/day/${locationOne.dayImage}`));
+          if (images.dayImage) {
+            await Location.updateOne({ _id: id }, { dayImage: images.dayImage });
+          }
         }
 
-      if (typeof description === 'string' && description !== location.description) {
-        location.description = description;
-      }
-
-      if (price && price !== location.price.toString()) {
-        location.price = mongoose.Types.Decimal128.fromString(price);
-      }
-
-      if (req.files) {
-        if (location.dayImage !== null && files['dayImage']) {
-          await fs.unlink(config.publicPath + '/' + location.dayImage);
+        if (images.schemaImage !== locationOne.schemaImage) {
+          await fs.unlink(path.join(config.publicPath, `images/schema/${locationOne.schemaImage}`));
+          if (images.schemaImage) {
+            await Location.updateOne({ _id: id }, { schemaImage: images.schemaImage });
+          }
         }
-        if (location.schemaImage !== null && files['schemaImage']) {
-          await fs.unlink(config.publicPath + '/' + location.schemaImage);
-        }
-        location.dayImage = req.files && files['dayImage'] && 'images/day/' + files['dayImage'][0].filename;
-        location.schemaImage = req.files && files['schemaImage'] && 'images/schema/' + files['schemaImage'][0].filename;
       }
-
-      const result = await location.save();
-      return res.send(await Location.populate(result, 'direction city region'));
+      await Location.updateMany({ _id: id }, locationEdit);
+      return res.send('edit: ' + id);
     } catch (e) {
-      if (req.files) {
-        if (files['dayImage'][0]) {
-          await fs.unlink(files['dayImage'][0].path);
-        }
-
-        if (files['schemaImage'][0]) {
-          await fs.unlink(files['schemaImage'][0].path);
-        }
-      }
       return next(e);
     }
   },

@@ -463,6 +463,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             name="dayImage"
             label="Фото дневного баннера"
             error={Boolean(getFieldError('dayImage'))}
+            value={existingLocation?.dayImage}
           />
         </Grid>
         <Grid item>
@@ -471,6 +472,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             name="schemaImage"
             label="Фото схемы"
             error={Boolean(getFieldError('schemaImage'))}
+            value={existingLocation?.schemaImage}
           />
         </Grid>
         {image.imageDay !== null || image.imageSchema !== null ? (
@@ -494,7 +496,13 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
           </Grid>
         ) : null}
         <Grid item>
-          <Button disabled={isLoading} type="submit" color="success" variant="contained" fullWidth>
+          <Button
+            disabled={isLoading || state.dayImage === null || state.schemaImage === null}
+            type="submit"
+            color="success"
+            variant="contained"
+            fullWidth
+          >
             {isLoading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
           </Button>
         </Grid>

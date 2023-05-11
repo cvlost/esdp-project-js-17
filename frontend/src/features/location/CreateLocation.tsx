@@ -17,7 +17,7 @@ const CreateLocation = () => {
   const submitFormHandler = async (location: LocationMutation) => {
     await dispatch(createLocation(location)).unwrap();
     dispatch(openSnackbar({ status: true, parameter: 'create_location' }));
-    navigate('/location');
+    navigate('/');
   };
 
   return (

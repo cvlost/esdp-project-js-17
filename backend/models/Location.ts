@@ -151,13 +151,6 @@ const LocationSchema = new Schema<ILocation>({
 LocationSchema.set('toJSON', {
   transform: (doc, ret) => {
     ret.price = ret.price.toString();
-    ret.description = ret.description === null ? '' : ret.description;
-    ret.addressNote = ret.addressNote === null ? '' : ret.addressNote;
-    ret.dayImage = null;
-    ret.schemaImage = null;
-    delete ret.__v;
-    delete ret.rent;
-    delete ret.reserve;
     return ret;
   },
 });
