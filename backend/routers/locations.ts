@@ -242,9 +242,13 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
   try {
     const _id = req.params.id as string;
     const location = await Location.findById(_id);
+
     if (!location) {
       return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });
     }
+
+    await fs.unlink(path.join(config.publicPath, `images/day/${location.dayImage}`));
+    await fs.unlink(path.join(config.publicPath, `images/schema/${location.schemaImage}`));
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
