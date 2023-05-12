@@ -37,7 +37,17 @@ const LocationPage = () => {
               <Box sx={{ position: 'sticky', top: '1em' }}>
                 <img
                   alt={`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}
-                  src={loc?.dayImage ? `${apiURL}/${loc.dayImage}` : imagePlaceholder}
+                  src={loc?.dayImage ? `${apiURL}/images/day/${loc.dayImage}` : imagePlaceholder}
+                  style={{
+                    maxWidth: '100%',
+                    boxShadow: '0 0 15px gainsboro',
+                  }}
+                />
+              </Box>
+              <Box sx={{ position: 'sticky', top: '1em' }}>
+                <img
+                  alt={`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}
+                  src={loc?.dayImage ? `${apiURL}/images/schema/${loc.schemaImage}` : imagePlaceholder}
                   style={{
                     maxWidth: '100%',
                     boxShadow: '0 0 15px gainsboro',

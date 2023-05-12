@@ -206,7 +206,6 @@ locationsRouter.put(
       booking: req.body.booking,
       nearest_booking_date: req.body.nearest_booking_date,
     };
-
     try {
       const locationOne: ILocation | null = await Location.findOne({ _id: id });
 
