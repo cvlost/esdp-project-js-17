@@ -155,8 +155,8 @@ locationsRouter.post(
       size: req.body.size,
       addressNote: req.body.addressNote,
       description: req.body.description,
-      dayImage: files['dayImage'][0].filename,
-      schemaImage: files['schemaImage'][0].filename,
+      dayImage: 'images/day/' + files['dayImage'][0].filename,
+      schemaImage: 'images/schema/' + files['schemaImage'][0].filename,
       client: req.body.client,
       booking: req.body.booking,
       nearest_booking_date: req.body.nearest_booking_date,
@@ -169,6 +169,15 @@ locationsRouter.post(
         location: await Location.populate(locationData, 'region direction city'),
       });
     } catch (e) {
+      if (req.files) {
+        const files = req.files as { [filename: string]: Express.Multer.File[] };
+        if (files.dayImage) {
+          await fs.unlink(files.dayImage[0].path);
+        }
+        if (files.schemaImage) {
+          await fs.unlink(files.schemaImage[0].path);
+        }
+      }
       if (e instanceof mongoose.Error.ValidationError) {
         return res.status(400).send(e);
       }
@@ -216,22 +225,31 @@ locationsRouter.put(
 
       if (locationOne) {
         if (images.dayImage !== locationOne.dayImage) {
-          await fs.unlink(path.join(config.publicPath, `images/day/${locationOne.dayImage}`));
+          await fs.unlink(path.join(config.publicPath, `${locationOne.dayImage}`));
           if (images.dayImage) {
-            await Location.updateOne({ _id: id }, { dayImage: images.dayImage });
+            await Location.updateOne({ _id: id }, { dayImage: 'images/day/' + images.dayImage });
           }
         }
 
         if (images.schemaImage !== locationOne.schemaImage) {
-          await fs.unlink(path.join(config.publicPath, `images/schema/${locationOne.schemaImage}`));
+          await fs.unlink(path.join(config.publicPath, `${locationOne.schemaImage}`));
           if (images.schemaImage) {
-            await Location.updateOne({ _id: id }, { schemaImage: images.schemaImage });
+            await Location.updateOne({ _id: id }, { schemaImage: 'images/schema/' + images.schemaImage });
           }
         }
       }
       await Location.updateMany({ _id: id }, locationEdit);
-      return res.send('edit: ' + id);
+      return res.send('Edited: ' + id);
     } catch (e) {
+      if (req.files) {
+        const files = req.files as { [filename: string]: Express.Multer.File[] };
+        if (files.dayImage) {
+          await fs.unlink(files.dayImage[0].path);
+        }
+        if (files.schemaImage) {
+          await fs.unlink(files.schemaImage[0].path);
+        }
+      }
       return next(e);
     }
   },
@@ -244,6 +262,14 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
 
     if (!location) {
       return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });
+    }
+
+    if (location.dayImage) {
+      await fs.unlink(path.join(config.publicPath, `${location.dayImage}`));
+    }
+
+    if (location.schemaImage) {
+      await fs.unlink(path.join(config.publicPath, `${location.schemaImage}`));
     }
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');

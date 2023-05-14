@@ -186,6 +186,7 @@ const locationsSlice = createSlice({
     });
 
     builder.addCase(createLocation.pending, (state) => {
+      state.createError = null;
       state.createLocationLoading = true;
     });
     builder.addCase(createLocation.fulfilled, (state) => {
