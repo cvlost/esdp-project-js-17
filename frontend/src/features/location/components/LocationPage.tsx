@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Chip, CircularProgress, Grid } from '@mui/material';
+import { Box, Chip, CircularProgress, Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectOneLocation, selectOneLocationLoading } from '../locationsSlice';
 import { getOneLocation } from '../locationsThunks';
@@ -33,21 +33,27 @@ const LocationPage = () => {
             color="info"
           />
           <Grid container spacing={1}>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ position: 'sticky', top: '1em' }}>
+            <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <Box sx={{ top: '1em' }}>
+                <Typography component="h5" variant="h5" sx={{ mb: 1, textAlign: 'center' }}>
+                  Днем
+                </Typography>
                 <img
                   alt={`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}
-                  src={loc?.dayImage ? `${apiURL}/images/day/${loc.dayImage}` : imagePlaceholder}
+                  src={loc?.dayImage ? `${apiURL}/${loc.dayImage}` : imagePlaceholder}
                   style={{
                     maxWidth: '100%',
                     boxShadow: '0 0 15px gainsboro',
                   }}
                 />
               </Box>
-              <Box sx={{ position: 'sticky', top: '1em' }}>
+              <Box sx={{ top: '1em' }}>
+                <Typography component="h5" variant="h5" sx={{ mb: 1, textAlign: 'center' }}>
+                  Схема
+                </Typography>
                 <img
                   alt={`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}
-                  src={loc?.dayImage ? `${apiURL}/images/schema/${loc.schemaImage}` : imagePlaceholder}
+                  src={loc?.dayImage ? `${apiURL}/${loc.schemaImage}` : imagePlaceholder}
                   style={{
                     maxWidth: '100%',
                     boxShadow: '0 0 15px gainsboro',
