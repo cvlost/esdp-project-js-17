@@ -187,7 +187,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
           alignItems: 'center',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
+        <Avatar sx={{ m: 1, bgcolor: 'green' }}>
           <AddLocationIcon />
         </Avatar>
         <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
