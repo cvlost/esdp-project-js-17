@@ -31,18 +31,20 @@ function App() {
             <Route path="createUser" element={<CreateUser />} />
           </Route>
         </Route>
+
+        <Route element={<Protected userRole={user?.role} priority="user" />}>
+          <Route path="/" element={<Location />} />
+          <Route path="/:id" element={<LocationPage />} />
+        </Route>
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
-          <Route path="/" element={<Location />}>
-            <Route path="create_location" element={<CreateLocation />} />
-            <Route path="create_region" element={<CreateRegion />} />
-            <Route path="create_city" element={<CreateCity />} />
-            <Route path="create_direction" element={<CreateDirection />} />
-            <Route path="create_format" element={<CreateFormat />} />
-            <Route path="create_area" element={<CreateArea />} />
-            <Route path="create_legal_entity" element={<CreateLegalEntity />} />
-            <Route path="create_street" element={<CreateStreet />} />
-            <Route path="/:id" element={<LocationPage />} />
-          </Route>
+          <Route path="/create_location" element={<CreateLocation />} />
+          <Route path="/create_region" element={<CreateRegion />} />
+          <Route path="/create_city" element={<CreateCity />} />
+          <Route path="/create_direction" element={<CreateDirection />} />
+          <Route path="/create_format" element={<CreateFormat />} />
+          <Route path="/create_area" element={<CreateArea />} />
+          <Route path="/create_legal_entity" element={<CreateLegalEntity />} />
+          <Route path="/create_street" element={<CreateStreet />} />
         </Route>
       </Routes>
     </Layout>
