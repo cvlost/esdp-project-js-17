@@ -142,7 +142,7 @@ const run = async () => {
   const lightings = BILLBOARD_LIGHTINGS.slice();
   const sizes = BILLBOARD_SIZES.slice();
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 20; i++) {
     await Location.create({
       area: randElement(areas)._id,
       direction: randElement(directions)._id,
@@ -191,8 +191,8 @@ const run = async () => {
       placement: Math.random() > 0.5,
       addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
       description: Math.random() > 0.5 ? fixtureDescription : null,
-      dayImage: 'fixtures/banner.jpeg',
-      schemaImage: 'fixtures/banner2.jpeg',
+      dayImage: `fixtures/${i + 1}.jpg`,
+      schemaImage: `fixtures/${i + 1}.png`,
     });
   }
 

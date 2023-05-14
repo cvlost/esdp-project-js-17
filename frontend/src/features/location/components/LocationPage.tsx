@@ -34,7 +34,7 @@ const LocationPage = () => {
           />
           <Grid container spacing={1}>
             <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-              <Box sx={{ top: '1em' }}>
+              <Box sx={{ top: '1em', width: '50%' }}>
                 <Typography component="h5" variant="h5" sx={{ mb: 1, textAlign: 'center' }}>
                   Днем
                 </Typography>
@@ -47,7 +47,7 @@ const LocationPage = () => {
                   }}
                 />
               </Box>
-              <Box sx={{ top: '1em' }}>
+              <Box sx={{ top: '1em', width: '50%' }}>
                 <Typography component="h5" variant="h5" sx={{ mb: 1, textAlign: 'center' }}>
                   Схема
                 </Typography>
