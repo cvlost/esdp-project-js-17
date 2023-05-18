@@ -1,24 +1,130 @@
-import React from 'react';
-import { Avatar, Box, Typography } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Avatar, Box, Chip, Container, Typography, Grid, TextField, Button } from '@mui/material';
 import ConstructionIcon from '@mui/icons-material/Construction';
+import { useAppSelector } from '../../app/hooks';
+import { selectSelectedLocationId } from '../location/locationsSlice';
+import { selectConstructor } from './commercialLinkSlice';
+import ConstructorCard from './components/ConstructorCard';
+import { green } from '@mui/material/colors';
+import TitleIcon from '@mui/icons-material/Title';
+import SimpleMdeReact from 'react-simplemde-editor';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import 'easymde/dist/easymde.min.css';
 
 const ConstructorLink = () => {
+  const listLocationId = useAppSelector(selectSelectedLocationId);
+  const constructorLocation = useAppSelector(selectConstructor);
+  const [value, setValue] = useState({
+    description: '',
+    title: '',
+  });
+
+  const options = useMemo(() => {
+    return {
+      spellChecker: false,
+      autofocus: true,
+      placeholder: 'Введите текст...',
+      status: false,
+      autoSave: {
+        enabled: true,
+        delay: 1000,
+      },
+    };
+  }, []);
+
+  const onChangeDescription = useCallback((value: string) => {
+    setValue((prev) => ({ ...prev, description: value }));
+  }, []);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setValue((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const createCommercialLink = () => {
+    const obj = {
+      location: listLocationId,
+      settings: constructorLocation,
+      description: value.description,
+      title: value.title,
+    };
+
+    console.log(obj);
+  };
+
   return (
-    <Box
-      sx={{
-        mt: 6,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Avatar sx={{ m: 1 }}>
-        <ConstructionIcon color="success" />
-      </Avatar>
-      <Typography component="h1" variant="h5">
-        Конструктор предложения
-      </Typography>
-    </Box>
+    <Container maxWidth="md" sx={{ mb: 4 }}>
+      <Box
+        sx={{
+          mt: 6,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1 }}>
+          <ConstructionIcon color="success" />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Конструктор предложения
+        </Typography>
+        <Chip
+          sx={{ fontSize: '20px', p: 3, marginRight: 'auto', mb: 2 }}
+          label={'Выберите поля '}
+          variant="outlined"
+          color="info"
+        />
+        <Grid spacing={2} container>
+          <ConstructorCard />
+          <Grid xs={12} item>
+            <Chip
+              sx={{ fontSize: '20px', p: 3, marginRight: 'auto', mt: 2 }}
+              label={'Ввести данные '}
+              variant="outlined"
+              color="info"
+            />
+            <Box component="form" sx={{ mt: 3, width: '100%' }}>
+              <Grid container sx={{ flexDirection: 'column' }} spacing={3}>
+                <Grid item xs={12}>
+                  <Box sx={{ display: 'flex' }}>
+                    <Avatar sx={{ bgcolor: green[500], mr: 3, mb: 'auto' }}>
+                      <TitleIcon />
+                    </Avatar>
+                    <TextField
+                      label="Название организации"
+                      name="title"
+                      type="text"
+                      autoComplete="current-password"
+                      fullWidth
+                      variant="outlined"
+                      required
+                      onChange={onChange}
+                      value={value.title}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12} display="flex">
+                  <Avatar sx={{ bgcolor: green[500], mr: 3, mb: 'auto' }}>
+                    <ChatBubbleOutlineIcon />
+                  </Avatar>
+                  <SimpleMdeReact
+                    options={options}
+                    style={{ width: '100%' }}
+                    value={value.description}
+                    onChange={onChangeDescription}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <Button onClick={createCommercialLink} variant="contained" sx={{ mt: 3 }}>
+              Создать предложение
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+    </Container>
   );
 };
 
