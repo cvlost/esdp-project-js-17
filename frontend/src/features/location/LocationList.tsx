@@ -62,6 +62,7 @@ import { fetchLegalEntity } from './legalEntity/legalEntityThunk';
 import { getDirectionsList } from './direction/directionsThunks';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import CloseIcon from '@mui/icons-material/Close';
+import { Link } from 'react-router-dom';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -179,7 +180,13 @@ const LocationList = () => {
           </Grid>
         )}
         <Grid marginLeft="auto" item>
-          <Button disabled={listLocationId.length <= 0} size="large" variant="contained">
+          <Button
+            component={Link}
+            disabled={listLocationId.length <= 0}
+            size="large"
+            variant="contained"
+            to={'constructor_link'}
+          >
             Создать ссылку
           </Button>
           <Tooltip title={!open ? 'Открыть выбор' : 'Закрыть выбор'} placement="top">

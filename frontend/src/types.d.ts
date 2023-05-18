@@ -278,10 +278,12 @@ export interface CommercialLinkTypeMutation {
     id: string;
     name: string;
     show: boolean;
-  };
+  }[];
+  description: string;
+  title: string;
 }
 
-export interface CommercialLinkTypeMutation {
+export interface CommercialLinkType {
   location: ILocation[];
   settings: {
     id: string;
@@ -289,4 +291,14 @@ export interface CommercialLinkTypeMutation {
     show: boolean;
   };
   fullLink: string;
+}
+
+export interface ConstructorLinkType {
+  id: string;
+  name: string;
+  show: boolean;
+}
+
+export interface Link {
+  link: string | null;
 }

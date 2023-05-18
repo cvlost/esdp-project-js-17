@@ -18,6 +18,7 @@ import CreateCity from './features/location/city/CreateCity';
 import CreateLocation from './features/location/CreateLocation';
 import 'rsuite/dist/rsuite.min.css';
 import LocationPage from './features/location/components/LocationPage';
+import ConstructorLink from './features/CommercialLink/ConstructorLink';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -45,6 +46,7 @@ function App() {
           <Route path="/create_area" element={<CreateArea />} />
           <Route path="/create_legal_entity" element={<CreateLegalEntity />} />
           <Route path="/create_street" element={<CreateStreet />} />
+          <Route path="/constructor_link" element={<ConstructorLink />} />
         </Route>
       </Routes>
     </Layout>
