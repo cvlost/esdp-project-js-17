@@ -115,6 +115,7 @@ export interface ILocation {
   schemaImage?: string;
   addressNote?: string;
   description?: string;
+  checked: boolean;
 }
 
 export interface LocationsListResponse {
@@ -270,3 +271,22 @@ interface FilterCriteriaResponse {
 }
 
 /***** END: Filter types *****/
+
+export interface CommercialLinkTypeMutation {
+  location: string[];
+  settings: {
+    id: string;
+    name: string;
+    show: boolean;
+  };
+}
+
+export interface CommercialLinkTypeMutation {
+  location: ILocation[];
+  settings: {
+    id: string;
+    name: string;
+    show: boolean;
+  };
+  fullLink: string;
+}

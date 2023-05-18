@@ -44,6 +44,8 @@ interface LocationsState {
   createLocationLoading: boolean;
   createError: ValidationError | null;
   locationDeleteLoading: false | string;
+  selectedLocationId: string[];
+  openSelected: boolean;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -136,6 +138,8 @@ const initialState: LocationsState = {
   oneLocationEdit: null,
   oneLocationEditLoading: false,
   oneLocationEditError: null,
+  selectedLocationId: [],
+  openSelected: false,
 };
 
 const locationsSlice = createSlice({
@@ -159,6 +163,16 @@ const locationsSlice = createSlice({
     resetFilter: (state) => {
       state.settings.filter = initialFilterState;
       state.locationsListData.filtered = false;
+    },
+    addLocationId: (state) => {
+      state.locationsListData.locations.forEach((item) => {
+        if (item.checked === true) {
+          state.selectedLocationId.push(item._id);
+        } else {
+          const index = state.selectedLocationId.indexOf(item._id);
+          state.selectedLocationId.splice(index, 1);
+        }
+      });
     },
   },
   extraReducers: (builder) => {
@@ -241,7 +255,8 @@ const locationsSlice = createSlice({
 
 export const locationsReducer = locationsSlice.reducer;
 
-export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter } = locationsSlice.actions;
+export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter, addLocationId } =
+  locationsSlice.actions;
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;

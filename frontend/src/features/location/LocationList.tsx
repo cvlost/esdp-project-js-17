@@ -16,6 +16,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  ToggleButton,
+  Tooltip,
 } from '@mui/material';
 import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
@@ -50,6 +52,7 @@ import { fetchRegions } from './region/regionThunk';
 import { fetchFormat } from './format/formatThunk';
 import { fetchLegalEntity } from './legalEntity/legalEntityThunk';
 import { getDirectionsList } from './direction/directionsThunks';
+import ViewListIcon from '@mui/icons-material/ViewList';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -152,6 +155,13 @@ const LocationList = () => {
             <Button onClick={() => dispatch(resetFilter())}>Сбросить фильтр</Button>
           </Grid>
         )}
+        <Grid marginLeft="auto" item>
+          <Tooltip title="Открыть выбор" placement="top">
+            <ToggleButton value="list" aria-label="list">
+              <ViewListIcon />
+            </ToggleButton>
+          </Tooltip>
+        </Grid>
       </Grid>
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
         <TableContainer>

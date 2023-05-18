@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup, TableCell, Typography } from '@mui/material';
+import { Button, ButtonGroup, Paper, Switch, TableCell, Tooltip, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { ILocation } from '../../../types';
@@ -95,6 +95,11 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
           <Button size="small" color="success" onClick={onEdit}>
             <EditIcon />
           </Button>
+          <Paper sx={{ ml: 1 }} elevation={3}>
+            <Tooltip title="Выбрать" placement="top">
+              <Switch />
+            </Tooltip>
+          </Paper>
         </ButtonGroup>
       </TableCell>
     </StyledTableRow>
