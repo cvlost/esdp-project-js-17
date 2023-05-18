@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Avatar, Box, Chip, Container, Typography, Grid, TextField, Button } from '@mui/material';
 import ConstructionIcon from '@mui/icons-material/Construction';
-import { useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectSelectedLocationId } from '../location/locationsSlice';
 import { selectConstructor } from './commercialLinkSlice';
 import ConstructorCard from './components/ConstructorCard';
@@ -10,10 +10,12 @@ import TitleIcon from '@mui/icons-material/Title';
 import SimpleMdeReact from 'react-simplemde-editor';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import 'easymde/dist/easymde.min.css';
+import { createCommLink } from './CommercialLinkThunk';
 
 const ConstructorLink = () => {
   const listLocationId = useAppSelector(selectSelectedLocationId);
   const constructorLocation = useAppSelector(selectConstructor);
+  const dispatch = useAppDispatch();
   const [value, setValue] = useState({
     description: '',
     title: '',
@@ -41,15 +43,14 @@ const ConstructorLink = () => {
     setValue((prev) => ({ ...prev, [name]: value }));
   };
 
-  const createCommercialLink = () => {
+  const createCommercialLink = async () => {
     const obj = {
       location: listLocationId,
       settings: constructorLocation,
-      description: value.description,
-      title: value.title,
+      description: value.description ? value.description : null,
+      title: value.title ? value.title : null,
     };
-
-    console.log(obj);
+    await dispatch(createCommLink(obj)).unwrap();
   };
 
   return (

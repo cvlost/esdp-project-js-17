@@ -279,8 +279,8 @@ export interface CommercialLinkTypeMutation {
     name: string;
     show: boolean;
   }[];
-  description: string;
-  title: string;
+  description: string | null;
+  title: string | null;
 }
 
 export interface CommercialLinkType {
