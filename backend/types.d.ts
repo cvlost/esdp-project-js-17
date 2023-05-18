@@ -81,3 +81,16 @@ export interface BookingType {
   locationId: Schema.Types.ObjectId;
   booking_date: [Schema.Types.Date];
 }
+
+export interface CommercialLinkType {
+  location: string[];
+  settings: {
+    id: string;
+    name: string;
+    show: boolean;
+  }[];
+  description: string;
+  title: string;
+  shortUrl: string;
+  fullLink: string;
+}
