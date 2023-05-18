@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CommercialLinkTypeMutation, ConstructorLinkType, Link } from '../../types';
 import { RootState } from '../../app/store';
+import { createCommLink } from './CommercialLinkThunk';
 
 interface commercialLinkType {
   url: Link | null;
@@ -46,6 +47,18 @@ const commercialLinkSlice = createSlice({
       const index = state.constructorLink.findIndex((item) => item.id === id);
       state.constructorLink[index].show = !state.constructorLink[index].show;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(createCommLink.pending, (state) => {
+      state.createLinkLoading = true;
+    });
+    builder.addCase(createCommLink.fulfilled, (state, { payload: link }) => {
+      state.createLinkLoading = false;
+      state.url = link;
+    });
+    builder.addCase(createCommLink.rejected, (state) => {
+      state.createLinkLoading = false;
+    });
   },
 });
 
