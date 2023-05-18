@@ -35,6 +35,7 @@ import {
   setCurrentPage,
   addLocationId,
   selectSelectedLocationId,
+  resetLocationId,
 } from './locationsSlice';
 import { MainColorGreen } from '../../constants';
 import {
@@ -142,7 +143,7 @@ const LocationList = () => {
   }));
 
   const checkedCardLocation = async (id: string) => {
-    await dispatch(checkedLocation(id)).unwrap();
+    await dispatch(checkedLocation({ id, allChecked: false })).unwrap();
     await dispatch(
       getLocationsList({
         page: locationsListData.page,
@@ -151,6 +152,18 @@ const LocationList = () => {
       }),
     );
     dispatch(addLocationId());
+  };
+
+  const resetCardLocationId = async () => {
+    await dispatch(checkedLocation({ id: undefined, allChecked: true })).unwrap();
+    dispatch(resetLocationId());
+    await dispatch(
+      getLocationsList({
+        page: locationsListData.page,
+        perPage: locationsListData.perPage,
+        filtered: filter.filtered,
+      }),
+    );
   };
 
   return (
@@ -180,6 +193,11 @@ const LocationList = () => {
           </Grid>
         )}
         <Grid marginLeft="auto" item>
+          {locationsListData.locations.filter((item) => item.checked).length > 3 && (
+            <Button sx={{ mr: 2 }} onClick={resetCardLocationId} size="large" variant="contained">
+              Сбросить предложение
+            </Button>
+          )}
           <Button
             component={Link}
             disabled={listLocationId.length <= 0}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup, Paper, Switch, TableCell, Tooltip, Typography } from '@mui/material';
+import { Button, ButtonGroup, Paper, Switch, TableCell, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { ILocation } from '../../../types';
@@ -100,13 +100,11 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
           </Button>
           {open && (
             <Paper sx={{ ml: 1 }} elevation={3}>
-              <Tooltip title="Выбрать" placement="top">
-                <Switch
-                  disabled={loadingCheck ? loadingCheck === loc._id : false}
-                  onClick={checkedCardLocation}
-                  checked={loc.checked}
-                />
-              </Tooltip>
+              <Switch
+                disabled={loadingCheck ? loadingCheck === loc._id : false}
+                onClick={checkedCardLocation}
+                checked={loc.checked}
+              />
             </Paper>
           )}
         </ButtonGroup>

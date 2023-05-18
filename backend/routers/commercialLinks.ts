@@ -27,8 +27,8 @@ commercialLinksRouter.post('/', async (req, res) => {
       settings: req.body.settings,
       description: req.body.description,
       title: req.body.title,
-      shortUrl: req.body.shortUrl,
-      fullLink: `http://localhost:8000/links/${randomShortUrl}`,
+      shortUrl: randomShortUrl,
+      fullLink: `http://localhost:8000/link/${randomShortUrl}`,
     });
 
     return res.send(newCommLink);

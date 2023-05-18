@@ -300,5 +300,5 @@ export interface ConstructorLinkType {
 }
 
 export interface Link {
-  link: string | null;
+  fullLink: string | null;
 }

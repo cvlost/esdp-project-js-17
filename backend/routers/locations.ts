@@ -280,13 +280,13 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
   }
 });
 
-locationsRouter.patch('/:id/checked', auth, async (req, res, next) => {
+locationsRouter.patch('/checked', auth, async (req, res, next) => {
   try {
     if (req.query.allChecked !== undefined) {
       await Location.updateMany({ checked: false });
       return res.send({ patch: false });
-    } else {
-      const locationOne = await Location.findOne({ _id: req.params.id });
+    } else if (req.query.checked !== undefined) {
+      const locationOne = await Location.findOne({ _id: req.query.checked });
 
       if (!locationOne) {
         return res.status(404).send({ error: 'Локации не существует в базе.' });

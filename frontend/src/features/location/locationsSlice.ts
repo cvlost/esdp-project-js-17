@@ -178,10 +178,13 @@ const locationsSlice = createSlice({
         }
       });
     },
+    resetLocationId: (state) => {
+      state.selectedLocationId = [];
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(checkedLocation.pending, (state, { meta: { arg: id } }) => {
-      state.checkedLocationLoading = id;
+      state.checkedLocationLoading = id.id ? id.id : '';
     });
     builder.addCase(checkedLocation.fulfilled, (state) => {
       state.checkedLocationLoading = false;
@@ -269,7 +272,7 @@ const locationsSlice = createSlice({
 
 export const locationsReducer = locationsSlice.reducer;
 
-export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter, addLocationId } =
+export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter, addLocationId, resetLocationId } =
   locationsSlice.actions;
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
