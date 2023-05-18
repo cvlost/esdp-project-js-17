@@ -16,9 +16,10 @@ interface Props {
   loc: ILocation;
   number: number;
   checkedCardLocation: React.MouseEventHandler;
+  open: boolean;
 }
 
-const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLoading, checkedCardLocation }) => {
+const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLoading, checkedCardLocation, open }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
   const loadingCheck = useAppSelector(selectCheckedLocationLoading);
@@ -97,15 +98,17 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
           <Button size="small" color="success" onClick={onEdit}>
             <EditIcon />
           </Button>
-          <Paper sx={{ ml: 1 }} elevation={3}>
-            <Tooltip title="Выбрать" placement="top">
-              <Switch
-                disabled={loadingCheck ? loadingCheck === loc._id : false}
-                onClick={checkedCardLocation}
-                checked={loc.checked}
-              />
-            </Tooltip>
-          </Paper>
+          {open && (
+            <Paper sx={{ ml: 1 }} elevation={3}>
+              <Tooltip title="Выбрать" placement="top">
+                <Switch
+                  disabled={loadingCheck ? loadingCheck === loc._id : false}
+                  onClick={checkedCardLocation}
+                  checked={loc.checked}
+                />
+              </Tooltip>
+            </Paper>
+          )}
         </ButtonGroup>
       </TableCell>
     </StyledTableRow>

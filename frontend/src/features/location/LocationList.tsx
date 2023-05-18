@@ -34,6 +34,7 @@ import {
   selectOneLocationToEdit,
   setCurrentPage,
   addLocationId,
+  selectSelectedLocationId,
 } from './locationsSlice';
 import { MainColorGreen } from '../../constants';
 import {
@@ -60,6 +61,7 @@ import { fetchFormat } from './format/formatThunk';
 import { fetchLegalEntity } from './legalEntity/legalEntityThunk';
 import { getDirectionsList } from './direction/directionsThunks';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import CloseIcon from '@mui/icons-material/Close';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -76,6 +78,8 @@ const LocationList = () => {
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
   const filter = useAppSelector(selectLocationsFilter);
   const { confirm } = useConfirm();
+  const [open, setOpen] = useState(false);
+  const listLocationId = useAppSelector(selectSelectedLocationId);
 
   const openDialog = async (id: string) => {
     await dispatch(fetchCities());
@@ -175,9 +179,12 @@ const LocationList = () => {
           </Grid>
         )}
         <Grid marginLeft="auto" item>
-          <Tooltip title="Открыть выбор" placement="top">
-            <ToggleButton value="list" aria-label="list">
-              <ViewListIcon />
+          <Button disabled={listLocationId.length <= 0} size="large" variant="contained">
+            Создать ссылку
+          </Button>
+          <Tooltip title={!open ? 'Открыть выбор' : 'Закрыть выбор'} placement="top">
+            <ToggleButton onClick={() => setOpen((prev) => !prev)} value="list" aria-label="list">
+              {!open ? <ViewListIcon /> : <CloseIcon />}
             </ToggleButton>
           </Tooltip>
         </Grid>
@@ -225,6 +232,7 @@ const LocationList = () => {
                   number={(locationsListData.page - 1) * locationsListData.perPage + i + 1}
                   onEdit={() => openDialog(loc._id)}
                   checkedCardLocation={() => checkedCardLocation(loc._id)}
+                  open={open}
                 />
               ))}
             </TableBody>
