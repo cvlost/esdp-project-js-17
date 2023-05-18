@@ -35,7 +35,13 @@ import {
   setCurrentPage,
 } from './locationsSlice';
 import { MainColorGreen } from '../../constants';
-import { getLocationsList, getToEditOneLocation, removeLocation, updateLocation } from './locationsThunks';
+import {
+  checkedLocation,
+  getLocationsList,
+  getToEditOneLocation,
+  removeLocation,
+  updateLocation,
+} from './locationsThunks';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { openSnackbar } from '../users/usersSlice';
@@ -129,6 +135,17 @@ const LocationList = () => {
     },
   }));
 
+  const checkedCardLocation = async (id: string) => {
+    await dispatch(checkedLocation(id)).unwrap();
+    await dispatch(
+      getLocationsList({
+        page: locationsListData.page,
+        perPage: locationsListData.perPage,
+        filtered: filter.filtered,
+      }),
+    );
+  };
+
   return (
     <Box sx={{ py: 2 }}>
       <Grid container alignItems="center" mb={2}>
@@ -205,6 +222,7 @@ const LocationList = () => {
                   loc={loc}
                   number={(locationsListData.page - 1) * locationsListData.perPage + i + 1}
                   onEdit={() => openDialog(loc._id)}
+                  checkedCardLocation={() => checkedCardLocation(loc._id)}
                 />
               ))}
             </TableBody>

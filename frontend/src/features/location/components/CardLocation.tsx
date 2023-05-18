@@ -6,7 +6,7 @@ import { ILocation } from '../../../types';
 import { StyledTableRow } from '../../../constants';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../../app/hooks';
-import { selectLocationsColumnSettings } from '../locationsSlice';
+import { selectCheckedLocationLoading, selectLocationsColumnSettings } from '../locationsSlice';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -15,11 +15,13 @@ interface Props {
   onEdit: React.MouseEventHandler;
   loc: ILocation;
   number: number;
+  checkedCardLocation: React.MouseEventHandler;
 }
 
-const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLoading }) => {
+const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLoading, checkedCardLocation }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
+  const loadingCheck = useAppSelector(selectCheckedLocationLoading);
 
   const cells: Record<string, React.ReactNode> = {
     address: (
@@ -97,7 +99,7 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
           </Button>
           <Paper sx={{ ml: 1 }} elevation={3}>
             <Tooltip title="Выбрать" placement="top">
-              <Switch />
+              <Switch disabled={loadingCheck} onClick={checkedCardLocation} checked={loc.checked} />
             </Tooltip>
           </Paper>
         </ButtonGroup>

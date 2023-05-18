@@ -284,4 +284,4 @@ export const selectLocationsDeleteLoading = (state: RootState) => state.location
 export const selectLocationsFilter = (state: RootState) => state.locations.settings.filter;
 export const selectLocationsFilterCriteriaData = (state: RootState) => state.locations.filterCriteriaData;
 export const selectLocationsFilterCriteriaLoading = (state: RootState) => state.locations.filterCriteriaLoading;
-export const selectCheckedLocation = (state: RootState) => state.locations.checkedLocationLoading;
+export const selectCheckedLocationLoading = (state: RootState) => state.locations.checkedLocationLoading;
