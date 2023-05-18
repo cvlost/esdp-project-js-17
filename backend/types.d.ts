@@ -59,6 +59,7 @@ export interface ILocation {
   description?: string;
   dayImage: File | string;
   schemaImage: File | string;
+  checked: boolean;
 }
 
 export interface AreaType {

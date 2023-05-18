@@ -160,6 +160,7 @@ locationsRouter.post(
       client: req.body.client,
       booking: req.body.booking,
       nearest_booking_date: req.body.nearest_booking_date,
+      checked: false,
     };
 
     try {
@@ -274,6 +275,32 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+locationsRouter.patch('/:id/checked', auth, async (req, res, next) => {
+  try {
+    if (req.query.allChecked !== undefined) {
+      await Location.updateMany({ checked: false });
+      return res.send({ patch: false });
+    } else {
+      const locationOne = await Location.findOne({ _id: req.params.id });
+
+      if (!locationOne) {
+        return res.status(404).send({ error: 'Локации не существует в базе.' });
+      }
+
+      if (!locationOne.checked) {
+        locationOne.checked = req.body.checked;
+      } else {
+        locationOne.checked = !req.body.checked;
+      }
+
+      await locationOne.save();
+      return res.send(locationOne.checked);
+    }
   } catch (e) {
     return next(e);
   }
