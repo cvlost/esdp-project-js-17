@@ -33,6 +33,7 @@ import {
   selectOneLocationEditLoading,
   selectOneLocationToEdit,
   setCurrentPage,
+  addLocationId,
 } from './locationsSlice';
 import { MainColorGreen } from '../../constants';
 import {
@@ -144,6 +145,7 @@ const LocationList = () => {
         filtered: filter.filtered,
       }),
     );
+    dispatch(addLocationId());
   };
 
   return (
