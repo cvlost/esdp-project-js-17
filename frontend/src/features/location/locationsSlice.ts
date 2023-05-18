@@ -17,6 +17,7 @@ import {
   removeLocation,
   updateLocation,
   getToEditOneLocation,
+  checkedLocation,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -46,6 +47,7 @@ interface LocationsState {
   locationDeleteLoading: false | string;
   selectedLocationId: string[];
   openSelected: boolean;
+  checkedLocationLoading: boolean;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -140,6 +142,7 @@ const initialState: LocationsState = {
   oneLocationEditError: null,
   selectedLocationId: [],
   openSelected: false,
+  checkedLocationLoading: false,
 };
 
 const locationsSlice = createSlice({
@@ -176,6 +179,16 @@ const locationsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(checkedLocation.pending, (state) => {
+      state.checkedLocationLoading = true;
+    });
+    builder.addCase(checkedLocation.fulfilled, (state) => {
+      state.checkedLocationLoading = false;
+    });
+    builder.addCase(checkedLocation.rejected, (state) => {
+      state.checkedLocationLoading = false;
+    });
+
     builder.addCase(getLocationsList.pending, (state) => {
       state.locationsListLoading = true;
     });
@@ -271,3 +284,4 @@ export const selectLocationsDeleteLoading = (state: RootState) => state.location
 export const selectLocationsFilter = (state: RootState) => state.locations.settings.filter;
 export const selectLocationsFilterCriteriaData = (state: RootState) => state.locations.filterCriteriaData;
 export const selectLocationsFilterCriteriaLoading = (state: RootState) => state.locations.filterCriteriaLoading;
+export const selectCheckedLocation = (state: RootState) => state.locations.checkedLocationLoading;

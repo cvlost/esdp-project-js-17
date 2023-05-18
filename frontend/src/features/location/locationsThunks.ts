@@ -157,3 +157,7 @@ export const getFilterCriteriaData = createAsyncThunk<FilterCriteriaResponse, vo
     return response.data;
   },
 );
+
+export const checkedLocation = createAsyncThunk<void, string>('locations/check_location', async (id) => {
+  await axiosApi.patch('/locations/' + id + '/checked', { checked: true });
+});
