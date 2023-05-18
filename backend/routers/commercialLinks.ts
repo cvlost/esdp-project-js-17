@@ -17,4 +17,22 @@ commercialLinksRouter.get('/:shortUrl', auth, async (req, res) => {
   }
 });
 
+commercialLinksRouter.post('/', auth, async (req, res) => {
+  const randomShortUrl = crypto.randomUUID();
+  try {
+    const newCommLink = await CommercialLink.create({
+      location: req.body.location,
+      settings: req.body.settings,
+      description: req.body.description,
+      title: req.body.title,
+      shortUrl: req.body.shortUrl,
+      fullLink: `http://localhost:8000/links/${randomShortUrl}`,
+    });
+
+    return res.send(newCommLink);
+  } catch (e) {
+    return res.sendStatus(500);
+  }
+});
+
 export default commercialLinksRouter;
