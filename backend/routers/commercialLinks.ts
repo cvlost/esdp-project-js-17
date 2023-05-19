@@ -4,6 +4,7 @@ import Location from '../models/Location';
 import { CommercialLinkType } from '../types';
 import * as crypto from 'crypto';
 import { flattenLookup } from './locations';
+import { Types } from 'mongoose';
 
 const commercialLinksRouter = express.Router();
 
@@ -77,6 +78,43 @@ commercialLinksRouter.get('/location/:id', async (req, res) => {
     description: commLink.description,
     title: commLink.title,
   });
+});
+
+commercialLinksRouter.get('/location/:idLink/locationOne/:idLoc', async (req, res) => {
+  const idLink = req.params.idLink;
+  const idLoc = req.params.idLoc;
+  try {
+    const commLink: CommercialLinkType | null = await CommercialLink.findOne({ _id: idLink });
+    if (!commLink) return res.status(500).send({ error: 'Ссылка недействительна !' });
+
+    const selects: { [key: string]: number } = {};
+
+    commLink.settings.forEach((item) => {
+      if (!item.show) {
+        selects[item.name] = 0;
+      }
+    });
+
+    if (Object.keys(selects).length !== 0) {
+      const [locationOne] = await Location.aggregate([
+        ...flattenLookup,
+        { $match: { _id: new Types.ObjectId(idLoc) } },
+        { $project: selects },
+      ]);
+
+      return res.send(locationOne);
+    }
+
+    const [locationOne] = await Location.aggregate([
+      ...flattenLookup,
+      { $match: { _id: new Types.ObjectId(idLoc) } },
+      { $project: selects },
+    ]);
+
+    return res.send(locationOne);
+  } catch (e) {
+    return res.sendStatus(500);
+  }
 });
 
 export default commercialLinksRouter;
