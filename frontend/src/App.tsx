@@ -19,6 +19,7 @@ import CreateLocation from './features/location/CreateLocation';
 import 'rsuite/dist/rsuite.min.css';
 import LocationPage from './features/location/components/LocationPage';
 import ConstructorLink from './features/CommercialLink/ConstructorLink';
+import CommercialLink from './features/CommercialLink/CommercialLink';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -26,6 +27,7 @@ function App() {
     <Layout>
       <Routes>
         <Route path="*" element={'Not found'} />
+        <Route path="/link/:id" element={<CommercialLink />} />
         <Route path="/login" element={<Login />} />
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/users" element={<Users />}>
