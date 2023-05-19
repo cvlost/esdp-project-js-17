@@ -16,13 +16,19 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Link } from 'react-router-dom';
+import { ILocationLink } from '../../../types';
+import { apiURL } from '../../../constants';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 
+interface Props {
+  location: ILocationLink;
+}
+
 const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
+  const { ...other } = props;
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
@@ -32,7 +38,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-const CommercialLinkCard = () => {
+const CommercialLinkCard: React.FC<Props> = ({ location }) => {
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -43,20 +49,10 @@ const CommercialLinkCard = () => {
       <Card sx={{ maxWidth: 345 }}>
         <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
           <SwiperSlide>
-            <CardMedia
-              component="img"
-              height="300"
-              image="https://i.pinimg.com/originals/8a/de/fe/8adefe5af862b4f9cec286c6ee4722cb.jpg"
-              alt="Paella dish"
-            />
+            <CardMedia component="img" height="300" image={apiURL + '/' + location.schemaImage} alt="Paella dish" />
           </SwiperSlide>
           <SwiperSlide>
-            <CardMedia
-              component="img"
-              height="300"
-              image="https://i.pinimg.com/originals/8a/de/fe/8adefe5af862b4f9cec286c6ee4722cb.jpg"
-              alt="Paella dish"
-            />
+            <CardMedia component="img" height="300" image={apiURL + '/' + location.dayImage} alt="Paella dish" />
           </SwiperSlide>
         </Swiper>
         <CardActions disableSpacing>
@@ -66,14 +62,8 @@ const CommercialLinkCard = () => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Typography paragraph>Method:</Typography>
-            <Typography paragraph>
-              Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high heat. Add chicken,
-              shrimp and chorizo, and cook, stirring occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp
-              to a large plate and set aside, leaving chicken and chorizo in the pan. Add pimentón, bay leaves, garlic,
-              tomatoes, onion, salt and pepper, and cook, stirring often until thickened and fragrant, about 10 minutes.
-              Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-            </Typography>
+            <Typography paragraph>{location.addressNote ? location.addressNote : 'Запещённая информация'}</Typography>
+            <Typography paragraph>{location.description ? location.description : 'Запещённая информация'}</Typography>
             <Button component={Link} size="large" to={'/link/123'}>
               Подробнее
             </Button>

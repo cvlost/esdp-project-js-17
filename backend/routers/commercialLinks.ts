@@ -44,7 +44,9 @@ commercialLinksRouter.get('/location/:id', async (req, res) => {
   const selects: { [key: string]: number } = {};
 
   commLink.settings.forEach((item) => {
-    selects[item.name] = 1;
+    if (item.show) {
+      selects[item.name] = 1;
+    }
   });
 
   const locations = await Location.find({ _id: commLink.location });
