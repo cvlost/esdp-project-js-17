@@ -65,7 +65,7 @@ const CommercialLinkCard: React.FC<Props> = ({ location }) => {
           <CardContent>
             <Typography paragraph>{location.addressNote ? location.addressNote : 'Информация недоступна'}</Typography>
             <Typography paragraph>{location.description ? location.description : 'Информация недоступна'}</Typography>
-            <Button component={Link} size="large" to={'/link/123'}>
+            <Button component={Link} size="large" to={'/linkOne/123'}>
               Подробнее
             </Button>
           </CardContent>
