@@ -24,19 +24,19 @@ const CommercialLink = () => {
     <Container>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Typography sx={{ my: 2, mr: 1 }} component="h1" variant="h4">
-          Список баннеров
+          Коммерческое предложение для {listLocationLink.title}
           <Divider light sx={{ mt: 1, background: '#ff6300' }} />
         </Typography>
       </Box>
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-        {listLocationLink.length > 0 ? (
-          !loading ? (
-            listLocationLink.map((location) => <CommercialLinkCard key={location._id} location={location} />)
+        {!loading ? (
+          listLocationLink.location.length > 0 ? (
+            listLocationLink.location.map((location) => <CommercialLinkCard key={location._id} location={location} />)
           ) : (
-            <CircularProgress />
+            <Alert severity="error">Сссылка удаленна !</Alert>
           )
         ) : (
-          <Alert severity="error">Сссылка удаленна !</Alert>
+          <CircularProgress />
         )}
       </Grid>
     </Container>

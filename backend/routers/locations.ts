@@ -18,7 +18,7 @@ import path from 'path';
 
 const locationsRouter = express.Router();
 
-const flattenLookup: PipelineStage[] = [
+export const flattenLookup: PipelineStage[] = [
   { $lookup: { from: 'cities', localField: 'city', foreignField: '_id', as: 'city' } },
   { $lookup: { from: 'regions', localField: 'region', foreignField: '_id', as: 'region' } },
   { $lookup: { from: 'streets', localField: 'street', foreignField: '_id', as: 'street' } },

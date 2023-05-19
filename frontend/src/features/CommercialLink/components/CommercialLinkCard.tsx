@@ -28,7 +28,8 @@ interface Props {
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { ...other } = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { expand, ...other } = props;
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
@@ -62,8 +63,8 @@ const CommercialLinkCard: React.FC<Props> = ({ location }) => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Typography paragraph>{location.addressNote ? location.addressNote : 'Запещённая информация'}</Typography>
-            <Typography paragraph>{location.description ? location.description : 'Запещённая информация'}</Typography>
+            <Typography paragraph>{location.addressNote ? location.addressNote : 'Информация недоступна'}</Typography>
+            <Typography paragraph>{location.description ? location.description : 'Информация недоступна'}</Typography>
             <Button component={Link} size="large" to={'/link/123'}>
               Подробнее
             </Button>

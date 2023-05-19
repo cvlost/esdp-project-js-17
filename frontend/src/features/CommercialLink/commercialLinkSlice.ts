@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CommercialLinkTypeMutation, ConstructorLinkType, ILocationLink, Link } from '../../types';
+import { CommercialLinkTypeMutation, ConstructorLinkType, contentLinkType, Link } from '../../types';
 import { RootState } from '../../app/store';
 import { createCommLink, fetchLocationLink } from './CommercialLinkThunk';
 
@@ -9,7 +9,7 @@ interface commercialLinkType {
   createLinkLoading: boolean;
   fetchLocationLinkLoading: boolean;
   constructorLink: ConstructorLinkType[];
-  listLocationLink: ILocationLink[];
+  listLocationLink: contentLinkType;
 }
 
 const initialState: commercialLinkType = {
@@ -38,7 +38,11 @@ const initialState: commercialLinkType = {
     { id: '13', name: 'rent', show: true },
     { id: '14', name: 'reserve', show: true },
   ],
-  listLocationLink: [],
+  listLocationLink: {
+    location: [],
+    description: '',
+    title: '',
+  },
 };
 
 const commercialLinkSlice = createSlice({

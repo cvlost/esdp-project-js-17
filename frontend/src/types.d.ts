@@ -325,3 +325,9 @@ export interface ILocationLink {
   description?: string;
   checked: boolean;
 }
+
+export interface contentLinkType {
+  location: ILocationLink[];
+  description: string;
+  title: string;
+}

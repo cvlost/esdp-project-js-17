@@ -25,6 +25,12 @@ const locationsPersistConfig = {
   whitelist: ['settings', 'selectedLocationId'],
 };
 
+const commercialLinkPersistConfig = {
+  key: 'ESDP-project-js-17:commercialLink',
+  storage,
+  whitelist: ['constructorLink'],
+};
+
 const rootReducer = combineReducers({
   users: persistReducer(usersPersistConfig, usersReducer),
   locations: persistReducer(locationsPersistConfig, locationsReducer),
@@ -35,7 +41,7 @@ const rootReducer = combineReducers({
   area: areaReducer,
   street: streetReducer,
   legalEntity: legalEntityReducer,
-  commercialLink: commercialLinkReducer,
+  commercialLink: persistReducer(commercialLinkPersistConfig, commercialLinkReducer),
 });
 
 export const store = configureStore({
