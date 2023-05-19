@@ -29,7 +29,7 @@ function App() {
       <Routes>
         <Route path="*" element={'Not found'} />
         <Route path="/link/:id" element={<CommercialLink />} />
-        <Route path="/linkOne/:id" element={<CommercialLinkOne />} />
+        <Route path="/location/:idLink/locationOne/:idLoc" element={<CommercialLinkOne />} />
         <Route path="/login" element={<Login />} />
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/users" element={<Users />}>

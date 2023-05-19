@@ -331,3 +331,9 @@ export interface contentLinkType {
   description: string;
   title: string;
 }
+
+export interface contentLinkOneType {
+  location: ILocationLink | null;
+  description: string;
+  title: string;
+}

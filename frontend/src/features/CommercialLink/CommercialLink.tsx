@@ -31,7 +31,9 @@ const CommercialLink = () => {
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
         {!loading ? (
           listLocationLink.location.length > 0 ? (
-            listLocationLink.location.map((location) => <CommercialLinkCard key={location._id} location={location} />)
+            listLocationLink.location.map((location) => (
+              <CommercialLinkCard key={location._id} location={location} id={id} />
+            ))
           ) : (
             <Alert severity="error">Сссылка удаленна !</Alert>
           )

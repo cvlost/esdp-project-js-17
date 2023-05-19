@@ -25,6 +25,7 @@ interface ExpandMoreProps extends IconButtonProps {
 
 interface Props {
   location: ILocationLink;
+  id: string | undefined;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
@@ -39,7 +40,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-const CommercialLinkCard: React.FC<Props> = ({ location }) => {
+const CommercialLinkCard: React.FC<Props> = ({ location, id }) => {
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -65,9 +66,11 @@ const CommercialLinkCard: React.FC<Props> = ({ location }) => {
           <CardContent>
             <Typography paragraph>{location.addressNote ? location.addressNote : 'Информация недоступна'}</Typography>
             <Typography paragraph>{location.description ? location.description : 'Информация недоступна'}</Typography>
-            <Button component={Link} size="large" to={'/linkOne/123'}>
-              Подробнее
-            </Button>
+            {id && (
+              <Button component={Link} size="large" to={`/location/${id}/locationOne/${location._id}`}>
+                Подробнее
+              </Button>
+            )}
           </CardContent>
         </Collapse>
       </Card>

@@ -102,16 +102,20 @@ commercialLinksRouter.get('/location/:idLink/locationOne/:idLoc', async (req, re
         { $project: selects },
       ]);
 
-      return res.send(locationOne);
+      return res.send({
+        location: locationOne,
+        description: commLink.description,
+        title: commLink.title,
+      });
     }
 
-    const [locationOne] = await Location.aggregate([
-      ...flattenLookup,
-      { $match: { _id: new Types.ObjectId(idLoc) } },
-      { $project: selects },
-    ]);
+    const [locationOne] = await Location.aggregate([...flattenLookup, { $match: { _id: new Types.ObjectId(idLoc) } }]);
 
-    return res.send(locationOne);
+    return res.send({
+      location: locationOne,
+      description: commLink.description,
+      title: commLink.title,
+    });
   } catch (e) {
     return res.sendStatus(500);
   }
