@@ -302,3 +302,26 @@ export interface ConstructorLinkType {
 export interface Link {
   fullLink: string | null;
 }
+
+export interface ILocationLink {
+  _id: string;
+  price: string | null;
+  rent: null | IPeriod;
+  reserve: null | IPeriod;
+  city: string | null;
+  area: string | null;
+  street: string | null;
+  direction: string | null;
+  region: string | null;
+  legalEntity: string | null;
+  size: string | null;
+  lighting: string | null;
+  format: string | null;
+  placement: boolean | null;
+  country?: string;
+  dayImage?: string;
+  schemaImage?: string;
+  addressNote?: string;
+  description?: string;
+  checked: boolean;
+}

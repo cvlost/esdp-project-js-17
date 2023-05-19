@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CommercialLinkTypeMutation, ConstructorLinkType, Link } from '../../types';
+import { CommercialLinkTypeMutation, ConstructorLinkType, ILocationLink, Link } from '../../types';
 import { RootState } from '../../app/store';
-import { createCommLink } from './CommercialLinkThunk';
+import { createCommLink, fetchLocationLink } from './CommercialLinkThunk';
 
 interface commercialLinkType {
   url: Link | null;
@@ -9,6 +9,7 @@ interface commercialLinkType {
   createLinkLoading: boolean;
   fetchLocationLinkLoading: boolean;
   constructorLink: ConstructorLinkType[];
+  listLocationLink: ILocationLink[];
 }
 
 const initialState: commercialLinkType = {
@@ -22,7 +23,7 @@ const initialState: commercialLinkType = {
   createLinkLoading: false,
   fetchLocationLinkLoading: false,
   constructorLink: [
-    { id: '1', name: 'address', show: true },
+    { id: '1', name: 'addressNote', show: true },
     { id: '2', name: 'area', show: true },
     { id: '3', name: 'city', show: true },
     { id: '4', name: 'region', show: true },
@@ -37,6 +38,7 @@ const initialState: commercialLinkType = {
     { id: '13', name: 'rent', show: true },
     { id: '14', name: 'reserve', show: true },
   ],
+  listLocationLink: [],
 };
 
 const commercialLinkSlice = createSlice({
@@ -59,6 +61,17 @@ const commercialLinkSlice = createSlice({
     builder.addCase(createCommLink.rejected, (state) => {
       state.createLinkLoading = false;
     });
+
+    builder.addCase(fetchLocationLink.pending, (state) => {
+      state.fetchLocationLinkLoading = true;
+    });
+    builder.addCase(fetchLocationLink.fulfilled, (state, { payload: locationListLink }) => {
+      state.fetchLocationLinkLoading = false;
+      state.listLocationLink = locationListLink;
+    });
+    builder.addCase(fetchLocationLink.rejected, (state) => {
+      state.fetchLocationLinkLoading = false;
+    });
   },
 });
 
@@ -69,3 +82,4 @@ export const selectLocationLink = (state: RootState) => state.commercialLink.com
 export const selectCreateLinkLoading = (state: RootState) => state.commercialLink.createLinkLoading;
 export const selectFetchLocationLinkLoading = (state: RootState) => state.commercialLink.fetchLocationLinkLoading;
 export const selectConstructor = (state: RootState) => state.commercialLink.constructorLink;
+export const selectListLocationLink = (state: RootState) => state.commercialLink.listLocationLink;

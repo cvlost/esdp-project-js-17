@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../axios';
-import { CommercialLinkTypeMutation, Link } from '../../types';
+import { CommercialLinkTypeMutation, ILocationLink, Link } from '../../types';
 
 export const createCommLink = createAsyncThunk<Link | null, CommercialLinkTypeMutation>(
   'commercialLink/createCommLink',
@@ -13,5 +13,13 @@ export const createCommLink = createAsyncThunk<Link | null, CommercialLinkTypeMu
     }
 
     return jsn;
+  },
+);
+
+export const fetchLocationLink = createAsyncThunk<ILocationLink[], string>(
+  'commercialLink/fetchLocationLink',
+  async (id) => {
+    const response = await axiosApi.get<ILocationLink[]>('/link/location/' + id);
+    return response.data;
   },
 );
