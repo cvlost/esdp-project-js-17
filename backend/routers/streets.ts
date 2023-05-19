@@ -26,7 +26,6 @@ streetsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
     const streetData = await Street.create({
       city: req.body.city,
       name: req.body.name,
-      region: req.body.region,
     });
 
     return res.send(streetData);

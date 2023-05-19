@@ -44,7 +44,7 @@ export interface ILocation {
   area: Types.ObjectId;
   region: Types.ObjectId;
   city: Types.ObjectId;
-  street: Types.ObjectId;
+  streets: [Types.ObjectId, Types.ObjectId];
   direction: Types.ObjectId;
   legalEntity: Types.ObjectId;
   format: Types.ObjectId;
