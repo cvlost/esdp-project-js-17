@@ -81,6 +81,7 @@ export interface RegionList {
 
 export interface RegionMutation {
   name: string;
+  city: string;
 }
 
 export interface DirectionList {
