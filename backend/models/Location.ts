@@ -156,6 +156,10 @@ const LocationSchema = new Schema<ILocation>({
     type: String,
     required: true,
   },
+  checked: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 LocationSchema.set('toJSON', {

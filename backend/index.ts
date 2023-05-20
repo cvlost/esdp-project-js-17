@@ -11,6 +11,7 @@ import formatRouter from './routers/formats';
 import areasRouter from './routers/areas';
 import streetsRouter from './routers/streets';
 import legalEntitiesRouter from './routers/legalEntities';
+import commercialLinksRouter from './routers/commercialLinks';
 
 const app = express();
 const port = 8000;
@@ -27,6 +28,7 @@ app.use('/formats', formatRouter);
 app.use('/areas', areasRouter);
 app.use('/legalEntities', legalEntitiesRouter);
 app.use('/locations', locationsRouter);
+app.use('/link', commercialLinksRouter);
 
 const run = async () => {
   mongoose.set('strictQuery', false);

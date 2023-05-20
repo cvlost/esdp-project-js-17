@@ -58,6 +58,7 @@ export interface ILocation {
   description?: string;
   dayImage: File | string;
   schemaImage: File | string;
+  checked: boolean;
 }
 
 export interface AreaType {
@@ -79,4 +80,17 @@ export interface BookingType {
   clientId: Schema.Types.ObjectId;
   locationId: Schema.Types.ObjectId;
   booking_date: [Schema.Types.Date];
+}
+
+export interface CommercialLinkType {
+  location: string[];
+  settings: {
+    id: string;
+    name: string;
+    show: boolean;
+  }[];
+  description: string;
+  title: string;
+  shortUrl: string;
+  fullLink: string;
 }

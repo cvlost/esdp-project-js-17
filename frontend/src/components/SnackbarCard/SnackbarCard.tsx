@@ -71,6 +71,10 @@ const SnackbarCard = () => {
       break;
     case 'edit_location':
       txt += 'Локация успешно отредактирована';
+      break;
+    case 'copy_link':
+      txt += 'Ссылка скопирована';
+      break;
   }
 
   return (
