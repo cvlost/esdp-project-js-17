@@ -160,7 +160,7 @@ const ConstructorLink = () => {
         <Grid container>
           <Grid item xs={12}>
             <Paper sx={{ p: 1 }} elevation={3}>
-              <Link href={link?.fullLink || ''} underline="none">
+              <Link target="_blank" href={link?.fullLink || ''} underline="none">
                 {link ? link.fullLink : 'Ссылка'}
               </Link>
             </Paper>
