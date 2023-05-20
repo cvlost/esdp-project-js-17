@@ -13,7 +13,7 @@ import streetsRouter from './routers/streets';
 import legalEntitiesRouter from './routers/legalEntities';
 import commercialLinksRouter from './routers/commercialLinks';
 
-const app = express();
+export const app = express();
 const port = 8000;
 app.use(cors());
 app.use(express.static('public'));

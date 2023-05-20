@@ -5,6 +5,7 @@ import { CommercialLinkType } from '../types';
 import * as crypto from 'crypto';
 import { flattenLookup } from './locations';
 import { Types } from 'mongoose';
+import auth from '../middleware/auth';
 
 const commercialLinksRouter = express.Router();
 
@@ -21,7 +22,7 @@ commercialLinksRouter.get('/:shortUrl', async (req, res) => {
   }
 });
 
-commercialLinksRouter.post('/', async (req, res) => {
+commercialLinksRouter.post('/', auth, async (req, res) => {
   const randomShortUrl = crypto.randomUUID();
   try {
     const newCommLink = await CommercialLink.create({
