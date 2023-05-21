@@ -43,4 +43,13 @@ clientsRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
+clientsRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const client = await Client.findOne({ _id: req.params.id });
+    return res.send(client);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 export default clientsRouter;
