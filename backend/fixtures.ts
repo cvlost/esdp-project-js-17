@@ -11,6 +11,7 @@ import LegalEntity from './models/LegalEntity';
 import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from './constants';
 import Format from './models/Format';
 import Area from './models/Area';
+import Lighting from './models/Lighting';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -139,7 +140,8 @@ const run = async () => {
     return arr[Math.floor(Math.random() * arr.length)];
   };
 
-  const lightings = BILLBOARD_LIGHTINGS.slice();
+  const lightingsConstants = BILLBOARD_LIGHTINGS.slice();
+  const lightings = await Lighting.create({ name: 'Внутреннее' }, { name: 'Внешнее' });
   const sizes = BILLBOARD_SIZES.slice();
 
   for (let i = 0; i < 20; i++) {
@@ -151,7 +153,7 @@ const run = async () => {
       street: randElement(streets)._id,
       format: randElement(formats)._id,
       legalEntity: randElement(legalEntities)._id,
-      lighting: randElement(lightings),
+      lighting: randElement(lightingsConstants),
       size: randElement(sizes),
       price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
       rent:
