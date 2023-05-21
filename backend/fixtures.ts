@@ -11,6 +11,7 @@ import LegalEntity from './models/LegalEntity';
 import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from './constants';
 import Format from './models/Format';
 import Area from './models/Area';
+import Lighting from './models/Lighting';
 import Size from './models/Size';
 
 const run = async () => {
@@ -29,6 +30,7 @@ const run = async () => {
     await db.dropCollection('formats');
     await db.dropCollection('areas');
     await db.dropCollection('sizes');
+    await db.dropCollection('lightings');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -150,9 +152,6 @@ const run = async () => {
     return arr[Math.floor(Math.random() * arr.length)];
   };
 
-  const lightings = BILLBOARD_LIGHTINGS.slice();
-  const sizesBeforeUpdate = BILLBOARD_SIZES.slice();
-
   const sizes = await Size.create(
     { name: '2,7x5,7' },
     { name: '2x5' },
@@ -163,6 +162,10 @@ const run = async () => {
     { name: '3x6' },
     { name: '4x10' },
   );
+
+  const lightings = await Lighting.create({ name: 'Внутреннее' }, { name: 'Внешнее' });
+  const lightingsConstants = BILLBOARD_LIGHTINGS.slice();
+  const sizesBeforeUpdate = BILLBOARD_SIZES.slice();
 
   for (let i = 0; i < 20; i++) {
     const street1 = randElement(streets)._id;
@@ -176,10 +179,10 @@ const run = async () => {
       direction: randElement(directions)._id,
       city: randElement(cities)._id,
       region: randElement(regions)._id,
-      streets: streetsArr,
+      street: streetsArr,
       format: randElement(formats)._id,
       legalEntity: randElement(legalEntities)._id,
-      lighting: randElement(lightings),
+      lighting: randElement(lightingsConstants),
       size: randElement(sizesBeforeUpdate), // надо  потом после обновления локации поменять на sizes с базы и взять id
       price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
       rent:

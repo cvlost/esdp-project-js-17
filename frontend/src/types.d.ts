@@ -98,6 +98,13 @@ export interface SizeList {
 
 export type SizeMutation = Omit<SizeList, '_id'>;
 
+export interface LightingList {
+  _id: string;
+  name: string;
+}
+
+export type LightingMutation = Omit<LightingList, '_id'>;
+
 export interface IPeriod {
   start: string;
   end: string;

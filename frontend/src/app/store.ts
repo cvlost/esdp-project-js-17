@@ -13,6 +13,7 @@ import { streetReducer } from '../features/location/street/streetSlice';
 import { legalEntityReducer } from '../features/location/legalEntity/legalEntitySlice';
 import { commercialLinkReducer } from '../features/CommercialLink/commercialLinkSlice';
 import { sizesReducer } from '../features/location/size/sizeSlice';
+import { lightingReducer } from '../features/location/lighting/lightingsSlice';
 
 const usersPersistConfig = {
   key: 'ESDP-project-js-17:users',
@@ -44,6 +45,7 @@ const rootReducer = combineReducers({
   legalEntity: legalEntityReducer,
   commercialLink: persistReducer(commercialLinkPersistConfig, commercialLinkReducer),
   size: sizesReducer,
+  lighting: lightingReducer,
 });
 
 export const store = configureStore({
