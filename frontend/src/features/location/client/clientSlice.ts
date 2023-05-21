@@ -1,10 +1,12 @@
 import { ClientsList, GlobalError, ValidationError } from '../../../types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createArea, fetchAreas, removeArea } from '../area/areaThunk';
+import { createClient, fetchClients, fetchOneClient, removeClient } from './clientThunk';
 
 interface clientState {
-  listClient: ClientsList[];
+  listClients: ClientsList[];
   getAllClientsLoading: boolean;
+  getOneClientLoading: boolean;
+  oneClient: ClientsList | null;
   createClientLoading: boolean;
   removeClientLoading: boolean;
   clientError: ValidationError | null;
@@ -13,8 +15,10 @@ interface clientState {
 }
 
 const initialState: clientState = {
-  listClient: [],
+  listClients: [],
   getAllClientsLoading: false,
+  getOneClientLoading: false,
+  oneClient: null,
   createClientLoading: false,
   removeClientLoading: false,
   clientError: null,
@@ -31,39 +35,50 @@ const clientsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // builder.addCase(fetchAreas.pending, (state) => {
-    //   state.getAllAreaLoading = true;
-    // });
-    // builder.addCase(fetchAreas.fulfilled, (state, { payload: areas }) => {
-    //   state.getAllAreaLoading = false;
-    //   state.listArea = areas;
-    // });
-    // builder.addCase(fetchAreas.rejected, (state) => {
-    //   state.getAllAreaLoading = false;
-    // });
-    //
-    // builder.addCase(createArea.pending, (state) => {
-    //   state.createAreaLoading = true;
-    // });
-    // builder.addCase(createArea.fulfilled, (state) => {
-    //   state.createAreaLoading = false;
-    // });
-    // builder.addCase(createArea.rejected, (state, { payload: error }) => {
-    //   state.createAreaLoading = false;
-    //   state.areaError = error || null;
-    // });
-    //
-    // builder.addCase(removeArea.pending, (state) => {
-    //   state.removeAreaLoading = true;
-    // });
-    // builder.addCase(removeArea.fulfilled, (state) => {
-    //   state.removeAreaLoading = false;
-    // });
-    // builder.addCase(removeArea.rejected, (state, { payload: error }) => {
-    //   state.removeAreaLoading = false;
-    //   state.errorRemove = error || null;
-    //   state.modal = true;
-    // });
+    builder.addCase(fetchClients.pending, (state) => {
+      state.getAllClientsLoading = true;
+    });
+    builder.addCase(fetchClients.fulfilled, (state, { payload: clients }) => {
+      state.getAllClientsLoading = false;
+      state.listClients = clients;
+    });
+    builder.addCase(fetchClients.rejected, (state) => {
+      state.getAllClientsLoading = false;
+    });
+
+    builder.addCase(fetchOneClient.pending, (state) => {
+      state.getOneClientLoading = true;
+    });
+    builder.addCase(fetchOneClient.fulfilled, (state, { payload: clients }) => {
+      state.getOneClientLoading = false;
+      state.oneClient = clients;
+    });
+    builder.addCase(fetchOneClient.rejected, (state) => {
+      state.getOneClientLoading = false;
+    });
+
+    builder.addCase(createClient.pending, (state) => {
+      state.createClientLoading = true;
+    });
+    builder.addCase(createClient.fulfilled, (state) => {
+      state.createClientLoading = false;
+    });
+    builder.addCase(createClient.rejected, (state, { payload: error }) => {
+      state.createClientLoading = false;
+      state.clientError = error || null;
+    });
+
+    builder.addCase(removeClient.pending, (state) => {
+      state.removeClientLoading = true;
+    });
+    builder.addCase(removeClient.fulfilled, (state) => {
+      state.removeClientLoading = false;
+    });
+    builder.addCase(removeClient.rejected, (state, { payload: error }) => {
+      state.removeClientLoading = false;
+      state.errorRemove = error || null;
+      state.modal = true;
+    });
   },
 });
 
