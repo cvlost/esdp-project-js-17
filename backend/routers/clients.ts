@@ -83,4 +83,18 @@ clientsRouter.put('/:id', auth, async (req, res, next) => {
   }
 });
 
+clientsRouter.delete('/:id', auth, async (req, res, next) => {
+  try {
+    const client = await Client.findOne({ _id: req.params.id });
+    if (!client) {
+      return res.send({ error: 'client is not found!' });
+    }
+
+    const deletedClient = await Client.deleteOne({ _id: req.params.id });
+    return res.send(deletedClient);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 export default clientsRouter;
