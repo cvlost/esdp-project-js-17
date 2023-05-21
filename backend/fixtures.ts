@@ -12,6 +12,7 @@ import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from './constants';
 import Format from './models/Format';
 import Area from './models/Area';
 import Lighting from './models/Lighting';
+import Size from './models/Size';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -28,6 +29,7 @@ const run = async () => {
     await db.dropCollection('legalentities');
     await db.dropCollection('formats');
     await db.dropCollection('areas');
+    await db.dropCollection('sizes');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -88,26 +90,35 @@ const run = async () => {
     { name: 'Ысык-Атинский', city: cities[0]._id },
   );
 
-  const directions = await Direction.create({ name: 'Север' }, { name: 'Юг' }, { name: 'Запад' }, { name: 'Восток' });
+  const directions = await Direction.create(
+    { name: 'Север' },
+    { name: 'Юг' },
+    { name: 'Запад' },
+    { name: 'Восток' },
+    { name: 'Северо-Восток' },
+    { name: 'Северо-Запад' },
+    { name: 'Юго-Восток' },
+    { name: 'Юго-Запад' },
+  );
 
   const streets = await Street.create(
-    { name: 'Киевская', city: cities[0]._id, region: regions[0]._id },
-    { name: 'Ахунбаева', city: cities[0]._id, region: regions[1]._id },
-    { name: 'Ибраимова', city: cities[0]._id, region: regions[2]._id },
-    { name: 'Манаса', city: cities[0]._id, region: regions[3]._id },
-    { name: 'Московская', city: cities[0]._id, region: regions[4]._id },
-    { name: 'Горького', city: cities[0]._id, region: regions[5]._id },
-    { name: 'Логвиненко', city: cities[0]._id, region: regions[6]._id },
-    { name: 'Боконбаева', city: cities[0]._id, region: regions[0]._id },
-    { name: 'Исанова', city: cities[0]._id, region: regions[1]._id },
-    { name: 'Тыныстанова', city: cities[0]._id, region: regions[2]._id },
-    { name: 'Юнусалиева', city: cities[0]._id, region: regions[3]._id },
-    { name: 'Фучика', city: cities[0]._id, region: regions[4]._id },
-    { name: 'Медерова', city: cities[0]._id, region: regions[5]._id },
-    { name: 'Токтогула', city: cities[0]._id, region: regions[6]._id },
-    { name: 'Жибек-Жолу', city: cities[0]._id, region: regions[0]._id },
-    { name: 'пр. Манаса', city: cities[0]._id, region: regions[1]._id },
-    { name: 'Шабдан-Баатыра', city: cities[0]._id, region: regions[2]._id },
+    { name: 'Киевская', city: cities[0]._id },
+    { name: 'Ахунбаева', city: cities[0]._id },
+    { name: 'Ибраимова', city: cities[0]._id },
+    { name: 'Манаса', city: cities[0]._id },
+    { name: 'Московская', city: cities[0]._id },
+    { name: 'Горького', city: cities[0]._id },
+    { name: 'Логвиненко', city: cities[0]._id },
+    { name: 'Боконбаева', city: cities[0]._id },
+    { name: 'Исанова', city: cities[0]._id },
+    { name: 'Тыныстанова', city: cities[0]._id },
+    { name: 'Юнусалиева', city: cities[0]._id },
+    { name: 'Фучика', city: cities[0]._id },
+    { name: 'Медерова', city: cities[0]._id },
+    { name: 'Токтогула', city: cities[0]._id },
+    { name: 'Жибек-Жолу', city: cities[0]._id },
+    { name: 'пр. Манаса', city: cities[0]._id },
+    { name: 'Шабдан-Баатыра', city: cities[0]._id },
   );
 
   const legalEntities = await LegalEntity.create({ name: 'Шамдагай' }, { name: 'ШамдагайЮридикал' });
@@ -140,21 +151,38 @@ const run = async () => {
     return arr[Math.floor(Math.random() * arr.length)];
   };
 
+  const sizesBeforeUpdate = BILLBOARD_SIZES.slice();
+
+  const sizes = await Size.create(
+    { name: '2,7x5,7' },
+    { name: '2x5' },
+    { name: '3x12' },
+    { name: '3x14,42' },
+    { name: '3x16' },
+    { name: '3x18' },
+    { name: '3x6' },
+    { name: '4x10' },
+  );
   const lightingsConstants = BILLBOARD_LIGHTINGS.slice();
   const lightings = await Lighting.create({ name: 'Внутреннее' }, { name: 'Внешнее' });
-  const sizes = BILLBOARD_SIZES.slice();
 
   for (let i = 0; i < 20; i++) {
+    const street1 = randElement(streets)._id;
+    let street2 = randElement(streets)._id;
+    while (street1 === street2) {
+      street2 = randElement(streets)._id;
+    }
+    const streetsArr = [street1, street2];
     await Location.create({
       area: randElement(areas)._id,
       direction: randElement(directions)._id,
       city: randElement(cities)._id,
       region: randElement(regions)._id,
-      street: randElement(streets)._id,
+      street: streetsArr,
       format: randElement(formats)._id,
       legalEntity: randElement(legalEntities)._id,
       lighting: randElement(lightingsConstants),
-      size: randElement(sizes),
+      size: randElement(sizesBeforeUpdate), // надо  потом после обновления локации поменять на sizes с базы и взять id
       price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
       rent:
         Math.random() > 0.5

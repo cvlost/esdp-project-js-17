@@ -29,7 +29,6 @@ import { deleteUser, getEditingUser, getUsersList, updateUser } from './usersThu
 import UserForm from './components/UserForm';
 import { UserMutation } from '../../types';
 import ModalBody from '../../components/ModalBody';
-import { StyledTableCell } from './theme';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
 import useAlert from '../../components/Dialogs/Alert/useAlert';
