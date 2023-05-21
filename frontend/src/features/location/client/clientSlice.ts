@@ -1,6 +1,7 @@
 import { ClientsList, GlobalError, ValidationError } from '../../../types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createClient, fetchClients, fetchOneClient, removeClient } from './clientThunk';
+import { RootState } from '../../../app/store';
 
 interface clientState {
   listClients: ClientsList[];
@@ -83,3 +84,11 @@ const clientsSlice = createSlice({
 });
 
 export const clientReducer = clientsSlice.reducer;
+export const { controlModal } = clientsSlice.actions;
+export const selectClientsList = (state: RootState) => state.clients.listClients;
+export const selectGetAllClientsLoading = (state: RootState) => state.clients.getAllClientsLoading;
+export const selectCreateClientLoading = (state: RootState) => state.clients.createClientLoading;
+export const selectRemoveClientLoading = (state: RootState) => state.clients.removeClientLoading;
+export const selectClientError = (state: RootState) => state.clients.clientError;
+export const selectErrorRemove = (state: RootState) => state.clients.errorRemove;
+export const selectModal = (state: RootState) => state.clients.modal;

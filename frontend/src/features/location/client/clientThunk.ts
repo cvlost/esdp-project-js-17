@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AreaList, ClientMutation, ClientsList, GlobalError, ValidationError } from '../../../types';
+import { ClientMutation, ClientsList, GlobalError, ValidationError } from '../../../types';
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 
