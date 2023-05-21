@@ -2,8 +2,6 @@ import express from 'express';
 import auth from '../middleware/auth';
 import Client from '../models/Client';
 import mongoose from 'mongoose';
-import User from '../models/Users';
-import usersRouter from './users';
 
 const clientsRouter = express.Router();
 
