@@ -11,6 +11,7 @@ import { formatReducer } from '../features/location/format/formatSlice';
 import { directionsReducer } from '../features/location/direction/directionsSlice';
 import { streetReducer } from '../features/location/street/streetSlice';
 import { legalEntityReducer } from '../features/location/legalEntity/legalEntitySlice';
+import { lightingReducer } from '../features/location/lighting/lightingsSlice';
 
 const usersPersistConfig = {
   key: 'ESDP-project-js-17:users',
@@ -34,6 +35,8 @@ const rootReducer = combineReducers({
   area: areaReducer,
   street: streetReducer,
   legalEntity: legalEntityReducer,
+
+  lighting: lightingReducer,
 });
 
 export const store = configureStore({
