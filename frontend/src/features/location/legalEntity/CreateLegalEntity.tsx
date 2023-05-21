@@ -28,7 +28,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { MainColorGreen, StyledTableCell } from '../../../constants';
+import { MainColorGreen } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import CardLegalEntity from './components/CardLegalEntity';
 import FormLegalEntity from './components/FormLegalEntity';

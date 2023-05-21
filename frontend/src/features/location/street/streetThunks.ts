@@ -6,7 +6,6 @@ import { isAxiosError } from 'axios';
 type StreetType =
   | {
       cityId?: string;
-      regionId?: string;
     }
   | undefined;
 
@@ -15,8 +14,6 @@ export const fetchStreet = createAsyncThunk<StreetList[], StreetType>('street/fe
   if (arg) {
     if (arg.cityId) {
       url = `/streets?citiId=${arg.cityId}`;
-    } else if (arg.regionId) {
-      url = `/streets?regionId=${arg.regionId}`;
     }
   }
 

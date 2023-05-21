@@ -119,10 +119,12 @@ const CommercialLinkOneCard = () => {
                   <TableCell>{locationLinkOne.location.city}</TableCell>
                 </TableRow>
               )}
-              {locationLinkOne.location.street && (
+              {locationLinkOne.location.streets && (
                 <TableRow>
                   <TableCell>Улица</TableCell>
-                  <TableCell>{locationLinkOne.location.street}</TableCell>
+                  <TableCell>
+                    {locationLinkOne.location.streets[0] + '/' + locationLinkOne.location.streets[1]}
+                  </TableCell>
                 </TableRow>
               )}
               {locationLinkOne.location.addressNote && (

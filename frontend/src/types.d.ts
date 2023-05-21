@@ -102,7 +102,7 @@ export interface ILocation {
   reserve: null | IPeriod;
   city: string;
   area: string;
-  street: string;
+  streets: [string, string] | string[];
   direction: string;
   region: string;
   legalEntity: string;
@@ -138,7 +138,6 @@ export interface StreetList {
   _id: string;
   name: string;
   city: string;
-  region: string | null;
 }
 
 export type StreetMutation = Omit<StreetList, '_id'>;
@@ -164,7 +163,7 @@ export interface LocationMutation {
   area: string;
   region: string;
   city: string;
-  street: string;
+  streets: [string, string] | string[];
   direction: string;
   legalEntity: string;
   size: string;
@@ -310,7 +309,7 @@ export interface ILocationLink {
   reserve: null | IPeriod;
   city: string | null;
   area: string | null;
-  street: string | null;
+  streets: [string, string] | string[];
   direction: string | null;
   region: string | null;
   legalEntity: string | null;
