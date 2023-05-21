@@ -81,3 +81,7 @@ export interface BookingType {
   locationId: Schema.Types.ObjectId;
   booking_date: [Schema.Types.Date];
 }
+
+export interface SizeType {
+  name: string;
+}
