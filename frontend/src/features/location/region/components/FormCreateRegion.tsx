@@ -1,23 +1,41 @@
-import React, { useState } from 'react';
-import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Avatar, Box, Button, CircularProgress, Grid, MenuItem, TextField, Typography } from '@mui/material';
 import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
 import { RegionMutation } from '../../../../types';
-import { useAppSelector } from '../../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectCreateRegionLoading, selectRegionError } from '../regionSlice';
+import { selectCityList } from '../../city/citySlice';
+import { fetchCities } from '../../city/cityThunk';
 
 interface Props {
   onSubmit: (region: RegionMutation) => void;
 }
 
 const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
+  const dispatch = useAppDispatch();
   const createLoading = useAppSelector(selectCreateRegionLoading);
+  const cities = useAppSelector(selectCityList);
   const error = useAppSelector(selectRegionError);
-  const [value, setValue] = useState('');
+  const [state, setState] = useState({
+    city: '',
+    name: '',
+  });
+
+  useEffect(() => {
+    dispatch(fetchCities());
+  }, [dispatch]);
+
+  const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setState((prevState) => {
+      return { ...prevState, [name]: value };
+    });
+  };
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name: value });
-    setValue('');
+    onSubmit(state);
+    setState({ city: '', name: '' });
   };
 
   const getFieldError = (fieldName: string) => {
@@ -46,11 +64,34 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
           <Grid item xs={12}>
             <TextField
-              value={value}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+              fullWidth
+              select
+              value={state.city}
+              name="city"
+              label="Город"
+              onChange={inputChangeHandler}
+              error={Boolean(getFieldError('city'))}
+              helperText={getFieldError('city')}
+              required
+            >
+              <MenuItem value="" disabled>
+                Выберите область
+              </MenuItem>
+              {cities &&
+                cities.map((city) => (
+                  <MenuItem key={city._id} value={city._id}>
+                    {city.name}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.name}
+              onChange={inputChangeHandler}
               required
               fullWidth
-              label="Название региона"
+              label="Название района"
               type="text"
               name="name"
               autoComplete="off"

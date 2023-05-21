@@ -87,7 +87,16 @@ const run = async () => {
     { name: 'Ысык-Атинский', city: cities[0]._id },
   );
 
-  const directions = await Direction.create({ name: 'Север' }, { name: 'Юг' }, { name: 'Запад' }, { name: 'Восток' });
+  const directions = await Direction.create(
+    { name: 'Север' },
+    { name: 'Юг' },
+    { name: 'Запад' },
+    { name: 'Восток' },
+    { name: 'Северо-Восток' },
+    { name: 'Северо-Запад' },
+    { name: 'Юго-Восток' },
+    { name: 'Юго-Запад' },
+  );
 
   const streets = await Street.create(
     { name: 'Киевская', city: cities[0]._id },
