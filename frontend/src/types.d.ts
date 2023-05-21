@@ -175,6 +175,14 @@ export interface LocationMutation {
   schemaImage: File | null;
 }
 
+export interface ClientsList {
+  _id: string;
+  name: string;
+  phone: string;
+  email: string;
+}
+export type ClientMutation = Omit<ClientsList, '_id'>;
+
 /***** START: Filter types *****/
 
 export interface StreetFilter {
