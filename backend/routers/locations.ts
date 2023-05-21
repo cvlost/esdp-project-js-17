@@ -21,14 +21,14 @@ const locationsRouter = express.Router();
 export const flattenLookup: PipelineStage[] = [
   { $lookup: { from: 'cities', localField: 'city', foreignField: '_id', as: 'city' } },
   { $lookup: { from: 'regions', localField: 'region', foreignField: '_id', as: 'region' } },
-  { $lookup: { from: 'streets', localField: 'streets', foreignField: '_id', as: 'street' } },
+  { $lookup: { from: 'streets', localField: 'streets', foreignField: '_id', as: 'streets' } },
   { $lookup: { from: 'areas', localField: 'area', foreignField: '_id', as: 'area' } },
   { $lookup: { from: 'formats', localField: 'format', foreignField: '_id', as: 'format' } },
   { $lookup: { from: 'directions', localField: 'direction', foreignField: '_id', as: 'direction' } },
   { $lookup: { from: 'legalentities', localField: 'legalEntity', foreignField: '_id', as: 'legalEntity' } },
   { $set: { city: { $first: '$city.name' } } },
   { $set: { region: { $first: '$region.name' } } },
-  { $set: { street: ['$street.firstStreet', '$street.secondStreet'] } },
+  { $set: { streets: { $map: { input: '$streets', as: 'street', in: '$$street.name' } } } },
   { $set: { direction: { $first: '$direction.name' } } },
   { $set: { area: { $first: '$area.name' } } },
   { $set: { format: { $first: '$format.name' } } },
@@ -73,7 +73,7 @@ locationsRouter.post('/filter', async (req, res, next) => {
   try {
     const [allLocations, filteredLocations] = await Promise.all([Location.find().lean(), Location.find(filter).lean()]);
     const [streets, areas, directions, regions, cities, formats, legalEntities] = await Promise.all([
-      Street.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.streets))] } }).lean(),
+      Street.find({ _id: { $in: [...new Set(allLocations.flatMap((loc) => loc.streets))] } }).lean(),
       Area.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.area))] } }).lean(),
       Direction.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.direction))] } }).lean(),
       Region.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.region))] } }).lean(),
@@ -146,7 +146,7 @@ locationsRouter.post(
       area: req.body.area,
       region: req.body.region.length > 0 ? req.body.region : null,
       city: req.body.city,
-      streets: [req.body.firstStreet, req.body.secondStreet],
+      streets: [req.body.streets[0], req.body.streets[1]],
       direction: req.body.direction,
       legalEntity: req.body.legalEntity,
       format: req.body.format,
@@ -206,7 +206,7 @@ locationsRouter.put(
       area: req.body.area,
       region: req.body.region.length > 0 ? req.body.region : null,
       city: req.body.city,
-      streets: [req.body.firstStreet, req.body.secondStreet],
+      streets: [req.body.streets[0], req.body.streets[1]],
       direction: req.body.direction,
       legalEntity: req.body.legalEntity,
       format: req.body.format,
