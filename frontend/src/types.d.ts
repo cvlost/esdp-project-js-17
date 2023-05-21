@@ -90,6 +90,13 @@ export interface DirectionList {
 
 export type DirectionMutation = Omit<DirectionList, '_id'>;
 
+export interface SizeList {
+  _id: string;
+  name: string;
+}
+
+export type SizeMutation = Omit<SizeList, '_id'>;
+
 export interface IPeriod {
   start: string;
   end: string;
