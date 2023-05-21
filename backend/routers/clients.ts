@@ -23,7 +23,7 @@ clientsRouter.post('/', auth, async (req, res, next) => {
 
 clientsRouter.get('/', auth, async (req, res, next) => {
   try {
-    const clients = await Client.find();
+    const clients = await Client.find().sort({ _id: -1 });
     return res.send(clients);
   } catch (e) {
     return next(e);

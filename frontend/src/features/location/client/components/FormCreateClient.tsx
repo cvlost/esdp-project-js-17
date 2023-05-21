@@ -80,7 +80,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit }) => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              value={state.phone}
+              value={state.email}
               onChange={inputChangeHandler}
               required
               fullWidth

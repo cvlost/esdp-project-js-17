@@ -71,6 +71,13 @@ const SnackbarCard = () => {
       break;
     case 'edit_location':
       txt += 'Локация успешно отредактирована';
+      break;
+    case 'remove_client':
+      txt += 'клиент успешно удален';
+      break;
+    case 'create_client':
+      txt += 'клиент успешно создан';
+      break;
   }
 
   return (

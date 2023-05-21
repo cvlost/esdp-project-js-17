@@ -27,6 +27,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import FormCreateClient from './components/FormCreateClient';
 import CardClient from './components/CardClient';
+import { openSnackbar } from '../../users/usersSlice';
 
 const CreateClient = () => {
   const clients = useAppSelector(selectClientsList);
@@ -50,14 +51,14 @@ const CreateClient = () => {
   const onSubmit = async (client: ClientMutation) => {
     await dispatch(createClient(client)).unwrap();
     await dispatch(fetchClients()).unwrap();
-    // dispatch(openSnackbar({ status: true, parameter: 'create_area' }));
+    dispatch(openSnackbar({ status: true, parameter: 'create_client' }));
   };
 
   const removeClientCard = async (id: string) => {
-    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить даунного клиента?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данного клиента?')) {
       await dispatch(removeClient(id)).unwrap();
       await dispatch(fetchClients()).unwrap();
-      // dispatch(openSnackbar({ status: true, parameter: 'remove_area' }));
+      dispatch(openSnackbar({ status: true, parameter: 'remove_client' }));
     } else {
       return;
     }
@@ -96,7 +97,7 @@ const CreateClient = () => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="left">Область</StyledTableCell>
+                  <StyledTableCell align="left">Клиент</StyledTableCell>
                   <StyledTableCell align="right">Управление</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -113,7 +114,7 @@ const CreateClient = () => {
                   ) : (
                     <TableRow>
                       <TableCell>
-                        <Alert severity="info">В данный момент направлений нет</Alert>
+                        <Alert severity="info">В данный момент клиентов нет</Alert>
                       </TableCell>
                     </TableRow>
                   )

@@ -31,7 +31,7 @@ export const removeClient = createAsyncThunk<void, string, { rejectValue: Global
   'client/remove_client',
   async (id, { rejectWithValue }) => {
     try {
-      await axiosApi.delete('/client/' + id);
+      await axiosApi.delete('/clients/' + id);
     } catch (e) {
       if (isAxiosError(e) && e.response && e.response.status === 404) {
         return rejectWithValue(e.response.data as GlobalError);
