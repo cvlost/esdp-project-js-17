@@ -13,9 +13,6 @@ const ClientSchema = new Schema<ClientType>({
   email: {
     type: 'String',
   },
-  description: {
-    type: 'String',
-  },
 });
 
 const Client = model('Client', ClientSchema);
