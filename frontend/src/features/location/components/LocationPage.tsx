@@ -28,7 +28,7 @@ const LocationPage = () => {
         <>
           <Chip
             sx={{ fontSize: '20px', p: 3, mb: 2 }}
-            label={`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}
+            label={`Локация ${loc?.city} ${loc?.streets[0] + '/' + loc?.streets[1]}, ${loc?.direction}`}
             variant="outlined"
             color="info"
           />
@@ -39,7 +39,7 @@ const LocationPage = () => {
                   Днем
                 </Typography>
                 <img
-                  alt={`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}
+                  alt={`Локация ${loc?.city} ${loc?.streets[0] + '/' + loc?.streets[1]}, ${loc?.direction}`}
                   src={loc?.dayImage ? `${apiURL}/${loc.dayImage}` : imagePlaceholder}
                   style={{
                     maxWidth: '100%',
@@ -52,7 +52,7 @@ const LocationPage = () => {
                   Схема
                 </Typography>
                 <img
-                  alt={`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}
+                  alt={`Локация ${loc?.city} ${loc?.streets[0] + '/' + loc?.streets[1]}, ${loc?.direction}`}
                   src={loc?.dayImage ? `${apiURL}/${loc.schemaImage}` : imagePlaceholder}
                   style={{
                     maxWidth: '100%',

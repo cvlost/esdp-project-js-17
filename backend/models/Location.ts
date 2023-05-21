@@ -106,15 +106,26 @@ const LocationSchema = new Schema<ILocation>({
       message: 'Неверный id области.',
     },
   },
-  street: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'Street',
-    validate: {
-      validator: (id: Types.ObjectId) => Street.findById(id),
-      message: 'Неверный id улицы.',
+  streets: [
+    {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Street',
+      validate: {
+        validator: (id: Types.ObjectId) => Street.findById(id),
+        message: 'Неверный id улицы.',
+      },
     },
-  },
+    {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Street',
+      validate: {
+        validator: (id: Types.ObjectId) => Street.findById(id),
+        message: 'Неверный id улицы.',
+      },
+    },
+  ],
   city: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -127,7 +138,6 @@ const LocationSchema = new Schema<ILocation>({
   region: {
     type: Schema.Types.ObjectId,
     ref: 'Region',
-    required: false,
   },
   direction: {
     type: Schema.Types.ObjectId,
@@ -145,6 +155,10 @@ const LocationSchema = new Schema<ILocation>({
   schemaImage: {
     type: String,
     required: true,
+  },
+  checked: {
+    type: Boolean,
+    default: false,
   },
 });
 

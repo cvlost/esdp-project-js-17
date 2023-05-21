@@ -18,17 +18,17 @@ import path from 'path';
 
 const locationsRouter = express.Router();
 
-const flattenLookup: PipelineStage[] = [
+export const flattenLookup: PipelineStage[] = [
   { $lookup: { from: 'cities', localField: 'city', foreignField: '_id', as: 'city' } },
   { $lookup: { from: 'regions', localField: 'region', foreignField: '_id', as: 'region' } },
-  { $lookup: { from: 'streets', localField: 'street', foreignField: '_id', as: 'street' } },
+  { $lookup: { from: 'streets', localField: 'streets', foreignField: '_id', as: 'streets' } },
   { $lookup: { from: 'areas', localField: 'area', foreignField: '_id', as: 'area' } },
   { $lookup: { from: 'formats', localField: 'format', foreignField: '_id', as: 'format' } },
   { $lookup: { from: 'directions', localField: 'direction', foreignField: '_id', as: 'direction' } },
   { $lookup: { from: 'legalentities', localField: 'legalEntity', foreignField: '_id', as: 'legalEntity' } },
   { $set: { city: { $first: '$city.name' } } },
   { $set: { region: { $first: '$region.name' } } },
-  { $set: { street: { $first: '$street.name' } } },
+  { $set: { streets: { $map: { input: '$streets', as: 'street', in: '$$street.name' } } } },
   { $set: { direction: { $first: '$direction.name' } } },
   { $set: { area: { $first: '$area.name' } } },
   { $set: { format: { $first: '$format.name' } } },
@@ -73,7 +73,7 @@ locationsRouter.post('/filter', async (req, res, next) => {
   try {
     const [allLocations, filteredLocations] = await Promise.all([Location.find().lean(), Location.find(filter).lean()]);
     const [streets, areas, directions, regions, cities, formats, legalEntities] = await Promise.all([
-      Street.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.street))] } }).lean(),
+      Street.find({ _id: { $in: [...new Set(allLocations.flatMap((loc) => loc.streets))] } }).lean(),
       Area.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.area))] } }).lean(),
       Direction.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.direction))] } }).lean(),
       Region.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.region))] } }).lean(),
@@ -133,7 +133,10 @@ locationsRouter.get('/edit/:id', async (req, res, next) => {
 
 locationsRouter.post(
   '/create',
-  imagesUpload.fields([{ name: 'dayImage', maxCount: 1 }, { name: 'schemaImage' }]),
+  imagesUpload.fields([
+    { name: 'dayImage', maxCount: 1 },
+    { name: 'schemaImage', maxCount: 1 },
+  ]),
   auth,
   async (req, res, next) => {
     const files = req.files as { [filename: string]: Express.Multer.File[] };
@@ -143,7 +146,7 @@ locationsRouter.post(
       area: req.body.area,
       region: req.body.region.length > 0 ? req.body.region : null,
       city: req.body.city,
-      street: req.body.street,
+      streets: [req.body.streets[0], req.body.streets[1]],
       direction: req.body.direction,
       legalEntity: req.body.legalEntity,
       format: req.body.format,
@@ -160,6 +163,7 @@ locationsRouter.post(
       client: req.body.client,
       booking: req.body.booking,
       nearest_booking_date: req.body.nearest_booking_date,
+      checked: false,
     };
 
     try {
@@ -189,7 +193,10 @@ locationsRouter.post(
 locationsRouter.put(
   '/edit/:id',
   auth,
-  imagesUpload.fields([{ name: 'dayImage', maxCount: 1 }, { name: 'schemaImage' }]),
+  imagesUpload.fields([
+    { name: 'dayImage', maxCount: 1 },
+    { name: 'schemaImage', maxCount: 1 },
+  ]),
   async (req, res, next) => {
     const files = req.files as { [filename: string]: Express.Multer.File[] };
     const id = req.params.id as string;
@@ -199,7 +206,7 @@ locationsRouter.put(
       area: req.body.area,
       region: req.body.region.length > 0 ? req.body.region : null,
       city: req.body.city,
-      street: req.body.street,
+      streets: [req.body.streets[0], req.body.streets[1]],
       direction: req.body.direction,
       legalEntity: req.body.legalEntity,
       format: req.body.format,
@@ -274,6 +281,32 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+locationsRouter.patch('/checked', auth, async (req, res, next) => {
+  try {
+    if (req.query.allChecked !== undefined) {
+      await Location.updateMany({ checked: false });
+      return res.send({ patch: false });
+    } else if (req.query.checked !== undefined) {
+      const locationOne = await Location.findOne({ _id: req.query.checked });
+
+      if (!locationOne) {
+        return res.status(404).send({ error: 'Локации не существует в базе.' });
+      }
+
+      if (!locationOne.checked) {
+        locationOne.checked = req.body.checked;
+      } else {
+        locationOne.checked = !req.body.checked;
+      }
+
+      await locationOne.save();
+      return res.send(locationOne.checked);
+    }
   } catch (e) {
     return next(e);
   }

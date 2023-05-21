@@ -89,26 +89,35 @@ const run = async () => {
     { name: 'Ысык-Атинский', city: cities[0]._id },
   );
 
-  const directions = await Direction.create({ name: 'Север' }, { name: 'Юг' }, { name: 'Запад' }, { name: 'Восток' });
+  const directions = await Direction.create(
+    { name: 'Север' },
+    { name: 'Юг' },
+    { name: 'Запад' },
+    { name: 'Восток' },
+    { name: 'Северо-Восток' },
+    { name: 'Северо-Запад' },
+    { name: 'Юго-Восток' },
+    { name: 'Юго-Запад' },
+  );
 
   const streets = await Street.create(
-    { name: 'Киевская', city: cities[0]._id, region: regions[0]._id },
-    { name: 'Ахунбаева', city: cities[0]._id, region: regions[1]._id },
-    { name: 'Ибраимова', city: cities[0]._id, region: regions[2]._id },
-    { name: 'Манаса', city: cities[0]._id, region: regions[3]._id },
-    { name: 'Московская', city: cities[0]._id, region: regions[4]._id },
-    { name: 'Горького', city: cities[0]._id, region: regions[5]._id },
-    { name: 'Логвиненко', city: cities[0]._id, region: regions[6]._id },
-    { name: 'Боконбаева', city: cities[0]._id, region: regions[0]._id },
-    { name: 'Исанова', city: cities[0]._id, region: regions[1]._id },
-    { name: 'Тыныстанова', city: cities[0]._id, region: regions[2]._id },
-    { name: 'Юнусалиева', city: cities[0]._id, region: regions[3]._id },
-    { name: 'Фучика', city: cities[0]._id, region: regions[4]._id },
-    { name: 'Медерова', city: cities[0]._id, region: regions[5]._id },
-    { name: 'Токтогула', city: cities[0]._id, region: regions[6]._id },
-    { name: 'Жибек-Жолу', city: cities[0]._id, region: regions[0]._id },
-    { name: 'пр. Манаса', city: cities[0]._id, region: regions[1]._id },
-    { name: 'Шабдан-Баатыра', city: cities[0]._id, region: regions[2]._id },
+    { name: 'Киевская', city: cities[0]._id },
+    { name: 'Ахунбаева', city: cities[0]._id },
+    { name: 'Ибраимова', city: cities[0]._id },
+    { name: 'Манаса', city: cities[0]._id },
+    { name: 'Московская', city: cities[0]._id },
+    { name: 'Горького', city: cities[0]._id },
+    { name: 'Логвиненко', city: cities[0]._id },
+    { name: 'Боконбаева', city: cities[0]._id },
+    { name: 'Исанова', city: cities[0]._id },
+    { name: 'Тыныстанова', city: cities[0]._id },
+    { name: 'Юнусалиева', city: cities[0]._id },
+    { name: 'Фучика', city: cities[0]._id },
+    { name: 'Медерова', city: cities[0]._id },
+    { name: 'Токтогула', city: cities[0]._id },
+    { name: 'Жибек-Жолу', city: cities[0]._id },
+    { name: 'пр. Манаса', city: cities[0]._id },
+    { name: 'Шабдан-Баатыра', city: cities[0]._id },
   );
 
   const legalEntities = await LegalEntity.create({ name: 'Шамдагай' }, { name: 'ШамдагайЮридикал' });
@@ -156,12 +165,18 @@ const run = async () => {
   );
 
   for (let i = 0; i < 20; i++) {
+    const street1 = randElement(streets)._id;
+    let street2 = randElement(streets)._id;
+    while (street1 === street2) {
+      street2 = randElement(streets)._id;
+    }
+    const streetsArr = [street1, street2];
     await Location.create({
       area: randElement(areas)._id,
       direction: randElement(directions)._id,
       city: randElement(cities)._id,
       region: randElement(regions)._id,
-      street: randElement(streets)._id,
+      streets: streetsArr,
       format: randElement(formats)._id,
       legalEntity: randElement(legalEntities)._id,
       lighting: randElement(lightings),

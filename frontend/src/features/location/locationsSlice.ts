@@ -17,6 +17,7 @@ import {
   removeLocation,
   updateLocation,
   getToEditOneLocation,
+  checkedLocation,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -44,6 +45,9 @@ interface LocationsState {
   createLocationLoading: boolean;
   createError: ValidationError | null;
   locationDeleteLoading: false | string;
+  selectedLocationId: string[];
+  openSelected: boolean;
+  checkedLocationLoading: false | string;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -51,7 +55,7 @@ export const initialColumns: LocationColumn[] = [
   { id: '2', name: 'area', prettyName: 'Область', show: true, type: 'location' },
   { id: '3', name: 'city', prettyName: 'Город', show: true, type: 'location' },
   { id: '4', name: 'region', prettyName: 'Регион', show: true, type: 'location' },
-  { id: '5', name: 'street', prettyName: 'Улица', show: true, type: 'location' },
+  { id: '5', name: 'streets', prettyName: 'Улица', show: true, type: 'location' },
   { id: '6', name: 'direction', prettyName: 'Направление', show: true, type: 'location' },
   { id: '7', name: 'legalEntity', prettyName: 'Юр. лицо', show: true, type: 'location' },
   { id: '8', name: 'size', prettyName: 'Размер', show: true, type: 'billboard' },
@@ -136,6 +140,9 @@ const initialState: LocationsState = {
   oneLocationEdit: null,
   oneLocationEditLoading: false,
   oneLocationEditError: null,
+  selectedLocationId: [],
+  openSelected: false,
+  checkedLocationLoading: false,
 };
 
 const locationsSlice = createSlice({
@@ -160,8 +167,32 @@ const locationsSlice = createSlice({
       state.settings.filter = initialFilterState;
       state.locationsListData.filtered = false;
     },
+    addLocationId: (state) => {
+      state.locationsListData.locations.filter((item) => {
+        if (item.checked === true) {
+          const index = state.selectedLocationId.indexOf(item._id);
+          if (index === -1) state.selectedLocationId.push(item._id);
+        } else if (item.checked === false) {
+          const index = state.selectedLocationId.indexOf(item._id);
+          if (index > -1) state.selectedLocationId.splice(index, 1);
+        }
+      });
+    },
+    resetLocationId: (state) => {
+      state.selectedLocationId = [];
+    },
   },
   extraReducers: (builder) => {
+    builder.addCase(checkedLocation.pending, (state, { meta: { arg: id } }) => {
+      state.checkedLocationLoading = id.id ? id.id : '';
+    });
+    builder.addCase(checkedLocation.fulfilled, (state) => {
+      state.checkedLocationLoading = false;
+    });
+    builder.addCase(checkedLocation.rejected, (state) => {
+      state.checkedLocationLoading = false;
+    });
+
     builder.addCase(getLocationsList.pending, (state) => {
       state.locationsListLoading = true;
     });
@@ -241,7 +272,8 @@ const locationsSlice = createSlice({
 
 export const locationsReducer = locationsSlice.reducer;
 
-export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter } = locationsSlice.actions;
+export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter, addLocationId, resetLocationId } =
+  locationsSlice.actions;
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;
@@ -256,3 +288,5 @@ export const selectLocationsDeleteLoading = (state: RootState) => state.location
 export const selectLocationsFilter = (state: RootState) => state.locations.settings.filter;
 export const selectLocationsFilterCriteriaData = (state: RootState) => state.locations.filterCriteriaData;
 export const selectLocationsFilterCriteriaLoading = (state: RootState) => state.locations.filterCriteriaLoading;
+export const selectCheckedLocationLoading = (state: RootState) => state.locations.checkedLocationLoading;
+export const selectSelectedLocationId = (state: RootState) => state.locations.selectedLocationId;

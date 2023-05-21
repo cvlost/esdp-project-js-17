@@ -81,6 +81,7 @@ export interface RegionList {
 
 export interface RegionMutation {
   name: string;
+  city: string;
 }
 
 export interface DirectionList {
@@ -109,7 +110,7 @@ export interface ILocation {
   reserve: null | IPeriod;
   city: string;
   area: string;
-  street: string;
+  streets: [string, string] | string[];
   direction: string;
   region: string;
   legalEntity: string;
@@ -122,6 +123,7 @@ export interface ILocation {
   schemaImage?: string;
   addressNote?: string;
   description?: string;
+  checked: boolean;
 }
 
 export interface LocationsListResponse {
@@ -144,7 +146,6 @@ export interface StreetList {
   _id: string;
   name: string;
   city: string;
-  region: string | null;
 }
 
 export type StreetMutation = Omit<StreetList, '_id'>;
@@ -170,7 +171,7 @@ export interface LocationMutation {
   area: string;
   region: string;
   city: string;
-  street: string;
+  streets: [string, string] | string[];
   direction: string;
   legalEntity: string;
   size: string;
@@ -277,3 +278,69 @@ interface FilterCriteriaResponse {
 }
 
 /***** END: Filter types *****/
+
+export interface CommercialLinkTypeMutation {
+  location: string[];
+  settings: {
+    id: string;
+    name: string;
+    show: boolean;
+  }[];
+  description: string | null;
+  title: string | null;
+}
+
+export interface CommercialLinkType {
+  location: ILocation[];
+  settings: {
+    id: string;
+    name: string;
+    show: boolean;
+  };
+  fullLink: string;
+}
+
+export interface ConstructorLinkType {
+  id: string;
+  name: string;
+  show: boolean;
+}
+
+export interface Link {
+  fullLink: string | null;
+}
+
+export interface ILocationLink {
+  _id: string;
+  price: string | null;
+  rent: null | IPeriod;
+  reserve: null | IPeriod;
+  city: string | null;
+  area: string | null;
+  streets: [string, string] | string[];
+  direction: string | null;
+  region: string | null;
+  legalEntity: string | null;
+  size: string | null;
+  lighting: string | null;
+  format: string | null;
+  placement: boolean | null;
+  country?: string;
+  dayImage?: string;
+  schemaImage?: string;
+  addressNote?: string;
+  description?: string;
+  checked: boolean;
+}
+
+export interface contentLinkType {
+  location: ILocationLink[];
+  description: string;
+  title: string;
+}
+
+export interface contentLinkOneType {
+  location: ILocationLink | null;
+  description: string;
+  title: string;
+}

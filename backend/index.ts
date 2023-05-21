@@ -11,6 +11,7 @@ import formatRouter from './routers/formats';
 import areasRouter from './routers/areas';
 import streetsRouter from './routers/streets';
 import legalEntitiesRouter from './routers/legalEntities';
+import commercialLinksRouter from './routers/commercialLinks';
 import sizesRouter from './routers/sizes';
 
 const app = express();
@@ -28,6 +29,7 @@ app.use('/formats', formatRouter);
 app.use('/areas', areasRouter);
 app.use('/legalEntities', legalEntitiesRouter);
 app.use('/locations', locationsRouter);
+app.use('/link', commercialLinksRouter);
 app.use('/sizes', sizesRouter);
 
 const run = async () => {

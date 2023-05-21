@@ -70,7 +70,8 @@ export const createLocation = createAsyncThunk<void, LocationMutation, { rejectV
       formData.append('area', locationSubmit.area);
       formData.append('region', locationSubmit.region);
       formData.append('city', locationSubmit.city);
-      formData.append('street', locationSubmit.street);
+      formData.append('streets[]', locationSubmit.streets[0]);
+      formData.append('streets[]', locationSubmit.streets[1]);
       formData.append('direction', locationSubmit.direction);
       formData.append('legalEntity', locationSubmit.legalEntity);
       formData.append('size', locationSubmit.size);
@@ -121,7 +122,8 @@ export const updateLocation = createAsyncThunk<void, UpdateLocationParams, { rej
       formData.append('area', locEdit.area);
       formData.append('region', locEdit.region);
       formData.append('city', locEdit.city);
-      formData.append('street', locEdit.street);
+      formData.append('streets[]', locEdit.streets[0]);
+      formData.append('streets[]', locEdit.streets[1]);
       formData.append('direction', locEdit.direction);
       formData.append('legalEntity', locEdit.legalEntity);
       formData.append('size', locEdit.size);
@@ -157,3 +159,20 @@ export const getFilterCriteriaData = createAsyncThunk<FilterCriteriaResponse, vo
     return response.data;
   },
 );
+
+interface CheckedLocationType {
+  id: string | undefined;
+  allChecked: boolean;
+}
+
+export const checkedLocation = createAsyncThunk<void, CheckedLocationType>('locations/check_location', async (arg) => {
+  let url = '/';
+
+  if (arg.id) {
+    url = `/locations/checked?checked=${arg.id}`;
+  } else if (arg.allChecked) {
+    url = `/locations/checked?allChecked=true`;
+  }
+
+  await axiosApi.patch(url, { checked: true });
+});
