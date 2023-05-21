@@ -30,6 +30,7 @@ const run = async () => {
     await db.dropCollection('formats');
     await db.dropCollection('areas');
     await db.dropCollection('sizes');
+    await db.dropCollection('lightings');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -151,8 +152,6 @@ const run = async () => {
     return arr[Math.floor(Math.random() * arr.length)];
   };
 
-  const sizesBeforeUpdate = BILLBOARD_SIZES.slice();
-
   const sizes = await Size.create(
     { name: '2,7x5,7' },
     { name: '2x5' },
@@ -163,8 +162,10 @@ const run = async () => {
     { name: '3x6' },
     { name: '4x10' },
   );
-  const lightingsConstants = BILLBOARD_LIGHTINGS.slice();
+
   const lightings = await Lighting.create({ name: 'Внутреннее' }, { name: 'Внешнее' });
+  const lightingsConstants = BILLBOARD_LIGHTINGS.slice();
+  const sizesBeforeUpdate = BILLBOARD_SIZES.slice();
 
   for (let i = 0; i < 20; i++) {
     const street1 = randElement(streets)._id;
