@@ -143,12 +143,18 @@ const run = async () => {
   const sizes = BILLBOARD_SIZES.slice();
 
   for (let i = 0; i < 20; i++) {
+    const street1 = randElement(streets)._id;
+    let street2 = randElement(streets)._id;
+    while (street1 === street2) {
+      street2 = randElement(streets)._id;
+    }
+    const streetsArr = [street1, street2];
     await Location.create({
       area: randElement(areas)._id,
       direction: randElement(directions)._id,
       city: randElement(cities)._id,
       region: randElement(regions)._id,
-      street: [randElement(streets)._id, randElement(streets)._id],
+      streets: streetsArr,
       format: randElement(formats)._id,
       legalEntity: randElement(legalEntities)._id,
       lighting: randElement(lightings),
