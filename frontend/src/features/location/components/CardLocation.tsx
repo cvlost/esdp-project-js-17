@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, ButtonGroup, TableCell, Typography } from '@mui/material';
+import { Button, ButtonGroup, Paper, Switch, TableCell, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { ILocation } from '../../../types';
 import { StyledTableRow } from '../../../constants';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../../app/hooks';
-import { selectLocationsColumnSettings } from '../locationsSlice';
+import { selectCheckedLocationLoading, selectLocationsColumnSettings } from '../locationsSlice';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -15,11 +15,14 @@ interface Props {
   onEdit: React.MouseEventHandler;
   loc: ILocation;
   number: number;
+  checkedCardLocation: React.MouseEventHandler;
+  open: boolean;
 }
 
-const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLoading }) => {
+const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLoading, checkedCardLocation, open }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
+  const loadingCheck = useAppSelector(selectCheckedLocationLoading);
 
   const cells: Record<string, React.ReactNode> = {
     address: (
@@ -95,6 +98,15 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
           <Button size="small" color="success" onClick={onEdit}>
             <EditIcon />
           </Button>
+          {open && (
+            <Paper sx={{ ml: 1 }} elevation={3}>
+              <Switch
+                disabled={loadingCheck ? loadingCheck === loc._id : false}
+                onClick={checkedCardLocation}
+                checked={loc.checked}
+              />
+            </Paper>
+          )}
         </ButtonGroup>
       </TableCell>
     </StyledTableRow>
