@@ -11,6 +11,7 @@ import LegalEntity from './models/LegalEntity';
 import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from './constants';
 import Format from './models/Format';
 import Area from './models/Area';
+import Size from './models/Size';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -27,6 +28,7 @@ const run = async () => {
     await db.dropCollection('legalentities');
     await db.dropCollection('formats');
     await db.dropCollection('areas');
+    await db.dropCollection('sizes');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -149,7 +151,18 @@ const run = async () => {
   };
 
   const lightings = BILLBOARD_LIGHTINGS.slice();
-  const sizes = BILLBOARD_SIZES.slice();
+  const sizesBeforeUpdate = BILLBOARD_SIZES.slice();
+
+  const sizes = await Size.create(
+    { name: '2,7x5,7' },
+    { name: '2x5' },
+    { name: '3x12' },
+    { name: '3x14,42' },
+    { name: '3x16' },
+    { name: '3x18' },
+    { name: '3x6' },
+    { name: '4x10' },
+  );
 
   for (let i = 0; i < 20; i++) {
     const street1 = randElement(streets)._id;
@@ -167,7 +180,7 @@ const run = async () => {
       format: randElement(formats)._id,
       legalEntity: randElement(legalEntities)._id,
       lighting: randElement(lightings),
-      size: randElement(sizes),
+      size: randElement(sizesBeforeUpdate), // надо  потом после обновления локации поменять на sizes с базы и взять id
       price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
       rent:
         Math.random() > 0.5

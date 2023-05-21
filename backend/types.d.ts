@@ -94,3 +94,7 @@ export interface CommercialLinkType {
   shortUrl: string;
   fullLink: string;
 }
+
+export interface SizeType {
+  name: string;
+}
