@@ -38,7 +38,7 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
     area: <>{loc.area}</>,
     city: <>{loc.city}</>,
     region: <>{loc.region}</>,
-    streets: <>{loc.streets[0] + '/' + loc.streets[1]}</>,
+    street: <>{loc.streets[0] + '/' + loc.streets[1]}</>,
     direction: <>{loc.direction}</>,
     legalEntity: <>{loc.legalEntity}</>,
     size: <>{loc.size}</>,
