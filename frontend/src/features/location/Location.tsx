@@ -20,6 +20,7 @@ const link_options: LinkOption[] = [
   { label: 'Создать Формат', link: '/create_format' },
   { label: 'Создать Юр.лицо', link: '/create_legal_entity' },
   { label: 'Создать Улицу', link: '/create_street' },
+  { label: 'Создать Освещение', link: '/create_lighting' },
 ];
 
 const Location = () => {

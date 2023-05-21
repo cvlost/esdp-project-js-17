@@ -30,6 +30,12 @@ const SnackbarCard = () => {
     case 'remove_direction':
       txt += 'Направление успешно удалено';
       break;
+    case 'create_lighting':
+      txt += 'Освещение успешно создано';
+      break;
+    case 'remove_lighting':
+      txt += 'Освещение успешно удалено';
+      break;
     case 'create_area':
       txt += 'Область успешно создана';
       break;

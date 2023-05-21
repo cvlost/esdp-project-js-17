@@ -18,6 +18,7 @@ import CreateCity from './features/location/city/CreateCity';
 import CreateLocation from './features/location/CreateLocation';
 import 'rsuite/dist/rsuite.min.css';
 import LocationPage from './features/location/components/LocationPage';
+import CreateLighting from './features/location/lighting/CreateLighting';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -39,6 +40,7 @@ function App() {
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/create_location" element={<CreateLocation />} />
           <Route path="/create_region" element={<CreateRegion />} />
+          <Route path="/create_lighting" element={<CreateLighting />} />
           <Route path="/create_city" element={<CreateCity />} />
           <Route path="/create_direction" element={<CreateDirection />} />
           <Route path="/create_format" element={<CreateFormat />} />
