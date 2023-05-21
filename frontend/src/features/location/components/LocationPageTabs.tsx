@@ -40,7 +40,7 @@ const LocationPageTabs = () => {
             mx="auto"
             mt={2}
             mb={5}
-          >{`Локация ${loc?.city} ${loc?.street}, ${loc?.direction}`}</Typography>
+          >{`Локация ${loc?.city} ${loc?.streets[0] + '/' + loc?.streets[1]}, ${loc?.direction}`}</Typography>
           {loc?.description ? (
             <Typography>{loc.description}</Typography>
           ) : (
@@ -131,7 +131,7 @@ const LocationPageTabs = () => {
               </TableRow>
               <TableRow>
                 <TableCell>Улица</TableCell>
-                <TableCell>{loc.street}</TableCell>
+                <TableCell>{loc?.streets[0] + '/' + loc?.streets[1]}</TableCell>
               </TableRow>
               {loc.addressNote && (
                 <TableRow>

@@ -27,7 +27,7 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
   const cells: Record<string, React.ReactNode> = {
     address: (
       <>
-        {`${loc.city} ${loc.street}, ${loc.direction}`}
+        {`${loc.city} ${loc.streets[0] + '/' + loc.streets[1]}, ${loc.direction}`}
         {loc.addressNote && (
           <Typography color="gray" fontSize=".85em">
             ({loc.addressNote})
@@ -38,7 +38,7 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
     area: <>{loc.area}</>,
     city: <>{loc.city}</>,
     region: <>{loc.region}</>,
-    street: <>{loc.street}</>,
+    streets: <>{loc.streets[0] + '/' + loc.streets[1]}</>,
     direction: <>{loc.direction}</>,
     legalEntity: <>{loc.legalEntity}</>,
     size: <>{loc.size}</>,
