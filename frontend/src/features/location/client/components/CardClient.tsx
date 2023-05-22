@@ -5,13 +5,15 @@ import { Box, CircularProgress, IconButton, TableCell, Typography } from '@mui/m
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectRemoveClientLoading } from '../clientSlice';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
   client: ClientsList;
   removeClientCard: React.MouseEventHandler;
+  onEditing: React.MouseEventHandler;
 }
 
-const CardClient: React.FC<Props> = ({ client, removeClientCard }) => {
+const CardClient: React.FC<Props> = ({ client, removeClientCard, onEditing }) => {
   const removeLoading = useAppSelector(selectRemoveClientLoading);
   return (
     <>
@@ -35,6 +37,9 @@ const CardClient: React.FC<Props> = ({ client, removeClientCard }) => {
         <TableCell align="right">
           <IconButton disabled={removeLoading} onClick={removeClientCard} aria-label="delete">
             {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          </IconButton>
+          <IconButton onClick={onEditing} aria-label="success">
+            <EditIcon />
           </IconButton>
         </TableCell>
       </StyledTableRow>

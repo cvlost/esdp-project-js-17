@@ -76,7 +76,7 @@ const SnackbarCard = () => {
       txt += 'клиент успешно удален';
       break;
     case 'create_client':
-      txt += 'клиент успешно создан';
+      txt += 'клиент успешно сохранен';
       break;
   }
 

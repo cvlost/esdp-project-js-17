@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 import {
@@ -20,22 +20,38 @@ import {
 } from '@mui/material';
 import { MainColorGreen } from '../../../constants';
 import { ClientMutation } from '../../../types';
-import { createClient, fetchClients, removeClient } from './clientThunk';
-import { selectClientsList, selectErrorRemove, selectGetAllClientsLoading, selectModal } from './clientSlice';
+import { createClient, fetchClients, fetchOneClient, removeClient, updateClient } from './clientThunk';
+import {
+  selectClientError,
+  selectClientsList,
+  selectCreateClientLoading,
+  selectErrorRemove,
+  selectGetAllClientsLoading,
+  selectModal,
+  selectOneClient,
+  selectOneClientLoading,
+} from './clientSlice';
 import { controlModal } from '../area/areaSlice';
 import CloseIcon from '@mui/icons-material/Close';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import FormCreateClient from './components/FormCreateClient';
 import CardClient from './components/CardClient';
 import { openSnackbar } from '../../users/usersSlice';
+import ModalBody from '../../../components/ModalBody';
 
 const CreateClient = () => {
   const clients = useAppSelector(selectClientsList);
+  const existingClient = useAppSelector(selectOneClient);
   const loadingGetAllClients = useAppSelector(selectGetAllClientsLoading);
   const dispatch = useAppDispatch();
   const errorRemove = useAppSelector(selectErrorRemove);
+  const ClientCreateLoading = useAppSelector(selectCreateClientLoading);
+  const OneClientCreateLoading = useAppSelector(selectOneClientLoading);
+  const error = useAppSelector(selectClientError);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [clientId, setClientId] = useState('');
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -54,6 +70,27 @@ const CreateClient = () => {
     dispatch(openSnackbar({ status: true, parameter: 'create_client' }));
   };
 
+  const onFormSubmit = async (clientToChange: ClientMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateClient({ id: clientId, client: clientToChange })).unwrap();
+        await dispatch(fetchClients()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (ClientID: string) => {
+    await dispatch(fetchOneClient(ClientID));
+    setClientId(ClientID);
+    setIsDialogOpen(true);
+  };
+
   const removeClientCard = async (id: string) => {
     if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данного клиента?')) {
       await dispatch(removeClient(id)).unwrap();
@@ -67,7 +104,7 @@ const CreateClient = () => {
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <FormCreateClient onSubmit={onSubmit} />
+        <FormCreateClient onSubmit={onSubmit} Loading={ClientCreateLoading} error={error} />
       </Container>
       <Container>
         {open && (
@@ -109,6 +146,7 @@ const CreateClient = () => {
                         removeClientCard={() => removeClientCard(client._id)}
                         key={client._id}
                         client={client}
+                        onEditing={() => openDialog(client._id)}
                       />
                     ))
                   ) : (
@@ -130,6 +168,17 @@ const CreateClient = () => {
           </TableContainer>
         </Paper>
       </Container>
+      {existingClient && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateClient
+            error={error}
+            onSubmit={onFormSubmit}
+            existingClient={existingClient}
+            isEdit
+            Loading={OneClientCreateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </Box>
   );

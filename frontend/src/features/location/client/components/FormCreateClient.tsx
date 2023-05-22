@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import { useAppSelector } from '../../../../app/hooks';
-import { selectCreateClientLoading, selectClientError } from '../clientSlice';
-import { ClientMutation } from '../../../../types';
+import { ClientMutation, ValidationError } from '../../../../types';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 interface Props {
   onSubmit: (client: ClientMutation) => void;
+  existingClient?: ClientMutation;
+  isEdit?: boolean;
+  Loading: boolean;
+  error: ValidationError | null;
 }
 
-const FormCreateClient: React.FC<Props> = ({ onSubmit }) => {
-  const [state, setState] = useState<ClientMutation>({ name: '', phone: '', email: '' });
-  const createLoading = useAppSelector(selectCreateClientLoading);
-  const error = useAppSelector(selectClientError);
+const initialState: ClientMutation = {
+  email: '',
+  name: '',
+  phone: '',
+};
+
+const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialState, isEdit, Loading, error }) => {
+  const [state, setState] = useState<ClientMutation>(existingClient);
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +52,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit }) => {
         <FolderSharedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Создать клиента
+        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать клиента' : 'Создать клиента'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -68,7 +74,6 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit }) => {
             <TextField
               value={state.phone}
               onChange={inputChangeHandler}
-              required
               fullWidth
               label="Номер клиента"
               type="number"
@@ -76,13 +81,12 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit }) => {
               autoComplete="off"
               error={Boolean(getFieldError('phone'))}
               helperText={getFieldError('phone')}
-            />
+            ></TextField>
           </Grid>
           <Grid item xs={12}>
             <TextField
               value={state.email}
               onChange={inputChangeHandler}
-              required
               fullWidth
               label="Email клиента"
               type="email"
@@ -93,15 +97,8 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button
-          disabled={createLoading}
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="success"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {!createLoading ? 'Создать клиента' : <CircularProgress />}
+        <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
+          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>

@@ -8,7 +8,6 @@ const ClientSchema = new Schema<ClientType>({
   },
   phone: {
     type: 'String',
-    required: true,
   },
   email: {
     type: 'String',
