@@ -85,8 +85,8 @@ locationsRouter.post('/filter', async (req, res, next) => {
       City.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.city))] } }).lean(),
       Format.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.format))] } }).lean(),
       LegalEntity.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.legalEntity))] } }).lean(),
-      Lighting.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.lighting))] } }).lean(),
       Size.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.size))] } }).lean(),
+      Lighting.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.lighting))] } }).lean(),
     ]);
 
     const count = filteredLocations.length;

@@ -221,11 +221,11 @@ export interface LegalEntityFilter {
 }
 
 export interface SizeFilter {
-  sizes: string[];
+  sizes: SizeList[];
 }
 
 export interface LightingFilter {
-  lightings: string[];
+  lightings: LightingList[];
 }
 
 export interface PlacementFilter {
