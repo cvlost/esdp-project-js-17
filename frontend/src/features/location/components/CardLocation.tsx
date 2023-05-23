@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup, Paper, Switch, TableCell, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Paper, Switch, TableCell, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { ILocation } from '../../../types';
@@ -64,6 +64,20 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
             <Typography>{dayjs(loc.reserve.end).format('DD.MM.YYYY')}</Typography>
           </>
         )}
+      </>
+    ),
+    status: (
+      <>
+        <Box
+          component="div"
+          sx={{
+            width: '25px',
+            height: '25px',
+            background: loc.rent ? '#ff7300' : 'rgb(255,255,255)',
+            borderRadius: '50%',
+            border: '1px solid #000',
+          }}
+        ></Box>
       </>
     ),
   };

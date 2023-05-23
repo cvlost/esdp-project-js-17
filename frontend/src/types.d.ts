@@ -131,6 +131,7 @@ export interface ILocation {
   addressNote?: string;
   description?: string;
   checked: boolean;
+  status: string | null;
 }
 
 export interface LocationsListResponse {

@@ -51,6 +51,7 @@ interface LocationsState {
 }
 
 export const initialColumns: LocationColumn[] = [
+  { id: '15', name: 'status', prettyName: 'Статус', show: true, type: 'billboard' },
   { id: '1', name: 'address', prettyName: 'Полный адрес', show: true, type: 'location' },
   { id: '2', name: 'area', prettyName: 'Область', show: true, type: 'location' },
   { id: '3', name: 'city', prettyName: 'Город', show: true, type: 'location' },
