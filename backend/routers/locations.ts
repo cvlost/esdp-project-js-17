@@ -164,6 +164,7 @@ locationsRouter.post(
       booking: req.body.booking,
       nearest_booking_date: req.body.nearest_booking_date,
       checked: false,
+      status: null,
     };
 
     try {

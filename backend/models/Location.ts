@@ -160,6 +160,10 @@ const LocationSchema = new Schema<ILocation>({
     type: Boolean,
     default: false,
   },
+  status: {
+    type: String,
+    enum: ['Занят', 'Свободный', null],
+  },
 });
 
 LocationSchema.set('toJSON', {
