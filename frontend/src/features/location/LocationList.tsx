@@ -64,6 +64,8 @@ import { getDirectionsList } from './direction/directionsThunks';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
+import { getSizesList } from './size/sizeThunks';
+import { getLightingsList } from './lighting/lightingsThunks';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -91,6 +93,8 @@ const LocationList = () => {
     await dispatch(fetchFormat());
     await dispatch(fetchLegalEntity());
     await dispatch(getDirectionsList());
+    await dispatch(getSizesList());
+    await dispatch(getLightingsList());
     await dispatch(getToEditOneLocation(id));
     setLocationID(id);
     setIsOpen(true);
