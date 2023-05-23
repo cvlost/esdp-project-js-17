@@ -24,7 +24,6 @@ import { selectStreetList } from '../street/streetSlice';
 import { selectDirections } from '../direction/directionsSlice';
 import { selectLegalEntityList } from '../legalEntity/legalEntitySlice';
 import FileInput from '../../../components/FileInput/FileInput';
-import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../../../constants';
 import { selectFormatList } from '../format/formatSlice';
 import { fetchAreas } from '../area/areaThunk';
 import { fetchRegions } from '../region/regionThunk';
@@ -35,6 +34,10 @@ import { getDirectionsList } from '../direction/directionsThunks';
 import { fetchStreet } from '../street/streetThunks';
 import noImage from '../../../assets/noImage.png';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
+import { selectSizes } from '../size/sizeSlice';
+import { getSizesList } from '../size/sizeThunks';
+import { getLightingsList } from '../lighting/lightingsThunks';
+import { selectLightings } from '../lighting/lightingsSlice';
 
 interface Props {
   onSubmit: (location: LocationMutation) => void;
@@ -80,7 +83,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
   const streets = useAppSelector(selectStreetList);
   const directions = useAppSelector(selectDirections);
   const legalEntities = useAppSelector(selectLegalEntityList);
-  const sizes = BILLBOARD_SIZES;
+  const sizes = useAppSelector(selectSizes);
+  const lightingList = useAppSelector(selectLightings);
   const formats = useAppSelector(selectFormatList);
   const [state, setState] = useState<LocationMutation>(existingLocation);
 
@@ -107,6 +111,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
         dispatch(fetchFormat());
         dispatch(fetchLegalEntity());
         dispatch(getDirectionsList());
+        dispatch(getSizesList());
+        dispatch(getLightingsList());
       }
     }
   }, [dispatch, isEdit, state.area, state.city, idState, cities]);
@@ -409,8 +415,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             </MenuItem>
             {sizes &&
               sizes.map((size) => (
-                <MenuItem key={size} value={size}>
-                  {size}
+                <MenuItem key={size._id} value={size._id}>
+                  {size.name}
                 </MenuItem>
               ))}
           </TextField>
@@ -453,10 +459,10 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             <MenuItem value="" disabled>
               Выберите освещение
             </MenuItem>
-            {BILLBOARD_LIGHTINGS &&
-              BILLBOARD_LIGHTINGS.map((lighting) => (
-                <MenuItem key={lighting} value={lighting}>
-                  {lighting}
+            {lightingList &&
+              lightingList.map((lighting) => (
+                <MenuItem key={lighting._id} value={lighting._id}>
+                  {lighting.name}
                 </MenuItem>
               ))}
           </TextField>
