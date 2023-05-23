@@ -114,6 +114,24 @@ locationsRouter.post('/filter', async (req, res, next) => {
   }
 });
 
+locationsRouter.get('/getItems', async (req, res) => {
+  try {
+    const [areas, regions, formats, legalEntity, directions, sizes, lighting] = await Promise.all([
+      Area.find(),
+      Region.find(),
+      Format.find(),
+      LegalEntity.find(),
+      Direction.find(),
+      Size.find(),
+      Lighting.find(),
+    ]);
+
+    return res.send({ areas, regions, formats, legalEntity, directions, sizes, lighting });
+  } catch (e) {
+    return res.sendStatus(500);
+  }
+});
+
 locationsRouter.get('/:id', async (req, res, next) => {
   const _id = req.params.id as string;
 

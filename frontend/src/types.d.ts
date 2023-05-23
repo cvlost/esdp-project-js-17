@@ -286,6 +286,16 @@ interface FilterCriteriaResponse {
 
 /***** END: Filter types *****/
 
+export interface GetItemsListType {
+  areas: AreaList[];
+  regions: RegionList[];
+  directions: DirectionList[];
+  legalEntity: LegalEntityList[];
+  sizes: SizeList[];
+  formats: FormatList[];
+  lighting: LightingList[];
+}
+
 export interface CommercialLinkTypeMutation {
   location: string[];
   settings: {

@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   FilterCriteriaResponse,
   FilterState,
+  GetItemsListType,
   ILocation,
   LocationMutation,
   LocationsListResponse,
@@ -58,6 +59,11 @@ export const getLocationsList = createAsyncThunk<LocationsListResponse, RequestP
     return response.data;
   },
 );
+
+export const getItems = createAsyncThunk<GetItemsListType>('locations/getItems', async () => {
+  const response = await axiosApi.get<GetItemsListType>('/locations/getItems');
+  return response.data;
+});
 
 export const createLocation = createAsyncThunk<void, LocationMutation, { rejectValue: ValidationError }>(
   'locations/create',
