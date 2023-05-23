@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, ButtonGroup, Paper, Switch, TableCell, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Divider, Paper, Switch, TableCell, Tooltip, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { ILocation } from '../../../types';
@@ -23,6 +23,17 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
   const loadingCheck = useAppSelector(selectCheckedLocationLoading);
+  let duration: string | null = null;
+
+  if (loc.rent) {
+    const startDate = dayjs(loc.rent.start);
+    const endDate = dayjs(loc.rent.end);
+    const day = endDate.diff(startDate, 'day');
+    const month = endDate.diff(startDate, 'month');
+
+    if (day > 30 || day > 31) duration = `Освободится через ${month} месяцев-(а)`;
+    else duration = `Освободится через ${day} дней`;
+  }
 
   const cells: Record<string, React.ReactNode> = {
     address: (
@@ -68,16 +79,32 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
     ),
     status: (
       <>
-        <Box
-          component="div"
-          sx={{
-            width: '25px',
-            height: '25px',
-            background: loc.rent ? '#ff7300' : 'rgb(255,255,255)',
-            borderRadius: '50%',
-            border: '1px solid #000',
-          }}
-        ></Box>
+        <Tooltip
+          title={
+            <>
+              <Typography color="inherit">
+                {loc.rent
+                  ? `Занят: от ${dayjs(loc.rent.start).format('DD.MM.YYYY')} до ${dayjs(loc.rent.end).format(
+                      'DD.MM.YYYY',
+                    )}`
+                  : 'Свободный'}
+              </Typography>
+              <Divider />
+              {duration && <Typography color="inherit">{duration}</Typography>}
+            </>
+          }
+        >
+          <Box
+            component="div"
+            sx={{
+              width: '25px',
+              height: '25px',
+              background: loc.rent ? '#ff7300' : 'rgb(255,255,255)',
+              borderRadius: '50%',
+              border: '1px solid #2e7d32',
+            }}
+          ></Box>
+        </Tooltip>
       </>
     ),
   };
