@@ -248,6 +248,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.sizes}
                   options={sizes}
                   onChange={(event, value) => handleFilterChange({ sizes: value })}
+                  isOptionEqualToValue={(option, value) => option._id === value._id}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Размеры" placeholder="Размеры" />
@@ -262,6 +263,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   value={filter.lightings}
                   options={lightings}
                   onChange={(event, value) => handleFilterChange({ lightings: value })}
+                  isOptionEqualToValue={(option, value) => option._id === value._id}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" label="Освещение" placeholder="Освещение" />
