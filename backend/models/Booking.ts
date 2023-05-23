@@ -1,6 +1,32 @@
-import { model, Schema, Types } from 'mongoose';
-import { BookingType } from '../types';
+import { HydratedDocument, model, Schema, Types } from 'mongoose';
+import { BookingType, IPeriod } from '../types';
 import Client from './Client';
+
+const PeriodSchema = new Schema<IPeriod>(
+  {
+    start: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: function (this: HydratedDocument<IPeriod>, value: Date) {
+          return value < this.end;
+        },
+        message: 'Дата начала аренды должа быть меньше даты окончания.',
+      },
+    },
+    end: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: function (this: HydratedDocument<IPeriod>, value: Date) {
+          return value > this.start;
+        },
+        message: 'Дата окончания аренды должа быть больше даты начала.',
+      },
+    },
+  },
+  { versionKey: false, _id: false },
+);
 
 const BookingSchema = new Schema<BookingType>({
   clientId: {
@@ -21,7 +47,7 @@ const BookingSchema = new Schema<BookingType>({
       message: 'Данная локация не существует!',
     },
   },
-  booking_date: [Schema.Types.Date],
+  booking_date: PeriodSchema,
 });
 
 const Booking = model('Booking', BookingSchema);
