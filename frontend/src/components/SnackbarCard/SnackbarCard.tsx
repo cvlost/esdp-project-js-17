@@ -87,6 +87,13 @@ const SnackbarCard = () => {
     case 'copy_link':
       txt += 'Ссылка скопирована';
       break;
+      break;
+    case 'remove_client':
+      txt += 'клиент успешно удален';
+      break;
+    case 'create_client':
+      txt += 'клиент успешно сохранен';
+      break;
   }
 
   return (
