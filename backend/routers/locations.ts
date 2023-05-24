@@ -11,10 +11,11 @@ import Street from '../models/Street';
 import Area from '../models/Area';
 import Format from '../models/Format';
 import LegalEntity from '../models/LegalEntity';
-import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../constants';
 import { promises as fs } from 'fs';
 import config from '../config';
 import path from 'path';
+import Size from '../models/Size';
+import Lighting from '../models/Lighting';
 
 const locationsRouter = express.Router();
 
@@ -26,6 +27,8 @@ export const flattenLookup: PipelineStage[] = [
   { $lookup: { from: 'formats', localField: 'format', foreignField: '_id', as: 'format' } },
   { $lookup: { from: 'directions', localField: 'direction', foreignField: '_id', as: 'direction' } },
   { $lookup: { from: 'legalentities', localField: 'legalEntity', foreignField: '_id', as: 'legalEntity' } },
+  { $lookup: { from: 'lightings', localField: 'lighting', foreignField: '_id', as: 'lighting' } },
+  { $lookup: { from: 'sizes', localField: 'size', foreignField: '_id', as: 'size' } },
   { $set: { city: { $first: '$city.name' } } },
   { $set: { region: { $first: '$region.name' } } },
   { $set: { streets: { $map: { input: '$streets', as: 'street', in: '$$street.name' } } } },
@@ -33,6 +36,8 @@ export const flattenLookup: PipelineStage[] = [
   { $set: { area: { $first: '$area.name' } } },
   { $set: { format: { $first: '$format.name' } } },
   { $set: { legalEntity: { $first: '$legalEntity.name' } } },
+  { $set: { lighting: { $first: '$lighting.name' } } },
+  { $set: { size: { $first: '$size.name' } } },
   { $set: { price: { $convert: { input: '$price', to: 'string' } } } },
 ];
 
@@ -72,7 +77,7 @@ locationsRouter.post('/filter', async (req, res, next) => {
 
   try {
     const [allLocations, filteredLocations] = await Promise.all([Location.find().lean(), Location.find(filter).lean()]);
-    const [streets, areas, directions, regions, cities, formats, legalEntities] = await Promise.all([
+    const [streets, areas, directions, regions, cities, formats, legalEntities, sizes, lightings] = await Promise.all([
       Street.find({ _id: { $in: [...new Set(allLocations.flatMap((loc) => loc.streets))] } }).lean(),
       Area.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.area))] } }).lean(),
       Direction.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.direction))] } }).lean(),
@@ -80,9 +85,9 @@ locationsRouter.post('/filter', async (req, res, next) => {
       City.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.city))] } }).lean(),
       Format.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.format))] } }).lean(),
       LegalEntity.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.legalEntity))] } }).lean(),
+      Size.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.size))] } }).lean(),
+      Lighting.find({ _id: { $in: [...new Set(allLocations.map((loc) => loc.lighting))] } }).lean(),
     ]);
-    const sizes = BILLBOARD_SIZES;
-    const lightings = BILLBOARD_LIGHTINGS;
 
     const count = filteredLocations.length;
     const locationsId = filteredLocations.map((loc) => loc._id);
@@ -106,6 +111,24 @@ locationsRouter.post('/filter', async (req, res, next) => {
     });
   } catch (e) {
     return next(e);
+  }
+});
+
+locationsRouter.get('/getItems', async (req, res) => {
+  try {
+    const [areas, regions, formats, legalEntity, directions, sizes, lighting] = await Promise.all([
+      Area.find(),
+      Region.find(),
+      Format.find(),
+      LegalEntity.find(),
+      Direction.find(),
+      Size.find(),
+      Lighting.find(),
+    ]);
+
+    return res.send({ areas, regions, formats, legalEntity, directions, sizes, lighting });
+  } catch (e) {
+    return res.sendStatus(500);
   }
 });
 

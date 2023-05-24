@@ -2,12 +2,13 @@ import { HydratedDocument, model, Schema, Types } from 'mongoose';
 import { ILocation, IPeriod } from '../types';
 import City from './City';
 import Direction from './Direction';
-import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../constants';
 import Area from './Area';
 import Street from './Street';
 import LegalEntity from './LegalEntity';
 import Format from './Format';
 import Booking from './Booking';
+import Size from './Size';
+import Lighting from './Lighting';
 
 const PeriodSchema = new Schema<IPeriod>(
   {
@@ -70,14 +71,22 @@ const LocationSchema = new Schema<ILocation>({
     default: 'Кыргызстан',
   },
   size: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Size',
     required: true,
-    enum: BILLBOARD_SIZES,
+    validate: {
+      validator: (id: Types.ObjectId) => Size.findById(id),
+      message: 'Неверный id размера.',
+    },
   },
   lighting: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Lighting',
     required: true,
-    enum: BILLBOARD_LIGHTINGS,
+    validate: {
+      validator: (id: Types.ObjectId) => Lighting.findById(id),
+      message: 'Неверный id освещения.',
+    },
   },
   format: {
     type: Schema.Types.ObjectId,

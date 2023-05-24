@@ -8,6 +8,7 @@ import {
   LocationsListResponse,
   ValidationError,
   LocationMutation,
+  GetItemsListType,
 } from '../../types';
 import {
   createLocation,
@@ -18,6 +19,7 @@ import {
   updateLocation,
   getToEditOneLocation,
   checkedLocation,
+  getItems,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -48,6 +50,8 @@ interface LocationsState {
   selectedLocationId: string[];
   openSelected: boolean;
   checkedLocationLoading: false | string;
+  itemsList: GetItemsListType;
+  getItemsListLoading: boolean;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -143,6 +147,16 @@ const initialState: LocationsState = {
   selectedLocationId: [],
   openSelected: false,
   checkedLocationLoading: false,
+  itemsList: {
+    areas: [],
+    regions: [],
+    directions: [],
+    legalEntity: [],
+    sizes: [],
+    formats: [],
+    lighting: [],
+  },
+  getItemsListLoading: false,
 };
 
 const locationsSlice = createSlice({
@@ -183,6 +197,17 @@ const locationsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getItems.pending, (state) => {
+      state.getItemsListLoading = true;
+    });
+    builder.addCase(getItems.fulfilled, (state, { payload: listItems }) => {
+      state.itemsList = listItems;
+      state.getItemsListLoading = false;
+    });
+    builder.addCase(getItems.rejected, (state) => {
+      state.getItemsListLoading = false;
+    });
+
     builder.addCase(checkedLocation.pending, (state, { meta: { arg: id } }) => {
       state.checkedLocationLoading = id.id ? id.id : '';
     });
@@ -290,3 +315,5 @@ export const selectLocationsFilterCriteriaData = (state: RootState) => state.loc
 export const selectLocationsFilterCriteriaLoading = (state: RootState) => state.locations.filterCriteriaLoading;
 export const selectCheckedLocationLoading = (state: RootState) => state.locations.checkedLocationLoading;
 export const selectSelectedLocationId = (state: RootState) => state.locations.selectedLocationId;
+export const selectItemsList = (state: RootState) => state.locations.itemsList;
+export const selectGetItemsListLoading = (state: RootState) => state.locations.getItemsListLoading;

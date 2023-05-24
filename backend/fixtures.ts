@@ -8,7 +8,6 @@ import Direction from './models/Direction';
 import Location from './models/Location';
 import Street from './models/Street';
 import LegalEntity from './models/LegalEntity';
-import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from './constants';
 import Format from './models/Format';
 import Area from './models/Area';
 import Lighting from './models/Lighting';
@@ -164,26 +163,18 @@ const run = async () => {
   );
 
   const lightings = await Lighting.create({ name: 'Внутреннее' }, { name: 'Внешнее' });
-  const lightingsConstants = BILLBOARD_LIGHTINGS.slice();
-  const sizesBeforeUpdate = BILLBOARD_SIZES.slice();
 
   for (let i = 0; i < 20; i++) {
-    const street1 = randElement(streets)._id;
-    let street2 = randElement(streets)._id;
-    while (street1 === street2) {
-      street2 = randElement(streets)._id;
-    }
-    const streetsArr = [street1, street2];
     await Location.create({
       area: randElement(areas)._id,
       direction: randElement(directions)._id,
       city: randElement(cities)._id,
       region: randElement(regions)._id,
-      street: streetsArr,
+      streets: [randElement(streets)._id, randElement(streets)._id],
       format: randElement(formats)._id,
       legalEntity: randElement(legalEntities)._id,
-      lighting: randElement(lightingsConstants),
-      size: randElement(sizesBeforeUpdate), // надо  потом после обновления локации поменять на sizes с базы и взять id
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
       price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
       rent:
         Math.random() > 0.5
@@ -230,4 +221,3 @@ const run = async () => {
   await db.close();
 };
 void run();
-console.log('Success');

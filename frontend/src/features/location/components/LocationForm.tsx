@@ -17,24 +17,16 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { selectAreaList } from '../area/areaSlice';
-import { selectRegionList } from '../region/regionSlice';
 import { selectCityList } from '../city/citySlice';
 import { selectStreetList } from '../street/streetSlice';
-import { selectDirections } from '../direction/directionsSlice';
-import { selectLegalEntityList } from '../legalEntity/legalEntitySlice';
 import FileInput from '../../../components/FileInput/FileInput';
-import { BILLBOARD_LIGHTINGS, BILLBOARD_SIZES } from '../../../constants';
-import { selectFormatList } from '../format/formatSlice';
-import { fetchAreas } from '../area/areaThunk';
 import { fetchRegions } from '../region/regionThunk';
 import { fetchCities } from '../city/cityThunk';
-import { fetchFormat } from '../format/formatThunk';
-import { fetchLegalEntity } from '../legalEntity/legalEntityThunk';
-import { getDirectionsList } from '../direction/directionsThunks';
 import { fetchStreet } from '../street/streetThunks';
 import noImage from '../../../assets/noImage.png';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
+import { getItems } from '../locationsThunks';
+import { selectItemsList } from '../locationsSlice';
 
 interface Props {
   onSubmit: (location: LocationMutation) => void;
@@ -74,14 +66,9 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
   });
 
   const dispatch = useAppDispatch();
-  const areas = useAppSelector(selectAreaList);
-  const regions = useAppSelector(selectRegionList);
   const cities = useAppSelector(selectCityList);
   const streets = useAppSelector(selectStreetList);
-  const directions = useAppSelector(selectDirections);
-  const legalEntities = useAppSelector(selectLegalEntityList);
-  const sizes = BILLBOARD_SIZES;
-  const formats = useAppSelector(selectFormatList);
+  const itemsList = useAppSelector(selectItemsList);
   const [state, setState] = useState<LocationMutation>(existingLocation);
 
   useEffect(() => {
@@ -102,11 +89,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
       }
 
       if (state.area === '' && state.city === '') {
-        dispatch(fetchAreas());
-        dispatch(fetchRegions());
-        dispatch(fetchFormat());
-        dispatch(fetchLegalEntity());
-        dispatch(getDirectionsList());
+        dispatch(getItems());
       }
     }
   }, [dispatch, isEdit, state.area, state.city, idState, cities]);
@@ -211,8 +194,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             <MenuItem value="" disabled>
               Выберите область
             </MenuItem>
-            {areas &&
-              areas.map((area) => (
+            {itemsList.areas &&
+              itemsList.areas.map((area) => (
                 <MenuItem key={area._id} value={area._id}>
                   {area.name}
                 </MenuItem>
@@ -266,8 +249,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             <MenuItem value="" disabled>
               Выберите район
             </MenuItem>
-            {regions &&
-              regions.map((region) => (
+            {itemsList.regions &&
+              itemsList.regions.map((region) => (
                 <MenuItem key={region._id} value={region._id}>
                   {region.name}
                 </MenuItem>
@@ -361,8 +344,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             <MenuItem value="" disabled>
               Выберите направление
             </MenuItem>
-            {directions &&
-              directions.map((direction) => (
+            {itemsList.directions &&
+              itemsList.directions.map((direction) => (
                 <MenuItem key={direction._id} value={direction._id}>
                   {direction.name}
                 </MenuItem>
@@ -384,8 +367,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             <MenuItem value="" disabled>
               Выберите юрлицо
             </MenuItem>
-            {legalEntities &&
-              legalEntities.map((legalEnt) => (
+            {itemsList.legalEntity &&
+              itemsList.legalEntity.map((legalEnt) => (
                 <MenuItem key={legalEnt._id} value={legalEnt._id}>
                   {legalEnt.name}
                 </MenuItem>
@@ -407,10 +390,10 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             <MenuItem value="" disabled>
               Выберите размер
             </MenuItem>
-            {sizes &&
-              sizes.map((size) => (
-                <MenuItem key={size} value={size}>
-                  {size}
+            {itemsList.sizes &&
+              itemsList.sizes.map((size) => (
+                <MenuItem key={size._id} value={size._id}>
+                  {size.name}
                 </MenuItem>
               ))}
           </TextField>
@@ -430,8 +413,8 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             <MenuItem value="" disabled>
               Выберите формат
             </MenuItem>
-            {formats &&
-              formats.map((format) => (
+            {itemsList.formats &&
+              itemsList.formats.map((format) => (
                 <MenuItem key={format._id} value={format._id}>
                   {format.name}
                 </MenuItem>
@@ -453,10 +436,10 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             <MenuItem value="" disabled>
               Выберите освещение
             </MenuItem>
-            {BILLBOARD_LIGHTINGS &&
-              BILLBOARD_LIGHTINGS.map((lighting) => (
-                <MenuItem key={lighting} value={lighting}>
-                  {lighting}
+            {itemsList.lighting &&
+              itemsList.lighting.map((lighting) => (
+                <MenuItem key={lighting._id} value={lighting._id}>
+                  {lighting.name}
                 </MenuItem>
               ))}
           </TextField>
