@@ -51,7 +51,7 @@ const initialState = {
   area: '',
   region: '',
   city: '',
-  street: '',
+  streets: ['', ''],
   direction: '',
   legalEntity: '',
   size: '',
@@ -71,7 +71,6 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
   const [idState, setIdState] = useState({
     city: '',
     area: '',
-    region: '',
   });
 
   const dispatch = useAppDispatch();
@@ -87,26 +86,19 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
 
   useEffect(() => {
     if (!isEdit) {
-      if (state.area !== '' && idState.area !== state.area) {
+      if (state.area && idState.area !== state.area) {
         dispatch(fetchCities(state.area));
         setIdState((prev) => ({ ...prev, area: state.area }));
-        setState((prev) => ({ ...prev, street: '', city: '', region: '' }));
+        setState((prev) => ({ ...prev, streets: ['', ''], city: '' }));
       }
 
       if (state.city && idState.city !== state.city) {
         if (cities.find((item) => item._id === state.city)?.name === 'Бишкек') {
           dispatch(fetchRegions(state.city));
-        } else {
           dispatch(fetchStreet({ cityId: state.city }));
         }
-        setState((prev) => ({ ...prev, street: '', region: '' }));
+        setState((prev) => ({ ...prev, streets: ['', ''] }));
         setIdState((prev) => ({ ...prev, city: state.city }));
-      }
-
-      if (state.region && idState.region !== state.region) {
-        dispatch(fetchStreet({ regionId: state.region }));
-        setIdState((prev) => ({ ...prev, region: state.region }));
-        setState((prev) => ({ ...prev, street: '' }));
       }
 
       if (state.area === '' && state.city === '') {
@@ -117,7 +109,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
         dispatch(getDirectionsList());
       }
     }
-  }, [dispatch, isEdit, state.area, state.city, idState, state.region, cities]);
+  }, [dispatch, isEdit, state.area, state.city, idState, cities]);
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -126,8 +118,17 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
     setState((prevState) => {
-      return { ...prevState, [name]: value };
+      const updatedStreets = [...prevState.streets];
+
+      if (name === 'street1') {
+        updatedStreets[0] = value;
+      } else if (name === 'street2') {
+        updatedStreets[1] = value;
+      }
+
+      return { ...prevState, [name]: value, streets: updatedStreets };
     });
   };
 
@@ -277,13 +278,36 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
           <TextField
             fullWidth
             select
-            value={state.street}
-            name="street"
+            value={state.streets[0]}
+            name="street1"
             label="Улица"
             onChange={inputChangeHandler}
             required
-            error={Boolean(getFieldError('street'))}
-            helperText={getFieldError('street')}
+            error={Boolean(getFieldError('streets'))}
+            helperText={getFieldError('streets')}
+          >
+            <MenuItem value="" disabled>
+              Выберите улицу
+            </MenuItem>
+            {streets &&
+              streets.map((street) => (
+                <MenuItem key={street._id} value={street._id}>
+                  {street.name}
+                </MenuItem>
+              ))}
+          </TextField>
+        </Grid>
+        <Grid sx={style} item>
+          <TextField
+            fullWidth
+            select
+            value={state.streets[1]}
+            name="street2"
+            label="Улица 2"
+            onChange={inputChangeHandler}
+            required
+            error={Boolean(getFieldError('streets'))}
+            helperText={getFieldError('streets')}
           >
             <MenuItem value="" disabled>
               Выберите улицу

@@ -6,8 +6,6 @@ import { selectCreateStreetLoading, selectStreetError } from '../streetSlice';
 import SignpostIcon from '@mui/icons-material/Signpost';
 import { selectCityList } from '../../city/citySlice';
 import { fetchCities } from '../../city/cityThunk';
-import { fetchRegions } from '../../region/regionThunk';
-import { selectRegionList } from '../../region/regionSlice';
 
 interface Props {
   onSubmit: (street: StreetMutation) => void;
@@ -18,16 +16,13 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
   const cities = useAppSelector(selectCityList);
   const createLoading = useAppSelector(selectCreateStreetLoading);
   const error = useAppSelector(selectStreetError);
-  const regions = useAppSelector(selectRegionList);
   const [state, setState] = useState<StreetMutation>({
     city: '',
     name: '',
-    region: '',
   });
 
   useEffect(() => {
     dispatch(fetchCities());
-    dispatch(fetchRegions());
   }, [dispatch]);
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -39,17 +34,10 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const obj = {
-      ...state,
-      region: state.region ? state.region : null,
-    };
-
-    onSubmit(obj);
+    onSubmit(state);
     setState({
       city: '',
       name: '',
-      region: '',
     });
   };
 
@@ -97,34 +85,6 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
                 cities.map((city) => (
                   <MenuItem key={city._id} value={city._id}>
                     {city.name}
-                  </MenuItem>
-                ))}
-            </TextField>
-          </Grid>
-          <Grid
-            sx={{ display: cities.find((item) => item._id === state.city)?.name === 'Бишкек' ? 'block' : 'none' }}
-            item
-            xs={12}
-          >
-            <TextField
-              fullWidth
-              select
-              value={state.region}
-              name="region"
-              label="Район"
-              onChange={inputChangeHandler}
-              autoComplete="off"
-              error={Boolean(getFieldError('region'))}
-              helperText={getFieldError('region')}
-              required={cities.find((item) => item._id === state.city)?.name === 'Бишкек'}
-            >
-              <MenuItem value="" disabled>
-                Выберите район
-              </MenuItem>
-              {regions &&
-                regions.map((region) => (
-                  <MenuItem key={region._id} value={region._id}>
-                    {region.name}
                   </MenuItem>
                 ))}
             </TextField>

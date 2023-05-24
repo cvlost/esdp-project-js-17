@@ -1,16 +1,4 @@
 import React, { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { selectUser } from '../../users/usersSlice';
-import {
-  controlModal,
-  selectErrorRemove,
-  selectGetAllLegalEntityLoading,
-  selectLegalEntityList,
-  selectModal,
-  selectOneLegalEntity,
-  unsetOneLegalEntity,
-} from './legalEntitySlice';
-import { fetchLegalEntity } from './legalEntityThunk';
 import {
   Alert,
   Box,
@@ -30,21 +18,25 @@ import {
 } from '@mui/material';
 import { MainColorGreen } from '../../../constants';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
-import CardLegalEntity from './components/CardLegalEntity';
-import FormLegalEntity from './components/FormLegalEntity';
+import CardSize from './components/cardSize';
+import FormCreateSize from './components/FormCreateSize';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { controlModal, selectSizes, selectSizesLoading, selectErrorRemove, selectModal } from './sizeSlice';
+import { createSize, deleteSize, getSizesList } from './sizeThunks';
+import { openSnackbar, selectUser } from '../../users/usersSlice';
+import { SizeMutation } from '../../../types';
 import { Navigate } from 'react-router-dom';
-import ModalBody from '../../../components/ModalBody';
 import CloseIcon from '@mui/icons-material/Close';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
-const CreateLegalEntity = () => {
+const CreateSize = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
-  const entities = useAppSelector(selectLegalEntityList);
-  const entitiesLoading = useAppSelector(selectGetAllLegalEntityLoading);
-  const oneEntity = useAppSelector(selectOneLegalEntity);
+  const fetchListSize = useAppSelector(selectSizes);
+  const fetchLoading = useAppSelector(selectSizesLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
-
+  const { confirm } = useConfirm();
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: MainColorGreen,
@@ -53,27 +45,33 @@ const CreateLegalEntity = () => {
   }));
 
   useEffect(() => {
-    if (user?.role === 'admin') {
-      dispatch(fetchLegalEntity());
-    }
-  }, [dispatch, user?.role]);
+    dispatch(getSizesList());
+  }, [dispatch]);
 
-  useEffect(() => {
-    return () => {
-      if (oneEntity) {
-        dispatch(unsetOneLegalEntity());
-      }
-    };
-  }, [dispatch, oneEntity]);
+  const onSubmit = async (Size: SizeMutation) => {
+    await dispatch(createSize(Size)).unwrap();
+    await dispatch(getSizesList()).unwrap();
+    dispatch(openSnackbar({ status: true, parameter: 'create_size' }));
+  };
+
+  const removeCardSize = async (id: string) => {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную сущность?')) {
+      await dispatch(deleteSize(id)).unwrap();
+      await dispatch(getSizesList()).unwrap();
+      dispatch(openSnackbar({ status: true, parameter: 'remove_size' }));
+    } else {
+      return;
+    }
+  };
 
   if (user?.role !== 'admin') {
     return <Navigate to="/login" />;
   }
 
   return (
-    <Box>
+    <Box sx={{ mb: 4 }}>
       <Container component="main" maxWidth="xs">
-        <FormLegalEntity />
+        <FormCreateSize onSubmit={onSubmit} />
       </Container>
       <Container>
         {open && (
@@ -100,21 +98,23 @@ const CreateLegalEntity = () => {
         )}
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
           <TableContainer>
-            <Table>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="left">Юридическое лицо</StyledTableCell>
+                  <StyledTableCell align="left">Размер</StyledTableCell>
                   <StyledTableCell align="right">Управление</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {!entitiesLoading ? (
-                  entities.length !== 0 ? (
-                    entities.map((entity) => <CardLegalEntity key={entity._id} {...entity} />)
+                {!fetchLoading ? (
+                  fetchListSize.length !== 0 ? (
+                    fetchListSize.map((size) => (
+                      <CardSize key={size._id} size={size} removeCardSize={() => removeCardSize(size._id)} />
+                    ))
                   ) : (
                     <TableRow>
                       <TableCell>
-                        <Alert severity="info">В данный момент юридических лиц нет</Alert>
+                        <Alert severity="info">В данный момент размеры отсутствуют</Alert>
                       </TableCell>
                     </TableRow>
                   )
@@ -131,11 +131,8 @@ const CreateLegalEntity = () => {
         </Paper>
       </Container>
       <SnackbarCard />
-      <ModalBody isOpen={!!oneEntity} onClose={() => dispatch(unsetOneLegalEntity())}>
-        <FormLegalEntity isEdit />
-      </ModalBody>
     </Box>
   );
 };
 
-export default CreateLegalEntity;
+export default CreateSize;

@@ -16,6 +16,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  ToggleButton,
+  Tooltip,
 } from '@mui/material';
 import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
@@ -31,9 +33,18 @@ import {
   selectOneLocationEditLoading,
   selectOneLocationToEdit,
   setCurrentPage,
+  addLocationId,
+  selectSelectedLocationId,
+  resetLocationId,
 } from './locationsSlice';
 import { MainColorGreen } from '../../constants';
-import { getLocationsList, getToEditOneLocation, removeLocation, updateLocation } from './locationsThunks';
+import {
+  checkedLocation,
+  getLocationsList,
+  getToEditOneLocation,
+  removeLocation,
+  updateLocation,
+} from './locationsThunks';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { openSnackbar } from '../users/usersSlice';
@@ -50,6 +61,9 @@ import { fetchRegions } from './region/regionThunk';
 import { fetchFormat } from './format/formatThunk';
 import { fetchLegalEntity } from './legalEntity/legalEntityThunk';
 import { getDirectionsList } from './direction/directionsThunks';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import CloseIcon from '@mui/icons-material/Close';
+import { Link } from 'react-router-dom';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -66,6 +80,8 @@ const LocationList = () => {
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
   const filter = useAppSelector(selectLocationsFilter);
   const { confirm } = useConfirm();
+  const [open, setOpen] = useState(false);
+  const listLocationId = useAppSelector(selectSelectedLocationId);
 
   const openDialog = async (id: string) => {
     await dispatch(fetchCities());
@@ -126,6 +142,30 @@ const LocationList = () => {
     },
   }));
 
+  const checkedCardLocation = async (id: string) => {
+    await dispatch(checkedLocation({ id, allChecked: false })).unwrap();
+    await dispatch(
+      getLocationsList({
+        page: locationsListData.page,
+        perPage: locationsListData.perPage,
+        filtered: filter.filtered,
+      }),
+    );
+    dispatch(addLocationId());
+  };
+
+  const resetCardLocationId = async () => {
+    await dispatch(checkedLocation({ id: undefined, allChecked: true })).unwrap();
+    dispatch(resetLocationId());
+    await dispatch(
+      getLocationsList({
+        page: locationsListData.page,
+        perPage: locationsListData.perPage,
+        filtered: filter.filtered,
+      }),
+    );
+  };
+
   return (
     <Box sx={{ py: 2 }}>
       <Grid container alignItems="center" mb={2}>
@@ -152,6 +192,27 @@ const LocationList = () => {
             <Button onClick={() => dispatch(resetFilter())}>Сбросить фильтр</Button>
           </Grid>
         )}
+        <Grid marginLeft="auto" item>
+          {locationsListData.locations.filter((item) => item.checked).length > 3 && (
+            <Button sx={{ mr: 2 }} onClick={resetCardLocationId} size="large" variant="contained">
+              Сбросить предложение
+            </Button>
+          )}
+          <Button
+            component={Link}
+            disabled={listLocationId.length <= 0}
+            size="large"
+            variant="contained"
+            to={'constructor_link'}
+          >
+            Создать ссылку
+          </Button>
+          <Tooltip title={!open ? 'Открыть выбор' : 'Закрыть выбор'} placement="top">
+            <ToggleButton onClick={() => setOpen((prev) => !prev)} value="list" aria-label="list">
+              {!open ? <ViewListIcon /> : <CloseIcon />}
+            </ToggleButton>
+          </Tooltip>
+        </Grid>
       </Grid>
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
         <TableContainer>
@@ -195,6 +256,8 @@ const LocationList = () => {
                   loc={loc}
                   number={(locationsListData.page - 1) * locationsListData.perPage + i + 1}
                   onEdit={() => openDialog(loc._id)}
+                  checkedCardLocation={() => checkedCardLocation(loc._id)}
+                  open={open}
                 />
               ))}
             </TableBody>

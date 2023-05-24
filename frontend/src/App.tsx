@@ -18,6 +18,11 @@ import CreateCity from './features/location/city/CreateCity';
 import CreateLocation from './features/location/CreateLocation';
 import 'rsuite/dist/rsuite.min.css';
 import LocationPage from './features/location/components/LocationPage';
+import CreateLighting from './features/location/lighting/CreateLighting';
+import CreateSize from './features/location/size/CreateSize';
+import ConstructorLink from './features/CommercialLink/ConstructorLink';
+import CommercialLink from './features/CommercialLink/CommercialLink';
+import CommercialLinkOne from './features/CommercialLink/CommercialLinkOne';
 import CreateClient from './features/location/client/CreateClient';
 
 function App() {
@@ -26,6 +31,8 @@ function App() {
     <Layout>
       <Routes>
         <Route path="*" element={'Not found'} />
+        <Route path="/link/:id" element={<CommercialLink />} />
+        <Route path="/location/:idLink/locationOne/:idLoc" element={<CommercialLinkOne />} />
         <Route path="/login" element={<Login />} />
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/users" element={<Users />}>
@@ -38,8 +45,10 @@ function App() {
           <Route path="/:id" element={<LocationPage />} />
         </Route>
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
+          <Route path="/create_size" element={<CreateSize />} />
           <Route path="/create_location" element={<CreateLocation />} />
           <Route path="/create_region" element={<CreateRegion />} />
+          <Route path="/create_lighting" element={<CreateLighting />} />
           <Route path="/create_city" element={<CreateCity />} />
           <Route path="/create_direction" element={<CreateDirection />} />
           <Route path="/create_format" element={<CreateFormat />} />
@@ -47,6 +56,7 @@ function App() {
           <Route path="/create_legal_entity" element={<CreateLegalEntity />} />
           <Route path="/create_street" element={<CreateStreet />} />
           <Route path="/create_client" element={<CreateClient />} />
+          <Route path="/constructor_link" element={<ConstructorLink />} />
         </Route>
       </Routes>
     </Layout>

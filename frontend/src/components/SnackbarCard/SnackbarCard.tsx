@@ -30,6 +30,18 @@ const SnackbarCard = () => {
     case 'remove_direction':
       txt += 'Направление успешно удалено';
       break;
+    case 'create_size':
+      txt += 'Размер успешно создан';
+      break;
+    case 'remove_size':
+      txt += 'Размер успешно удален';
+      break;
+    case 'create_lighting':
+      txt += 'Освещение успешно создано';
+      break;
+    case 'remove_lighting':
+      txt += 'Освещение успешно удалено';
+      break;
     case 'create_area':
       txt += 'Область успешно создана';
       break;
@@ -71,6 +83,10 @@ const SnackbarCard = () => {
       break;
     case 'edit_location':
       txt += 'Локация успешно отредактирована';
+      break;
+    case 'copy_link':
+      txt += 'Ссылка скопирована';
+      break;
       break;
     case 'remove_client':
       txt += 'клиент успешно удален';

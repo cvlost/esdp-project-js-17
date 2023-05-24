@@ -17,9 +17,11 @@ const link_options: LinkOption[] = [
   { label: 'Создать Район', link: '/create_region' },
   { label: 'Создать Город', link: '/create_city' },
   { label: 'Создать Направление', link: '/create_direction' },
+  { label: 'Создать Размер', link: '/create_size' },
   { label: 'Создать Формат', link: '/create_format' },
   { label: 'Создать Юр.лицо', link: '/create_legal_entity' },
   { label: 'Создать Улицу', link: '/create_street' },
+  { label: 'Создать Освещение', link: '/create_lighting' },
   { label: 'Создать Клиента', link: '/create_client' },
 ];
 

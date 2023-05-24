@@ -11,6 +11,9 @@ import { formatReducer } from '../features/location/format/formatSlice';
 import { directionsReducer } from '../features/location/direction/directionsSlice';
 import { streetReducer } from '../features/location/street/streetSlice';
 import { legalEntityReducer } from '../features/location/legalEntity/legalEntitySlice';
+import { commercialLinkReducer } from '../features/CommercialLink/commercialLinkSlice';
+import { sizesReducer } from '../features/location/size/sizeSlice';
+import { lightingReducer } from '../features/location/lighting/lightingsSlice';
 import { clientReducer } from '../features/location/client/clientSlice';
 
 const usersPersistConfig = {
@@ -22,7 +25,13 @@ const usersPersistConfig = {
 const locationsPersistConfig = {
   key: 'ESDP-project-js-17:locations',
   storage,
-  whitelist: ['settings'],
+  whitelist: ['settings', 'selectedLocationId'],
+};
+
+const commercialLinkPersistConfig = {
+  key: 'ESDP-project-js-17:commercialLink',
+  storage,
+  whitelist: ['constructorLink'],
 };
 
 const rootReducer = combineReducers({
@@ -35,6 +44,9 @@ const rootReducer = combineReducers({
   area: areaReducer,
   street: streetReducer,
   legalEntity: legalEntityReducer,
+  commercialLink: persistReducer(commercialLinkPersistConfig, commercialLinkReducer),
+  size: sizesReducer,
+  lighting: lightingReducer,
   clients: clientReducer,
 });
 

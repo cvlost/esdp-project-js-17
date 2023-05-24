@@ -25,6 +25,7 @@ regionsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const regionData = await Region.create({
       name: req.body.name,
+      city: req.body.city,
     });
 
     return res.send(regionData);

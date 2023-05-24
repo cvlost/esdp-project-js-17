@@ -15,11 +15,11 @@ const AppToolbar = () => {
       <Toolbar>
         <Grid container sx={{ alignItems: 'center' }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, alignItems: 'center' }}>
-            <Link style={{ color: '#fff', textDecoration: 'none' }} to="/">
+            <Link style={{ color: '#fff', textDecoration: 'none' }} to={user ? '/' : '#'}>
               Шамдагай
             </Link>
           </Typography>
-          <Grid item>{user ? <UserMenu user={user} /> : <AnonymousMenu />}</Grid>
+          {user && <Grid item>{user ? <UserMenu user={user} /> : <AnonymousMenu />}</Grid>}
         </Grid>
       </Toolbar>
     </AppBar>
