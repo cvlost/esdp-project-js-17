@@ -215,6 +215,7 @@ const run = async () => {
       description: Math.random() > 0.5 ? fixtureDescription : null,
       dayImage: `fixtures/${i + 1}.jpg`,
       schemaImage: `fixtures/${i + 1}.png`,
+      status: null,
     });
   }
 
