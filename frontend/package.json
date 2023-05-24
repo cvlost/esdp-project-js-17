@@ -14,6 +14,7 @@
     "@types/react-dom": "^18.0.11",
     "axios": "^1.2.2",
     "dayjs": "^1.11.7",
+    "easymde": "^2.18.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.7",
