@@ -6,7 +6,6 @@ import Area from './Area';
 import Street from './Street';
 import LegalEntity from './LegalEntity';
 import Format from './Format';
-import Booking from './Booking';
 import Size from './Size';
 import Lighting from './Lighting';
 
@@ -43,10 +42,7 @@ const LocationSchema = new Schema<ILocation>({
   booking: {
     type: [Schema.Types.ObjectId],
     ref: 'Booking',
-    validate: {
-      validator: async (value: Types.ObjectId) => Booking.findById(value),
-      message: 'Данная бронь не существует!',
-    },
+    default: [],
   },
   nearest_booking_date: [Schema.Types.Date],
   price: {
