@@ -110,6 +110,25 @@ export interface IPeriod {
   end: string;
 }
 
+export interface BookingMutation {
+  clientId: string;
+  locationId: string;
+  booking_date: {
+    start: Date;
+    end: Date;
+  };
+}
+
+export interface BookingListType {
+  _id: string;
+  clientId: ClientsList;
+  locationId: string;
+  booking_date: {
+    start: string;
+    end: string;
+  };
+}
+
 export interface ILocation {
   _id: string;
   price: string;
@@ -132,6 +151,7 @@ export interface ILocation {
   description?: string;
   checked: boolean;
   status: string | null;
+  booking: BookingListType[];
 }
 
 export interface LocationsListResponse {
@@ -369,23 +389,4 @@ export interface contentLinkOneType {
   location: ILocationLink | null;
   description: string;
   title: string;
-}
-
-export interface BookingMutation {
-  clientId: string;
-  locationId: string;
-  booking_date: {
-    start: Date;
-    end: Date;
-  };
-}
-
-export interface BookingListType {
-  _id: string;
-  clientId: ClientsList;
-  locationId: string;
-  booking_date: {
-    start: string;
-    end: string;
-  };
 }

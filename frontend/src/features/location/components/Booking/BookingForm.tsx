@@ -37,7 +37,7 @@ const BookingForm: React.FC<Props> = ({ locationId }) => {
 
   useEffect(() => {
     dispatch(fetchClients());
-  }, [dispatch]);
+  }, [dispatch, locationId]);
 
   const handleDateChange = (date: DateRange | null) => {
     setValueDate(date as [Date, Date]);
@@ -55,7 +55,9 @@ const BookingForm: React.FC<Props> = ({ locationId }) => {
       },
     };
 
-    await dispatch(createBooking(obj));
+    await dispatch(createBooking(obj)).unwrap();
+    setValueClient('');
+    setValueDate([new Date(), new Date()]);
   };
 
   const getFieldError = (fieldName: string) => {
@@ -73,7 +75,7 @@ const BookingForm: React.FC<Props> = ({ locationId }) => {
           {error && <Alert severity="error">{error.message}</Alert>}
         </Grid>
         <Grid display="flex" xs={12} item>
-          <Box sx={{ width: '20px', height: '20px', background: 'green', borderRadius: '50%' }}></Box>
+          {/*<Box key={item._id} sx={{ width: '20px', height: '20px', background: 'green', borderRadius: '50%' }}></Box>*/}
         </Grid>
         <Grid xs={12} item>
           <Paper elevation={3} sx={{ p: 1 }}>

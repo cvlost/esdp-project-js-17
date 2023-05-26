@@ -1,6 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
-  BookingListType,
   BookingMutation,
   FilterCriteriaResponse,
   FilterState,
@@ -196,13 +195,5 @@ export const createBooking = createAsyncThunk<void, BookingMutation, { rejectVal
       }
       throw e;
     }
-  },
-);
-
-export const fetchListBooking = createAsyncThunk<BookingListType[], string>(
-  'locations/fetchListBooking',
-  async (id) => {
-    const response = await axiosApi.get<BookingListType[]>('/bookings/' + id);
-    return response.data;
   },
 );
