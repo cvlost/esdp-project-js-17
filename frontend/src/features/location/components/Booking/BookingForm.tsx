@@ -72,6 +72,9 @@ const BookingForm: React.FC<Props> = ({ locationId }) => {
         <Grid xs={12} item>
           {error && <Alert severity="error">{error.message}</Alert>}
         </Grid>
+        <Grid display="flex" xs={12} item>
+          <Box sx={{ width: '20px', height: '20px', background: 'green', borderRadius: '50%' }}></Box>
+        </Grid>
         <Grid xs={12} item>
           <Paper elevation={3} sx={{ p: 1 }}>
             <Link to="create_client">

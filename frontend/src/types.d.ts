@@ -379,3 +379,13 @@ export interface BookingMutation {
     end: Date;
   };
 }
+
+export interface BookingListType {
+  _id: string;
+  clientId: ClientsList;
+  locationId: string;
+  booking_date: {
+    start: string;
+    end: string;
+  };
+}

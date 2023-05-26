@@ -9,6 +9,7 @@ import {
   ValidationError,
   LocationMutation,
   GetItemsListType,
+  BookingListType,
 } from '../../types';
 import {
   createLocation,
@@ -21,6 +22,7 @@ import {
   checkedLocation,
   getItems,
   createBooking,
+  fetchListBooking,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -55,6 +57,8 @@ interface LocationsState {
   getItemsListLoading: boolean;
   createBookingLoading: boolean;
   createBookingError: ValidationError | null;
+  fetchListBooking: BookingListType[];
+  fetchListBookingLoading: boolean;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -163,6 +167,8 @@ const initialState: LocationsState = {
   getItemsListLoading: false,
   createBookingLoading: false,
   createBookingError: null,
+  fetchListBooking: [],
+  fetchListBookingLoading: false,
 };
 
 const locationsSlice = createSlice({
@@ -309,6 +315,17 @@ const locationsSlice = createSlice({
       state.createBookingLoading = false;
       state.createBookingError = error || null;
     });
+
+    builder.addCase(fetchListBooking.pending, (state) => {
+      state.fetchListBookingLoading = false;
+    });
+    builder.addCase(fetchListBooking.fulfilled, (state, { payload: bookingList }) => {
+      state.fetchListBookingLoading = false;
+      state.fetchListBooking = bookingList;
+    });
+    builder.addCase(fetchListBooking.rejected, (state) => {
+      state.fetchListBookingLoading = false;
+    });
   },
 });
 
@@ -336,3 +353,5 @@ export const selectItemsList = (state: RootState) => state.locations.itemsList;
 export const selectGetItemsListLoading = (state: RootState) => state.locations.getItemsListLoading;
 export const selectCreateBookingLoading = (state: RootState) => state.locations.createBookingLoading;
 export const selectCreateBookingError = (state: RootState) => state.locations.createBookingError;
+export const selectFetchListBookingLoading = (state: RootState) => state.locations.fetchListBookingLoading;
+export const selectFetchListBooking = (state: RootState) => state.locations.fetchListBooking;
