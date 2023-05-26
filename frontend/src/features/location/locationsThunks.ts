@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
+  BookingMutation,
   FilterCriteriaResponse,
   FilterState,
   GetItemsListType,
@@ -182,3 +183,17 @@ export const checkedLocation = createAsyncThunk<void, CheckedLocationType>('loca
 
   await axiosApi.patch(url, { checked: true });
 });
+
+export const createBooking = createAsyncThunk<void, BookingMutation, { rejectValue: ValidationError }>(
+  'locations/createBooking',
+  async (bookingMutation, { rejectWithValue }) => {
+    try {
+      await axiosApi.post('/bookings', bookingMutation);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 400) {
+        return rejectWithValue(e.response.data as ValidationError);
+      }
+      throw e;
+    }
+  },
+);

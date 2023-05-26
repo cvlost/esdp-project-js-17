@@ -163,6 +163,11 @@ const LocationList = () => {
     );
   };
 
+  const openBookingModal = (id: string) => {
+    setOpenBooking(true);
+    setLocationID(id);
+  };
+
   return (
     <Box sx={{ py: 2 }}>
       <Grid container alignItems="center" mb={2}>
@@ -255,7 +260,7 @@ const LocationList = () => {
                   onEdit={() => openDialog(loc._id)}
                   checkedCardLocation={() => checkedCardLocation(loc._id)}
                   open={open}
-                  setOpenBooking={() => setOpenBooking(true)}
+                  setOpenBooking={() => openBookingModal(loc._id)}
                 />
               ))}
             </TableBody>
@@ -289,7 +294,7 @@ const LocationList = () => {
         <LocationFilter onClose={() => setIsFilterOpen(false)} />
       </Dialog>
       <Dialog open={openBooking} onClose={() => setOpenBooking(false)} maxWidth="md">
-        <BookingForm />
+        <BookingForm locationId={locationID} />
       </Dialog>
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />

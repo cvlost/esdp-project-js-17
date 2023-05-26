@@ -1,11 +1,14 @@
 import express from 'express';
 import Booking from '../models/Booking';
 import Location from '../models/Location';
+import mongoose from 'mongoose';
 
 const bookingsRouter = express.Router();
 
-bookingsRouter.post('/', async (req, res) => {
+bookingsRouter.post('/', async (req, res, next) => {
   try {
+    console.log(req.body);
+
     const create = await Booking.create({
       clientId: req.body.clientId,
       locationId: req.body.locationId,
@@ -16,7 +19,10 @@ bookingsRouter.post('/', async (req, res) => {
 
     return res.send(create);
   } catch (e) {
-    return res.sendStatus(500);
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(e);
+    }
+    return next(e);
   }
 });
 

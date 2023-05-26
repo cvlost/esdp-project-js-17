@@ -20,6 +20,7 @@ import {
   getToEditOneLocation,
   checkedLocation,
   getItems,
+  createBooking,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -52,6 +53,8 @@ interface LocationsState {
   checkedLocationLoading: false | string;
   itemsList: GetItemsListType;
   getItemsListLoading: boolean;
+  createBookingLoading: boolean;
+  createBookingError: ValidationError | null;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -158,6 +161,8 @@ const initialState: LocationsState = {
     lighting: [],
   },
   getItemsListLoading: false,
+  createBookingLoading: false,
+  createBookingError: null,
 };
 
 const locationsSlice = createSlice({
@@ -293,6 +298,17 @@ const locationsSlice = createSlice({
     builder.addCase(getFilterCriteriaData.rejected, (state) => {
       state.filterCriteriaLoading = false;
     });
+
+    builder.addCase(createBooking.pending, (state) => {
+      state.createBookingLoading = true;
+    });
+    builder.addCase(createBooking.fulfilled, (state) => {
+      state.createBookingLoading = false;
+    });
+    builder.addCase(createBooking.rejected, (state, { payload: error }) => {
+      state.createBookingLoading = false;
+      state.createBookingError = error || null;
+    });
   },
 });
 
@@ -318,3 +334,5 @@ export const selectCheckedLocationLoading = (state: RootState) => state.location
 export const selectSelectedLocationId = (state: RootState) => state.locations.selectedLocationId;
 export const selectItemsList = (state: RootState) => state.locations.itemsList;
 export const selectGetItemsListLoading = (state: RootState) => state.locations.getItemsListLoading;
+export const selectCreateBookingLoading = (state: RootState) => state.locations.createBookingLoading;
+export const selectCreateBookingError = (state: RootState) => state.locations.createBookingError;

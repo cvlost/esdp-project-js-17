@@ -20,13 +20,20 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectClientsList, selectGetAllClientsLoading } from '../../client/clientSlice';
 import { fetchClients } from '../../client/clientThunk';
 import { DateRange } from 'rsuite/DateRangePicker';
+import { createBooking } from '../../locationsThunks';
+import { selectCreateBookingError } from '../../locationsSlice';
 
-const BookingForm = () => {
+interface Props {
+  locationId: string;
+}
+
+const BookingForm: React.FC<Props> = ({ locationId }) => {
   const [valueDate, setValueDate] = useState<[Date, Date]>([new Date(), new Date()]);
   const [valueCLinet, setValueClient] = useState('');
   const clientList = useAppSelector(selectClientsList);
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectGetAllClientsLoading);
+  const error = useAppSelector(selectCreateBookingError);
 
   useEffect(() => {
     dispatch(fetchClients());
@@ -36,23 +43,35 @@ const BookingForm = () => {
     setValueDate(date as [Date, Date]);
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const obj = {
       clientId: valueCLinet,
+      locationId,
       booking_date: {
-        start: valueDate[0].toISOString(),
-        end: valueDate[1].toISOString(),
+        end: new Date(valueDate[1]),
+        start: new Date(valueDate[0]),
       },
     };
 
-    console.log(obj);
+    await dispatch(createBooking(obj));
+  };
+
+  const getFieldError = (fieldName: string) => {
+    try {
+      return error?.errors[fieldName].message;
+    } catch {
+      return undefined;
+    }
   };
 
   return (
     <Box component="form" sx={{ maxWidth: '500px', p: 1 }} onSubmit={onSubmit}>
       <Grid container alignItems="center" spacing={3}>
+        <Grid xs={12} item>
+          {error && <Alert severity="error">{error.message}</Alert>}
+        </Grid>
         <Grid xs={12} item>
           <Paper elevation={3} sx={{ p: 1 }}>
             <Link to="create_client">
@@ -84,6 +103,8 @@ const BookingForm = () => {
               name="client"
               label="Клиенты"
               required
+              error={Boolean(getFieldError('clientId'))}
+              helperText={getFieldError('clientId')}
             >
               <MenuItem value="" disabled>
                 Выберите клиента

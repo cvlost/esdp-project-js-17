@@ -370,3 +370,12 @@ export interface contentLinkOneType {
   description: string;
   title: string;
 }
+
+export interface BookingMutation {
+  clientId: string;
+  locationId: string;
+  booking_date: {
+    start: Date;
+    end: Date;
+  };
+}
