@@ -15,6 +15,7 @@ import commercialLinksRouter from './routers/commercialLinks';
 import sizesRouter from './routers/sizes';
 import lightingRouter from './routers/lightings';
 import clientsRouter from './routers/clients';
+import bookingsRouter from './routers/bookings';
 
 const app = express();
 const port = 8000;
@@ -35,6 +36,7 @@ app.use('/link', commercialLinksRouter);
 app.use('/sizes', sizesRouter);
 app.use('/lighting', lightingRouter);
 app.use('/clients', clientsRouter);
+app.use('/bookings', bookingsRouter);
 
 const run = async () => {
   mongoose.set('strictQuery', false);

@@ -41,7 +41,7 @@ const LocationSchema = new Schema<ILocation>({
     type: Schema.Types.ObjectId,
   },
   booking: {
-    type: Schema.Types.ObjectId,
+    type: [Schema.Types.ObjectId],
     ref: 'Booking',
     validate: {
       validator: async (value: Types.ObjectId) => Booking.findById(value),
