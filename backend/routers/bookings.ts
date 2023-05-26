@@ -25,13 +25,4 @@ bookingsRouter.post('/', auth, async (req, res, next) => {
   }
 });
 
-bookingsRouter.get('/:id', async (req, res) => {
-  try {
-    const bookingListLocation = await Location.findOne({ _id: req.params.id }).populate('booking');
-    return res.send(bookingListLocation);
-  } catch (e) {
-    return res.sendStatus(500);
-  }
-});
-
 export default bookingsRouter;
