@@ -62,6 +62,7 @@ import { fetchStreet } from './street/streetThunks';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
+import BookingForm from './components/Booking/BookingForm';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -81,6 +82,7 @@ const LocationList = () => {
   const [open, setOpen] = useState(false);
   const listLocationId = useAppSelector(selectSelectedLocationId);
   const getItemsLoading = useAppSelector(selectGetItemsListLoading);
+  const [openBooking, setOpenBooking] = useState(false);
 
   const openDialog = async (id: string) => {
     await dispatch(getItems());
@@ -253,6 +255,7 @@ const LocationList = () => {
                   onEdit={() => openDialog(loc._id)}
                   checkedCardLocation={() => checkedCardLocation(loc._id)}
                   open={open}
+                  setOpenBooking={() => setOpenBooking(true)}
                 />
               ))}
             </TableBody>
@@ -284,6 +287,9 @@ const LocationList = () => {
       )}
       <Dialog open={isFilterOpen} onClose={() => setIsFilterOpen(false)} fullWidth maxWidth="md">
         <LocationFilter onClose={() => setIsFilterOpen(false)} />
+      </Dialog>
+      <Dialog open={openBooking} onClose={() => setOpenBooking(false)} maxWidth="md">
+        <BookingForm />
       </Dialog>
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />

@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { useAppSelector } from '../../../app/hooks';
 import { selectCheckedLocationLoading, selectLocationsColumnSettings } from '../locationsSlice';
 import { useNavigate } from 'react-router-dom';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 
 interface Props {
   onDelete: React.MouseEventHandler;
@@ -17,9 +18,19 @@ interface Props {
   number: number;
   checkedCardLocation: React.MouseEventHandler;
   open: boolean;
+  setOpenBooking: React.MouseEventHandler;
 }
 
-const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLoading, checkedCardLocation, open }) => {
+const CardLocation: React.FC<Props> = ({
+  loc,
+  onEdit,
+  number,
+  onDelete,
+  deleteLoading,
+  checkedCardLocation,
+  open,
+  setOpenBooking,
+}) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
   const loadingCheck = useAppSelector(selectCheckedLocationLoading);
@@ -139,6 +150,11 @@ const CardLocation: React.FC<Props> = ({ loc, onEdit, number, onDelete, deleteLo
           <Button size="small" color="success" onClick={onEdit}>
             <EditIcon />
           </Button>
+          <Tooltip title="Бронь">
+            <Button onClick={setOpenBooking} size="small" color="success">
+              <GroupAddIcon />
+            </Button>
+          </Tooltip>
           {open && (
             <Paper sx={{ ml: 1 }} elevation={3}>
               <Switch
