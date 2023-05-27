@@ -1,7 +1,7 @@
 import React from 'react';
 import { ClientsList } from '../../../../types';
 import { StyledTableRow } from '../../../../constants';
-import { Box, CircularProgress, Collapse, IconButton, Table, TableBody, TableCell, Typography } from '@mui/material';
+import { Box, CircularProgress, IconButton, TableCell, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectRemoveClientLoading } from '../clientSlice';
@@ -53,7 +53,7 @@ const CardClient: React.FC<Props> = ({ client, removeClientCard, onEditing }) =>
               </Typography>
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
                 <b>Сайт компании: </b>
-                <a href={client.companySite}> {client.companySite}</a>
+                <a href={client.companySite}>{client.companySite}</a>
               </Typography>
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
                 <b>День рождения компании: </b>
