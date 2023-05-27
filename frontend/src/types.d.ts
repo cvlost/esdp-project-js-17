@@ -121,7 +121,7 @@ export interface BookingMutation {
 
 export interface BookingListType {
   _id: string;
-  clientId: ClientsList;
+  clientId: string;
   locationId: string;
   booking_date: {
     start: string;
