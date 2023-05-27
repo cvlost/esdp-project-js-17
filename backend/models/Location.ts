@@ -1,5 +1,5 @@
-import { HydratedDocument, model, Schema, Types } from 'mongoose';
-import { ILocation, IPeriod } from '../types';
+import { model, Schema, Types } from 'mongoose';
+import { ILocation } from '../types';
 import City from './City';
 import Direction from './Direction';
 import Area from './Area';
@@ -9,32 +9,7 @@ import Format from './Format';
 import Size from './Size';
 import Lighting from './Lighting';
 import Client from './Client';
-
-const PeriodSchema = new Schema<IPeriod>(
-  {
-    start: {
-      type: Date,
-      required: true,
-      validate: {
-        validator: function (this: HydratedDocument<IPeriod>, value: Date) {
-          return value < this.end;
-        },
-        message: 'Дата начала аренды должа быть меньше даты окончания.',
-      },
-    },
-    end: {
-      type: Date,
-      required: true,
-      validate: {
-        validator: function (this: HydratedDocument<IPeriod>, value: Date) {
-          return value > this.start;
-        },
-        message: 'Дата окончания аренды должа быть больше даты начала.',
-      },
-    },
-  },
-  { versionKey: false, _id: false },
-);
+import { PeriodSchema } from './Period';
 
 const LocationSchema = new Schema<ILocation>({
   client: {
@@ -44,13 +19,13 @@ const LocationSchema = new Schema<ILocation>({
       validator: async (value: Types.ObjectId) => Client.findById(value),
       message: 'Данный клиент не существует!',
     },
+    default: null,
   },
   booking: {
     type: [Schema.Types.ObjectId],
     ref: 'Booking',
     default: [],
   },
-  nearest_booking_date: [Schema.Types.Date],
   price: {
     type: Schema.Types.Decimal128,
     required: true,
@@ -59,8 +34,10 @@ const LocationSchema = new Schema<ILocation>({
       message: 'Цена не может быть меньше нуля',
     },
   },
-  rent: PeriodSchema,
-  reserve: PeriodSchema,
+  rent: {
+    type: PeriodSchema,
+    default: null,
+  },
   description: String,
   addressNote: String,
   placement: {
@@ -174,6 +151,7 @@ const LocationSchema = new Schema<ILocation>({
   status: {
     type: String,
     enum: ['Занят', 'Свободный', null],
+    default: null,
   },
 });
 
