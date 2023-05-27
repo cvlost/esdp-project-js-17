@@ -8,17 +8,12 @@ import LegalEntity from './LegalEntity';
 import Format from './Format';
 import Size from './Size';
 import Lighting from './Lighting';
-import Client from './Client';
 import { PeriodSchema } from './Period';
 
 const LocationSchema = new Schema<ILocation>({
   client: {
     type: Schema.Types.ObjectId,
     ref: 'Client',
-    validate: {
-      validator: async (value: Types.ObjectId) => Client.findById(value),
-      message: 'Данный клиент не существует!',
-    },
     default: null,
   },
   booking: {
