@@ -6,7 +6,7 @@ import Region from '../models/Region';
 import City from '../models/City';
 import Direction from '../models/Direction';
 import { imagesUpload } from '../multer';
-import { ILocation } from '../types';
+import { ILocation, RentData } from '../types';
 import Street from '../models/Street';
 import Area from '../models/Area';
 import Format from '../models/Format';
@@ -331,6 +331,26 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
       await locationOne.save();
       return res.send(locationOne.checked);
     }
+  } catch (e) {
+    return next(e);
+  }
+});
+
+locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const rentData: RentData = req.body;
+
+    const location = await Location.findById(id);
+
+    if (!location) {
+      return res.status(404).send('Данная локация не найдена!');
+    }
+
+    location.rent = rentData.date;
+    location.client = rentData.client;
+    await location.save();
+    return res.send(location);
   } catch (e) {
     return next(e);
   }
