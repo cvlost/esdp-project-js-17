@@ -96,19 +96,6 @@ const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingL
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Забронирован</TableCell>
-                <TableCell>
-                  {loc.reserve ? (
-                    <>
-                      Да (с {dayjs(loc.reserve.start).format('DD.MM.YYYY')} до{' '}
-                      {dayjs(loc.reserve.end).format('DD.MM.YYYY')})
-                    </>
-                  ) : (
-                    `Нет`
-                  )}
-                </TableCell>
-              </TableRow>
-              <TableRow>
                 <TableCell>Расположение</TableCell>
                 <TableCell>{loc.placement ? `По направлению` : `Не по направлению`}</TableCell>
               </TableRow>

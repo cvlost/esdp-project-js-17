@@ -85,16 +85,6 @@ const CardLocation: React.FC<Props> = ({
         )}
       </div>
     ),
-    reserve: (
-      <>
-        {loc.reserve && (
-          <>
-            <Typography>{dayjs(loc.reserve.start).format('DD.MM.YYYY')}</Typography>
-            <Typography>{dayjs(loc.reserve.end).format('DD.MM.YYYY')}</Typography>
-          </>
-        )}
-      </>
-    ),
     status: (
       <>
         <Tooltip

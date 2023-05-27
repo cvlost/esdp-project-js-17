@@ -135,7 +135,6 @@ export interface ILocation {
   _id: string;
   price: string;
   rent: null | IPeriod;
-  reserve: null | IPeriod;
   city: string;
   area: string;
   streets: [string, string] | string[];
@@ -363,7 +362,6 @@ export interface ILocationLink {
   _id: string;
   price: string | null;
   rent: null | IPeriod;
-  reserve: null | IPeriod;
   city: string | null;
   area: string | null;
   streets: [string, string] | string[];
@@ -397,5 +395,5 @@ export interface contentLinkOneType {
 
 export interface RentMutation {
   date: DateRange | null;
-  client: string;
+  client: string | null;
 }
