@@ -301,7 +301,7 @@ const LocationList = () => {
         <BookingForm locationId={locationID} />
       </Dialog>
       <Dialog open={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
-        <BookingList />
+        <BookingList locationId={locationID} />
       </Dialog>
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />
