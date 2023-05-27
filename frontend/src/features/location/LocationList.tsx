@@ -47,6 +47,7 @@ import {
   getToEditOneLocation,
   removeLocation,
   updateLocation,
+  updateRent,
 } from './locationsThunks';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -56,12 +57,13 @@ import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
 import TuneIcon from '@mui/icons-material/Tune';
 import LocationFilter from './components/LocationsFilter';
 import LocationForm from './components/LocationForm';
-import { LocationMutation } from '../../types';
+import { LocationMutation, RentMutation } from '../../types';
 import { fetchCities } from './city/cityThunk';
 import { fetchStreet } from './street/streetThunks';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
+import RentForm from './rent/RentForm';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -73,6 +75,7 @@ const LocationList = () => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isRentOpen, setIsRentOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [locationID, setLocationID] = useState('');
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
@@ -89,6 +92,23 @@ const LocationList = () => {
     await dispatch(getToEditOneLocation(id));
     setLocationID(id);
     setIsOpen(true);
+  };
+
+  const onRentUpdateSubmit = async (rent: RentMutation) => {
+    await dispatch(updateRent({ rent, id: locationID }));
+    await dispatch(
+      getLocationsList({
+        page: locationsListData.page,
+        perPage: locationsListData.perPage,
+        filtered: filter.filtered,
+      }),
+    );
+    setIsRentOpen(false);
+  };
+
+  const openRentDialog = (locationId: string) => {
+    setIsRentOpen(true);
+    setLocationID(locationId);
   };
 
   const onFormSubmit = async (location: LocationMutation) => {
@@ -245,6 +265,7 @@ const LocationList = () => {
             >
               {locationsListData.locations.map((loc, i) => (
                 <CardLocation
+                  rentOpen={() => openRentDialog(loc._id)}
                   onDelete={() => DeleteLocations(loc._id)}
                   deleteLoading={deleteLoading}
                   key={loc._id}
@@ -285,6 +306,7 @@ const LocationList = () => {
       <Dialog open={isFilterOpen} onClose={() => setIsFilterOpen(false)} fullWidth maxWidth="md">
         <LocationFilter onClose={() => setIsFilterOpen(false)} />
       </Dialog>
+      <RentForm onSubmit={onRentUpdateSubmit} isOpen={isRentOpen} closeRentForm={() => setIsRentOpen(false)} />
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />
     </Box>

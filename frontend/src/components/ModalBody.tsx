@@ -10,7 +10,7 @@ interface Props extends PropsWithChildren {
 
 const ModalBody: React.FC<Props> = ({ children, isOpen, onClose, maxWidth = undefined }) => {
   return (
-    <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth={maxWidth}>
+    <Dialog sx={{ zIndex: '2' }} open={isOpen} onClose={onClose} fullWidth maxWidth={maxWidth}>
       <DialogContent>{children}</DialogContent>
     </Dialog>
   );

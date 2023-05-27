@@ -9,6 +9,7 @@ import Format from './Format';
 import Booking from './Booking';
 import Size from './Size';
 import Lighting from './Lighting';
+import Client from './Client';
 
 const PeriodSchema = new Schema<IPeriod>(
   {
@@ -39,6 +40,11 @@ const PeriodSchema = new Schema<IPeriod>(
 const LocationSchema = new Schema<ILocation>({
   client: {
     type: Schema.Types.ObjectId,
+    ref: 'Client',
+    validate: {
+      validator: async (value: Types.ObjectId) => Client.findById(value),
+      message: 'Данный клиент не существует!',
+    },
   },
   booking: {
     type: Schema.Types.ObjectId,

@@ -1,3 +1,5 @@
+import { DateRange } from 'rsuite/DateRangePicker';
+
 export interface User {
   _id: string;
   email: string;
@@ -197,6 +199,7 @@ export interface ClientsList {
   phone: string;
   email: string;
 }
+
 export type ClientMutation = Omit<ClientsList, '_id'>;
 
 /***** START: Filter types *****/
@@ -357,6 +360,7 @@ export interface ILocationLink {
   addressNote?: string;
   description?: string;
   checked: boolean;
+  client: string;
 }
 
 export interface contentLinkType {
@@ -369,4 +373,9 @@ export interface contentLinkOneType {
   location: ILocationLink | null;
   description: string;
   title: string;
+}
+
+export interface RentMutation {
+  date: DateRange | null;
+  client: string;
 }

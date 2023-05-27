@@ -7,6 +7,8 @@ import { persistor, store } from './app/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import DialogsProvider from './components/Dialogs/DialogsProvider';
+import { CustomProvider } from 'rsuite';
+import ruRU from 'rsuite/locales/ru_RU';
 
 addInterceptors(store);
 
@@ -16,7 +18,9 @@ root.render(
     <PersistGate persistor={persistor}>
       <BrowserRouter>
         <DialogsProvider>
-          <App />
+          <CustomProvider locale={ruRU}>
+            <App />
+          </CustomProvider>
         </DialogsProvider>
       </BrowserRouter>
     </PersistGate>
