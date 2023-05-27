@@ -37,9 +37,8 @@ export interface IPeriod {
 }
 
 export interface ILocation {
-  client: Schema.Types.ObjectId;
-  booking: Schema.Types.ObjectId[];
-  nearest_booking_date: [Schema.Types.Date];
+  client?: Schema.Types.ObjectId | null;
+  booking?: Schema.Types.ObjectId[];
   country: string;
   area: Types.ObjectId;
   region: Types.ObjectId;
@@ -49,17 +48,16 @@ export interface ILocation {
   legalEntity: Types.ObjectId;
   format: Types.ObjectId;
   price: Types.Decimal128;
-  rent: IPeriod | null;
-  reserve: IPeriod | null;
+  rent?: IPeriod | null;
   lighting: Types.ObjectId;
   placement: boolean;
   size: Types.ObjectId;
   addressNote?: string;
   description?: string;
-  dayImage: File | string;
-  schemaImage: File | string;
-  checked: boolean;
-  status: string | null;
+  dayImage: string | null;
+  schemaImage: string | null;
+  checked?: boolean;
+  status?: string | null;
 }
 
 export interface AreaType {
@@ -102,5 +100,5 @@ export interface SizeType {
 
 export interface RentData {
   date: DateRange | null;
-  client: Schema.Types.ObjectId;
+  client: Schema.Types.ObjectId | null;
 }

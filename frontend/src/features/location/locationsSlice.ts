@@ -74,7 +74,6 @@ export const initialColumns: LocationColumn[] = [
   { id: '11', name: 'placement', prettyName: 'Расположение', show: true, type: 'billboard' },
   { id: '12', name: 'price', prettyName: 'Цена', show: true, type: 'billboard' },
   { id: '13', name: 'rent', prettyName: 'Аренда', show: true, type: 'billboard' },
-  { id: '14', name: 'reserve', prettyName: 'Бронь', show: true, type: 'billboard' },
 ];
 
 const initialFilterState: FilterState = {
