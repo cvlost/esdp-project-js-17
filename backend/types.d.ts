@@ -71,10 +71,20 @@ export interface FormatType {
 }
 
 export interface ClientType {
-  name: string;
-  phone: string;
-  email?: string;
-  description?: string;
+  companyName: string;
+  companyKindOfActivity: string;
+  companyAddress: string;
+  companyPhone: string;
+  companyEmail: string;
+  companySite: string;
+  companyBirthday: string;
+  CompanyManagementName: string;
+  CompanyManagementJobTitle: string;
+  CompanyManagementBirthday: string;
+  contactPersonName: string;
+  contactPersonJobTitle: string;
+  contactPersonBirthday: string;
+  advertisingChannel: string;
 }
 
 export interface BookingType {
