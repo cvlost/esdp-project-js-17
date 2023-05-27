@@ -8,6 +8,8 @@ import dayjs from 'dayjs';
 import { useAppSelector } from '../../../app/hooks';
 import { selectCheckedLocationLoading, selectLocationsColumnSettings } from '../locationsSlice';
 import { useNavigate } from 'react-router-dom';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 interface Props {
   onDelete: React.MouseEventHandler;
@@ -18,6 +20,8 @@ interface Props {
   checkedCardLocation: React.MouseEventHandler;
   open: boolean;
   rentOpen: React.MouseEventHandler;
+  openBooking: React.MouseEventHandler;
+  openBookingList: React.MouseEventHandler;
 }
 
 const CardLocation: React.FC<Props> = ({
@@ -28,6 +32,8 @@ const CardLocation: React.FC<Props> = ({
   deleteLoading,
   checkedCardLocation,
   open,
+  openBooking,
+  openBookingList,
   rentOpen,
 }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
@@ -131,7 +137,7 @@ const CardLocation: React.FC<Props> = ({
           </TableCell>
         ))}
       <TableCell align="right">
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
+        <ButtonGroup sx={{ mr: 1 }} variant="contained" aria-label="outlined primary button group">
           <Button
             size="small"
             color="error"
@@ -152,6 +158,18 @@ const CardLocation: React.FC<Props> = ({
               />
             </Paper>
           )}
+        </ButtonGroup>
+        <ButtonGroup variant="contained" aria-label="outlined primary button group">
+          <Tooltip title="Бронь">
+            <Button onClick={openBooking} size="small" color="success">
+              <GroupAddIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Список броней">
+            <Button onClick={openBookingList} size="small" color="success">
+              <FormatListBulletedIcon />
+            </Button>
+          </Tooltip>
         </ButtonGroup>
       </TableCell>
     </StyledTableRow>

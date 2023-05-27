@@ -232,6 +232,7 @@ const run = async () => {
       dayImage: `fixtures/${i + 1}.jpg`,
       schemaImage: `fixtures/${i + 1}.png`,
       status: null,
+      booking: [],
     });
   }
 

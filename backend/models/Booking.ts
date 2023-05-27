@@ -1,6 +1,7 @@
 import { HydratedDocument, model, Schema, Types } from 'mongoose';
 import { BookingType, IPeriod } from '../types';
 import Client from './Client';
+import Location from './Location';
 
 const PeriodSchema = new Schema<IPeriod>(
   {
@@ -43,7 +44,7 @@ const BookingSchema = new Schema<BookingType>({
     ref: 'Location',
     required: true,
     validate: {
-      validator: async (value: Types.ObjectId) => Client.findById(value),
+      validator: async (value: Types.ObjectId) => Location.findById(value),
       message: 'Данная локация не существует!',
     },
   },

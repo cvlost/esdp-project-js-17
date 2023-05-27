@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
+  BookingMutation,
   FilterCriteriaResponse,
   FilterState,
   GetItemsListType,
@@ -202,4 +203,27 @@ export const updateRent = createAsyncThunk<void, UpdateRentParams>('locations/up
   } catch (e) {
     console.log(e);
   }
+});
+
+export const createBooking = createAsyncThunk<void, BookingMutation, { rejectValue: ValidationError }>(
+  'locations/createBooking',
+  async (bookingMutation, { rejectWithValue }) => {
+    try {
+      await axiosApi.post('/bookings', bookingMutation);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 400) {
+        return rejectWithValue(e.response.data as ValidationError);
+      }
+      throw e;
+    }
+  },
+);
+
+interface removeBookingType {
+  idLoc: string;
+  idBook: string;
+}
+
+export const removeBooking = createAsyncThunk<void, removeBookingType>('locations/removeBooking', async (arg) => {
+  await axiosApi.delete(`/bookings/${arg.idLoc}/${arg.idBook}`);
 });

@@ -4,7 +4,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
   Grid,
   IconButton,
   Pagination,
@@ -64,6 +63,8 @@ import ViewListIcon from '@mui/icons-material/ViewList';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
 import RentForm from './rent/RentForm';
+import BookingForm from './components/BookingForm/BookingForm';
+import BookingList from './components/BookingList';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -84,6 +85,8 @@ const LocationList = () => {
   const [open, setOpen] = useState(false);
   const listLocationId = useAppSelector(selectSelectedLocationId);
   const getItemsLoading = useAppSelector(selectGetItemsListLoading);
+  const [openBooking, setOpenBooking] = useState(false);
+  const [openBookingList, setOpenBookingList] = useState(false);
 
   const openDialog = async (id: string) => {
     await dispatch(getItems());
@@ -181,6 +184,12 @@ const LocationList = () => {
     );
   };
 
+  const openBookingModal = (name: string, id: string) => {
+    if (name === 'list') setOpenBookingList(true);
+    else if (name === 'booking') setOpenBooking(true);
+    setLocationID(id);
+  };
+
   return (
     <Box sx={{ py: 2 }}>
       <Grid container alignItems="center" mb={2}>
@@ -274,6 +283,8 @@ const LocationList = () => {
                   onEdit={() => openDialog(loc._id)}
                   checkedCardLocation={() => checkedCardLocation(loc._id)}
                   open={open}
+                  openBooking={() => openBookingModal('booking', loc._id)}
+                  openBookingList={() => openBookingModal('list', loc._id)}
                 />
               ))}
             </TableBody>
@@ -303,9 +314,15 @@ const LocationList = () => {
           )}
         </ModalBody>
       )}
-      <Dialog open={isFilterOpen} onClose={() => setIsFilterOpen(false)} fullWidth maxWidth="md">
+      <ModalBody isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)}>
         <LocationFilter onClose={() => setIsFilterOpen(false)} />
-      </Dialog>
+      </ModalBody>
+      <ModalBody isOpen={openBooking} onClose={() => setOpenBooking(false)}>
+        <BookingForm closeModal={() => setOpenBooking(false)} locationId={locationID} />
+      </ModalBody>
+      <ModalBody isOpen={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
+        <BookingList locationId={locationID} />
+      </ModalBody>
       <RentForm onSubmit={onRentUpdateSubmit} isOpen={isRentOpen} closeRentForm={() => setIsRentOpen(false)} />
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />
