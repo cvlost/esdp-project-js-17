@@ -55,7 +55,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit }) => {
   return (
     <ModalBody isOpen={isOpen} onClose={closeRentForm}>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
           Обновление аренды
         </Typography>
         <Grid component="form" onSubmit={submitFormHandler} container direction="column" spacing={2}>
@@ -86,18 +86,21 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit }) => {
               Нет клиента в списке? Создать клиента
             </Link>
           </Grid>
-          <Grid item alignSelf="center">
+          <Grid item>
             <DateRangePicker
+              block
               style={{ zIndex: '1' }}
-              placement="auto"
+              placement="topStart"
               value={state.date}
               onChange={dateChangeHandler}
               placeholder="Выберите дату аренды"
             />
           </Grid>
-          <Button type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
-            Обновить аренду
-          </Button>
+          <Grid item alignSelf="center">
+            <Button type="submit" variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
+              Обновить аренду
+            </Button>
+          </Grid>
         </Grid>
       </Box>
     </ModalBody>

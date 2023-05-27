@@ -4,7 +4,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
   Grid,
   IconButton,
   Pagination,
@@ -315,15 +314,15 @@ const LocationList = () => {
           )}
         </ModalBody>
       )}
-      <Dialog open={isFilterOpen} onClose={() => setIsFilterOpen(false)} fullWidth maxWidth="md">
+      <ModalBody isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)}>
         <LocationFilter onClose={() => setIsFilterOpen(false)} />
-      </Dialog>
-      <Dialog open={openBooking} onClose={() => setOpenBooking(false)} maxWidth="md">
-        <BookingForm locationId={locationID} />
-      </Dialog>
-      <Dialog open={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
+      </ModalBody>
+      <ModalBody isOpen={openBooking} onClose={() => setOpenBooking(false)}>
+        <BookingForm closeModal={() => setOpenBooking(false)} locationId={locationID} />
+      </ModalBody>
+      <ModalBody isOpen={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
         <BookingList locationId={locationID} />
-      </Dialog>
+      </ModalBody>
       <RentForm onSubmit={onRentUpdateSubmit} isOpen={isRentOpen} closeRentForm={() => setIsRentOpen(false)} />
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />

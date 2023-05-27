@@ -3,21 +3,15 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
   CircularProgress,
   Divider,
   Grid,
-  IconButton,
   MenuItem,
-  Paper,
   TextField,
   Tooltip,
   Typography,
 } from '@mui/material';
-import { MainColorGreen } from '../../../../constants';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { DateRangePicker } from 'rsuite';
-import './/Booking.css';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectClientsList, selectGetAllClientsLoading } from '../../client/clientSlice';
@@ -37,11 +31,12 @@ import { openSnackbar } from '../../../users/usersSlice';
 interface Props {
   locationId: string;
   isPage?: boolean;
+  closeModal: (close: boolean) => void;
 }
 
-const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
+const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
   const [valueDate, setValueDate] = useState<[Date, Date]>([new Date(), new Date()]);
-  const [valueCLinet, setValueClient] = useState('');
+  const [valueClient, setValueClient] = useState('');
   const clientList = useAppSelector(selectClientsList);
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectGetAllClientsLoading);
@@ -65,7 +60,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
     e.preventDefault();
 
     const obj = {
-      clientId: valueCLinet,
+      clientId: valueClient,
       locationId,
       booking_date: {
         end: new Date(valueDate[1]),
@@ -78,6 +73,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
     dispatch(openSnackbar({ status: true, parameter: 'create_booking' }));
     setValueClient('');
     setValueDate([new Date(), new Date()]);
+    closeModal(true);
   };
 
   const getFieldError = (fieldName: string) => {
@@ -89,112 +85,85 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
   };
 
   return (
-    <Box component="form" sx={{ maxWidth: '500px', p: 1 }} onSubmit={onSubmit}>
-      <Grid container alignItems="center" rowSpacing={2}>
-        <Grid xs={12} item>
-          {error && <Alert severity="error">{error.message}</Alert>}
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Typography component="h1" variant="h5">
+        Добавление бронирования
+      </Typography>
+      <Grid direction="column" spacing={2} container component="form" onSubmit={onSubmit}>
+        <Grid item>{error && <Alert severity="error">{error.message}</Alert>}</Grid>
+        <Grid item>
+          {!loadingOneLocation ? (
+            oneLocation && oneLocation.booking.length !== 0 ? (
+              oneLocation.booking.map((item) => (
+                <Tooltip
+                  key={item._id}
+                  title={
+                    <>
+                      <Typography component="p">
+                        Старт: {dayjs(item.booking_date.start).format('DD.MM.YYYY')}
+                      </Typography>
+                      <Divider />
+                      <Typography component="p">Конец: {dayjs(item.booking_date.end).format('DD.MM.YYYY')}</Typography>
+                    </>
+                  }
+                >
+                  <AccountCircleIcon />
+                </Tooltip>
+              ))
+            ) : (
+              <Alert severity="info" color="success">
+                Броней нет
+              </Alert>
+            )
+          ) : (
+            <CircularProgress />
+          )}
         </Grid>
-        <Grid display="flex" xs={12} item>
-          <Paper elevation={3}>
-            {!loadingOneLocation ? (
-              oneLocation && oneLocation.booking.length !== 0 ? (
-                oneLocation.booking.map((item) => (
-                  <Tooltip
-                    key={item._id}
-                    title={
-                      <>
-                        <Typography component="p">
-                          Старт: {dayjs(item.booking_date.start).format('DD.MM.YYYY')}
-                        </Typography>
-                        <Divider />
-                        <Typography component="p">
-                          Конец: {dayjs(item.booking_date.end).format('DD.MM.YYYY')}
-                        </Typography>
-                      </>
-                    }
-                  >
-                    <AccountCircleIcon />
-                  </Tooltip>
+        <Grid item>
+          <TextField
+            value={valueClient}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValueClient(e.target.value)}
+            fullWidth
+            select
+            name="client"
+            label="Клиенты"
+            required
+            error={Boolean(getFieldError('clientId'))}
+            helperText={getFieldError('clientId')}
+          >
+            <MenuItem value="" disabled>
+              Выберите клиента
+            </MenuItem>
+            {!loading ? (
+              clientList.length !== 0 ? (
+                clientList.map((item) => (
+                  <MenuItem key={item._id} value={item._id}>
+                    {item.name}
+                  </MenuItem>
                 ))
               ) : (
-                <Alert severity="info">Броней нет</Alert>
+                <Alert severity="info">Список пуст</Alert>
               )
             ) : (
               <CircularProgress />
             )}
-          </Paper>
+          </TextField>
+          <Link to="/create_client" style={{ display: 'block', textAlign: 'center', margin: '10px 0', color: 'green' }}>
+            Нет клиента в списке? Создать клиента
+          </Link>
         </Grid>
-        <Grid xs={12} item>
-          <Paper elevation={3} sx={{ p: 1 }}>
-            <Link to="create_client">
-              <IconButton aria-label="delete">
-                <AddCircleIcon sx={{ fontSize: '50px' }} />
-              </IconButton>
-            </Link>
-            <Chip
-              sx={{ fontSize: '20px', p: 3, color: MainColorGreen }}
-              label="Создать пользователя"
-              variant="outlined"
-              color="success"
-            />
-          </Paper>
+        <Grid item>
+          <DateRangePicker
+            block
+            placeholder="Выбрать даты"
+            placement="topStart"
+            value={valueDate}
+            onChange={handleDateChange}
+            style={{ zIndex: '1 important!' }}
+          />
         </Grid>
-        <Grid item xs={12}>
-          <Paper elevation={3} sx={{ p: 1 }}>
-            <Chip
-              sx={{ fontSize: '20px', p: 3, color: MainColorGreen, mb: 1 }}
-              label="Выбрать клиентов"
-              variant="outlined"
-              color="success"
-            />
-            <TextField
-              value={valueCLinet}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValueClient(e.target.value)}
-              fullWidth
-              select
-              name="client"
-              label="Клиенты"
-              required
-              error={Boolean(getFieldError('clientId'))}
-              helperText={getFieldError('clientId')}
-            >
-              <MenuItem value="" disabled>
-                Выберите клиента
-              </MenuItem>
-              {!loading ? (
-                clientList.length !== 0 ? (
-                  clientList.map((item) => (
-                    <MenuItem key={item._id} value={item._id}>
-                      {item.name}
-                    </MenuItem>
-                  ))
-                ) : (
-                  <Alert severity="info">Список пуст</Alert>
-                )
-              ) : (
-                <CircularProgress />
-              )}
-            </TextField>
-          </Paper>
-        </Grid>
-        <Grid xs={12} item>
-          <Paper elevation={3} sx={{ p: 1 }}>
-            <Chip
-              sx={{ fontSize: '20px', p: 3, color: MainColorGreen, mb: 1 }}
-              label="Выбрать даты"
-              variant="outlined"
-              color="success"
-            />
-            <DateRangePicker
-              placeholder="Выбрать даты"
-              style={{ width: 300 }}
-              value={valueDate}
-              onChange={handleDateChange}
-            />
-          </Paper>
-        </Grid>
-        <Grid xs={12} item>
-          <Button disabled={createLoading} type="submit" variant="contained">
+        <Grid item alignSelf="center">
+          <Button disabled={createLoading} type="submit" color="success" variant="contained">
             {!createLoading ? 'Бронировать' : <CircularProgress />}
           </Button>
         </Grid>

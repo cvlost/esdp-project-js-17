@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Chip, CircularProgress, Dialog, Grid, Typography } from '@mui/material';
+import { Box, Chip, CircularProgress, Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectOneLocation, selectOneLocationLoading } from '../locationsSlice';
 import { getOneLocation } from '../locationsThunks';
@@ -10,6 +10,7 @@ import { apiURL } from '../../../constants';
 import BookingForm from './BookingForm/BookingForm';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import BookingList from './BookingList';
+import ModalBody from '../../../components/ModalBody';
 
 const LocationPage = () => {
   const [isPage, setIsPage] = useState(false);
@@ -82,12 +83,12 @@ const LocationPage = () => {
               </Box>
             </Grid>
           </Grid>
-          <Dialog open={openBooking} onClose={() => setOpenBooking(false)} maxWidth="md">
-            <BookingForm isPage={isPage} locationId={id} />
-          </Dialog>
-          <Dialog open={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
+          <ModalBody isOpen={openBooking} onClose={() => setOpenBooking(false)}>
+            <BookingForm closeModal={() => setOpenBooking(false)} isPage={isPage} locationId={id} />
+          </ModalBody>
+          <ModalBody isOpen={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
             <BookingList isPage={isPage} locationId={id} />
-          </Dialog>
+          </ModalBody>
           <SnackbarCard />
         </>
       )}
