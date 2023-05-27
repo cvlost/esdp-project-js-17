@@ -15,9 +15,10 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { Link } from 'react-router-dom';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { selectOneLocation, selectOneLocationLoading } from '../locationsSlice';
-import { getOneLocation } from '../locationsThunks';
+import { selectOneLocation, selectOneLocationLoading, selectRemoveBookingLoading } from '../locationsSlice';
+import { getOneLocation, removeBooking } from '../locationsThunks';
 import dayjs from 'dayjs';
+import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 interface Props {
   locationId: string;
@@ -27,10 +28,21 @@ const BookingList: React.FC<Props> = ({ locationId }) => {
   const dispatch = useAppDispatch();
   const oneLocation = useAppSelector(selectOneLocation);
   const loading = useAppSelector(selectOneLocationLoading);
+  const { confirm } = useConfirm();
+  const loadingRemove = useAppSelector(selectRemoveBookingLoading);
 
   useEffect(() => {
     dispatch(getOneLocation(locationId));
   }, [dispatch, locationId]);
+
+  const removeCardBooking = async (id: string) => {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную локацию?')) {
+      await dispatch(removeBooking({ idLoc: locationId, idBook: id })).unwrap();
+      await dispatch(getOneLocation(locationId));
+    } else {
+      return;
+    }
+  };
 
   return (
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -63,8 +75,12 @@ const BookingList: React.FC<Props> = ({ locationId }) => {
                 <TableCell align="center">{dayjs(booking.booking_date.end).format('DD.MM.YYYY')}</TableCell>
                 <TableCell align="center">
                   <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                    <IconButton aria-label="delete">
-                      <RemoveCircleIcon />
+                    <IconButton
+                      disabled={loadingRemove}
+                      onClick={() => removeCardBooking(booking._id)}
+                      aria-label="delete"
+                    >
+                      {!loadingRemove ? <RemoveCircleIcon /> : <CircularProgress />}
                     </IconButton>
                     <Link to={`/${booking.locationId}`}>
                       <IconButton aria-label="delete">

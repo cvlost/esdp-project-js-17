@@ -21,6 +21,7 @@ import {
   checkedLocation,
   getItems,
   createBooking,
+  removeBooking,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -55,6 +56,7 @@ interface LocationsState {
   getItemsListLoading: boolean;
   createBookingLoading: boolean;
   createBookingError: ValidationError | null;
+  removeBookingLoading: boolean;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -163,6 +165,7 @@ const initialState: LocationsState = {
   getItemsListLoading: false,
   createBookingLoading: false,
   createBookingError: null,
+  removeBookingLoading: false,
 };
 
 const locationsSlice = createSlice({
@@ -309,6 +312,16 @@ const locationsSlice = createSlice({
       state.createBookingLoading = false;
       state.createBookingError = error || null;
     });
+
+    builder.addCase(removeBooking.pending, (state) => {
+      state.removeBookingLoading = true;
+    });
+    builder.addCase(removeBooking.fulfilled, (state) => {
+      state.removeBookingLoading = false;
+    });
+    builder.addCase(removeBooking.rejected, (state) => {
+      state.removeBookingLoading = false;
+    });
   },
 });
 
@@ -336,3 +349,4 @@ export const selectItemsList = (state: RootState) => state.locations.itemsList;
 export const selectGetItemsListLoading = (state: RootState) => state.locations.getItemsListLoading;
 export const selectCreateBookingLoading = (state: RootState) => state.locations.createBookingLoading;
 export const selectCreateBookingError = (state: RootState) => state.locations.createBookingError;
+export const selectRemoveBookingLoading = (state: RootState) => state.locations.removeBookingLoading;

@@ -197,3 +197,12 @@ export const createBooking = createAsyncThunk<void, BookingMutation, { rejectVal
     }
   },
 );
+
+interface removeBookingType {
+  idLoc: string;
+  idBook: string;
+}
+
+export const removeBooking = createAsyncThunk<void, removeBookingType>('locations/removeBooking', async (arg) => {
+  await axiosApi.delete(`/bookings/${arg.idLoc}/${arg.idBook}`);
+});

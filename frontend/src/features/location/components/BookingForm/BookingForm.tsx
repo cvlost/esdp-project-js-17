@@ -24,7 +24,12 @@ import { selectClientsList, selectGetAllClientsLoading } from '../../client/clie
 import { fetchClients } from '../../client/clientThunk';
 import { DateRange } from 'rsuite/DateRangePicker';
 import { createBooking, getOneLocation } from '../../locationsThunks';
-import { selectCreateBookingError, selectOneLocation, selectOneLocationLoading } from '../../locationsSlice';
+import {
+  selectCreateBookingError,
+  selectCreateBookingLoading,
+  selectOneLocation,
+  selectOneLocationLoading,
+} from '../../locationsSlice';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import dayjs from 'dayjs';
 import { openSnackbar } from '../../../users/usersSlice';
@@ -43,6 +48,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
   const error = useAppSelector(selectCreateBookingError);
   const oneLocation = useAppSelector(selectOneLocation);
   const loadingOneLocation = useAppSelector(selectOneLocationLoading);
+  const createLoading = useAppSelector(selectCreateBookingLoading);
 
   useEffect(() => {
     dispatch(fetchClients());
@@ -188,8 +194,8 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
           </Paper>
         </Grid>
         <Grid xs={12} item>
-          <Button type="submit" variant="contained">
-            Бронировать
+          <Button disabled={createLoading} type="submit" variant="contained">
+            {!createLoading ? 'Бронировать' : <CircularProgress />}
           </Button>
         </Grid>
       </Grid>
