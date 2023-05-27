@@ -99,3 +99,8 @@ export interface CommercialLinkType {
 export interface SizeType {
   name: string;
 }
+
+export interface RentData {
+  date: DateRange | null;
+  client: Schema.Types.ObjectId;
+}

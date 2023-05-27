@@ -19,6 +19,7 @@ interface Props {
   number: number;
   checkedCardLocation: React.MouseEventHandler;
   open: boolean;
+  rentOpen: React.MouseEventHandler;
   openBooking: React.MouseEventHandler;
   openBookingList: React.MouseEventHandler;
 }
@@ -33,6 +34,7 @@ const CardLocation: React.FC<Props> = ({
   open,
   openBooking,
   openBookingList,
+  rentOpen,
 }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
@@ -51,14 +53,14 @@ const CardLocation: React.FC<Props> = ({
 
   const cells: Record<string, React.ReactNode> = {
     address: (
-      <>
+      <Box onClick={() => navigate(`/${loc._id}`)}>
         {`${loc.city} ${loc.streets[0] + '/' + loc.streets[1]}, ${loc.direction}`}
         {loc.addressNote && (
           <Typography color="gray" fontSize=".85em">
             ({loc.addressNote})
           </Typography>
         )}
-      </>
+      </Box>
     ),
     area: <>{loc.area}</>,
     city: <>{loc.city}</>,
@@ -72,14 +74,16 @@ const CardLocation: React.FC<Props> = ({
     placement: <>{loc.placement ? 'По направлению' : 'Не по направлению'}</>,
     price: <>{loc.price}</>,
     rent: (
-      <>
-        {loc.rent && (
+      <div onClick={rentOpen}>
+        {loc.rent ? (
           <>
             <Typography>{dayjs(loc.rent.start).format('DD.MM.YYYY')}</Typography>
             <Typography>{dayjs(loc.rent.end).format('DD.MM.YYYY')}</Typography>
           </>
+        ) : (
+          'Свободен'
         )}
-      </>
+      </div>
     ),
     reserve: (
       <>
@@ -122,21 +126,13 @@ const CardLocation: React.FC<Props> = ({
       </>
     ),
   };
-
   return (
     <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell onClick={() => navigate(`/location/${loc._id}`)} align="center">
-        {number}
-      </TableCell>
+      <TableCell align="center">{number}</TableCell>
       {columns
         .filter((col) => col.show)
         .map((col) => (
-          <TableCell
-            onClick={() => navigate(`/${loc._id}`)}
-            key={col.prettyName}
-            align="center"
-            sx={{ whiteSpace: 'nowrap' }}
-          >
+          <TableCell key={col.prettyName} align="center" sx={{ whiteSpace: 'nowrap' }}>
             {cells[col.name]}
           </TableCell>
         ))}
