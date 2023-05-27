@@ -25,4 +25,24 @@ bookingsRouter.post('/', auth, async (req, res, next) => {
   }
 });
 
+bookingsRouter.delete('/:loc/:book', auth, async (req, res) => {
+  const locId = req.params.loc as string;
+  const bookId = req.params.book as string;
+
+  try {
+    const locationOne = await Location.findOne({ _id: locId });
+
+    if (!locationOne) {
+      return res.status(404).send({ error: 'Данной локации нет ' });
+    }
+
+    await Booking.deleteOne({ _id: bookId });
+    await Location.updateOne({ _id: locId }, { $pull: { booking: bookId } });
+
+    return res.send({ removeLoc: locId, removeBook: bookId });
+  } catch (e) {
+    return res.sendStatus(500);
+  }
+});
+
 export default bookingsRouter;
