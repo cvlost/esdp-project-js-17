@@ -1,4 +1,3 @@
-import { describe } from '@jest/globals';
 import supertest from 'supertest';
 import * as db from '../db';
 import app from '../app';
@@ -36,6 +35,7 @@ describe('areasRouter', () => {
 
   beforeAll(async () => {
     await db.connect();
+    await db.clear();
     await User.create(adminDto, userDto);
     const area1 = await Area.create(area1Dto);
     await City.create({ name: 'Бишкек', area: area1._id });
@@ -48,7 +48,7 @@ describe('areasRouter', () => {
   });
 
   describe('GET /areas', () => {
-    test('если обращается неавторизованный пользователь, то должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
+    test('если неавторизованный пользователь пытается получить список областей, должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
       const res = await request.get('/areas');
       const errorMessage = res.body.error;
 
@@ -56,23 +56,33 @@ describe('areasRouter', () => {
       expect(errorMessage).toBe('Отсутствует токен авторизации.');
     });
 
-    test('если обращается пользователь с ролью "admin", то должен возвращаться statusCode 200 и массив областей длинной 1', async () => {
+    test('если пользователь c рандомным токеном пытается получить список областей, должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
+      const res = await request.get('/areas').set({ Authorization: 'some-random-token' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
+    });
+
+    test('если пользователь с ролью "admin" пытается получить список областей, должен возвращаться statusCode 200 и массив областей длинной 1', async () => {
       const res = await request.get('/areas').set({ Authorization: adminToken });
       const areasList = res.body;
 
       expect(res.statusCode).toBe(200);
+      expect(Array.isArray(areasList)).toBe(true);
       expect(areasList.length).toBe(1);
     });
 
-    test('если обращается пользователь с ролью "user", то должен возвращаться statusCode 200 и массив областей длинной 1', async () => {
+    test('если пользователь с ролью "user" пытается получитьс список областей, то должен возвращаться statusCode 200 и массив областей длинной 1', async () => {
       const res = await request.get('/areas').set({ Authorization: userToken });
       const areasList = res.body;
 
       expect(res.statusCode).toBe(200);
+      expect(Array.isArray(areasList)).toBe(true);
       expect(areasList.length).toBe(1);
     });
 
-    test('элементы массива должны содержать 2 поля "_id" и "name"', async () => {
+    test('элементы списка должны содержать 2 поля "_id" и "name"', async () => {
       const res = await request.get('/areas').set({ Authorization: adminToken });
       const areasList = res.body;
       const area = areasList[0];
@@ -95,55 +105,77 @@ describe('areasRouter', () => {
       expect(errorMessage).toBe('Отсутствует токен авторизации.');
     });
 
+    test('если пользователь c рандомным токеном пытается создать новую область, должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
+      const res = await request.get('/areas').set({ Authorization: 'some-random-token' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
+    });
+
     test('если пользователь с ролью "user" пытается создать новую область, то должен возвращаться statusCode 403 и сообщение ошибки о недостаточных правах на действие', async () => {
       const res = await request.post('/areas').set({ Authorization: userToken }).send(createAreaDto);
       const error = res.body.error;
 
       expect(res.statusCode).toBe(403);
-      expect(error).toEqual('Неавторизованный пользователь. Нет прав на совершение действия');
+      expect(error).toEqual('Неавторизованный пользователь. Нет прав на совершение действия.');
     });
 
-    test('если пользователь с ролью "admin" пытается создать новую область, то должен созвращаться statusCode 201 и объект с сообщением и созданной областью', async () => {
-      const res = await request.post('/areas').set({ Authorization: adminToken }).send(createAreaDto);
-      const { message, area } = res.body;
+    describe('если пользователь с ролью "admin" пытается создать новую область', () => {
+      test('с верными данными, должен созвращаться statusCode 201 и объект с сообщением и созданной областью', async () => {
+        const res = await request.post('/areas').set({ Authorization: adminToken }).send(createAreaDto);
+        const { message, area } = res.body;
 
-      createdAreaId = area._id;
+        createdAreaId = area._id;
 
-      expect(res.statusCode).toBe(201);
-      expect(message).toBe('Новая область успешно создана!');
-      expect(area._id).not.toBeUndefined();
-      expect(area.name).not.toBeUndefined();
-      expect(area.name).toBe(createAreaDto.name);
-    });
+        expect(res.statusCode).toBe(201);
+        expect(message).toBe('Новая область успешно создана!');
+        expect(area._id).not.toBeUndefined();
+        expect(area.name).not.toBeUndefined();
+        expect(area.name).toBe(createAreaDto.name);
+      });
 
-    test('если пользователь с ролью "admin" пытается создать новую область c невернымы данными, то должен созвращаться statusCode 400 и обект ValidationError', async () => {
-      const res = await request.post('/areas').set({ Authorization: adminToken }).send({ bla: 'bla' });
-      const name = res.body.name;
+      test('c невернымы данными, то должен созвращаться statusCode 422 и обект ValidationError', async () => {
+        const res = await request.post('/areas').set({ Authorization: adminToken }).send({ bla: 'bla' });
+        const name = res.body.name;
 
-      expect(res.statusCode).toBe(400);
-      expect(name).toBe('ValidationError');
+        expect(res.statusCode).toBe(422);
+        expect(name).toBe('ValidationError');
+      });
     });
   });
 
   describe('DELETE /areas/:id', () => {
     test('если неавторизованный пользователь пытается удалить область по id, должен возваращаться statusCode 401 и сообщение об ошибке', async () => {
       const res = await request.delete(`/areas/${area1Id}`);
+      const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+
+    test('если пользователь c рандомным токеном пытается удалить область по id, должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
+      const res = await request.get('/areas').set({ Authorization: 'some-random-token' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
     });
 
     test('если пользователь с ролью "user" пытается удалить область по id, должен возваращаться statusCode 403 и сообщение об ошибке', async () => {
       const res = await request.delete(`/areas/${area1Id}`).set({ Authorization: userToken });
+      const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(403);
+      expect(errorMessage).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
     });
 
     describe('если пользователь с ролью "admin" пытается удалить область', () => {
-      test('с некорректным по форме mongodb id, должен возвращать statusCode 400 и сообщение об ошибке', async () => {
+      test('с некорректным по форме mongodb id, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
         const res = await request.delete(`/areas/some-random-string-id`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
 
-        expect(res.statusCode).toBe(400);
+        expect(res.statusCode).toBe(422);
         expect(errorMessage).toBe('Некорректный id области');
       });
 
@@ -160,7 +192,6 @@ describe('areasRouter', () => {
         const result = res.body;
 
         expect(res.statusCode).toBe(200);
-        expect(result.deletedCount).not.toBeUndefined();
         expect(result.deletedCount).toBe(1);
       });
 

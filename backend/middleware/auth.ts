@@ -17,7 +17,7 @@ const auth = async (expressReq: Request, res: Response, next: NextFunction) => {
   const user = await User.findOne({ token });
 
   if (!user) {
-    return res.status(401).send({ error: 'Предоставлен неверный токен авторизации' });
+    return res.status(401).send({ error: 'Предоставлен неверный токен авторизации.' });
   }
 
   req.user = user;

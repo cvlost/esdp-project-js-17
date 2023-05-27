@@ -24,7 +24,7 @@ areasRouter.post('/', auth, permit('admin'), async (req, res, next) => {
     return res.status(201).send({ message: 'Новая область успешно создана!', area });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+      return res.status(422).send(e);
     } else {
       return next(e);
     }
@@ -34,7 +34,7 @@ areasRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 areasRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   const _id = req.params.id as string;
   if (!mongoose.isValidObjectId(_id)) {
-    return res.status(400).send({ error: 'Некорректный id области' });
+    return res.status(422).send({ error: 'Некорректный id области' });
   }
 
   try {
