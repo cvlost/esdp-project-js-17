@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Box, Chip, CircularProgress, Grid, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Chip, CircularProgress, Dialog, Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectOneLocation, selectOneLocationLoading } from '../locationsSlice';
 import { getOneLocation } from '../locationsThunks';
@@ -7,8 +7,12 @@ import { useParams } from 'react-router-dom';
 import imagePlaceholder from '../../../assets/billboard-placeholder.jpg';
 import LocationPageTabs from './LocationPageTabs';
 import { apiURL } from '../../../constants';
+import BookingForm from './Booking/BookingForm';
+import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 
 const LocationPage = () => {
+  const [isPage, setIsPage] = useState(false);
+  const [openBooking, setOpenBooking] = useState(false);
   const dispatch = useAppDispatch();
   const id = useParams().id as string;
   const loc = useAppSelector(selectOneLocation);
@@ -19,6 +23,11 @@ const LocationPage = () => {
       dispatch(getOneLocation(id));
     }
   }, [dispatch, id]);
+
+  const openModalBooking = () => {
+    setIsPage(true);
+    setOpenBooking(true);
+  };
 
   return (
     <Box sx={{ py: 2 }}>
@@ -63,10 +72,14 @@ const LocationPage = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Box>
-                <LocationPageTabs />
+                <LocationPageTabs openModalBooking={openModalBooking} />
               </Box>
             </Grid>
           </Grid>
+          <Dialog open={openBooking} onClose={() => setOpenBooking(false)} maxWidth="md">
+            <BookingForm isPage={isPage} locationId={id} />
+          </Dialog>
+          <SnackbarCard />
         </>
       )}
     </Box>

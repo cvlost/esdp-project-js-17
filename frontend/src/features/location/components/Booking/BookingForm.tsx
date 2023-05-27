@@ -31,9 +31,10 @@ import { openSnackbar } from '../../../users/usersSlice';
 
 interface Props {
   locationId: string;
+  isPage?: boolean;
 }
 
-const BookingForm: React.FC<Props> = ({ locationId }) => {
+const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
   const [valueDate, setValueDate] = useState<[Date, Date]>([new Date(), new Date()]);
   const [valueCLinet, setValueClient] = useState('');
   const clientList = useAppSelector(selectClientsList);
@@ -44,8 +45,10 @@ const BookingForm: React.FC<Props> = ({ locationId }) => {
 
   useEffect(() => {
     dispatch(fetchClients());
-    dispatch(getOneLocation(locationId));
-  }, [dispatch, locationId]);
+    if (isPage === undefined) {
+      dispatch(getOneLocation(locationId));
+    }
+  }, [dispatch, locationId, isPage]);
 
   const handleDateChange = (date: DateRange | null) => {
     setValueDate(date as [Date, Date]);

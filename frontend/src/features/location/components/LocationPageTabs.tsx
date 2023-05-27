@@ -8,8 +8,13 @@ import { selectUser } from '../../users/usersSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 
-const LocationPageTabs = () => {
+interface Props {
+  openModalBooking: React.MouseEventHandler;
+}
+
+const LocationPageTabs: React.FC<Props> = ({ openModalBooking }) => {
   const user = useAppSelector(selectUser);
   const { confirm } = useConfirm();
   const [value, setValue] = React.useState('1');
@@ -189,6 +194,17 @@ const LocationPageTabs = () => {
                   }}
                 >
                   Удалить
+                </LoadingButton>
+              </Grid>
+              <Grid item>
+                <LoadingButton
+                  onClick={openModalBooking}
+                  loading={false}
+                  variant="contained"
+                  loadingPosition="start"
+                  startIcon={<GroupAddIcon />}
+                >
+                  Бронировать
                 </LoadingButton>
               </Grid>
             </Grid>
