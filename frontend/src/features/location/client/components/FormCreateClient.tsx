@@ -11,9 +11,20 @@ interface Props {
 }
 
 const initialState: ClientMutation = {
-  email: '',
-  name: '',
-  phone: '',
+  companyName: '',
+  companyKindOfActivity: '',
+  companyAddress: '',
+  companyPhone: '',
+  companyEmail: '',
+  companySite: '',
+  companyBirthday: '',
+  CompanyManagementName: '',
+  CompanyManagementJobTitle: '',
+  CompanyManagementBirthday: '',
+  contactPersonName: '',
+  contactPersonJobTitle: '',
+  contactPersonBirthday: '',
+  advertisingChannel: '',
 };
 
 const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialState, isEdit, Loading, error }) => {
@@ -22,7 +33,22 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(state);
-    setState({ name: '', phone: '', email: '' });
+    setState({
+      companyName: '',
+      companyKindOfActivity: '',
+      companyAddress: '',
+      companyPhone: '',
+      companyEmail: '',
+      companySite: '',
+      companyBirthday: '',
+      CompanyManagementName: '',
+      CompanyManagementJobTitle: '',
+      CompanyManagementBirthday: '',
+      contactPersonName: '',
+      contactPersonJobTitle: '',
+      contactPersonBirthday: '',
+      advertisingChannel: '',
+    });
   };
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -56,15 +82,18 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
+          <Typography component="h1" variant="h5" sx={{ mt: 2 }}>
+            Организация
+          </Typography>
           <Grid item xs={12}>
             <TextField
-              value={state.name}
+              value={state.companyName}
               onChange={inputChangeHandler}
               required
               fullWidth
-              label="Имя клиента"
+              label="Имя организации"
               type="text"
-              name="name"
+              name="companyName"
               autoComplete="off"
               error={Boolean(getFieldError('name'))}
               helperText={getFieldError('name')}
@@ -72,28 +101,67 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
           </Grid>
           <Grid item xs={12}>
             <TextField
-              value={state.phone}
+              value={state.companyPhone}
               onChange={inputChangeHandler}
               fullWidth
-              label="Номер клиента"
+              label="Номер организации"
               type="number"
-              name="phone"
+              name="companyPhone"
               autoComplete="off"
-              error={Boolean(getFieldError('phone'))}
-              helperText={getFieldError('phone')}
+              error={Boolean(getFieldError('companyPhone'))}
+              helperText={getFieldError('companyPhone')}
             ></TextField>
           </Grid>
           <Grid item xs={12}>
             <TextField
-              value={state.email}
+              value={state.companyEmail}
               onChange={inputChangeHandler}
               fullWidth
-              label="Email клиента"
+              label="Email организации"
               type="email"
-              name="email"
+              name="companyEmail"
               autoComplete="off"
-              error={Boolean(getFieldError('email'))}
-              helperText={getFieldError('email')}
+              error={Boolean(getFieldError('companyEmail'))}
+              helperText={getFieldError('companyEmail')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.companyKindOfActivity}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="Вид деятельности организации"
+              type="text"
+              name="companyKindOfActivity"
+              autoComplete="off"
+              error={Boolean(getFieldError('companyKindOfActivity'))}
+              helperText={getFieldError('companyKindOfActivity')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.companyAddress}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="Адрес организации"
+              type="text"
+              name="companyAddress"
+              autoComplete="off"
+              error={Boolean(getFieldError('companyAddress'))}
+              helperText={getFieldError('companyAddress')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.companySite}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="Сайт организации"
+              type="url"
+              name="companySite"
+              autoComplete="off"
+              error={Boolean(getFieldError('companySite'))}
+              helperText={getFieldError('companySite')}
             />
           </Grid>
         </Grid>
