@@ -17,14 +17,14 @@ import {
 import { MainColorGreen } from '../../../../constants';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { DateRangePicker } from 'rsuite';
-import '../../components/Booking/Booking.css';
+import './/Booking.css';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectClientsList, selectGetAllClientsLoading } from '../../client/clientSlice';
 import { fetchClients } from '../../client/clientThunk';
 import { DateRange } from 'rsuite/DateRangePicker';
 import { createBooking, getOneLocation } from '../../locationsThunks';
-import { selectCreateBookingError, selectOneLocation } from '../../locationsSlice';
+import { selectCreateBookingError, selectOneLocation, selectOneLocationLoading } from '../../locationsSlice';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import dayjs from 'dayjs';
 import { openSnackbar } from '../../../users/usersSlice';
@@ -42,6 +42,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
   const loading = useAppSelector(selectGetAllClientsLoading);
   const error = useAppSelector(selectCreateBookingError);
   const oneLocation = useAppSelector(selectOneLocation);
+  const loadingOneLocation = useAppSelector(selectOneLocationLoading);
 
   useEffect(() => {
     dispatch(fetchClients());
@@ -89,23 +90,32 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage }) => {
         </Grid>
         <Grid display="flex" xs={12} item>
           <Paper elevation={3}>
-            {oneLocation &&
-              oneLocation.booking.map((item) => (
-                <Tooltip
-                  key={item._id}
-                  title={
-                    <>
-                      <Typography component="p">
-                        Старт: {dayjs(item.booking_date.start).format('DD.MM.YYYY')}
-                      </Typography>
-                      <Divider />
-                      <Typography component="p">Конец: {dayjs(item.booking_date.end).format('DD.MM.YYYY')}</Typography>
-                    </>
-                  }
-                >
-                  <AccountCircleIcon />
-                </Tooltip>
-              ))}
+            {!loadingOneLocation ? (
+              oneLocation && oneLocation.booking.length !== 0 ? (
+                oneLocation.booking.map((item) => (
+                  <Tooltip
+                    key={item._id}
+                    title={
+                      <>
+                        <Typography component="p">
+                          Старт: {dayjs(item.booking_date.start).format('DD.MM.YYYY')}
+                        </Typography>
+                        <Divider />
+                        <Typography component="p">
+                          Конец: {dayjs(item.booking_date.end).format('DD.MM.YYYY')}
+                        </Typography>
+                      </>
+                    }
+                  >
+                    <AccountCircleIcon />
+                  </Tooltip>
+                ))
+              ) : (
+                <Alert severity="info">Броней нет</Alert>
+              )
+            ) : (
+              <CircularProgress />
+            )}
           </Paper>
         </Grid>
         <Grid xs={12} item>

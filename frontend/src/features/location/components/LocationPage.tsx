@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import imagePlaceholder from '../../../assets/billboard-placeholder.jpg';
 import LocationPageTabs from './LocationPageTabs';
 import { apiURL } from '../../../constants';
-import BookingForm from './Booking/BookingForm';
+import BookingForm from './BookingForm/BookingForm';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 
 const LocationPage = () => {

@@ -62,7 +62,8 @@ import { fetchStreet } from './street/streetThunks';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
-import BookingForm from './components/Booking/BookingForm';
+import BookingForm from './components/BookingForm/BookingForm';
+import BookingList from './components/BookingList';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -83,6 +84,7 @@ const LocationList = () => {
   const listLocationId = useAppSelector(selectSelectedLocationId);
   const getItemsLoading = useAppSelector(selectGetItemsListLoading);
   const [openBooking, setOpenBooking] = useState(false);
+  const [openBookingList, setOpenBookingList] = useState(false);
 
   const openDialog = async (id: string) => {
     await dispatch(getItems());
@@ -163,8 +165,9 @@ const LocationList = () => {
     );
   };
 
-  const openBookingModal = (id: string) => {
-    setOpenBooking(true);
+  const openBookingModal = (name: string, id: string) => {
+    if (name === 'list') setOpenBookingList(true);
+    else if (name === 'booking') setOpenBooking(true);
     setLocationID(id);
   };
 
@@ -260,7 +263,8 @@ const LocationList = () => {
                   onEdit={() => openDialog(loc._id)}
                   checkedCardLocation={() => checkedCardLocation(loc._id)}
                   open={open}
-                  setOpenBooking={() => openBookingModal(loc._id)}
+                  openBooking={() => openBookingModal('booking', loc._id)}
+                  openBookingList={() => openBookingModal('list', loc._id)}
                 />
               ))}
             </TableBody>
@@ -295,6 +299,9 @@ const LocationList = () => {
       </Dialog>
       <Dialog open={openBooking} onClose={() => setOpenBooking(false)} maxWidth="md">
         <BookingForm locationId={locationID} />
+      </Dialog>
+      <Dialog open={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
+        <BookingList />
       </Dialog>
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />
