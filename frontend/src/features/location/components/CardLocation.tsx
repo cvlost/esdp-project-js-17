@@ -86,7 +86,7 @@ const CardLocation: React.FC<Props> = ({
       </div>
     ),
     status: (
-      <>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Tooltip
           title={
             <>
@@ -113,7 +113,7 @@ const CardLocation: React.FC<Props> = ({
             }}
           ></Box>
         </Tooltip>
-      </>
+      </div>
     ),
   };
   return (

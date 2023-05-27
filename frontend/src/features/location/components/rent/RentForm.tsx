@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { DateRangePicker } from 'rsuite';
-import ModalBody from '../../../components/ModalBody';
+import ModalBody from '../../../../components/ModalBody';
 import { Box, Button, Grid, MenuItem, TextField, Typography } from '@mui/material';
-import { RentMutation } from '../../../types';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { selectClientsList } from '../client/clientSlice';
-import { fetchClients } from '../client/clientThunk';
+import { RentMutation } from '../../../../types';
+import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
+import { selectClientsList } from '../../client/clientSlice';
+import { fetchClients } from '../../client/clientThunk';
 import { DateRange } from 'rsuite/DateRangePicker';
 import { Link } from 'react-router-dom';
 
@@ -60,15 +60,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit }) => {
         </Typography>
         <Grid component="form" onSubmit={submitFormHandler} container direction="column" spacing={2}>
           <Grid item>
-            <TextField
-              fullWidth
-              select
-              value={state.client}
-              name="client"
-              label="Клиент"
-              required
-              onChange={inputChangeHandler}
-            >
+            <TextField fullWidth select value={state.client} name="client" label="Клиент" onChange={inputChangeHandler}>
               <MenuItem value="" disabled>
                 Выберите клиента
               </MenuItem>

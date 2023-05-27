@@ -62,7 +62,7 @@ import { fetchStreet } from './street/streetThunks';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
-import RentForm from './rent/RentForm';
+import RentForm from './components/rent/RentForm';
 import BookingForm from './components/BookingForm/BookingForm';
 import BookingList from './components/BookingList';
 
