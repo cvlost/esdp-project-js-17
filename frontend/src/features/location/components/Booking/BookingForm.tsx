@@ -5,11 +5,14 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Divider,
   Grid,
   IconButton,
   MenuItem,
   Paper,
   TextField,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import { MainColorGreen } from '../../../../constants';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -20,8 +23,11 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectClientsList, selectGetAllClientsLoading } from '../../client/clientSlice';
 import { fetchClients } from '../../client/clientThunk';
 import { DateRange } from 'rsuite/DateRangePicker';
-import { createBooking } from '../../locationsThunks';
-import { selectCreateBookingError } from '../../locationsSlice';
+import { createBooking, getOneLocation } from '../../locationsThunks';
+import { selectCreateBookingError, selectOneLocation } from '../../locationsSlice';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import dayjs from 'dayjs';
+import { openSnackbar } from '../../../users/usersSlice';
 
 interface Props {
   locationId: string;
@@ -34,9 +40,11 @@ const BookingForm: React.FC<Props> = ({ locationId }) => {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectGetAllClientsLoading);
   const error = useAppSelector(selectCreateBookingError);
+  const oneLocation = useAppSelector(selectOneLocation);
 
   useEffect(() => {
     dispatch(fetchClients());
+    dispatch(getOneLocation(locationId));
   }, [dispatch, locationId]);
 
   const handleDateChange = (date: DateRange | null) => {
@@ -56,6 +64,8 @@ const BookingForm: React.FC<Props> = ({ locationId }) => {
     };
 
     await dispatch(createBooking(obj)).unwrap();
+    await dispatch(getOneLocation(locationId)).unwrap();
+    dispatch(openSnackbar({ status: true, parameter: 'create_booking' }));
     setValueClient('');
     setValueDate([new Date(), new Date()]);
   };
@@ -70,12 +80,30 @@ const BookingForm: React.FC<Props> = ({ locationId }) => {
 
   return (
     <Box component="form" sx={{ maxWidth: '500px', p: 1 }} onSubmit={onSubmit}>
-      <Grid container alignItems="center" spacing={3}>
+      <Grid container alignItems="center" rowSpacing={2}>
         <Grid xs={12} item>
           {error && <Alert severity="error">{error.message}</Alert>}
         </Grid>
         <Grid display="flex" xs={12} item>
-          {/*<Box key={item._id} sx={{ width: '20px', height: '20px', background: 'green', borderRadius: '50%' }}></Box>*/}
+          <Paper elevation={3}>
+            {oneLocation &&
+              oneLocation.booking.map((item) => (
+                <Tooltip
+                  key={item._id}
+                  title={
+                    <>
+                      <Typography component="p">
+                        Старт: {dayjs(item.booking_date.start).format('DD.MM.YYYY')}
+                      </Typography>
+                      <Divider />
+                      <Typography component="p">Конец: {dayjs(item.booking_date.end).format('DD.MM.YYYY')}</Typography>
+                    </>
+                  }
+                >
+                  <AccountCircleIcon />
+                </Tooltip>
+              ))}
+          </Paper>
         </Grid>
         <Grid xs={12} item>
           <Paper elevation={3} sx={{ p: 1 }}>
