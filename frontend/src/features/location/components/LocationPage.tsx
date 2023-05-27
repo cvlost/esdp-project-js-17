@@ -9,10 +9,12 @@ import LocationPageTabs from './LocationPageTabs';
 import { apiURL } from '../../../constants';
 import BookingForm from './BookingForm/BookingForm';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
+import BookingList from './BookingList';
 
 const LocationPage = () => {
   const [isPage, setIsPage] = useState(false);
   const [openBooking, setOpenBooking] = useState(false);
+  const [openBookingList, setOpenBookingList] = useState(false);
   const dispatch = useAppDispatch();
   const id = useParams().id as string;
   const loc = useAppSelector(selectOneLocation);
@@ -24,9 +26,10 @@ const LocationPage = () => {
     }
   }, [dispatch, id]);
 
-  const openModalBooking = () => {
+  const openModal = (name: string) => {
     setIsPage(true);
-    setOpenBooking(true);
+    if (name === 'modal') setOpenBooking(true);
+    else if (name === 'list') setOpenBookingList(true);
   };
 
   return (
@@ -72,12 +75,18 @@ const LocationPage = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Box>
-                <LocationPageTabs openModalBooking={openModalBooking} />
+                <LocationPageTabs
+                  openModalBookingList={() => openModal('list')}
+                  openModalBooking={() => openModal('modal')}
+                />
               </Box>
             </Grid>
           </Grid>
           <Dialog open={openBooking} onClose={() => setOpenBooking(false)} maxWidth="md">
             <BookingForm isPage={isPage} locationId={id} />
+          </Dialog>
+          <Dialog open={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
+            <BookingList isPage={isPage} locationId={id} />
           </Dialog>
           <SnackbarCard />
         </>

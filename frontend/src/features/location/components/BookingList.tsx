@@ -22,9 +22,10 @@ import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 
 interface Props {
   locationId: string;
+  isPage?: boolean;
 }
 
-const BookingList: React.FC<Props> = ({ locationId }) => {
+const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
   const dispatch = useAppDispatch();
   const oneLocation = useAppSelector(selectOneLocation);
   const loading = useAppSelector(selectOneLocationLoading);
@@ -32,8 +33,10 @@ const BookingList: React.FC<Props> = ({ locationId }) => {
   const loadingRemove = useAppSelector(selectRemoveBookingLoading);
 
   useEffect(() => {
-    dispatch(getOneLocation(locationId));
-  }, [dispatch, locationId]);
+    if (isPage === undefined) {
+      dispatch(getOneLocation(locationId));
+    }
+  }, [dispatch, locationId, isPage]);
 
   const removeCardBooking = async (id: string) => {
     if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную локацию?')) {
