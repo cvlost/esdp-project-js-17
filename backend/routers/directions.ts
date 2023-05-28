@@ -4,6 +4,7 @@ import Direction from '../models/Direction';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
 import Location from '../models/Location';
+import { Dir } from 'fs';
 
 const directionRouter = express.Router();
 
@@ -11,6 +12,31 @@ directionRouter.get('/', auth, async (req, res, next) => {
   try {
     const directions = await Direction.find();
     return res.send(directions);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+directionRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const dir = await Direction.find({ _id: req.params.id });
+    return res.send(dir);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+directionRouter.put('/:id', auth, async (req, res, next) => {
+  const editDir = {
+    name: req.body.name,
+  };
+  try {
+    const id = req.params.id as string;
+    const dir = await Direction.find({ _id: req.params.id });
+    if (!dir) {
+      return res.status(404).send({ error: 'direction not found!' });
+    }
+    await Direction.updateMany({ _id: id }, editDir);
   } catch (e) {
     return next(e);
   }
