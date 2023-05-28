@@ -168,14 +168,14 @@ const run = async () => {
 
   const clients = await Client.create(
     {
-      name: 'Арбуз',
-      phone: '+996551178715',
-      email: 'arbuz@gmail.com',
+      companyName: 'Арбуз',
+      companyPhone: '+996551178715',
+      companyEmail: 'arbuz@gmail.com',
     },
     {
-      name: 'Апельсин',
-      phone: '+99655117852',
-      email: 'orange@gmail.com',
+      companyName: 'Апельсин',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
     },
   );
 

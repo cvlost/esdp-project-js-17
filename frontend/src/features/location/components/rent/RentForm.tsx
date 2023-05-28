@@ -67,7 +67,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit }) => {
               {clients &&
                 clients.map((client) => (
                   <MenuItem key={client._id} value={client._id}>
-                    {client.name}
+                    {client.companyName}
                   </MenuItem>
                 ))}
             </TextField>

@@ -138,7 +138,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
               clientList.length !== 0 ? (
                 clientList.map((item) => (
                   <MenuItem key={item._id} value={item._id}>
-                    {item.name}
+                    {item.companyName}
                   </MenuItem>
                 ))
               ) : (
