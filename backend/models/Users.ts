@@ -27,7 +27,7 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
           });
           return !user;
         },
-        message: 'This email is already registered',
+        message: 'Эта почта уже зарегистрирована!',
       },
     },
     password: {

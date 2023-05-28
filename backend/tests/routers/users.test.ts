@@ -54,7 +54,6 @@ describe('usersRouter', () => {
 
   beforeAll(async () => {
     await db.connect();
-    await db.clear();
   });
 
   beforeEach(async () => {
@@ -65,8 +64,11 @@ describe('usersRouter', () => {
     userId = user._id.toString();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await db.clear();
+  });
+
+  afterAll(async () => {
     await db.disconnect();
   });
 
@@ -186,7 +188,7 @@ describe('usersRouter', () => {
         expect(usersListData.perPage).toBe(perPage);
         expect(usersListData.count).not.toBeUndefined();
         expect(usersListData.count).toBe(await User.count());
-      });
+      }, 20_000);
 
       test('без query параметров page & perPage, должен возвращать statusCode 200 и верные данные для пагинации', async () => {
         await addUsersToDb(98);
@@ -199,7 +201,7 @@ describe('usersRouter', () => {
         expect(usersListData.pages).toBe(10);
         expect(usersListData.perPage).toBe(10);
         expect(usersListData.count).toBe(await User.count());
-      });
+      }, 20_000);
 
       test('с невалидными query параметрами page=100_000 & perPage=-200, должен возвращать statusCode 200 и верные данные для пагинации', async () => {
         await addUsersToDb(105);
@@ -214,7 +216,7 @@ describe('usersRouter', () => {
         expect(usersListData.pages).toBe(11);
         expect(usersListData.perPage).toBe(10);
         expect(usersListData.count).toBe(await User.count());
-      });
+      }, 20_000);
     });
   });
 

@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto';
 import User from '../../models/Users';
 import Area from '../../models/Area';
 import City from '../../models/City';
+import mongoose from 'mongoose';
 
 app.use('/areas', areasRouter);
 const request = supertest(app);
@@ -31,10 +32,12 @@ const createAreaDto = { name: 'New area' };
 
 describe('areasRouter', () => {
   let area1Id: string;
-  let createdAreaId: string;
 
   beforeAll(async () => {
     await db.connect();
+  });
+
+  beforeEach(async () => {
     await db.clear();
     await User.create(adminDto, userDto);
     const area1 = await Area.create(area1Dto);
@@ -42,8 +45,11 @@ describe('areasRouter', () => {
     area1Id = area1._id.toString();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await db.clear();
+  });
+
+  afterAll(async () => {
     await db.disconnect();
   });
 
@@ -118,15 +124,24 @@ describe('areasRouter', () => {
       const error = res.body.error;
 
       expect(res.statusCode).toBe(403);
-      expect(error).toEqual('Неавторизованный пользователь. Нет прав на совершение действия.');
+      expect(error).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
+    });
+
+    test('с дублирующимся названием, должен возвращать statusCode 422 и обект ValidationError с сообщением о дублировании', async () => {
+      const duplicateDto = { name: 'area duplicate' };
+      await Area.create(duplicateDto);
+      const res = await request.post('/areas').send(duplicateDto).set({ Authorization: adminToken });
+      const validationError = res.body;
+
+      expect(res.statusCode).toBe(422);
+      expect(validationError.name).toBe('ValidationError');
+      expect(validationError.errors.name).not.toBeUndefined();
     });
 
     describe('если пользователь с ролью "admin" пытается создать новую область', () => {
-      test('с верными данными, должен созвращаться statusCode 201 и объект с сообщением и созданной областью', async () => {
+      test('с верными данными, должен возвращаться statusCode 201 и объект с сообщением и созданной областью', async () => {
         const res = await request.post('/areas').set({ Authorization: adminToken }).send(createAreaDto);
         const { message, area } = res.body;
-
-        createdAreaId = area._id;
 
         expect(res.statusCode).toBe(201);
         expect(message).toBe('Новая область успешно создана!');
@@ -135,7 +150,7 @@ describe('areasRouter', () => {
         expect(area.name).toBe(createAreaDto.name);
       });
 
-      test('c невернымы данными, то должен созвращаться statusCode 422 и обект ValidationError', async () => {
+      test('c невернымы данными, то должен возвращаться statusCode 422 и обект ValidationError', async () => {
         const res = await request.post('/areas').set({ Authorization: adminToken }).send({ bla: 'bla' });
         const name = res.body.name;
 
@@ -176,7 +191,7 @@ describe('areasRouter', () => {
         const errorMessage = res.body.error;
 
         expect(res.statusCode).toBe(422);
-        expect(errorMessage).toBe('Некорректный id области');
+        expect(errorMessage).toBe('Некорректный id области.');
       });
 
       test('с верным id, но со связанным городом, должен возвращать statusCode 409 и сообщение об ошибке', async () => {
@@ -188,7 +203,8 @@ describe('areasRouter', () => {
       });
 
       test('с верным id и без всязанных сущностей, должен возвращать statusCode 200 и объект с информацией об удалении с полем deletedCount = 1', async () => {
-        const res = await request.delete(`/areas/${createdAreaId}`).set({ Authorization: adminToken });
+        const area = await Area.create(createAreaDto);
+        const res = await request.delete(`/areas/${area._id.toString()}`).set({ Authorization: adminToken });
         const result = res.body;
 
         expect(res.statusCode).toBe(200);
@@ -196,7 +212,9 @@ describe('areasRouter', () => {
       });
 
       test('с корректным, но отсутствующим в базе id, должен возвращать statusCode 404 и сообщение об ошибке', async () => {
-        const res = await request.delete(`/areas/${createdAreaId}`).set({ Authorization: adminToken });
+        const res = await request
+          .delete(`/areas/${new mongoose.Types.ObjectId().toString()}`)
+          .set({ Authorization: adminToken });
         const errorMessage = res.body.error;
 
         expect(res.statusCode).toBe(404);

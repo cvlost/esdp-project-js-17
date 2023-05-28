@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "cd .. && husky install backend/.husky",
-    "test:unit": "jest"
+    "test:unit": "jest --config jest.config.json --runInBand"
   },
   "keywords": [],
   "author": "",

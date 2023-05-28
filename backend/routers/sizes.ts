@@ -22,10 +22,10 @@ sizesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
       name: req.body.name,
     });
     await sizeData.save();
-    return res.send(sizeData);
+    return res.status(201).send({ message: 'Новый размер успешно создан!', size: sizeData });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+      return res.status(422).send(e);
     } else {
       return next(e);
     }
@@ -33,14 +33,18 @@ sizesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 });
 
 sizesRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+  const _id = req.params.id as string;
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id размера.' });
+  }
+
   try {
-    const _id = req.params.id as string;
     const size = await Size.findOne({ _id });
     const location = await Location.find({ size: _id });
     if (!size) {
       return res.status(404).send({ error: 'Данный размер не существует в базе.' });
     } else if (location.length > 0) {
-      return res.status(404).send({ error: 'Данный размер привязан к локациям ! Удаление запрещено' });
+      return res.status(409).send({ error: 'Данный размер привязан к локациям! Удаление запрещено.' });
     }
     const result = await Size.deleteOne({ _id });
     return res.send(result);
