@@ -16,7 +16,6 @@ import CreateLegalEntity from './features/location/legalEntity/CreateLegalEntity
 import CreateStreet from './features/location/street/CreateStreet';
 import CreateCity from './features/location/city/CreateCity';
 import CreateLocation from './features/location/CreateLocation';
-import 'rsuite/dist/rsuite.min.css';
 import LocationPage from './features/location/components/LocationPage';
 import CreateLighting from './features/location/lighting/CreateLighting';
 import CreateSize from './features/location/size/CreateSize';
@@ -24,6 +23,7 @@ import ConstructorLink from './features/CommercialLink/ConstructorLink';
 import CommercialLink from './features/CommercialLink/CommercialLink';
 import CommercialLinkOne from './features/CommercialLink/CommercialLinkOne';
 import CreateClient from './features/location/client/CreateClient';
+import 'rsuite/dist/rsuite.min.css';
 
 function App() {
   const user = useAppSelector(selectUser);

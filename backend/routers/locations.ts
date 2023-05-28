@@ -6,7 +6,7 @@ import Region from '../models/Region';
 import City from '../models/City';
 import Direction from '../models/Direction';
 import { imagesUpload } from '../multer';
-import { ILocation } from '../types';
+import { ILocation, RentData } from '../types';
 import Street from '../models/Street';
 import Area from '../models/Area';
 import Format from '../models/Format';
@@ -29,6 +29,7 @@ export const flattenLookup: PipelineStage[] = [
   { $lookup: { from: 'legalentities', localField: 'legalEntity', foreignField: '_id', as: 'legalEntity' } },
   { $lookup: { from: 'lightings', localField: 'lighting', foreignField: '_id', as: 'lighting' } },
   { $lookup: { from: 'sizes', localField: 'size', foreignField: '_id', as: 'size' } },
+  { $lookup: { from: 'bookings', localField: 'booking', foreignField: '_id', as: 'booking' } },
   { $set: { city: { $first: '$city.name' } } },
   { $set: { region: { $first: '$region.name' } } },
   { $set: { streets: { $map: { input: '$streets', as: 'street', in: '$$street.name' } } } },
@@ -174,20 +175,13 @@ locationsRouter.post(
       legalEntity: req.body.legalEntity,
       format: req.body.format,
       price: mongoose.Types.Decimal128.fromString(req.body.price),
-      rent: null,
-      reserve: req.body.reserve,
       lighting: req.body.lighting,
       placement: JSON.parse(req.body.placement),
       size: req.body.size,
       addressNote: req.body.addressNote,
       description: req.body.description,
-      dayImage: 'images/day/' + files['dayImage'][0].filename,
-      schemaImage: 'images/schema/' + files['schemaImage'][0].filename,
-      client: req.body.client,
-      booking: req.body.booking,
-      nearest_booking_date: req.body.nearest_booking_date,
-      checked: false,
-      status: null,
+      dayImage: req.files && files['dayImage'][0] ? 'images/day/' + files['dayImage'][0].filename : null,
+      schemaImage: req.files && files['schemaImage'][0] ? 'images/schema/' + files['schemaImage'][0].filename : null,
     };
 
     try {
@@ -235,16 +229,11 @@ locationsRouter.put(
       legalEntity: req.body.legalEntity,
       format: req.body.format,
       price: mongoose.Types.Decimal128.fromString(req.body.price),
-      rent: null,
-      reserve: req.body.reserve,
       lighting: req.body.lighting,
       placement: JSON.parse(req.body.placement),
       size: req.body.size,
       addressNote: req.body.addressNote,
       description: req.body.description,
-      client: req.body.client,
-      booking: req.body.booking,
-      nearest_booking_date: req.body.nearest_booking_date,
     };
     try {
       const locationOne: ILocation | null = await Location.findOne({ _id: id });
@@ -332,6 +321,29 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
       return res.send(locationOne.checked);
     }
   } catch (e) {
+    return next(e);
+  }
+});
+
+locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const rentData: RentData = req.body;
+
+    const location = await Location.findById(id);
+
+    if (!location) {
+      return res.status(404).send('Данная локация не найдена!');
+    }
+
+    location.rent = rentData.date !== null ? rentData.date : null;
+    location.client = rentData.client !== null ? rentData.client : null;
+    await location.save();
+    return res.send(location);
+  } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(e);
+    }
     return next(e);
   }
 });

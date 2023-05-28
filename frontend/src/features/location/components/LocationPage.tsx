@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Chip, CircularProgress, Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectOneLocation, selectOneLocationLoading } from '../locationsSlice';
@@ -7,8 +7,15 @@ import { useParams } from 'react-router-dom';
 import imagePlaceholder from '../../../assets/billboard-placeholder.jpg';
 import LocationPageTabs from './LocationPageTabs';
 import { apiURL } from '../../../constants';
+import BookingForm from './BookingForm/BookingForm';
+import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
+import BookingList from './BookingList';
+import ModalBody from '../../../components/ModalBody';
 
 const LocationPage = () => {
+  const [isPage, setIsPage] = useState(false);
+  const [openBooking, setOpenBooking] = useState(false);
+  const [openBookingList, setOpenBookingList] = useState(false);
   const dispatch = useAppDispatch();
   const id = useParams().id as string;
   const loc = useAppSelector(selectOneLocation);
@@ -19,6 +26,12 @@ const LocationPage = () => {
       dispatch(getOneLocation(id));
     }
   }, [dispatch, id]);
+
+  const openModal = (name: string) => {
+    setIsPage(true);
+    if (name === 'modal') setOpenBooking(true);
+    else if (name === 'list') setOpenBookingList(true);
+  };
 
   return (
     <Box sx={{ py: 2 }}>
@@ -63,10 +76,20 @@ const LocationPage = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Box>
-                <LocationPageTabs />
+                <LocationPageTabs
+                  openModalBookingList={() => openModal('list')}
+                  openModalBooking={() => openModal('modal')}
+                />
               </Box>
             </Grid>
           </Grid>
+          <ModalBody isOpen={openBooking} onClose={() => setOpenBooking(false)}>
+            <BookingForm closeModal={() => setOpenBooking(false)} isPage={isPage} locationId={id} />
+          </ModalBody>
+          <ModalBody isOpen={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
+            <BookingList isPage={isPage} locationId={id} />
+          </ModalBody>
+          <SnackbarCard />
         </>
       )}
     </Box>

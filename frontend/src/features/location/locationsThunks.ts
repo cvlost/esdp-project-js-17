@@ -1,11 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
+  BookingMutation,
   FilterCriteriaResponse,
   FilterState,
   GetItemsListType,
   ILocation,
   LocationMutation,
   LocationsListResponse,
+  RentMutation,
   ValidationError,
 } from '../../types';
 import axiosApi from '../../axios';
@@ -181,4 +183,50 @@ export const checkedLocation = createAsyncThunk<void, CheckedLocationType>('loca
   }
 
   await axiosApi.patch(url, { checked: true });
+});
+
+interface UpdateRentParams {
+  id: string;
+  rent: RentMutation;
+}
+
+export const updateRent = createAsyncThunk<void, UpdateRentParams>('locations/updateRent', async (params) => {
+  try {
+    const rentDate =
+      params.rent.date !== null
+        ? {
+            start: params.rent.date[0],
+            end: params.rent.date[1],
+          }
+        : null;
+    await axiosApi.patch('locations/updateRent/' + params.id, {
+      date: rentDate,
+      client: params.rent.client !== '' ? params.rent.client : null,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+export const createBooking = createAsyncThunk<void, BookingMutation, { rejectValue: ValidationError }>(
+  'locations/createBooking',
+  async (bookingMutation, { rejectWithValue }) => {
+    try {
+      await axiosApi.post('/bookings', bookingMutation);
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 400) {
+        return rejectWithValue(e.response.data as ValidationError);
+      }
+      throw e;
+    }
+  },
+);
+
+interface removeBookingType {
+  idLoc: string;
+  idBook: string;
+}
+
+export const removeBooking = createAsyncThunk<void, removeBookingType>('locations/removeBooking', async (arg) => {
+  await axiosApi.delete(`/bookings/${arg.idLoc}/${arg.idBook}`);
 });

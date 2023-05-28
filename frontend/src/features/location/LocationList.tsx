@@ -4,7 +4,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
   Grid,
   IconButton,
   Pagination,
@@ -47,6 +46,7 @@ import {
   getToEditOneLocation,
   removeLocation,
   updateLocation,
+  updateRent,
 } from './locationsThunks';
 import LocationDrawer from './components/LocationDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -56,12 +56,15 @@ import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
 import TuneIcon from '@mui/icons-material/Tune';
 import LocationFilter from './components/LocationsFilter';
 import LocationForm from './components/LocationForm';
-import { LocationMutation } from '../../types';
+import { LocationMutation, RentMutation } from '../../types';
 import { fetchCities } from './city/cityThunk';
 import { fetchStreet } from './street/streetThunks';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
+import RentForm from './components/rent/RentForm';
+import BookingForm from './components/BookingForm/BookingForm';
+import BookingList from './components/BookingList';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -73,6 +76,7 @@ const LocationList = () => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isRentOpen, setIsRentOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [locationID, setLocationID] = useState('');
   const deleteLoading = useAppSelector(selectLocationsDeleteLoading);
@@ -81,6 +85,8 @@ const LocationList = () => {
   const [open, setOpen] = useState(false);
   const listLocationId = useAppSelector(selectSelectedLocationId);
   const getItemsLoading = useAppSelector(selectGetItemsListLoading);
+  const [openBooking, setOpenBooking] = useState(false);
+  const [openBookingList, setOpenBookingList] = useState(false);
 
   const openDialog = async (id: string) => {
     await dispatch(getItems());
@@ -89,6 +95,23 @@ const LocationList = () => {
     await dispatch(getToEditOneLocation(id));
     setLocationID(id);
     setIsOpen(true);
+  };
+
+  const onRentUpdateSubmit = async (rent: RentMutation) => {
+    await dispatch(updateRent({ rent, id: locationID }));
+    await dispatch(
+      getLocationsList({
+        page: locationsListData.page,
+        perPage: locationsListData.perPage,
+        filtered: filter.filtered,
+      }),
+    );
+    setIsRentOpen(false);
+  };
+
+  const openRentDialog = (locationId: string) => {
+    setIsRentOpen(true);
+    setLocationID(locationId);
   };
 
   const onFormSubmit = async (location: LocationMutation) => {
@@ -159,6 +182,12 @@ const LocationList = () => {
         filtered: filter.filtered,
       }),
     );
+  };
+
+  const openBookingModal = (name: string, id: string) => {
+    if (name === 'list') setOpenBookingList(true);
+    else if (name === 'booking') setOpenBooking(true);
+    setLocationID(id);
   };
 
   return (
@@ -245,6 +274,7 @@ const LocationList = () => {
             >
               {locationsListData.locations.map((loc, i) => (
                 <CardLocation
+                  rentOpen={() => openRentDialog(loc._id)}
                   onDelete={() => DeleteLocations(loc._id)}
                   deleteLoading={deleteLoading}
                   key={loc._id}
@@ -253,6 +283,8 @@ const LocationList = () => {
                   onEdit={() => openDialog(loc._id)}
                   checkedCardLocation={() => checkedCardLocation(loc._id)}
                   open={open}
+                  openBooking={() => openBookingModal('booking', loc._id)}
+                  openBookingList={() => openBookingModal('list', loc._id)}
                 />
               ))}
             </TableBody>
@@ -282,9 +314,16 @@ const LocationList = () => {
           )}
         </ModalBody>
       )}
-      <Dialog open={isFilterOpen} onClose={() => setIsFilterOpen(false)} fullWidth maxWidth="md">
+      <ModalBody isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)}>
         <LocationFilter onClose={() => setIsFilterOpen(false)} />
-      </Dialog>
+      </ModalBody>
+      <ModalBody isOpen={openBooking} onClose={() => setOpenBooking(false)}>
+        <BookingForm closeModal={() => setOpenBooking(false)} locationId={locationID} />
+      </ModalBody>
+      <ModalBody isOpen={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
+        <BookingList locationId={locationID} />
+      </ModalBody>
+      <RentForm onSubmit={onRentUpdateSubmit} isOpen={isRentOpen} closeRentForm={() => setIsRentOpen(false)} />
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />
     </Box>

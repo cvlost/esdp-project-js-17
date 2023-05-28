@@ -19,7 +19,7 @@ const AppToolbar = () => {
               Шамдагай
             </Link>
           </Typography>
-          {user && <Grid item>{user ? <UserMenu user={user} /> : <AnonymousMenu />}</Grid>}
+          <Grid item>{user ? <UserMenu user={user} /> : <AnonymousMenu />}</Grid>
         </Grid>
       </Toolbar>
     </AppBar>

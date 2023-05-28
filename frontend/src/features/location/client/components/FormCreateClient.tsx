@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ClientMutation, ValidationError } from '../../../../types';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
+
 interface Props {
   onSubmit: (client: ClientMutation) => void;
   existingClient?: ClientMutation;
@@ -11,9 +12,20 @@ interface Props {
 }
 
 const initialState: ClientMutation = {
-  email: '',
-  name: '',
-  phone: '',
+  companyName: '',
+  companyKindOfActivity: '',
+  companyAddress: '',
+  companyPhone: '',
+  companyEmail: '',
+  companySite: '',
+  companyBirthday: '',
+  CompanyManagementName: '',
+  CompanyManagementJobTitle: '',
+  CompanyManagementBirthday: '',
+  contactPersonName: '',
+  contactPersonJobTitle: '',
+  contactPersonBirthday: '',
+  advertisingChannel: '',
 };
 
 const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialState, isEdit, Loading, error }) => {
@@ -22,7 +34,22 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(state);
-    setState({ name: '', phone: '', email: '' });
+    setState({
+      companyName: '',
+      companyKindOfActivity: '',
+      companyAddress: '',
+      companyPhone: '',
+      companyEmail: '',
+      companySite: '',
+      companyBirthday: '',
+      CompanyManagementName: '',
+      CompanyManagementJobTitle: '',
+      CompanyManagementBirthday: '',
+      contactPersonName: '',
+      contactPersonJobTitle: '',
+      contactPersonBirthday: '',
+      advertisingChannel: '',
+    });
   };
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -56,15 +83,18 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
+          <Typography component="h1" variant="h5" sx={{ mt: 2 }}>
+            Организация
+          </Typography>
           <Grid item xs={12}>
             <TextField
-              value={state.name}
+              value={state.companyName}
               onChange={inputChangeHandler}
               required
               fullWidth
-              label="Имя клиента"
+              label="Имя организации"
               type="text"
-              name="name"
+              name="companyName"
               autoComplete="off"
               error={Boolean(getFieldError('name'))}
               helperText={getFieldError('name')}
@@ -72,28 +102,186 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
           </Grid>
           <Grid item xs={12}>
             <TextField
-              value={state.phone}
+              value={state.companyPhone}
               onChange={inputChangeHandler}
               fullWidth
-              label="Номер клиента"
+              label="Номер организации"
               type="number"
-              name="phone"
+              name="companyPhone"
               autoComplete="off"
-              error={Boolean(getFieldError('phone'))}
-              helperText={getFieldError('phone')}
+              error={Boolean(getFieldError('companyPhone'))}
+              helperText={getFieldError('companyPhone')}
             ></TextField>
           </Grid>
           <Grid item xs={12}>
             <TextField
-              value={state.email}
+              value={state.companyEmail}
               onChange={inputChangeHandler}
               fullWidth
-              label="Email клиента"
+              label="Email организации"
               type="email"
-              name="email"
+              name="companyEmail"
               autoComplete="off"
-              error={Boolean(getFieldError('email'))}
-              helperText={getFieldError('email')}
+              error={Boolean(getFieldError('companyEmail'))}
+              helperText={getFieldError('companyEmail')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.companyKindOfActivity}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="Вид деятельности организации"
+              type="text"
+              name="companyKindOfActivity"
+              autoComplete="off"
+              error={Boolean(getFieldError('companyKindOfActivity'))}
+              helperText={getFieldError('companyKindOfActivity')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.companyAddress}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="Адрес организации"
+              type="text"
+              name="companyAddress"
+              autoComplete="off"
+              error={Boolean(getFieldError('companyAddress'))}
+              helperText={getFieldError('companyAddress')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.companySite}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="Сайт организации"
+              type="url"
+              name="companySite"
+              autoComplete="off"
+              error={Boolean(getFieldError('companySite'))}
+              helperText={getFieldError('companySite')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1" sx={{ m: 0 }}>
+              День рождение организации
+            </Typography>
+            <TextField
+              value={state.companyBirthday}
+              onChange={inputChangeHandler}
+              fullWidth
+              type="date"
+              name="companyBirthday"
+              autoComplete="off"
+              error={Boolean(getFieldError('companyBirthday'))}
+              helperText={getFieldError('companyBirthday')}
+            />
+          </Grid>
+          <Typography component="h1" variant="h5" sx={{ mt: 1 }}>
+            Руководство компании
+          </Typography>
+          <Grid item xs={12}>
+            <TextField
+              value={state.CompanyManagementName}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="ФИО"
+              type="text"
+              name="CompanyManagementName"
+              autoComplete="off"
+              error={Boolean(getFieldError('CompanyManagementName'))}
+              helperText={getFieldError('CompanyManagementName')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.CompanyManagementJobTitle}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="должность"
+              type="text"
+              name="CompanyManagementJobTitle"
+              autoComplete="off"
+              error={Boolean(getFieldError('CompanyManagementJobTitle'))}
+              helperText={getFieldError('CompanyManagementJobTitle')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1" sx={{ m: 0 }}>
+              День рождение
+            </Typography>
+            <TextField
+              value={state.CompanyManagementBirthday}
+              onChange={inputChangeHandler}
+              fullWidth
+              type="date"
+              name="CompanyManagementBirthday"
+              autoComplete="off"
+              error={Boolean(getFieldError('CompanyManagementBirthday'))}
+              helperText={getFieldError('CompanyManagementBirthday')}
+            />
+          </Grid>
+          <Typography component="h1" variant="h5" sx={{ mt: 1 }}>
+            Контактное лицо
+          </Typography>
+          <Grid item xs={12}>
+            <TextField
+              value={state.contactPersonName}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="ФИО"
+              type="text"
+              name="contactPersonName"
+              autoComplete="off"
+              error={Boolean(getFieldError('contactPersonName'))}
+              helperText={getFieldError('contactPersonName')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              value={state.contactPersonJobTitle}
+              onChange={inputChangeHandler}
+              fullWidth
+              label="Должность"
+              type="text"
+              name="contactPersonJobTitle"
+              autoComplete="off"
+              error={Boolean(getFieldError('contactPersonJobTitle'))}
+              helperText={getFieldError('contactPersonJobTitle')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1" sx={{ m: 0 }}>
+              День рождение
+            </Typography>
+            <TextField
+              value={state.contactPersonBirthday}
+              onChange={inputChangeHandler}
+              fullWidth
+              type="date"
+              name="contactPersonBirthday"
+              autoComplete="off"
+              error={Boolean(getFieldError('contactPersonBirthday'))}
+              helperText={getFieldError('contactPersonBirthday')}
+            />
+          </Grid>
+          <Typography component="h1" variant="h5" sx={{ mt: 1 }}>
+            Рекламный канал
+          </Typography>
+          <Grid item>
+            <TextField
+              fullWidth
+              multiline
+              rows={5}
+              label=" рекомендация знакомых, реклама в интернете итд..."
+              value={state.advertisingChannel}
+              onChange={inputChangeHandler}
+              name="advertisingChannel"
+              error={Boolean(getFieldError('advertisingChannel'))}
+              helperText={getFieldError('advertisingChannel')}
             />
           </Grid>
         </Grid>

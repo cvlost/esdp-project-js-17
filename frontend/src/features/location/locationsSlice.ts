@@ -20,6 +20,8 @@ import {
   getToEditOneLocation,
   checkedLocation,
   getItems,
+  createBooking,
+  removeBooking,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -52,6 +54,9 @@ interface LocationsState {
   checkedLocationLoading: false | string;
   itemsList: GetItemsListType;
   getItemsListLoading: boolean;
+  createBookingLoading: boolean;
+  createBookingError: ValidationError | null;
+  removeBookingLoading: boolean;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -69,7 +74,6 @@ export const initialColumns: LocationColumn[] = [
   { id: '11', name: 'placement', prettyName: 'Расположение', show: true, type: 'billboard' },
   { id: '12', name: 'price', prettyName: 'Цена', show: true, type: 'billboard' },
   { id: '13', name: 'rent', prettyName: 'Аренда', show: true, type: 'billboard' },
-  { id: '14', name: 'reserve', prettyName: 'Бронь', show: true, type: 'billboard' },
 ];
 
 const initialFilterState: FilterState = {
@@ -158,6 +162,9 @@ const initialState: LocationsState = {
     lighting: [],
   },
   getItemsListLoading: false,
+  createBookingLoading: false,
+  createBookingError: null,
+  removeBookingLoading: false,
 };
 
 const locationsSlice = createSlice({
@@ -293,6 +300,27 @@ const locationsSlice = createSlice({
     builder.addCase(getFilterCriteriaData.rejected, (state) => {
       state.filterCriteriaLoading = false;
     });
+
+    builder.addCase(createBooking.pending, (state) => {
+      state.createBookingLoading = true;
+    });
+    builder.addCase(createBooking.fulfilled, (state) => {
+      state.createBookingLoading = false;
+    });
+    builder.addCase(createBooking.rejected, (state, { payload: error }) => {
+      state.createBookingLoading = false;
+      state.createBookingError = error || null;
+    });
+
+    builder.addCase(removeBooking.pending, (state) => {
+      state.removeBookingLoading = true;
+    });
+    builder.addCase(removeBooking.fulfilled, (state) => {
+      state.removeBookingLoading = false;
+    });
+    builder.addCase(removeBooking.rejected, (state) => {
+      state.removeBookingLoading = false;
+    });
   },
 });
 
@@ -318,3 +346,6 @@ export const selectCheckedLocationLoading = (state: RootState) => state.location
 export const selectSelectedLocationId = (state: RootState) => state.locations.selectedLocationId;
 export const selectItemsList = (state: RootState) => state.locations.itemsList;
 export const selectGetItemsListLoading = (state: RootState) => state.locations.getItemsListLoading;
+export const selectCreateBookingLoading = (state: RootState) => state.locations.createBookingLoading;
+export const selectCreateBookingError = (state: RootState) => state.locations.createBookingError;
+export const selectRemoveBookingLoading = (state: RootState) => state.locations.removeBookingLoading;

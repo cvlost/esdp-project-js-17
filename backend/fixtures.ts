@@ -12,6 +12,7 @@ import Format from './models/Format';
 import Area from './models/Area';
 import Lighting from './models/Lighting';
 import Size from './models/Size';
+import Client from './models/Client';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -30,6 +31,7 @@ const run = async () => {
     await db.dropCollection('areas');
     await db.dropCollection('sizes');
     await db.dropCollection('lightings');
+    await db.dropCollection('clients');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -164,9 +166,23 @@ const run = async () => {
 
   const lightings = await Lighting.create({ name: 'Внутреннее' }, { name: 'Внешнее' });
 
+  const clients = await Client.create(
+    {
+      companyName: 'Арбуз',
+      companyPhone: '+996551178715',
+      companyEmail: 'arbuz@gmail.com',
+    },
+    {
+      companyName: 'Апельсин',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
+  );
+
   for (let i = 0; i < 20; i++) {
     await Location.create({
       area: randElement(areas)._id,
+      client: randElement(clients)._id,
       direction: randElement(directions)._id,
       city: randElement(cities)._id,
       region: randElement(regions)._id,
@@ -216,6 +232,7 @@ const run = async () => {
       dayImage: `fixtures/${i + 1}.jpg`,
       schemaImage: `fixtures/${i + 1}.png`,
       status: null,
+      booking: [],
     });
   }
 

@@ -1,3 +1,5 @@
+import { DateRange } from 'rsuite/DateRangePicker';
+
 export interface User {
   _id: string;
   email: string;
@@ -110,11 +112,29 @@ export interface IPeriod {
   end: string;
 }
 
+export interface BookingMutation {
+  clientId: string;
+  locationId: string;
+  booking_date: {
+    start: Date;
+    end: Date;
+  };
+}
+
+export interface BookingListType {
+  _id: string;
+  clientId: string;
+  locationId: string;
+  booking_date: {
+    start: string;
+    end: string;
+  };
+}
+
 export interface ILocation {
   _id: string;
   price: string;
   rent: null | IPeriod;
-  reserve: null | IPeriod;
   city: string;
   area: string;
   streets: [string, string] | string[];
@@ -132,6 +152,7 @@ export interface ILocation {
   description?: string;
   checked: boolean;
   status: string | null;
+  booking: BookingListType[];
 }
 
 export interface LocationsListResponse {
@@ -193,10 +214,22 @@ export interface LocationMutation {
 
 export interface ClientsList {
   _id: string;
-  name: string;
-  phone: string;
-  email: string;
+  companyName: string;
+  companyKindOfActivity: string;
+  companyAddress: string;
+  companyPhone: string;
+  companyEmail: string;
+  companySite: string;
+  companyBirthday: string;
+  CompanyManagementName: string;
+  CompanyManagementJobTitle: string;
+  CompanyManagementBirthday: string;
+  contactPersonName: string;
+  contactPersonJobTitle: string;
+  contactPersonBirthday: string;
+  advertisingChannel: string;
 }
+
 export type ClientMutation = Omit<ClientsList, '_id'>;
 
 /***** START: Filter types *****/
@@ -340,7 +373,6 @@ export interface ILocationLink {
   _id: string;
   price: string | null;
   rent: null | IPeriod;
-  reserve: null | IPeriod;
   city: string | null;
   area: string | null;
   streets: [string, string] | string[];
@@ -357,6 +389,7 @@ export interface ILocationLink {
   addressNote?: string;
   description?: string;
   checked: boolean;
+  client: string;
 }
 
 export interface contentLinkType {
@@ -369,4 +402,9 @@ export interface contentLinkOneType {
   location: ILocationLink | null;
   description: string;
   title: string;
+}
+
+export interface RentMutation {
+  date: DateRange | null;
+  client: string | null;
 }

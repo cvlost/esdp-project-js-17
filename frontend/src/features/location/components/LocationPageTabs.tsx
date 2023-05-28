@@ -8,8 +8,15 @@ import { selectUser } from '../../users/usersSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
-const LocationPageTabs = () => {
+interface Props {
+  openModalBooking: React.MouseEventHandler;
+  openModalBookingList: React.MouseEventHandler;
+}
+
+const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingList }) => {
   const user = useAppSelector(selectUser);
   const { confirm } = useConfirm();
   const [value, setValue] = React.useState('1');
@@ -82,19 +89,6 @@ const LocationPageTabs = () => {
                   {loc.rent ? (
                     <>
                       Да (с {dayjs(loc.rent.start).format('DD.MM.YYYY')} до {dayjs(loc.rent.end).format('DD.MM.YYYY')})
-                    </>
-                  ) : (
-                    `Нет`
-                  )}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Забронирован</TableCell>
-                <TableCell>
-                  {loc.reserve ? (
-                    <>
-                      Да (с {dayjs(loc.reserve.start).format('DD.MM.YYYY')} до{' '}
-                      {dayjs(loc.reserve.end).format('DD.MM.YYYY')})
                     </>
                   ) : (
                     `Нет`
@@ -189,6 +183,28 @@ const LocationPageTabs = () => {
                   }}
                 >
                   Удалить
+                </LoadingButton>
+              </Grid>
+              <Grid item>
+                <LoadingButton
+                  onClick={openModalBooking}
+                  loading={false}
+                  variant="contained"
+                  loadingPosition="start"
+                  startIcon={<GroupAddIcon />}
+                >
+                  Бронировать
+                </LoadingButton>
+              </Grid>
+              <Grid item>
+                <LoadingButton
+                  onClick={openModalBookingList}
+                  loading={false}
+                  variant="contained"
+                  loadingPosition="start"
+                  startIcon={<FormatListBulletedIcon />}
+                >
+                  Список броней
                 </LoadingButton>
               </Grid>
             </Grid>

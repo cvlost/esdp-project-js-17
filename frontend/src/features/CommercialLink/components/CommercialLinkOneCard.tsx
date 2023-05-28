@@ -66,21 +66,6 @@ const CommercialLinkOneCard = () => {
                   </TableCell>
                 </TableRow>
               )}
-              {locationLinkOne.location.reserve && (
-                <TableRow>
-                  <TableCell>Забронирован</TableCell>
-                  <TableCell>
-                    {locationLinkOne.location.reserve ? (
-                      <>
-                        Да (с {dayjs(locationLinkOne.location.reserve.start).format('DD.MM.YYYY')} до{' '}
-                        {dayjs(locationLinkOne.location.reserve.end).format('DD.MM.YYYY')})
-                      </>
-                    ) : (
-                      `Нет`
-                    )}
-                  </TableCell>
-                </TableRow>
-              )}
               {locationLinkOne.location.placement && (
                 <TableRow>
                   <TableCell>Расположение</TableCell>
