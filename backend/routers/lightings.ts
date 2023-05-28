@@ -18,7 +18,7 @@ lightingRouter.get('/', auth, async (req, res, next) => {
 
 lightingRouter.get('/:id', auth, async (req, res, next) => {
   try {
-    const light = await Lighting.find({ _id: req.params.id });
+    const light = await Lighting.findOne({ _id: req.params.id });
     return res.send(light);
   } catch (e) {
     return next(e);

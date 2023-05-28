@@ -18,7 +18,7 @@ formatRouter.get('/', auth, permit('admin'), async (req, res, next) => {
 
 formatRouter.get('/:id', auth, async (req, res, next) => {
   try {
-    const format = await Format.find({ _id: req.params.id });
+    const format = await Format.findOne({ _id: req.params.id });
     return res.send(format);
   } catch (e) {
     return next(e);

@@ -23,7 +23,7 @@ streetsRouter.get('/', auth, async (req, res, next) => {
 
 streetsRouter.get('/:id', auth, async (req, res, next) => {
   try {
-    const street = await Street.find({ _id: req.params.id });
+    const street = await Street.findOne({ _id: req.params.id });
     return res.send(street);
   } catch (e) {
     return next(e);

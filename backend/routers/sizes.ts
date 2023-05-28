@@ -18,7 +18,7 @@ sizesRouter.get('/', auth, async (req, res, next) => {
 
 sizesRouter.get('/:id', auth, async (req, res, next) => {
   try {
-    const size = await Size.find({ _id: req.params.id });
+    const size = await Size.findOne({ _id: req.params.id });
     return res.send(size);
   } catch (e) {
     return next(e);

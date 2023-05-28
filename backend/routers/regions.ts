@@ -23,7 +23,7 @@ regionsRouter.get('/', auth, async (req, res, next) => {
 
 regionsRouter.get('/:id', auth, async (req, res, next) => {
   try {
-    const region = await Region.find({ _id: req.params.id });
+    const region = await Region.findOne({ _id: req.params.id });
     return res.send(region);
   } catch (e) {
     return next(e);

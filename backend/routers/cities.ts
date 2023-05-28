@@ -24,7 +24,7 @@ citiesRouter.get('/', auth, async (req, res, next) => {
 
 citiesRouter.get('/:id', auth, async (req, res, next) => {
   try {
-    const city = await City.find({ _id: req.params.id });
+    const city = await City.findOne({ _id: req.params.id });
     return res.send(city);
   } catch (e) {
     return next(e);

@@ -18,7 +18,7 @@ directionRouter.get('/', auth, async (req, res, next) => {
 
 directionRouter.get('/:id', auth, async (req, res, next) => {
   try {
-    const dir = await Direction.find({ _id: req.params.id });
+    const dir = await Direction.findOne({ _id: req.params.id });
     return res.send(dir);
   } catch (e) {
     return next(e);
