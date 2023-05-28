@@ -38,7 +38,6 @@ import { DirectionMutation } from '../../../types';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
-import { fetchAreas, updateArea } from '../area/areaThunk';
 import ModalBody from '../../../components/ModalBody';
 
 const CreateDirection = () => {

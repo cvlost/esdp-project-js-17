@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
 import { FormatList, GlobalError, ValidationError } from '../../../types';
-import { createFormat, fetchFormat, removeFormat } from './formatThunk';
+import { createFormat, fetchFormat, fetchOneFormat, removeFormat, updateFormat } from './formatThunk';
 
 interface formatSlice {
   listFormat: FormatList[];
@@ -11,6 +11,9 @@ interface formatSlice {
   formatError: ValidationError | null;
   errorRemove: GlobalError | null;
   modal: boolean;
+  oneFormat: null | FormatList;
+  updateFormatLoading: boolean;
+  oneFormatLoading: boolean;
 }
 
 const initialState: formatSlice = {
@@ -21,6 +24,9 @@ const initialState: formatSlice = {
   formatError: null,
   errorRemove: null,
   modal: false,
+  oneFormat: null,
+  updateFormatLoading: false,
+  oneFormatLoading: false,
 };
 
 const formatSlice = createSlice({
@@ -29,6 +35,12 @@ const formatSlice = createSlice({
   reducers: {
     controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
       state.modal = type;
+    },
+    unsetFormat: (state) => {
+      state.oneFormat = null;
+    },
+    setFormat: (state, action) => {
+      state.oneFormat = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -41,6 +53,28 @@ const formatSlice = createSlice({
     });
     builder.addCase(fetchFormat.rejected, (state) => {
       state.getAllFormatLoading = false;
+    });
+
+    builder.addCase(fetchOneFormat.pending, (state) => {
+      state.oneFormatLoading = true;
+    });
+    builder.addCase(fetchOneFormat.fulfilled, (state, { payload: format }) => {
+      state.oneFormatLoading = false;
+      state.oneFormat = format;
+    });
+    builder.addCase(fetchOneFormat.rejected, (state) => {
+      state.oneFormatLoading = false;
+    });
+
+    builder.addCase(updateFormat.pending, (state) => {
+      state.updateFormatLoading = true;
+    });
+    builder.addCase(updateFormat.fulfilled, (state) => {
+      state.updateFormatLoading = false;
+    });
+    builder.addCase(updateFormat.rejected, (state, { payload: error }) => {
+      state.updateFormatLoading = false;
+      state.formatError = error || null;
     });
 
     builder.addCase(createFormat.pending, (state) => {
@@ -68,7 +102,7 @@ const formatSlice = createSlice({
     });
   },
 });
-
+export const { setFormat, unsetFormat } = formatSlice.actions;
 export const formatReducer = formatSlice.reducer;
 export const { controlModal } = formatSlice.actions;
 export const selectFormatList = (state: RootState) => state.format.listFormat;
@@ -78,3 +112,6 @@ export const selectRemoveFormatLoading = (state: RootState) => state.format.remo
 export const selectFormatError = (state: RootState) => state.format.formatError;
 export const selectErrorRemove = (state: RootState) => state.format.errorRemove;
 export const selectModal = (state: RootState) => state.format.modal;
+export const selectOneFormat = (state: RootState) => state.format.oneFormat;
+export const selectOneFormatLoading = (state: RootState) => state.format.oneFormatLoading;
+export const selectUpdateFormatLoading = (state: RootState) => state.format.updateFormatLoading;

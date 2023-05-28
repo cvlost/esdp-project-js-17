@@ -1,9 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../../axios';
-import { AreaList, AreaMutation, DirectionList, DirectionMutation, GlobalError, ValidationError } from '../../../types';
+import { DirectionList, DirectionMutation, GlobalError, ValidationError } from '../../../types';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
-import { setArea } from '../area/areaSlice';
 import { setDirection } from './directionsSlice';
 
 export const getDirectionsList = createAsyncThunk<DirectionList[]>('direction/fetchAll', async () => {
@@ -21,7 +20,7 @@ export const fetchOneDir = createAsyncThunk<DirectionList, string>('direction/fe
 
 interface UpdateDirectionParams {
   id: string;
-  area: AreaMutation;
+  area: DirectionMutation;
 }
 
 export const updateDir = createAsyncThunk<
