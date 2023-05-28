@@ -21,6 +21,35 @@ regionsRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
+regionsRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const region = await Region.find({ _id: req.params.id });
+    return res.send(region);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+regionsRouter.put('/:id', auth, async (req, res, next) => {
+  const edit = {
+    name: req.body.name,
+    city: req.body.city,
+  };
+  try {
+    const id = req.params.id as string;
+    const region = await Region.find({ _id: req.params.id });
+    if (!region) {
+      return res.status(404).send({ error: 'region not found!' });
+    }
+    await Region.updateMany({ _id: id }, edit);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
+  }
+});
+
 regionsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const regionData = await Region.create({
