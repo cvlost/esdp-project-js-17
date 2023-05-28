@@ -18,14 +18,12 @@ directionRouter.get('/', auth, async (req, res, next) => {
 
 directionRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
-    const directionData = new Direction({
-      name: req.body.name,
-    });
-    await directionData.save();
-    return res.send(directionData);
+    const direction = await Direction.create({ name: req.body.name });
+
+    return res.status(201).send({ message: 'Новое направление успешно создано!', direction });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+      return res.status(422).send(e);
     } else {
       return next(e);
     }
@@ -33,14 +31,19 @@ directionRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 });
 
 directionRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id направления.' });
+  }
+
   try {
-    const _id = req.params.id as string;
     const direction = await Direction.findOne({ _id });
     const location = await Location.find({ direction: _id });
     if (!direction) {
       return res.status(404).send({ error: 'Направление не существует в базе.' });
     } else if (location.length > 0) {
-      return res.status(404).send({ error: 'Направление привязано к локациям ! удаление запрещено' });
+      return res.status(409).send({ error: 'Направление привязано к локациям! Удаление запрещено.' });
     }
     const result = await Direction.deleteOne({ _id });
     return res.send(result);

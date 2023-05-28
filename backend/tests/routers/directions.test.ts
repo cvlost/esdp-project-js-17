@@ -14,9 +14,9 @@ import Direction from '../../models/Direction';
 import Region from '../../models/Region';
 import Street from '../../models/Street';
 import Lighting from '../../models/Lighting';
-import formatRouter from '../../routers/formats';
+import directionRouter from '../../routers/directions';
 
-app.use('/formats', formatRouter);
+app.use('/directions', directionRouter);
 const request = supertest(app);
 
 const adminToken = randomUUID();
@@ -35,11 +35,11 @@ const userDto = {
   password: '@esdpjs17',
   token: userToken,
 };
-const createFormatDto = { name: 'new test format' };
+const createDirectionDto = { name: 'new test direction' };
 
-describe('formatRouter', () => {
-  let formatIdNotRelatedToLocation: string;
-  let formatIdRelatedToLocation: string;
+describe('directionRouter', () => {
+  let directionIdNotRelatedToLocation: string;
+  let directionIdRelatedToLocation: string;
 
   beforeAll(async () => {
     await db.connect();
@@ -48,7 +48,7 @@ describe('formatRouter', () => {
   beforeEach(async () => {
     await db.clear();
     await User.create(adminDto, userDto);
-    const [notRelatedFormat, relatedFormat] = await Format.create({ name: 'z-format' }, { name: 'y-format' });
+    const [notRelatedDirection, relatedDirection] = await Direction.create({ name: 'south' }, { name: 'west' });
     const area = await Area.create({ name: 'area' });
     const city = await City.create({ name: 'city', area: area._id });
     const region = await Region.create({ name: 'region', city: city._id });
@@ -56,12 +56,12 @@ describe('formatRouter', () => {
       { name: 'street1', city: city._id },
       { name: 'street2', city: city._id },
     );
-    formatIdNotRelatedToLocation = notRelatedFormat._id.toString();
-    formatIdRelatedToLocation = relatedFormat._id.toString();
+    directionIdNotRelatedToLocation = notRelatedDirection._id.toString();
+    directionIdRelatedToLocation = relatedDirection._id.toString();
     await Location.create({
       legalEntity: (await LegalEntity.create({ name: 'legal entity' }))._id,
-      format: relatedFormat._id,
-      direction: (await Direction.create({ name: 'direction' }))._id,
+      format: (await Format.create({ name: 'direction' }))._id,
+      direction: relatedDirection._id,
       lighting: (await Lighting.create({ name: 'lighting' }))._id,
       region: region._id,
       size: (await Size.create({ name: '345x345' }))._id,
@@ -79,9 +79,9 @@ describe('formatRouter', () => {
     await db.disconnect();
   });
 
-  describe('GET /formats', () => {
+  describe('GET /directions', () => {
     test('неавторизованный пользователь пытается получить список, должен созвращать statusCode 401 и сообщение об ошибке', async () => {
-      const res = await request.get(`/formats`);
+      const res = await request.get(`/directions`);
       const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(401);
@@ -89,7 +89,7 @@ describe('formatRouter', () => {
     });
 
     test('пользователь с рандомным токеном пытается получить список, должен созвращать statusCode 401 и сообщение об ошибке', async () => {
-      const res = await request.get(`/formats`).set({ Authorization: 'random-token' });
+      const res = await request.get(`/directions`).set({ Authorization: 'random-token' });
       const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(401);
@@ -97,46 +97,46 @@ describe('formatRouter', () => {
     });
 
     test('пользователь с ролью "user" пытается получить список, должен созвращать statusCode 200 и список элементов длиной 1', async () => {
-      await Format.deleteMany();
-      await Format.create(createFormatDto);
-      const res = await request.get(`/formats`).set({ Authorization: userToken });
-      const formatsList = res.body;
+      await Direction.deleteMany();
+      await Direction.create(createDirectionDto);
+      const res = await request.get(`/directions`).set({ Authorization: userToken });
+      const directionsList = res.body;
 
       expect(res.statusCode).toBe(200);
-      expect(Array.isArray(formatsList)).toBe(true);
-      expect(formatsList.length).toBe(1);
+      expect(Array.isArray(directionsList)).toBe(true);
+      expect(directionsList.length).toBe(1);
     });
 
     test('пользователь с ролью "admin" пытается получить список, должен созвращать statusCode 200 и список элементов длиной 1', async () => {
-      await Format.deleteMany();
-      await Format.create(createFormatDto);
-      const res = await request.get(`/formats`).set({ Authorization: adminToken });
-      const formatsList = res.body;
+      await Direction.deleteMany();
+      await Direction.create(createDirectionDto);
+      const res = await request.get(`/directions`).set({ Authorization: adminToken });
+      const directionsList = res.body;
 
       expect(res.statusCode).toBe(200);
-      expect(Array.isArray(formatsList)).toBe(true);
-      expect(formatsList.length).toBe(1);
+      expect(Array.isArray(directionsList)).toBe(true);
+      expect(directionsList.length).toBe(1);
     });
 
     test('элементы списка должны иметь свойства _id и name', async () => {
-      await Format.deleteMany();
-      const createdFormat = await Format.create(createFormatDto);
-      const res = await request.get(`/formats`).set({ Authorization: adminToken });
-      const formatsList = res.body;
-      const format = formatsList[0];
+      await Direction.deleteMany();
+      const createdDirection = await Direction.create(createDirectionDto);
+      const res = await request.get(`/directions`).set({ Authorization: adminToken });
+      const directions = res.body;
+      const direction = directions[0];
 
       expect(res.statusCode).toBe(200);
-      expect(formatsList.length).toBe(1);
-      expect(format._id).not.toBeUndefined();
-      expect(format._id).toBe(createdFormat._id.toString());
-      expect(format.name).not.toBeUndefined();
-      expect(format.name).toBe(createFormatDto.name);
+      expect(directions.length).toBe(1);
+      expect(direction._id).not.toBeUndefined();
+      expect(direction._id).toBe(createdDirection._id.toString());
+      expect(direction.name).not.toBeUndefined();
+      expect(direction.name).toBe(createDirectionDto.name);
     });
   });
 
-  describe('POST /formats', () => {
+  describe('POST /directions', () => {
     test('неавторизованный пользователь пытается создать новую запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
-      const res = await request.post('/formats').send(createFormatDto);
+      const res = await request.post('/directions').send(createDirectionDto);
       const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(401);
@@ -144,7 +144,10 @@ describe('formatRouter', () => {
     });
 
     test('пользователь с рандомным токеном пытается создать новую запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
-      const res = await request.post('/formats').set({ Authorization: 'some-random-token' }).send(createFormatDto);
+      const res = await request
+        .post('/directions')
+        .set({ Authorization: 'some-random-token' })
+        .send(createDirectionDto);
       const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(401);
@@ -152,7 +155,7 @@ describe('formatRouter', () => {
     });
 
     test('пользователь с ролью "user" пытается создать новую запись, должен возвращать statusCode 403 и сообщение об ошибке', async () => {
-      const res = await request.post('/formats').set({ Authorization: userToken }).send(createFormatDto);
+      const res = await request.post('/directions').set({ Authorization: userToken }).send(createDirectionDto);
       const error = res.body.error;
 
       expect(res.statusCode).toBe(403);
@@ -162,8 +165,8 @@ describe('formatRouter', () => {
     describe('пользователь с ролью "admin" пытается создать новую запись', () => {
       test('с дублирующимися данными, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
         const duplicateDto = { name: 'duplicate name' };
-        await Format.create(duplicateDto);
-        const res = await request.post('/formats').send(duplicateDto).set({ Authorization: adminToken });
+        await Direction.create(duplicateDto);
+        const res = await request.post('/directions').send(duplicateDto).set({ Authorization: adminToken });
         const validationError = res.body;
 
         expect(res.statusCode).toBe(422);
@@ -172,7 +175,7 @@ describe('formatRouter', () => {
       });
 
       test('с некорректными данными, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
-        const res = await request.post('/formats').send({ bla: 'bla' }).set({ Authorization: adminToken });
+        const res = await request.post('/directions').send({ bla: 'bla' }).set({ Authorization: adminToken });
         const name = res.body.name;
 
         expect(res.statusCode).toBe(422);
@@ -180,23 +183,23 @@ describe('formatRouter', () => {
       });
 
       test('с корректными данными, дожен возвращать statusCode 201 и объект с сообщением и созданной записью', async () => {
-        await Format.deleteMany();
-        const res = await request.post('/formats').send(createFormatDto).set({ Authorization: adminToken });
-        const { message, format } = res.body;
+        await Direction.deleteMany();
+        const res = await request.post('/directions').send(createDirectionDto).set({ Authorization: adminToken });
+        const { message, direction } = res.body;
 
         expect(res.statusCode).toBe(201);
-        expect(message).toBe('Новый формат успешно создан!');
-        expect(format._id).not.toBeUndefined();
-        expect(typeof format._id === 'string').toBe(true);
-        expect(format.name).not.toBeUndefined();
-        expect(format.name).toBe(createFormatDto.name);
+        expect(message).toBe('Новое направление успешно создано!');
+        expect(direction._id).not.toBeUndefined();
+        expect(typeof direction._id === 'string').toBe(true);
+        expect(direction.name).not.toBeUndefined();
+        expect(direction.name).toBe(createDirectionDto.name);
       });
     });
   });
 
-  describe('DELETE /formats/:id', () => {
+  describe('DELETE /directions/:id', () => {
     test('неавторизованный пользователь пытается удалить 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
-      const res = await request.delete(`/formats/${formatIdNotRelatedToLocation}`);
+      const res = await request.delete(`/directions/${directionIdNotRelatedToLocation}`);
       const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(401);
@@ -205,7 +208,7 @@ describe('formatRouter', () => {
 
     test('пользователь с рандомным токеном пытается удалить 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
       const res = await request
-        .delete(`/formats/${formatIdNotRelatedToLocation}`)
+        .delete(`/directions/${directionIdNotRelatedToLocation}`)
         .set({ Authorization: 'some-random-token' });
       const errorMessage = res.body.error;
 
@@ -214,7 +217,9 @@ describe('formatRouter', () => {
     });
 
     test('пользователь с ролью "user" пытается удалить 1 запись, должен возвращать statusCode 403 и сообщение о недостаточных правах', async () => {
-      const res = await request.delete(`/formats/${formatIdNotRelatedToLocation}`).set({ Authorization: userToken });
+      const res = await request
+        .delete(`/directions/${directionIdNotRelatedToLocation}`)
+        .set({ Authorization: userToken });
       const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(403);
@@ -223,32 +228,36 @@ describe('formatRouter', () => {
 
     describe('пользоваетель с ролью "admin" пытается удалить 1 запись', () => {
       test('указав некорректный mongodb id, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
-        const res = await request.delete(`/formats/random-string`).set({ Authorization: adminToken });
+        const res = await request.delete(`/directions/random-string`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
 
         expect(res.statusCode).toBe(422);
-        expect(errorMessage).toBe('Некорректный id формата.');
+        expect(errorMessage).toBe('Некорректный id направления.');
       });
 
       test('указав корректный, но несуществующий в базе id, должен возвращать statusCode 404 и сообщение об ошибке', async () => {
         const randomMongoId = new mongoose.Types.ObjectId().toString();
-        const res = await request.delete(`/formats/${randomMongoId}`).set({ Authorization: adminToken });
+        const res = await request.delete(`/directions/${randomMongoId}`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
 
         expect(res.statusCode).toBe(404);
-        expect(errorMessage).toBe('Формат не существует в базе.');
+        expect(errorMessage).toBe('Направление не существует в базе.');
       });
 
       test('указав корректный id, но имеется связь, должен возвращать statusCode 409 и сообщение об ошибке', async () => {
-        const res = await request.delete(`/formats/${formatIdRelatedToLocation}`).set({ Authorization: adminToken });
+        const res = await request
+          .delete(`/directions/${directionIdRelatedToLocation}`)
+          .set({ Authorization: adminToken });
         const errorMessage = res.body.error;
 
         expect(res.statusCode).toBe(409);
-        expect(errorMessage).toBe('Формат привязан к локациям! Удаление запрещено.');
+        expect(errorMessage).toBe('Направление привязано к локациям! Удаление запрещено.');
       });
 
       test('указав корректный id сущности без связей, должен возвращать statusCode 200 и объект с информацию об удалении со свойством deletedCoutn = 1', async () => {
-        const res = await request.delete(`/formats/${formatIdNotRelatedToLocation}`).set({ Authorization: adminToken });
+        const res = await request
+          .delete(`/directions/${directionIdNotRelatedToLocation}`)
+          .set({ Authorization: adminToken });
         const result = res.body;
 
         expect(res.statusCode).toBe(200);

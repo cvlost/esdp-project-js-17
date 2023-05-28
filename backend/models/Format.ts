@@ -13,7 +13,7 @@ const FormatSchema = new Schema(
           const format: HydratedDocument<FormatType> | null = await Format.findOne({ name });
           return !format;
         },
-        message: 'Такой формат лицо уже существуеют!',
+        message: 'Такой формат уже существуеют!',
       },
     },
   },
