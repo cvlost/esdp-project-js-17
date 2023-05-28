@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import SouthAmericaOutlinedIcon from '@mui/icons-material/SouthAmericaOutlined';
-import { useAppSelector } from '../../../../app/hooks';
-import { selectAreaError, selectCreateAreaLoading } from '../areaSlice';
-import { AreaMutation } from '../../../../types';
+import { AreaMutation, ValidationError } from '../../../../types';
 
 interface Props {
   onSubmit: (area: AreaMutation) => void;
+  existingArea?: AreaMutation;
+  isEdit?: boolean;
+  Loading: boolean;
+  error: ValidationError | null;
 }
 
-const FormCreateArea: React.FC<Props> = ({ onSubmit }) => {
-  const [value, setValue] = useState('');
-  const createLoading = useAppSelector(selectCreateAreaLoading);
-  const error = useAppSelector(selectAreaError);
+const initialState: AreaMutation = {
+  name: '',
+};
 
+const FormCreateArea: React.FC<Props> = ({ onSubmit, existingArea = initialState, isEdit, Loading, error }) => {
+  const [value, setValue] = useState<AreaMutation>(existingArea);
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name: value });
-    setValue('');
+    onSubmit(value);
+  };
+  const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setValue((prevState) => {
+      return { ...prevState, [name]: value };
+    });
   };
 
   const getFieldError = (fieldName: string) => {
@@ -41,14 +49,14 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit }) => {
         <SouthAmericaOutlinedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Создать область
+        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать область' : 'Создать область'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
           <Grid item xs={12}>
             <TextField
-              value={value}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+              value={value.name}
+              onChange={inputChangeHandler}
               required
               fullWidth
               label="Область"
@@ -60,15 +68,8 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button
-          disabled={createLoading}
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="success"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {!createLoading ? 'Создать область' : <CircularProgress />}
+        <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
+          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>
