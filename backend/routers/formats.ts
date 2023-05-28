@@ -18,9 +18,7 @@ formatRouter.get('/', auth, async (req, res, next) => {
 
 formatRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
-    const format = await Format.create({
-      name: req.body.name,
-    });
+    const format = await Format.create({ name: req.body.name });
 
     return res.status(201).send({ message: 'Новый формат успешно создан!', format });
   } catch (e) {

@@ -68,6 +68,10 @@ export interface FormatType {
   name: string;
 }
 
+export interface LightingType {
+  name: string;
+}
+
 export interface ClientType {
   companyName: string;
   companyKindOfActivity: string;
