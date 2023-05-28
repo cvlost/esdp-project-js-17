@@ -16,6 +16,34 @@ sizesRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
+sizesRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const size = await Size.find({ _id: req.params.id });
+    return res.send(size);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+sizesRouter.put('/:id', auth, async (req, res, next) => {
+  const edit = {
+    name: req.body.name,
+  };
+  try {
+    const id = req.params.id as string;
+    const size = await Size.find({ _id: req.params.id });
+    if (!size) {
+      return res.status(404).send({ error: 'size not found!' });
+    }
+    await Size.updateMany({ _id: id }, edit);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
+  }
+});
+
 sizesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const sizeData = new Size({

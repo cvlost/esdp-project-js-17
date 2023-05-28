@@ -22,6 +22,35 @@ citiesRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
+citiesRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const city = await City.find({ _id: req.params.id });
+    return res.send(city);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+citiesRouter.put('/:id', auth, async (req, res, next) => {
+  const edit = {
+    name: req.body.name,
+    area: req.body.area,
+  };
+  try {
+    const id = req.params.id as string;
+    const city = await City.find({ _id: req.params.id });
+    if (!city) {
+      return res.status(404).send({ error: 'City not found!' });
+    }
+    await City.updateMany({ _id: id }, edit);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
+  }
+});
+
 citiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const cityData = await City.create({
