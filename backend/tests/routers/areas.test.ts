@@ -112,7 +112,7 @@ describe('areasRouter', () => {
     });
 
     test('если пользователь c рандомным токеном пытается создать новую область, должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
-      const res = await request.get('/areas').set({ Authorization: 'some-random-token' });
+      const res = await request.post('/areas').set({ Authorization: 'some-random-token' }).send(createAreaDto);
       const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(401);
@@ -127,17 +127,6 @@ describe('areasRouter', () => {
       expect(error).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
     });
 
-    test('с дублирующимся названием, должен возвращать statusCode 422 и обект ValidationError с сообщением о дублировании', async () => {
-      const duplicateDto = { name: 'area duplicate' };
-      await Area.create(duplicateDto);
-      const res = await request.post('/areas').send(duplicateDto).set({ Authorization: adminToken });
-      const validationError = res.body;
-
-      expect(res.statusCode).toBe(422);
-      expect(validationError.name).toBe('ValidationError');
-      expect(validationError.errors.name).not.toBeUndefined();
-    });
-
     describe('если пользователь с ролью "admin" пытается создать новую область', () => {
       test('с верными данными, должен возвращаться statusCode 201 и объект с сообщением и созданной областью', async () => {
         const res = await request.post('/areas').set({ Authorization: adminToken }).send(createAreaDto);
@@ -148,6 +137,17 @@ describe('areasRouter', () => {
         expect(area._id).not.toBeUndefined();
         expect(area.name).not.toBeUndefined();
         expect(area.name).toBe(createAreaDto.name);
+      });
+
+      test('с дублирующимся названием, должен возвращать statusCode 422 и обект ValidationError с сообщением о дублировании', async () => {
+        const duplicateDto = { name: 'area duplicate' };
+        await Area.create(duplicateDto);
+        const res = await request.post('/areas').send(duplicateDto).set({ Authorization: adminToken });
+        const validationError = res.body;
+
+        expect(res.statusCode).toBe(422);
+        expect(validationError.name).toBe('ValidationError');
+        expect(validationError.errors.name).not.toBeUndefined();
       });
 
       test('c невернымы данными, то должен возвращаться statusCode 422 и обект ValidationError', async () => {

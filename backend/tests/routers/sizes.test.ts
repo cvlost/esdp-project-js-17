@@ -145,6 +145,7 @@ describe('sizesRouter', () => {
       expect(res.statusCode).toBe(401);
       expect(errorMessage).toBe('Отсутствует токен авторизации.');
     });
+
     test('если пользователь с рандомным токеном пытается создать новый размер, то должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
       const createSizeDto = { name: '500x500' };
       const res = await request.post('/sizes').send(createSizeDto).set({ Authorization: 'random-token' });
@@ -153,6 +154,7 @@ describe('sizesRouter', () => {
       expect(res.statusCode).toBe(401);
       expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
     });
+
     test('если пользователь с ролью "user" пытается создать новый размер, то должен возвращаться statusCode 403 и сообщение ошибки о недостаточных правах на действие', async () => {
       const createSizeDto = { name: '500x500' };
       const res = await request.post('/sizes').send(createSizeDto).set({ Authorization: userToken });
@@ -161,6 +163,7 @@ describe('sizesRouter', () => {
       expect(res.statusCode).toBe(403);
       expect(errorMessage).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
     });
+
     describe('если пользователь с ролью "admin" пытается создать новый размер', () => {
       test('с верными данными, должен возвращаться statusCode 201 и объект с сообщением и созданным размером', async () => {
         const createSizeDto = { name: '500x500' };
@@ -198,7 +201,7 @@ describe('sizesRouter', () => {
 
   describe('DELETE /sizes/:id', () => {
     test('неавторизованный пользователь пытается удалить, дожен возвращать statusCode 401 и сообщение об ошибке', async () => {
-      const res = await request.delete(`/sizes/some-random-string-id`);
+      const res = await request.delete(`/sizes/${sizeIdNotRelatedToLocation}`);
       const errorMessage = res.body.error;
 
       expect(res.statusCode).toBe(401);

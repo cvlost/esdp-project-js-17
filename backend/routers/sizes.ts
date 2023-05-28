@@ -34,6 +34,7 @@ sizesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 sizesRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   const _id = req.params.id as string;
+
   if (!mongoose.isValidObjectId(_id)) {
     return res.status(422).send({ error: 'Некорректный id размера.' });
   }

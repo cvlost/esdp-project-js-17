@@ -51,6 +51,7 @@ usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
 
 usersRouter.get('/:id', auth, async (req, res, next) => {
   const _id = req.params.id;
+
   if (!mongoose.isValidObjectId(_id)) {
     return res.status(422).send({ error: 'Некорректный id пользователя.' });
   }

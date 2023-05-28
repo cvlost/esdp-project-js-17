@@ -17,8 +17,18 @@ legalEntitiesRouter.get('/', auth, async (req, res, next) => {
 });
 
 legalEntitiesRouter.get('/:id', auth, async (req, res, next) => {
+  const _id = req.params.id;
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id юридического лица.' });
+  }
+
   try {
-    const legalEntity = await LegalEntity.findOne({ _id: req.params.id });
+    const legalEntity = await LegalEntity.findOne({ _id });
+
+    if (!legalEntity) {
+      return res.status(404).send({ error: 'Такое юридическое лицо не существует в базе.' });
+    }
+
     return res.send(legalEntity);
   } catch (e) {
     return next(e);
@@ -27,14 +37,14 @@ legalEntitiesRouter.get('/:id', auth, async (req, res, next) => {
 
 legalEntitiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
-    const legalEntityData = await LegalEntity.create({
+    const legalEntity = await LegalEntity.create({
       name: req.body.name,
     });
 
-    return res.send(legalEntityData);
+    return res.status(201).send({ message: 'Новое юридическое лицо успешно создано!', legalEntity });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+      return res.status(422).send(e);
     } else {
       return next(e);
     }
@@ -42,8 +52,13 @@ legalEntitiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 });
 
 legalEntitiesRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id юридического лица.' });
+  }
+
   try {
-    const _id = req.params.id as string;
     const legalEntity = await LegalEntity.findById(_id);
 
     if (!legalEntity) {
@@ -60,21 +75,26 @@ legalEntitiesRouter.put('/:id', auth, permit('admin'), async (req, res, next) =>
     return res.send(result);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }
 });
 
 legalEntitiesRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id юридического лица.' });
+  }
+
   try {
-    const _id = req.params.id as string;
     const legalEntity = await LegalEntity.findById(_id);
     const location = await Location.find({ legalEntity: _id });
     if (!legalEntity) {
       return res.status(404).send({ error: 'Юридическое лицо не существует в базе.' });
     } else if (location.length > 0) {
-      return res.status(404).send({ error: 'Юр лицо привязано к локациям ! удаление запрещено' });
+      return res.status(409).send({ error: 'Юр лицо привязано к локациям! Удаление запрещено.' });
     }
 
     const result = await LegalEntity.deleteOne({ _id });
