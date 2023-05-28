@@ -3,47 +3,47 @@ import { ClientType } from '../types';
 
 const ClientSchema = new Schema<ClientType>({
   companyName: {
-    type: 'String',
+    type: String,
     required: true,
   },
   companyKindOfActivity: {
-    type: 'String',
+    type: String,
   },
   companyAddress: {
-    type: 'String',
+    type: String,
   },
   companyPhone: {
-    type: 'String',
+    type: String,
   },
   companyEmail: {
-    type: 'String',
+    type: String,
   },
   companySite: {
-    type: 'String',
+    type: String,
   },
   companyBirthday: {
-    type: 'String',
+    type: String,
   },
   CompanyManagementName: {
-    type: 'String',
+    type: String,
   },
   CompanyManagementJobTitle: {
-    type: 'String',
+    type: String,
   },
   CompanyManagementBirthday: {
-    type: 'String',
+    type: String,
   },
   contactPersonName: {
-    type: 'String',
+    type: String,
   },
   contactPersonJobTitle: {
-    type: 'String',
+    type: String,
   },
   contactPersonBirthday: {
-    type: 'String',
+    type: String,
   },
   advertisingChannel: {
-    type: 'String',
+    type: String,
   },
 });
 

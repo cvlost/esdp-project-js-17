@@ -3,6 +3,7 @@ import auth from '../middleware/auth';
 import Client from '../models/Client';
 import mongoose from 'mongoose';
 import permit from '../middleware/permit';
+import Location from '../models/Location';
 
 const clientsRouter = express.Router();
 
@@ -73,7 +74,7 @@ clientsRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
     const client = await Client.findById(id);
 
     if (!client) {
-      return res.status(404).send({ error: 'client not found!' });
+      return res.status(404).send({ error: 'Данный клиент не найден!' });
     }
 
     if (companyEmail && companyEmail !== client.companyEmail) {
@@ -137,7 +138,13 @@ clientsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
     const client = await Client.findOne({ _id: req.params.id });
     if (!client) {
-      return res.send({ error: 'client is not found!' });
+      return res.send({ error: 'Данный клиент не найден!' });
+    }
+
+    const location = await Location.findOne({ client: req.params.id });
+
+    if (location) {
+      return res.status(403).send({ error: 'Удаление запрещено!' });
     }
 
     const deletedClient = await Client.deleteOne({ _id: req.params.id });
