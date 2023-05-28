@@ -30,7 +30,6 @@ import {
   selectGetAllAreaLoading,
   selectModal,
   selectOneArea,
-  selectOneAreaLoading,
   selectUpdateAreaLoading,
 } from './areaSlice';
 import { createArea, fetchAreas, fetchOneArea, removeArea, updateArea } from './areaThunk';
@@ -44,10 +43,10 @@ import ModalBody from '../../../components/ModalBody';
 const CreateArea = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
+  const existingArea = useAppSelector(selectOneArea);
   const areas = useAppSelector(selectAreaList);
   const loadingGetAllAreas = useAppSelector(selectGetAllAreaLoading);
   const error = useAppSelector(selectAreaError);
-  const oneArea = useAppSelector(selectOneArea);
   const createLoading = useAppSelector(selectCreateAreaLoading);
   const updateLoading = useAppSelector(selectUpdateAreaLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
@@ -174,9 +173,15 @@ const CreateArea = () => {
           </TableContainer>
         </Paper>
       </Container>
-      {oneArea !== null && (
+      {existingArea && (
         <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-          <FormCreateArea error={error} onSubmit={onFormSubmit} existingArea={oneArea} isEdit Loading={updateLoading} />
+          <FormCreateArea
+            error={error}
+            onSubmit={onFormSubmit}
+            existingArea={existingArea}
+            isEdit
+            Loading={updateLoading}
+          />
         </ModalBody>
       )}
       <SnackbarCard />

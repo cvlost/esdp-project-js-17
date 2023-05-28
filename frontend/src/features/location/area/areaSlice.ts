@@ -6,7 +6,7 @@ import { createArea, fetchAreas, fetchOneArea, removeArea, updateArea } from './
 interface areaState {
   listArea: AreaList[];
   getAllAreaLoading: boolean;
-  oneArea: AreaList | null;
+  oneArea: null | AreaList;
   oneAreaLoading: boolean;
   createAreaLoading: boolean;
   removeAreaLoading: boolean;

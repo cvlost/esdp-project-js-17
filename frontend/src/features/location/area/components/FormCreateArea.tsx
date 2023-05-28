@@ -16,16 +16,16 @@ const initialState: AreaMutation = {
 };
 
 const FormCreateArea: React.FC<Props> = ({ onSubmit, existingArea = initialState, isEdit, Loading, error }) => {
-  const [value, setValue] = useState<AreaMutation>(existingArea);
+  const [state, setState] = useState<AreaMutation>(existingArea);
+
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(value);
+    onSubmit(state);
   };
-  const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setValue((prevState) => {
-      return { ...prevState, [name]: value };
-    });
+    setState((prev) => ({ ...prev, [name]: value }));
   };
 
   const getFieldError = (fieldName: string) => {
@@ -55,14 +55,14 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit, existingArea = initialState
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
           <Grid item xs={12}>
             <TextField
-              value={value.name}
-              onChange={inputChangeHandler}
               required
               fullWidth
               label="Область"
               type="text"
               name="name"
               autoComplete="off"
+              value={state.name}
+              onChange={onChange}
               error={Boolean(getFieldError('name'))}
               helperText={getFieldError('name')}
             />

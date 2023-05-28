@@ -11,7 +11,10 @@ export const fetchAreas = createAsyncThunk<AreaList[]>('area/fetch_areas', async
 });
 
 export const fetchOneArea = createAsyncThunk<AreaList, string>('area/fetch_one', async (id) => {
-  const response = await axiosApi.get('/areas/' + id);
+  const response = await axiosApi.get<AreaList | null>('/areas/' + id);
+  if (response.data === null) {
+    throw new Error('not found');
+  }
   return response.data;
 });
 
