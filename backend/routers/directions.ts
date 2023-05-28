@@ -4,7 +4,6 @@ import Direction from '../models/Direction';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
 import Location from '../models/Location';
-import { Dir } from 'fs';
 
 const directionRouter = express.Router();
 
