@@ -43,11 +43,11 @@ import ModalBody from '../../../components/ModalBody';
 const CreateArea = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
-  const existingArea = useAppSelector(selectOneArea);
   const areas = useAppSelector(selectAreaList);
   const loadingGetAllAreas = useAppSelector(selectGetAllAreaLoading);
   const error = useAppSelector(selectAreaError);
   const createLoading = useAppSelector(selectCreateAreaLoading);
+  const existingArea = useAppSelector(selectOneArea);
   const updateLoading = useAppSelector(selectUpdateAreaLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);

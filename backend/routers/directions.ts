@@ -35,7 +35,8 @@ directionRouter.put('/:id', auth, async (req, res, next) => {
     if (!dir) {
       return res.status(404).send({ error: 'direction not found!' });
     }
-    await Direction.updateMany({ _id: id }, editDir);
+    await Direction.updateOne({ _id: id, name: editDir.name });
+    return res.send(dir);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(error);
