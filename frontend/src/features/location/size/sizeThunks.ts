@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../../axios';
-import { SizeMutation, GlobalError, SizeList, ValidationError, LightingList, LightingMutation } from '../../../types';
+import { SizeMutation, GlobalError, SizeList, ValidationError, LightingList } from '../../../types';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setSize } from './sizeSlice';

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -22,13 +22,23 @@ import { openSnackbar, selectUser } from '../../users/usersSlice';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import { MainColorGreen } from '../../../constants';
 import { Navigate } from 'react-router-dom';
-import { controlModal, selectCityList, selectErrorRemove, selectGetAllCitiesLoading, selectModal } from './citySlice';
+import {
+  controlModal,
+  selectCityError,
+  selectCityList,
+  selectCreateCityLoading,
+  selectErrorRemove,
+  selectGetAllCitiesLoading,
+  selectModal,
+  selectOneCity,
+  selectUpdateCityLoading,
+} from './citySlice';
 import CardCity from './components/CardCity';
-import { createCity, fetchCities, removeCity } from './cityThunk';
+import { createCity, fetchCities, fetchOneCity, removeCity, updateCity } from './cityThunk';
 import FormCreateCity from './components/FormCreateCity';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
-
+import ModalBody from '../../../components/ModalBody';
 const CreateCity = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
@@ -36,6 +46,12 @@ const CreateCity = () => {
   const fetchLoading = useAppSelector(selectGetAllCitiesLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [Id, setId] = useState('');
+  const existingCity = useAppSelector(selectOneCity);
+  const updateLoading = useAppSelector(selectUpdateCityLoading);
+  const createLoading = useAppSelector(selectCreateCityLoading);
+  const error = useAppSelector(selectCityError);
   const { confirm } = useConfirm();
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -64,6 +80,27 @@ const CreateCity = () => {
     }
   };
 
+  const onFormSubmit = async (ToChange: CityMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateCity({ id: Id, name: ToChange })).unwrap();
+        await dispatch(fetchCities()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (ID: string) => {
+    await dispatch(fetchOneCity(ID));
+    setId(ID);
+    setIsDialogOpen(true);
+  };
+
   if (user?.role !== 'admin') {
     return <Navigate to="/login" />;
   }
@@ -72,7 +109,7 @@ const CreateCity = () => {
     <>
       <Box>
         <Container component="main" maxWidth="xs">
-          <FormCreateCity onSubmit={onSubmit} />
+          <FormCreateCity onSubmit={onSubmit} error={error} Loading={createLoading} />
         </Container>
         <Container>
           {open && (
@@ -110,7 +147,12 @@ const CreateCity = () => {
                   {!fetchLoading ? (
                     fetchListCities.length !== 0 ? (
                       fetchListCities.map((city) => (
-                        <CardCity removeCardCity={() => removeCardCity(city._id)} key={city._id} city={city} />
+                        <CardCity
+                          removeCardCity={() => removeCardCity(city._id)}
+                          key={city._id}
+                          city={city}
+                          onEditing={() => openDialog(city._id)}
+                        />
                       ))
                     ) : (
                       <TableRow>
@@ -132,6 +174,17 @@ const CreateCity = () => {
           </Paper>
         </Container>
       </Box>
+      {existingCity && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateCity
+            error={error}
+            onSubmit={onFormSubmit}
+            existingCity={existingCity}
+            isEdit
+            Loading={updateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </>
   );

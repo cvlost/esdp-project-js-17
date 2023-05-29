@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, MenuItem, TextField, Typography } from '@mui/material';
-import { CityMutation } from '../../../../types';
+import { CityMutation, ValidationError } from '../../../../types';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import { selectCityError, selectCreateCityLoading } from '../citySlice';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { fetchAreas } from '../../area/areaThunk';
 import { selectAreaList } from '../../area/areaSlice';
@@ -10,17 +9,21 @@ import { fetchCities } from '../cityThunk';
 
 interface Props {
   onSubmit: (city: CityMutation) => void;
+  existingCity?: CityMutation;
+  isEdit?: boolean;
+  Loading: boolean;
+  error: ValidationError | null;
 }
 
-const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
+const initialState: CityMutation = {
+  name: '',
+  area: '',
+};
+
+const FormCreateCity: React.FC<Props> = ({ onSubmit, existingCity = initialState, error, Loading, isEdit }) => {
   const dispatch = useAppDispatch();
   const areas = useAppSelector(selectAreaList);
-  const createLoading = useAppSelector(selectCreateCityLoading);
-  const error = useAppSelector(selectCityError);
-  const [state, setState] = useState<CityMutation>({
-    area: '',
-    name: '',
-  });
+  const [state, setState] = useState<CityMutation>(existingCity);
 
   useEffect(() => {
     dispatch(fetchAreas());
@@ -63,7 +66,7 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
         <LocationCityIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Создать город
+        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать город' : 'Создать город'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -105,15 +108,8 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button
-          disabled={createLoading}
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="success"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {!createLoading ? 'Создать город' : <CircularProgress />}
+        <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
+          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>

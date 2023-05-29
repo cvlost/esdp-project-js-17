@@ -10,7 +10,7 @@ export const fetchRegions = createAsyncThunk<RegionList[], string | undefined>('
   return response.data;
 });
 
-export const fetchOneRegion = createAsyncThunk<RegionList, string>('regions/fetchOne', async (id) => {
+export const fetchOneRegion = createAsyncThunk<RegionList, string>('location/fetchOneRegion', async (id) => {
   const response = await axiosApi.get<RegionList | null>('/regions/' + id);
   if (response.data === null) {
     throw new Error('not found');
@@ -27,7 +27,7 @@ export const updateRegion = createAsyncThunk<
   void,
   UpdateParams,
   { rejectValue: ValidationError; dispatch: AppDispatch; state: RootState }
->('lighting/update', async (params, { rejectWithValue, dispatch, getState }) => {
+>('location/update_region', async (params, { rejectWithValue, dispatch, getState }) => {
   try {
     const current = getState().region.oneRegion;
     const response = await axiosApi.put('/regions/' + params.id, params.name);

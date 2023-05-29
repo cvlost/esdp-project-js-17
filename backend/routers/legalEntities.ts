@@ -4,7 +4,6 @@ import permit from '../middleware/permit';
 import mongoose from 'mongoose';
 import LegalEntity from '../models/LegalEntity';
 import Location from '../models/Location';
-import Format from '../models/Format';
 
 const legalEntitiesRouter = express.Router();
 

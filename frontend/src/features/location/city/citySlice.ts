@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
-import { createCity, fetchCities, removeCity } from './cityThunk';
+import { createCity, fetchCities, fetchOneCity, removeCity, updateCity } from './cityThunk';
 import { CityList, GlobalError, ValidationError } from '../../../types';
-
 interface CityState {
   cityList: CityList[];
   getAllListCityLoading: boolean;
@@ -11,6 +10,9 @@ interface CityState {
   cityError: null | ValidationError;
   errorRemove: GlobalError | null;
   modal: boolean;
+  oneCity: null | CityList;
+  updateCityLoading: boolean;
+  oneCityLoading: boolean;
 }
 
 const initialState: CityState = {
@@ -21,6 +23,9 @@ const initialState: CityState = {
   cityError: null,
   errorRemove: null,
   modal: false,
+  oneCity: null,
+  updateCityLoading: false,
+  oneCityLoading: false,
 };
 
 export const citySlice = createSlice({
@@ -29,6 +34,12 @@ export const citySlice = createSlice({
   reducers: {
     controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
       state.modal = type;
+    },
+    unsetCity: (state) => {
+      state.oneCity = null;
+    },
+    setCity: (state, action) => {
+      state.oneCity = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -53,6 +64,27 @@ export const citySlice = createSlice({
       state.createCityLoading = false;
       state.cityError = error || null;
     });
+    builder.addCase(fetchOneCity.pending, (state) => {
+      state.oneCityLoading = true;
+    });
+    builder.addCase(fetchOneCity.fulfilled, (state, { payload: city }) => {
+      state.oneCityLoading = false;
+      state.oneCity = city;
+    });
+    builder.addCase(fetchOneCity.rejected, (state) => {
+      state.oneCityLoading = false;
+    });
+
+    builder.addCase(updateCity.pending, (state) => {
+      state.updateCityLoading = true;
+    });
+    builder.addCase(updateCity.fulfilled, (state) => {
+      state.updateCityLoading = false;
+    });
+    builder.addCase(updateCity.rejected, (state, { payload: error }) => {
+      state.updateCityLoading = false;
+      state.cityError = error || null;
+    });
 
     builder.addCase(removeCity.pending, (state) => {
       state.removeCityLoading = true;
@@ -67,6 +99,7 @@ export const citySlice = createSlice({
     });
   },
 });
+export const { setCity, unsetCity } = citySlice.actions;
 
 export const cityReducer = citySlice.reducer;
 export const { controlModal } = citySlice.actions;
@@ -77,3 +110,6 @@ export const selectRemoveCityLoading = (state: RootState) => state.city.removeCi
 export const selectCityError = (state: RootState) => state.city.cityError;
 export const selectErrorRemove = (state: RootState) => state.city.errorRemove;
 export const selectModal = (state: RootState) => state.city.modal;
+export const selectOneCity = (state: RootState) => state.city.oneCity;
+export const selectOneCityLoading = (state: RootState) => state.city.oneCityLoading;
+export const selectUpdateCityLoading = (state: RootState) => state.city.updateCityLoading;

@@ -38,11 +38,12 @@ citiesRouter.put('/:id', auth, async (req, res, next) => {
   };
   try {
     const id = req.params.id as string;
-    const city = await City.find({ _id: req.params.id });
+    const city = await City.findOne({ _id: req.params.id });
     if (!city) {
       return res.status(404).send({ error: 'City not found!' });
     }
-    await City.updateMany({ _id: id }, edit);
+    await City.updateOne({ _id: id }, edit);
+    return res.send(city);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(error);
