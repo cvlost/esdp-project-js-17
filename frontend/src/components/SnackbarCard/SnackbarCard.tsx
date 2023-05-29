@@ -96,6 +96,9 @@ const SnackbarCard = () => {
     case 'create_booking':
       txt += 'Бронь успешно добавлена';
       break;
+    case 'Main_Edit':
+      txt += ' успешно сохранено';
+      break;
   }
 
   return (

@@ -31,11 +31,11 @@ directionRouter.put('/:id', auth, async (req, res, next) => {
   };
   try {
     const id = req.params.id as string;
-    const dir = await Direction.find({ _id: req.params.id });
+    const dir = await Direction.findOne({ _id: id });
     if (!dir) {
       return res.status(404).send({ error: 'direction not found!' });
     }
-    await Direction.updateOne({ _id: id, name: editDir.name });
+    await Direction.updateOne({ _id: id }, { name: editDir.name });
     return res.send(dir);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {

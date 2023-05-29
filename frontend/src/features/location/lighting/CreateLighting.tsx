@@ -86,7 +86,7 @@ const CreateLighting = () => {
       try {
         await dispatch(updateLight({ id: Id, name: LightToChange })).unwrap();
         await dispatch(getLightingsList()).unwrap();
-        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
         setIsDialogOpen(false);
       } catch (error) {
         throw new Error(`Произошла ошибка: ${error}`);

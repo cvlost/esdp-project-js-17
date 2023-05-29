@@ -87,7 +87,7 @@ const CreateRegion = () => {
       try {
         await dispatch(updateRegion({ id: Id, name: ToChange })).unwrap();
         await dispatch(fetchRegions()).unwrap();
-        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
         setIsDialogOpen(false);
       } catch (error) {
         throw new Error(`Произошла ошибка: ${error}`);

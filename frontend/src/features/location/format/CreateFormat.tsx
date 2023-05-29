@@ -80,7 +80,7 @@ const CreateFormat = () => {
       try {
         await dispatch(updateFormat({ id: Id, area: FormatToChange })).unwrap();
         await dispatch(fetchFormat()).unwrap();
-        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
         setIsDialogOpen(false);
       } catch (error) {
         throw new Error(`Произошла ошибка: ${error}`);

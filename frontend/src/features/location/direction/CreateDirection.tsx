@@ -76,7 +76,7 @@ const CreateDirection = () => {
       try {
         await dispatch(updateDir({ id: dirId, area: DirToChange })).unwrap();
         await dispatch(getDirectionsList()).unwrap();
-        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
         setIsDialogOpen(false);
       } catch (error) {
         throw new Error(`Произошла ошибка: ${error}`);

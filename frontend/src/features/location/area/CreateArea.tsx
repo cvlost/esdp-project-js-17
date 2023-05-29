@@ -76,7 +76,7 @@ const CreateArea = () => {
       try {
         await dispatch(updateArea({ id: AreaId, area: AreaToChange })).unwrap();
         await dispatch(fetchAreas()).unwrap();
-        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
         setIsDialogOpen(false);
       } catch (error) {
         throw new Error(`Произошла ошибка: ${error}`);

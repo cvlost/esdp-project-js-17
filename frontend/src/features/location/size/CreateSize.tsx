@@ -85,7 +85,7 @@ const CreateSize = () => {
       try {
         await dispatch(updateSize({ id: Id, name: ToChange })).unwrap();
         await dispatch(getSizesList()).unwrap();
-        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
         setIsDialogOpen(false);
       } catch (error) {
         throw new Error(`Произошла ошибка: ${error}`);
