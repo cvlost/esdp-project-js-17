@@ -146,7 +146,7 @@ describe('citiesRouter', () => {
       expect(city.area).toBe(area._id.toString());
     });
 
-    describe('GET /cities?areaId=id - авторизованный пользователь пытается получить список с query параметром area', () => {
+    describe('GET /cities?areaId=id - авторизованный пользователь пытается получить список с query параметром areaId', () => {
       test('указав некорректный mongodb id area, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
         const res = await request.get(`/cities?areaId=random-string`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
@@ -155,7 +155,7 @@ describe('citiesRouter', () => {
         expect(errorMessage).toBe('Некорректный id области.');
       });
 
-      test('указав корректный mongodb, но не существующий id area, должен возвращать statusCode 200 и пустой список', async () => {
+      test('указав корректный, но не существующий mongodb id area, должен возвращать statusCode 200 и пустой список', async () => {
         const randomMongoId = new mongoose.Types.ObjectId().toString();
         const res = await request.get(`/cities?areaId=${randomMongoId}`).set({ Authorization: adminToken });
         const citiesList = res.body;
@@ -180,7 +180,7 @@ describe('citiesRouter', () => {
         expect(citiesList.length).toBe(2);
         expect(citiesList.some((city) => city._id === city1._id.toString())).toBe(true);
         expect(citiesList.some((city) => city._id === city2._id.toString())).toBe(true);
-        expect(citiesList.some((city) => city.name === city2.name.toString())).toBe(true);
+        expect(citiesList.some((city) => city.name === city1.name.toString())).toBe(true);
         expect(citiesList.some((city) => city.name === city2.name.toString())).toBe(true);
         expect(citiesList.every((city) => city.area === area1._id.toString())).toBe(true);
       });
