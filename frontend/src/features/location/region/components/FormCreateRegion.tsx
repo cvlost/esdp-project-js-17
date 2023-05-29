@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, MenuItem, TextField, Typography } from '@mui/material';
 import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
-import { RegionMutation } from '../../../../types';
+import { RegionMutation, ValidationError } from '../../../../types';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import { selectCreateRegionLoading, selectRegionError } from '../regionSlice';
 import { selectCityList } from '../../city/citySlice';
 import { fetchCities } from '../../city/cityThunk';
 
 interface Props {
   onSubmit: (region: RegionMutation) => void;
+  existingRegion?: RegionMutation;
+  isEdit?: boolean;
+  Loading: boolean;
+  error: ValidationError | null;
 }
 
-const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
+const initialState: RegionMutation = {
+  name: '',
+  city: '',
+};
+
+const FormCreateRegion: React.FC<Props> = ({ onSubmit, existingRegion = initialState, error, Loading, isEdit }) => {
   const dispatch = useAppDispatch();
-  const createLoading = useAppSelector(selectCreateRegionLoading);
   const cities = useAppSelector(selectCityList);
-  const error = useAppSelector(selectRegionError);
-  const [state, setState] = useState({
-    city: '',
-    name: '',
-  });
+  const [state, setState] = useState<RegionMutation>(existingRegion);
 
   useEffect(() => {
     dispatch(fetchCities());
@@ -58,7 +61,7 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
         <SouthAmericaIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Создать район
+        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать район' : 'Создать район'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -100,15 +103,8 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button
-          disabled={createLoading}
-          color="success"
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {!createLoading ? 'Создать регион' : <CircularProgress />}
+        <Button disabled={Loading} color="success" type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>

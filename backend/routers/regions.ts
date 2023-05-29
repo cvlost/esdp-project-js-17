@@ -41,7 +41,8 @@ regionsRouter.put('/:id', auth, async (req, res, next) => {
     if (!region) {
       return res.status(404).send({ error: 'region not found!' });
     }
-    await Region.updateMany({ _id: id }, edit);
+    await Region.updateOne({ _id: id }, edit);
+    return res.send(region);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(error);

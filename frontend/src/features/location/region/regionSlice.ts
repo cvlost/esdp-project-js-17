@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
 import { GlobalError, RegionList, ValidationError } from '../../../types';
-import { createRegion, fetchRegions, removeRegion } from './regionThunk';
+import { createRegion, fetchOneRegion, fetchRegions, removeRegion, updateRegion } from './regionThunk';
 
 interface regionState {
   listRegion: RegionList[];
@@ -11,6 +11,9 @@ interface regionState {
   regionError: ValidationError | null;
   errorRemove: GlobalError | null;
   modal: boolean;
+  oneRegion: null | RegionList;
+  updateRegionLoading: boolean;
+  oneRegionLoading: boolean;
 }
 
 const initialState: regionState = {
@@ -21,6 +24,9 @@ const initialState: regionState = {
   regionError: null,
   errorRemove: null,
   modal: false,
+  oneRegion: null,
+  updateRegionLoading: false,
+  oneRegionLoading: false,
 };
 
 const regionSlice = createSlice({
@@ -29,6 +35,12 @@ const regionSlice = createSlice({
   reducers: {
     controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
       state.modal = type;
+    },
+    unsetRegion: (state) => {
+      state.oneRegion = null;
+    },
+    setRegion: (state, action) => {
+      state.oneRegion = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -43,6 +55,27 @@ const regionSlice = createSlice({
       state.getAllRegionLoading = false;
     });
 
+    builder.addCase(fetchOneRegion.pending, (state) => {
+      state.oneRegionLoading = true;
+    });
+    builder.addCase(fetchOneRegion.fulfilled, (state, { payload: region }) => {
+      state.oneRegionLoading = false;
+      state.oneRegion = region;
+    });
+    builder.addCase(fetchOneRegion.rejected, (state) => {
+      state.oneRegionLoading = false;
+    });
+
+    builder.addCase(updateRegion.pending, (state) => {
+      state.updateRegionLoading = true;
+    });
+    builder.addCase(updateRegion.fulfilled, (state) => {
+      state.updateRegionLoading = false;
+    });
+    builder.addCase(updateRegion.rejected, (state, { payload: error }) => {
+      state.updateRegionLoading = false;
+      state.regionError = error || null;
+    });
     builder.addCase(createRegion.pending, (state) => {
       state.createRegionLoading = true;
     });
@@ -67,7 +100,7 @@ const regionSlice = createSlice({
     });
   },
 });
-
+export const { setRegion, unsetRegion } = regionSlice.actions;
 export const regionReducer = regionSlice.reducer;
 export const { controlModal } = regionSlice.actions;
 export const selectRegionList = (state: RootState) => state.region.listRegion;
@@ -77,3 +110,6 @@ export const selectRemoveRegionLoading = (state: RootState) => state.region.remo
 export const selectRegionError = (state: RootState) => state.region.regionError;
 export const selectErrorRemove = (state: RootState) => state.region.errorRemove;
 export const selectModal = (state: RootState) => state.region.modal;
+export const selectOneRegion = (state: RootState) => state.region.oneRegion;
+export const selectOneRegionLoading = (state: RootState) => state.region.oneRegionLoading;
+export const selectUpdateRegionLoading = (state: RootState) => state.region.updateRegionLoading;

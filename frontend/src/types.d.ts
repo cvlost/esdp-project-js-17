@@ -78,7 +78,7 @@ export interface CityMutation {
 export interface RegionList {
   _id: string;
   name: string;
-  area: string;
+  city: string;
 }
 
 export interface RegionMutation {

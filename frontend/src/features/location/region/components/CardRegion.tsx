@@ -5,13 +5,15 @@ import { RegionList } from '../../../../types';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectRemoveRegionLoading } from '../regionSlice';
 import { StyledTableRow } from '../../../../constants';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
   region: RegionList;
   removeCardRegion: React.MouseEventHandler;
+  onEditing: React.MouseEventHandler;
 }
 
-const CardRegion: React.FC<Props> = ({ region, removeCardRegion }) => {
+const CardRegion: React.FC<Props> = ({ region, removeCardRegion, onEditing }) => {
   const removeLoading = useAppSelector(selectRemoveRegionLoading);
   return (
     <>
@@ -20,6 +22,9 @@ const CardRegion: React.FC<Props> = ({ region, removeCardRegion }) => {
         <TableCell align="right">
           <IconButton disabled={removeLoading} onClick={removeCardRegion} aria-label="delete">
             {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          </IconButton>
+          <IconButton aria-label="success" onClick={onEditing}>
+            <EditIcon />
           </IconButton>
         </TableCell>
       </StyledTableRow>
