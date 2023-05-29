@@ -36,7 +36,7 @@ areasRouter.put('/:id', auth, async (req, res, next) => {
     if (!area) {
       return res.status(404).send({ error: 'area not found!' });
     }
-    await Area.updateOne({ _id: id, name: editArea.name });
+    await Area.updateOne({ _id: id }, { name: editArea.name });
     return res.send(area);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {

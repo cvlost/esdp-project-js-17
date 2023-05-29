@@ -31,11 +31,12 @@ sizesRouter.put('/:id', auth, async (req, res, next) => {
   };
   try {
     const id = req.params.id as string;
-    const size = await Size.find({ _id: req.params.id });
+    const size = await Size.findOne({ _id: req.params.id });
     if (!size) {
       return res.status(404).send({ error: 'size not found!' });
     }
-    await Size.updateMany({ _id: id }, edit);
+    await Size.updateMany({ _id: id }, { name: edit.name });
+    return res.send(size);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(error);

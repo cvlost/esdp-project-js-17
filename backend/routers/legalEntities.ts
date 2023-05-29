@@ -4,6 +4,7 @@ import permit from '../middleware/permit';
 import mongoose from 'mongoose';
 import LegalEntity from '../models/LegalEntity';
 import Location from '../models/Location';
+import Format from '../models/Format';
 
 const legalEntitiesRouter = express.Router();
 
@@ -31,11 +32,12 @@ legalEntitiesRouter.put('/:id', auth, async (req, res, next) => {
   };
   try {
     const id = req.params.id as string;
-    const LE = await LegalEntity.find({ _id: req.params.id });
+    const LE = await LegalEntity.findOne({ _id: id });
     if (!LE) {
       return res.status(404).send({ error: 'legal Entity not found!' });
     }
-    await LegalEntity.updateMany({ _id: id }, edit);
+    await LegalEntity.updateOne({ _id: id }, { name: edit.name });
+    return res.send(LE);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(error);

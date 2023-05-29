@@ -35,7 +35,7 @@ formatRouter.put('/:id', auth, async (req, res, next) => {
     if (!format) {
       return res.status(404).send({ error: 'format not found!' });
     }
-    await Format.updateOne({ _id: id, name: editFormat.name });
+    await Format.updateOne({ _id: id }, { name: editFormat.name });
     return res.send(format);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
