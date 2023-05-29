@@ -112,3 +112,10 @@ export interface RentData {
   date: DateRange | null;
   client: Schema.Types.ObjectId | null;
 }
+
+export interface BookingHistoryType {
+  location_id: Schema.Types.ObjectId;
+  client_id: Schema.Types.ObjectId;
+  price: string;
+  booking_date: Schema.Types.Date[];
+}
