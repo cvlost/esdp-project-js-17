@@ -3,7 +3,6 @@ import { FormatList, FormatMutation, GlobalError, ValidationError } from '../../
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
-import { setDirection } from '../direction/directionsSlice';
 import { setFormat } from './formatSlice';
 
 export const fetchFormat = createAsyncThunk<FormatList[]>('format/fetch_formats', async () => {

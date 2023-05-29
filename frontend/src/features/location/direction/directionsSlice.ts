@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createDirection, deleteDirection, fetchOneDir, getDirectionsList, updateDir } from './directionsThunks';
 import { DirectionList, GlobalError, ValidationError } from '../../../types';
 import { RootState } from '../../../app/store';
-import { updateArea } from '../area/areaThunk';
 
 interface DirectionState {
   listDirection: DirectionList[];

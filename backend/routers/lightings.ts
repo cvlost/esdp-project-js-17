@@ -31,11 +31,12 @@ lightingRouter.put('/:id', auth, async (req, res, next) => {
   };
   try {
     const id = req.params.id as string;
-    const light = await Lighting.find({ _id: req.params.id });
+    const light = await Lighting.find({ _id: id });
     if (!light) {
       return res.status(404).send({ error: 'light not found!' });
     }
-    await Lighting.updateMany({ _id: id }, edit);
+    await Lighting.updateOne({ _id: id, name: edit.name });
+    return res.send(light);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(error);

@@ -44,16 +44,16 @@ const CreateFormat = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const formats = useAppSelector(selectFormatList);
-  const existingFormat = useAppSelector(selectOneFormat);
-  const updateLoading = useAppSelector(selectUpdateFormatLoading);
-  const createLoading = useAppSelector(selectCreateFormatLoading);
-  const error = useAppSelector(selectFormatError);
   const formatsLoading = useAppSelector(selectGetAllFormatLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [Id, setId] = useState('');
+  const existingFormat = useAppSelector(selectOneFormat);
+  const updateLoading = useAppSelector(selectUpdateFormatLoading);
+  const createLoading = useAppSelector(selectCreateFormatLoading);
+  const error = useAppSelector(selectFormatError);
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: MainColorGreen,
