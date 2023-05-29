@@ -318,7 +318,7 @@ describe('legalEntitiesRouter', () => {
         expect(errorMessage).toBe('Юр лицо привязано к локациям! Удаление запрещено.');
       });
 
-      test('указав корректный id сущности без связей, должен возвращать statusCode 200 и объект с информацию об удалении со свойством deletedCoutn = 1', async () => {
+      test('указав корректный id сущности без связей, должен возвращать statusCode 200 и объект с информацию об удалении со свойством deletedCount = 1', async () => {
         const res = await request
           .delete(`/legalEntities/${entityIdNotRelatedToLocation}`)
           .set({ Authorization: adminToken });

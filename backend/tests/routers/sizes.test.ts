@@ -252,7 +252,7 @@ describe('sizesRouter', () => {
         expect(errorMessage).toBe('Данный размер привязан к локациям! Удаление запрещено.');
       });
 
-      test('указав корректный id, должен возвращать statusCode 200 и объект с информацией об удалении с полем deleteCount = 1', async () => {
+      test('указав корректный id, должен возвращать statusCode 200 и объект с информацией об удалении с полем deletedCount = 1', async () => {
         const res = await request.delete(`/sizes/${sizeIdNotRelatedToLocation}`).set({ Authorization: adminToken });
         const result = res.body;
 
