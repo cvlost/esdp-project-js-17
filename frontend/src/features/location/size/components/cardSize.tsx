@@ -5,13 +5,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { SizeList } from '../../../../types';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectSizeDeleteLoading } from '../sizeSlice';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
   size: SizeList;
   removeCardSize: React.MouseEventHandler;
+  onEditing: React.MouseEventHandler;
 }
 
-const CardSize: React.FC<Props> = ({ size, removeCardSize }) => {
+const CardSize: React.FC<Props> = ({ size, removeCardSize, onEditing }) => {
   const removeLoading = useAppSelector(selectSizeDeleteLoading);
   return (
     <>
@@ -20,6 +22,9 @@ const CardSize: React.FC<Props> = ({ size, removeCardSize }) => {
         <TableCell align="right">
           <IconButton disabled={removeLoading} onClick={removeCardSize} aria-label="delete">
             {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          </IconButton>
+          <IconButton aria-label="success" onClick={onEditing}>
+            <EditIcon />
           </IconButton>
         </TableCell>
       </StyledTableRow>

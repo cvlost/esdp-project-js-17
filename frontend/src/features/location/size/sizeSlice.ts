@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createSize, deleteSize, getSizesList } from './sizeThunks';
+import { createSize, deleteSize, fetchOneSize, getSizesList, updateSize } from './sizeThunks';
 import { GlobalError, SizeList, ValidationError } from '../../../types';
 import { RootState } from '../../../app/store';
 
@@ -11,6 +11,9 @@ interface SizeState {
   deleteSizeLoading: boolean;
   errorRemove: GlobalError | null;
   modal: boolean;
+  oneSize: null | SizeList;
+  updateSizeLoading: boolean;
+  oneSizeLoading: boolean;
 }
 
 const initialState: SizeState = {
@@ -21,6 +24,9 @@ const initialState: SizeState = {
   deleteSizeLoading: false,
   errorRemove: null,
   modal: false,
+  oneSize: null,
+  updateSizeLoading: false,
+  oneSizeLoading: false,
 };
 
 const sizeSlice = createSlice({
@@ -29,6 +35,12 @@ const sizeSlice = createSlice({
   reducers: {
     controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
       state.modal = type;
+    },
+    unsetSize: (state) => {
+      state.oneSize = null;
+    },
+    setSize: (state, action) => {
+      state.oneSize = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -41,6 +53,28 @@ const sizeSlice = createSlice({
     });
     builder.addCase(getSizesList.rejected, (state) => {
       state.getAllSizesLoading = false;
+    });
+
+    builder.addCase(fetchOneSize.pending, (state) => {
+      state.oneSizeLoading = true;
+    });
+    builder.addCase(fetchOneSize.fulfilled, (state, { payload: size }) => {
+      state.oneSizeLoading = false;
+      state.oneSize = size;
+    });
+    builder.addCase(fetchOneSize.rejected, (state) => {
+      state.oneSizeLoading = false;
+    });
+
+    builder.addCase(updateSize.pending, (state) => {
+      state.updateSizeLoading = true;
+    });
+    builder.addCase(updateSize.fulfilled, (state) => {
+      state.updateSizeLoading = false;
+    });
+    builder.addCase(updateSize.rejected, (state, { payload: error }) => {
+      state.updateSizeLoading = false;
+      state.sizeError = error || null;
     });
 
     builder.addCase(createSize.pending, (state) => {
@@ -67,7 +101,7 @@ const sizeSlice = createSlice({
     });
   },
 });
-
+export const { setSize, unsetSize } = sizeSlice.actions;
 export const sizesReducer = sizeSlice.reducer;
 export const { controlModal } = sizeSlice.actions;
 export const selectSizes = (state: RootState) => state.size.listSize;
@@ -77,3 +111,6 @@ export const selectSizeError = (state: RootState) => state.size.sizeError;
 export const selectSizeDeleteLoading = (state: RootState) => state.size.deleteSizeLoading;
 export const selectErrorRemove = (state: RootState) => state.size.errorRemove;
 export const selectModal = (state: RootState) => state.size.modal;
+export const selectOneSize = (state: RootState) => state.size.oneSize;
+export const selectOneSizeLoading = (state: RootState) => state.size.oneSizeLoading;
+export const selectUpdateSizeLoading = (state: RootState) => state.size.updateSizeLoading;

@@ -38,7 +38,6 @@ import { LightingMutation } from '../../../types';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
-import { selectCreateLinkLoading } from '../../CommercialLink/commercialLinkSlice';
 import ModalBody from '../../../components/ModalBody';
 
 const CreateLighting = () => {

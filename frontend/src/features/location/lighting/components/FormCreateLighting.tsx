@@ -20,6 +20,7 @@ const FormCreateLighting: React.FC<Props> = ({ onSubmit, existingLight = initial
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(value);
+    setValue({ name: '' });
   };
 
   const getFieldError = (fieldName: string) => {
