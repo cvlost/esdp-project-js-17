@@ -6,7 +6,6 @@ const RegionSchema = new Schema<RegionType>({
   name: {
     type: String,
     required: true,
-    unique: true,
   },
   city: {
     type: Schema.Types.ObjectId,

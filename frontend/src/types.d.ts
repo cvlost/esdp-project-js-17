@@ -177,7 +177,10 @@ export interface StreetList {
   city: string;
 }
 
-export type StreetMutation = Omit<StreetList, '_id'>;
+export interface StreetMutation {
+  name: string;
+  city: string;
+}
 
 export interface AreaList {
   _id: string;

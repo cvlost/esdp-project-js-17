@@ -5,13 +5,15 @@ import { StreetList } from '../../../../types';
 import { useAppSelector } from '../../../../app/hooks';
 import { StyledTableRow } from '../../../../constants';
 import { selectRemoveStreetLoading } from '../streetSlice';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
   street: StreetList;
   removeCardStreet: React.MouseEventHandler;
+  onEditing: React.MouseEventHandler;
 }
 
-const CardStreet: React.FC<Props> = ({ street, removeCardStreet }) => {
+const CardStreet: React.FC<Props> = ({ street, removeCardStreet, onEditing }) => {
   const removeLoading = useAppSelector(selectRemoveStreetLoading);
   return (
     <>
@@ -20,6 +22,9 @@ const CardStreet: React.FC<Props> = ({ street, removeCardStreet }) => {
         <TableCell align="right">
           <IconButton disabled={removeLoading} onClick={removeCardStreet} aria-label="delete">
             {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          </IconButton>
+          <IconButton aria-label="success" onClick={onEditing}>
+            <EditIcon />
           </IconButton>
         </TableCell>
       </StyledTableRow>

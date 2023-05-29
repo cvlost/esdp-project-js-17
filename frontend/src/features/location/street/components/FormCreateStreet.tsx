@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, MenuItem, TextField, Typography } from '@mui/material';
-import { StreetMutation } from '../../../../types';
+import { StreetMutation, ValidationError } from '../../../../types';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import { selectCreateStreetLoading, selectStreetError } from '../streetSlice';
 import SignpostIcon from '@mui/icons-material/Signpost';
 import { selectCityList } from '../../city/citySlice';
 import { fetchCities } from '../../city/cityThunk';
 
 interface Props {
   onSubmit: (street: StreetMutation) => void;
+  existingStreet?: StreetMutation;
+  isEdit?: boolean;
+  Loading: boolean;
+  error: ValidationError | null;
 }
 
-const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
+const initialState: StreetMutation = {
+  name: '',
+  city: '',
+};
+
+const FormCreateStreet: React.FC<Props> = ({ onSubmit, existingStreet = initialState, isEdit, Loading, error }) => {
   const dispatch = useAppDispatch();
   const cities = useAppSelector(selectCityList);
-  const createLoading = useAppSelector(selectCreateStreetLoading);
-  const error = useAppSelector(selectStreetError);
-  const [state, setState] = useState<StreetMutation>({
-    city: '',
-    name: '',
-  });
+  const [state, setState] = useState<StreetMutation>(existingStreet);
 
   useEffect(() => {
     dispatch(fetchCities());
@@ -61,7 +64,7 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
         <SignpostIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Создать улицу
+        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать улицу' : 'Создать улицу'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -104,15 +107,8 @@ const FormCreateStreet: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button
-          disabled={createLoading}
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="success"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {!createLoading ? 'Создать улицу' : <CircularProgress />}
+        <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
+          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>

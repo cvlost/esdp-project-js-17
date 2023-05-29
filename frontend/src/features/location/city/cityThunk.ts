@@ -1,9 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { CityMutation, CityList, ValidationError, GlobalError, RegionList, RegionMutation } from '../../../types';
+import { CityMutation, CityList, ValidationError, GlobalError } from '../../../types';
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
-import { setRegion } from '../region/regionSlice';
 import { setCity } from './citySlice';
 
 export const fetchCities = createAsyncThunk<CityList[], string | undefined>('city/fetch_cities', async (id) => {
