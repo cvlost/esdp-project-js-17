@@ -8,9 +8,15 @@ import Location from '../models/Location';
 const streetsRouter = express.Router();
 
 streetsRouter.get('/', auth, async (req, res, next) => {
+  const cityId = req.query.cityId as string;
+
   try {
-    if (req.query.citiId !== undefined) {
-      const streets = await Street.find({ city: req.query.citiId });
+    if (cityId !== undefined) {
+      if (!mongoose.isValidObjectId(cityId)) {
+        return res.status(422).send({ error: 'Некорректный id города.' });
+      }
+
+      const streets = await Street.find({ city: cityId });
       return res.send(streets);
     } else {
       const streets = await Street.find();
@@ -53,15 +59,15 @@ streetsRouter.put('/:id', auth, async (req, res, next) => {
 
 streetsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
-    const streetData = await Street.create({
+    const street = await Street.create({
       city: req.body.city,
       name: req.body.name,
     });
 
-    return res.send(streetData);
+    return res.status(201).send({ message: 'Новая улица успешно создана!', street });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+      return res.status(422).send(e);
     } else {
       return next(e);
     }
@@ -69,14 +75,19 @@ streetsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 });
 
 streetsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id улицы.' });
+  }
+
   try {
-    const _id = req.params.id as string;
     const street = await Street.findById(_id);
-    const location = await Location.find({ street: _id });
+    const location = await Location.findOne({ streets: { $in: [_id] } });
     if (!street) {
       return res.status(404).send({ error: 'Улица не существует в базе.' });
-    } else if (location.length > 0) {
-      return res.status(404).send({ error: 'Улицы привязаны к локациям ! удаление запрещено' });
+    } else if (location) {
+      return res.status(409).send({ error: 'Улица привязана к локациям! Удаление запрещено.' });
     }
 
     const result = await Street.deleteOne({ _id });

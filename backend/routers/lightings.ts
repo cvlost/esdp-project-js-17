@@ -47,14 +47,12 @@ lightingRouter.put('/:id', auth, async (req, res, next) => {
 
 lightingRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
-    const lightingData = new Lighting({
-      name: req.body.name,
-    });
-    await lightingData.save();
-    return res.send(lightingData);
+    const lighting = await Lighting.create({ name: req.body.name });
+
+    return res.status(201).send({ message: 'Новое освещение успешно создано!', lighting });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+      return res.status(422).send(e);
     } else {
       return next(e);
     }
@@ -62,14 +60,19 @@ lightingRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 });
 
 lightingRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id освещения.' });
+  }
+
   try {
-    const _id = req.params.id as string;
     const lighting = await Lighting.findOne({ _id });
     const location = await Location.find({ lighting: _id });
     if (!lighting) {
-      return res.status(404).send({ error: 'Данное освещение не существует в базе.' });
+      return res.status(404).send({ error: 'Освещение не существует в базе.' });
     } else if (location.length > 0) {
-      return res.status(404).send({ error: 'Освещение привязано к локациям ! Удаление запрещено!' });
+      return res.status(409).send({ error: 'Освещение привязано к локациям! Удаление запрещено.' });
     }
     const result = await Lighting.deleteOne({ _id });
     return res.send(result);

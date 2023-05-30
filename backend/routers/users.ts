@@ -1,6 +1,6 @@
 import express from 'express';
 import User from '../models/Users';
-import auth from '../middleware/auth';
+import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
 
@@ -16,10 +16,10 @@ usersRouter.post('/', auth, permit('admin'), async (req, res, next) => {
     });
     user.generateToken();
     await user.save();
-    return res.send({ message: 'Registered successfully! ', user });
+    return res.status(201).send({ message: 'Новый пользователь успешно зарегистрирован!', user });
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }
@@ -50,8 +50,19 @@ usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
 });
 
 usersRouter.get('/:id', auth, async (req, res, next) => {
+  const _id = req.params.id;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id пользователя.' });
+  }
+
   try {
-    const user = await User.findOne({ _id: req.params.id });
+    const user = await User.findOne({ _id });
+
+    if (!user) {
+      return res.status(404).send({ error: 'Пользователь не найден.' });
+    }
+
     return res.send(user);
   } catch (e) {
     return next(e);
@@ -59,13 +70,23 @@ usersRouter.get('/:id', auth, async (req, res, next) => {
 });
 
 usersRouter.put('/:id', auth, async (req, res, next) => {
+  const reqUser = (req as RequestWithUser).user;
+  const id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(422).send({ error: 'Некорректный id пользователя.' });
+  }
+
+  if (reqUser.role !== 'admin' && reqUser._id.toString() !== id) {
+    return res.status(403).send({ error: 'Неавторизованный пользователь. Нет прав на совершение действия.' });
+  }
+
   try {
-    const id = req.params.id as string;
     const { email, displayName, password, role } = req.body;
     const user = await User.findById(id);
 
     if (!user) {
-      return res.status(404).send({ error: 'No user found!' });
+      return res.status(404).send({ error: 'Пользователь не найден.' });
     }
 
     if (email && email !== user.email) {
@@ -83,10 +104,10 @@ usersRouter.put('/:id', auth, async (req, res, next) => {
 
     const result = await user.save();
 
-    return res.send(result);
+    return res.send({ message: 'Пользователь успешно отредактирован!', user: result });
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }
@@ -95,7 +116,7 @@ usersRouter.put('/:id', auth, async (req, res, next) => {
 usersRouter.delete('/sessions', async (req, res, next) => {
   try {
     const token = req.get('Authorization');
-    const success = { message: 'ok' };
+    const success = { message: 'Успешное окончание сессии!' };
 
     if (!token) {
       return res.send(success);
@@ -116,13 +137,24 @@ usersRouter.delete('/sessions', async (req, res, next) => {
 });
 
 usersRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+  const reqUser = (req as RequestWithUser).user;
+  const _id = req.params.id;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id пользователя.' });
+  }
+
+  if (reqUser._id.toString() === _id) {
+    return res.status(403).send({ error: 'Невозможно удалить собственный аккаунт!' });
+  }
+
   try {
-    const user = await User.findOne({ _id: req.params.id });
+    const user = await User.findOne({ _id });
     if (!user) {
-      return res.send({ error: 'User is not found!' });
+      return res.status(404).send({ error: 'Пользователь не найден.' });
     }
 
-    const deletedUser = await User.deleteOne({ _id: req.params.id });
+    const deletedUser = await User.deleteOne({ _id });
     return res.send(deletedUser);
   } catch (e) {
     return next(e);
@@ -133,20 +165,20 @@ usersRouter.post('/sessions', async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    return res.status(400).send({ error: 'Email or password is incorrect!' });
+    return res.status(422).send({ error: 'Неверная почта или пароль!' });
   }
 
   const isMatch = await user.checkPassword(req.body.password);
 
   if (!isMatch) {
-    return res.status(400).send({ error: 'Email or password is incorrect!' });
+    return res.status(422).send({ error: 'Неверная почта или пароль!' });
   }
 
   try {
     user.generateToken();
     await user.save();
 
-    return res.send({ message: 'Username and password correct!', user });
+    return res.send({ message: 'Почта и пароль верные!', user });
   } catch (e) {
     return next(e);
   }
