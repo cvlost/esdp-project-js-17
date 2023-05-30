@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -27,13 +27,18 @@ import {
   selectLightingsLoading,
   selectErrorRemove,
   selectModal,
+  selectOneLight,
+  selectUpdateLightLoading,
+  selectLightingError,
+  selectLightingCreateLoading,
 } from './lightingsSlice';
-import { createLighting, deleteLighting, getLightingsList } from './lightingsThunks';
+import { createLighting, deleteLighting, fetchOneLight, getLightingsList, updateLight } from './lightingsThunks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { LightingMutation } from '../../../types';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
+import ModalBody from '../../../components/ModalBody';
 
 const CreateLighting = () => {
   const user = useAppSelector(selectUser);
@@ -43,6 +48,12 @@ const CreateLighting = () => {
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [Id, setId] = useState('');
+  const existingLight = useAppSelector(selectOneLight);
+  const updateLoading = useAppSelector(selectUpdateLightLoading);
+  const createLoading = useAppSelector(selectLightingCreateLoading);
+  const error = useAppSelector(selectLightingError);
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: MainColorGreen,
@@ -70,6 +81,27 @@ const CreateLighting = () => {
     }
   };
 
+  const onFormSubmit = async (LightToChange: LightingMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateLight({ id: Id, name: LightToChange })).unwrap();
+        await dispatch(getLightingsList()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (ID: string) => {
+    await dispatch(fetchOneLight(ID));
+    setId(ID);
+    setIsDialogOpen(true);
+  };
+
   if (user?.role !== 'admin') {
     return <Navigate to="/login" />;
   }
@@ -77,7 +109,7 @@ const CreateLighting = () => {
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <FormCreateLighting onSubmit={onSubmit} />
+        <FormCreateLighting onSubmit={onSubmit} error={error} Loading={createLoading} />
       </Container>
       <Container>
         {open && (
@@ -119,6 +151,7 @@ const CreateLighting = () => {
                         key={light._id}
                         lighting={light}
                         removeCardLighting={() => removeCardLighting(light._id)}
+                        onEditing={() => openDialog(light._id)}
                       />
                     ))
                   ) : (
@@ -140,6 +173,17 @@ const CreateLighting = () => {
           </TableContainer>
         </Paper>
       </Container>
+      {existingLight && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateLighting
+            error={error}
+            onSubmit={onFormSubmit}
+            existingLight={existingLight}
+            isEdit
+            Loading={updateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </Box>
   );

@@ -5,13 +5,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { DirectionList } from '../../../../types';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectDirectionDeleteLoading } from '../directionsSlice';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
   direction: DirectionList;
   removeCardDirection: React.MouseEventHandler;
+  onEditing: React.MouseEventHandler;
 }
 
-const CardDirection: React.FC<Props> = ({ direction, removeCardDirection }) => {
+const CardDirection: React.FC<Props> = ({ direction, removeCardDirection, onEditing }) => {
   const removeLoading = useAppSelector(selectDirectionDeleteLoading);
   return (
     <>
@@ -20,6 +22,9 @@ const CardDirection: React.FC<Props> = ({ direction, removeCardDirection }) => {
         <TableCell align="right">
           <IconButton disabled={removeLoading} onClick={removeCardDirection} aria-label="delete">
             {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          </IconButton>
+          <IconButton aria-label="success" onClick={onEditing}>
+            <EditIcon />
           </IconButton>
         </TableCell>
       </StyledTableRow>

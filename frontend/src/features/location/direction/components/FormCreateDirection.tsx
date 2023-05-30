@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import { DirectionMutation } from '../../../../types';
-import { useAppSelector } from '../../../../app/hooks';
-import { selectDirectionCreateLoading, selectDirectionError } from '../directionsSlice';
+import { DirectionMutation, ValidationError } from '../../../../types';
 
 interface Props {
   onSubmit: (direction: DirectionMutation) => void;
+  existingDir?: DirectionMutation;
+  isEdit?: boolean;
+  Loading: boolean;
+  error: ValidationError | null;
 }
 
-const FormCreateDirection: React.FC<Props> = ({ onSubmit }) => {
-  const createLoading = useAppSelector(selectDirectionCreateLoading);
-  const error = useAppSelector(selectDirectionError);
-  const [value, setValue] = useState('');
+const initialState: DirectionMutation = {
+  name: '',
+};
+
+const FormCreateDirection: React.FC<Props> = ({ onSubmit, existingDir = initialState, Loading, isEdit, error }) => {
+  const [value, setValue] = useState<DirectionMutation>(existingDir);
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name: value });
-    setValue('');
+    onSubmit(value);
   };
 
   const getFieldError = (fieldName: string) => {
@@ -41,14 +44,14 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit }) => {
         <GpsFixedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Создать направление
+        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать направление' : 'Создать направление'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
           <Grid item xs={12}>
             <TextField
-              value={value}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+              value={value.name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue({ name: e.target.value })}
               required
               fullWidth
               label="Направление"
@@ -60,15 +63,8 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit }) => {
             />
           </Grid>
         </Grid>
-        <Button
-          disabled={createLoading}
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="success"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {!createLoading ? 'Создать направление' : <CircularProgress />}
+        <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
+          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать направление' : 'Создать'}
         </Button>
       </Box>
     </Box>

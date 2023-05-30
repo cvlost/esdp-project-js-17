@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -22,18 +22,23 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import {
   controlModal,
+  selectCreateFormatLoading,
   selectErrorRemove,
+  selectFormatError,
   selectFormatList,
   selectGetAllFormatLoading,
   selectModal,
+  selectOneFormat,
+  selectUpdateFormatLoading,
 } from './formatSlice';
 import CardFormat from './components/CardFormat';
-import { createFormat, fetchFormat, removeFormat } from './formatThunk';
+import { createFormat, fetchFormat, fetchOneFormat, removeFormat, updateFormat } from './formatThunk';
 import { FormatMutation } from '../../../types';
 import FormCreateFormat from './components/FormCreateFormat';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
+import ModalBody from '../../../components/ModalBody';
 
 const CreateFormat = () => {
   const user = useAppSelector(selectUser);
@@ -43,6 +48,12 @@ const CreateFormat = () => {
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [Id, setId] = useState('');
+  const existingFormat = useAppSelector(selectOneFormat);
+  const updateLoading = useAppSelector(selectUpdateFormatLoading);
+  const createLoading = useAppSelector(selectCreateFormatLoading);
+  const error = useAppSelector(selectFormatError);
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: MainColorGreen,
@@ -64,6 +75,27 @@ const CreateFormat = () => {
     }
   };
 
+  const onFormSubmit = async (FormatToChange: FormatMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateFormat({ id: Id, area: FormatToChange })).unwrap();
+        await dispatch(fetchFormat()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (ID: string) => {
+    await dispatch(fetchOneFormat(ID));
+    setId(ID);
+    setIsDialogOpen(true);
+  };
+
   const onSubmit = async (format: FormatMutation) => {
     await dispatch(createFormat(format)).unwrap();
     await dispatch(fetchFormat());
@@ -77,7 +109,7 @@ const CreateFormat = () => {
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <FormCreateFormat onSubmit={onSubmit} />
+        <FormCreateFormat onSubmit={onSubmit} Loading={createLoading} error={error} />
       </Container>
       <Container>
         {open && (
@@ -115,7 +147,12 @@ const CreateFormat = () => {
                 {!formatsLoading ? (
                   formats.length !== 0 ? (
                     formats.map((format) => (
-                      <CardFormat key={format._id} format={format} removeFormat={() => deleteFormat(format._id)} />
+                      <CardFormat
+                        key={format._id}
+                        format={format}
+                        removeFormat={() => deleteFormat(format._id)}
+                        onEditing={() => openDialog(format._id)}
+                      />
                     ))
                   ) : (
                     <TableRow>
@@ -136,6 +173,17 @@ const CreateFormat = () => {
           </TableContainer>
         </Paper>
       </Container>
+      {existingFormat && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateFormat
+            error={error}
+            onSubmit={onFormSubmit}
+            existingFormat={existingFormat}
+            isEdit
+            Loading={updateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </Box>
   );

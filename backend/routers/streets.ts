@@ -21,6 +21,36 @@ streetsRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
+streetsRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const street = await Street.findOne({ _id: req.params.id });
+    return res.send(street);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+streetsRouter.put('/:id', auth, async (req, res, next) => {
+  const edit = {
+    name: req.body.name,
+    city: req.body.city,
+  };
+  try {
+    const id = req.params.id as string;
+    const street = await Street.findOne({ _id: req.params.id });
+    if (!street) {
+      return res.status(404).send({ error: 'street not found!' });
+    }
+    await Street.updateOne({ _id: id }, edit);
+    return res.send(street);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
+  }
+});
+
 streetsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const streetData = await Street.create({

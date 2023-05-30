@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -22,18 +22,23 @@ import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import { MainColorGreen } from '../../../constants';
 import {
   controlModal,
+  selectCreateStreetLoading,
   selectErrorRemove,
   selectGetAllStreetsLoading,
   selectModal,
+  selectOneStreet,
+  selectStreetError,
   selectStreetList,
+  selectUpdateStreetLoading,
 } from './streetSlice';
 import { Navigate } from 'react-router-dom';
-import { createStreet, fetchStreet, removeStreet } from './streetThunks';
+import { createStreet, fetchOneStreet, fetchStreet, removeStreet, updateStreet } from './streetThunks';
 import FormCreateStreet from './components/FormCreateStreet';
 import CardStreet from './components/CardStreet';
 import { StreetMutation } from '../../../types';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
+import ModalBody from '../../../components/ModalBody';
 
 const CreateStreet = () => {
   const user = useAppSelector(selectUser);
@@ -42,6 +47,12 @@ const CreateStreet = () => {
   const fetchLoading = useAppSelector(selectGetAllStreetsLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [Id, setId] = useState('');
+  const existingStreet = useAppSelector(selectOneStreet);
+  const updateLoading = useAppSelector(selectUpdateStreetLoading);
+  const createLoading = useAppSelector(selectCreateStreetLoading);
+  const error = useAppSelector(selectStreetError);
   const { confirm } = useConfirm();
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -70,6 +81,27 @@ const CreateStreet = () => {
     }
   };
 
+  const onFormSubmit = async (ToChange: StreetMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateStreet({ id: Id, name: ToChange })).unwrap();
+        await dispatch(fetchStreet()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (ID: string) => {
+    await dispatch(fetchOneStreet(ID));
+    setId(ID);
+    setIsDialogOpen(true);
+  };
+
   if (user?.role !== 'admin') {
     return <Navigate to="/login" />;
   }
@@ -78,7 +110,7 @@ const CreateStreet = () => {
     <>
       <Box>
         <Container component="main" maxWidth="xs">
-          <FormCreateStreet onSubmit={onSubmit} />
+          <FormCreateStreet onSubmit={onSubmit} Loading={createLoading} error={error} />
         </Container>
         <Container>
           {open && (
@@ -120,6 +152,7 @@ const CreateStreet = () => {
                           removeCardStreet={() => removeCardStreet(street._id)}
                           key={street._id}
                           street={street}
+                          onEditing={() => openDialog(street._id)}
                         />
                       ))
                     ) : (
@@ -142,6 +175,17 @@ const CreateStreet = () => {
           </Paper>
         </Container>
       </Box>
+      {existingStreet && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateStreet
+            error={error}
+            onSubmit={onFormSubmit}
+            existingStreet={existingStreet}
+            isEdit
+            Loading={updateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </>
   );

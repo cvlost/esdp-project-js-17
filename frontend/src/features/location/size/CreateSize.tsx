@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -21,14 +21,24 @@ import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import CardSize from './components/cardSize';
 import FormCreateSize from './components/FormCreateSize';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { controlModal, selectSizes, selectSizesLoading, selectErrorRemove, selectModal } from './sizeSlice';
-import { createSize, deleteSize, getSizesList } from './sizeThunks';
+import {
+  controlModal,
+  selectSizes,
+  selectSizesLoading,
+  selectErrorRemove,
+  selectModal,
+  selectSizeCreateLoading,
+  selectOneSize,
+  selectUpdateSizeLoading,
+  selectSizeError,
+} from './sizeSlice';
+import { createSize, deleteSize, fetchOneSize, getSizesList, updateSize } from './sizeThunks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { SizeMutation } from '../../../types';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
-
+import ModalBody from '../../../components/ModalBody';
 const CreateSize = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
@@ -36,6 +46,12 @@ const CreateSize = () => {
   const fetchLoading = useAppSelector(selectSizesLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [Id, setId] = useState('');
+  const existingSize = useAppSelector(selectOneSize);
+  const updateLoading = useAppSelector(selectUpdateSizeLoading);
+  const createLoading = useAppSelector(selectSizeCreateLoading);
+  const error = useAppSelector(selectSizeError);
   const { confirm } = useConfirm();
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -64,6 +80,27 @@ const CreateSize = () => {
     }
   };
 
+  const onFormSubmit = async (ToChange: SizeMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateSize({ id: Id, name: ToChange })).unwrap();
+        await dispatch(getSizesList()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (ID: string) => {
+    await dispatch(fetchOneSize(ID));
+    setId(ID);
+    setIsDialogOpen(true);
+  };
+
   if (user?.role !== 'admin') {
     return <Navigate to="/login" />;
   }
@@ -71,7 +108,7 @@ const CreateSize = () => {
   return (
     <Box sx={{ mb: 4 }}>
       <Container component="main" maxWidth="xs">
-        <FormCreateSize onSubmit={onSubmit} />
+        <FormCreateSize onSubmit={onSubmit} error={error} Loading={createLoading} />
       </Container>
       <Container>
         {open && (
@@ -109,7 +146,12 @@ const CreateSize = () => {
                 {!fetchLoading ? (
                   fetchListSize.length !== 0 ? (
                     fetchListSize.map((size) => (
-                      <CardSize key={size._id} size={size} removeCardSize={() => removeCardSize(size._id)} />
+                      <CardSize
+                        key={size._id}
+                        size={size}
+                        removeCardSize={() => removeCardSize(size._id)}
+                        onEditing={() => openDialog(size._id)}
+                      />
                     ))
                   ) : (
                     <TableRow>
@@ -130,6 +172,17 @@ const CreateSize = () => {
           </TableContainer>
         </Paper>
       </Container>
+      {existingSize && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateSize
+            error={error}
+            onSubmit={onFormSubmit}
+            existingSize={existingSize}
+            isEdit
+            Loading={updateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </Box>
   );

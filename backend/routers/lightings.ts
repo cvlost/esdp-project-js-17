@@ -9,10 +9,39 @@ const lightingRouter = express.Router();
 
 lightingRouter.get('/', auth, async (req, res, next) => {
   try {
-    const lightings = await Lighting.find();
-    return res.send(lightings);
+    const lightnings = await Lighting.find();
+    return res.send(lightnings);
   } catch (e) {
     return next(e);
+  }
+});
+
+lightingRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const light = await Lighting.findOne({ _id: req.params.id });
+    return res.send(light);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+lightingRouter.put('/:id', auth, async (req, res, next) => {
+  const edit = {
+    name: req.body.name,
+  };
+  try {
+    const id = req.params.id as string;
+    const light = await Lighting.findOne({ _id: id });
+    if (!light) {
+      return res.status(404).send({ error: 'light not found!' });
+    }
+    await Lighting.updateOne({ _id: id }, { name: edit.name });
+    return res.send(light);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
   }
 });
 

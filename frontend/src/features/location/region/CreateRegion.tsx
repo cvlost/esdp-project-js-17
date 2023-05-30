@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -18,22 +18,28 @@ import {
 } from '@mui/material';
 import { RegionMutation } from '../../../types';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { createRegion, fetchRegions, removeRegion } from './regionThunk';
+import { createRegion, fetchOneRegion, fetchRegions, removeRegion, updateRegion } from './regionThunk';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
-import {
-  controlModal,
-  selectErrorRemove,
-  selectGetAllRegionLoading,
-  selectModal,
-  selectRegionList,
-} from './regionSlice';
+
 import { MainColorGreen } from '../../../constants';
 import CardRegion from './components/CardRegion';
 import FormCreateRegion from './components/FormCreateRegion';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
+import ModalBody from '../../../components/ModalBody';
+import {
+  controlModal,
+  selectCreateRegionLoading,
+  selectErrorRemove,
+  selectGetAllRegionLoading,
+  selectModal,
+  selectOneRegion,
+  selectRegionError,
+  selectRegionList,
+  selectUpdateRegionLoading,
+} from './regionSlice';
 
 const CreateRegion = () => {
   const user = useAppSelector(selectUser);
@@ -42,6 +48,12 @@ const CreateRegion = () => {
   const fetchLoading = useAppSelector(selectGetAllRegionLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [Id, setId] = useState('');
+  const existingRegion = useAppSelector(selectOneRegion);
+  const updateLoading = useAppSelector(selectUpdateRegionLoading);
+  const createLoading = useAppSelector(selectCreateRegionLoading);
+  const error = useAppSelector(selectRegionError);
   const { confirm } = useConfirm();
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -70,6 +82,27 @@ const CreateRegion = () => {
     }
   };
 
+  const onFormSubmit = async (ToChange: RegionMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateRegion({ id: Id, name: ToChange })).unwrap();
+        await dispatch(fetchRegions()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (ID: string) => {
+    await dispatch(fetchOneRegion(ID));
+    setId(ID);
+    setIsDialogOpen(true);
+  };
+
   if (user?.role !== 'admin') {
     return <Navigate to="/login" />;
   }
@@ -78,7 +111,7 @@ const CreateRegion = () => {
     <>
       <Box>
         <Container component="main" maxWidth="xs">
-          <FormCreateRegion onSubmit={onSubmit} />
+          <FormCreateRegion onSubmit={onSubmit} Loading={createLoading} error={error} />
         </Container>
         <Container>
           {open && (
@@ -120,6 +153,7 @@ const CreateRegion = () => {
                           removeCardRegion={() => removeCardRegion(region._id)}
                           key={region._id}
                           region={region}
+                          onEditing={() => openDialog(region._id)}
                         />
                       ))
                     ) : (
@@ -142,6 +176,17 @@ const CreateRegion = () => {
           </Paper>
         </Container>
       </Box>
+      {existingRegion && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateRegion
+            error={error}
+            onSubmit={onFormSubmit}
+            existingRegion={existingRegion}
+            isEdit
+            Loading={updateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </>
   );

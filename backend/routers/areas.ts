@@ -17,6 +17,35 @@ areasRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
+areasRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const area = await Area.findOne({ _id: req.params.id });
+    return res.send(area);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+areasRouter.put('/:id', auth, async (req, res, next) => {
+  const editArea = {
+    name: req.body.name,
+  };
+  try {
+    const id = req.params.id as string;
+    const area = await Area.find({ _id: id });
+    if (!area) {
+      return res.status(404).send({ error: 'area not found!' });
+    }
+    await Area.updateOne({ _id: id }, { name: editArea.name });
+    return res.send(area);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
+  }
+});
+
 areasRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const areaData = await Area.create({

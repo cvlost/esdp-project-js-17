@@ -1,11 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createDirection, deleteDirection, getDirectionsList } from './directionsThunks';
+import { createDirection, deleteDirection, fetchOneDir, getDirectionsList, updateDir } from './directionsThunks';
 import { DirectionList, GlobalError, ValidationError } from '../../../types';
 import { RootState } from '../../../app/store';
 
 interface DirectionState {
   listDirection: DirectionList[];
   getAllDirectionsLoading: boolean;
+  oneDir: null | DirectionList;
+  updateDirLoading: boolean;
+  oneDirLoading: boolean;
   createDirectionLoading: boolean;
   directionError: null | ValidationError;
   deleteDirectionLoading: boolean;
@@ -15,6 +18,9 @@ interface DirectionState {
 
 const initialState: DirectionState = {
   listDirection: [],
+  oneDir: null,
+  updateDirLoading: false,
+  oneDirLoading: false,
   getAllDirectionsLoading: false,
   createDirectionLoading: false,
   directionError: null,
@@ -30,6 +36,12 @@ const directionsSlice = createSlice({
     controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
       state.modal = type;
     },
+    unsetDirection: (state) => {
+      state.oneDir = null;
+    },
+    setDirection: (state, action) => {
+      state.oneDir = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getDirectionsList.pending, (state) => {
@@ -41,6 +53,28 @@ const directionsSlice = createSlice({
     });
     builder.addCase(getDirectionsList.rejected, (state) => {
       state.getAllDirectionsLoading = false;
+    });
+
+    builder.addCase(fetchOneDir.pending, (state) => {
+      state.oneDirLoading = true;
+    });
+    builder.addCase(fetchOneDir.fulfilled, (state, { payload: dir }) => {
+      state.oneDirLoading = false;
+      state.oneDir = dir;
+    });
+    builder.addCase(fetchOneDir.rejected, (state) => {
+      state.oneDirLoading = false;
+    });
+
+    builder.addCase(updateDir.pending, (state) => {
+      state.updateDirLoading = true;
+    });
+    builder.addCase(updateDir.fulfilled, (state) => {
+      state.updateDirLoading = false;
+    });
+    builder.addCase(updateDir.rejected, (state, { payload: error }) => {
+      state.updateDirLoading = false;
+      state.directionError = error || null;
     });
 
     builder.addCase(createDirection.pending, (state) => {
@@ -67,10 +101,13 @@ const directionsSlice = createSlice({
     });
   },
 });
-
+export const { setDirection, unsetDirection } = directionsSlice.actions;
 export const directionsReducer = directionsSlice.reducer;
 export const { controlModal } = directionsSlice.actions;
 export const selectDirections = (state: RootState) => state.directions.listDirection;
+export const selectOneDirection = (state: RootState) => state.directions.oneDir;
+export const selectOneDirLoading = (state: RootState) => state.directions.oneDirLoading;
+export const selectUpdateDirLoading = (state: RootState) => state.directions.updateDirLoading;
 export const selectDirectionsLoading = (state: RootState) => state.directions.getAllDirectionsLoading;
 export const selectDirectionCreateLoading = (state: RootState) => state.directions.createDirectionLoading;
 export const selectDirectionError = (state: RootState) => state.directions.directionError;

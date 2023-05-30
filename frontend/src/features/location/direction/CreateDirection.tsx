@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -23,26 +23,37 @@ import FormCreateDirection from './components/FormCreateDirection';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import {
   controlModal,
+  selectDirectionCreateLoading,
+  selectDirectionError,
   selectDirections,
   selectDirectionsLoading,
   selectErrorRemove,
   selectModal,
+  selectOneDirection,
+  selectUpdateDirLoading,
 } from './directionsSlice';
-import { createDirection, deleteDirection, getDirectionsList } from './directionsThunks';
+import { createDirection, deleteDirection, fetchOneDir, getDirectionsList, updateDir } from './directionsThunks';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { DirectionMutation } from '../../../types';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
+import ModalBody from '../../../components/ModalBody';
 
 const CreateDirection = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const fetchListDirection = useAppSelector(selectDirections);
   const fetchLoading = useAppSelector(selectDirectionsLoading);
+  const existingDir = useAppSelector(selectOneDirection);
+  const updateLoading = useAppSelector(selectUpdateDirLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
+  const createLoading = useAppSelector(selectDirectionCreateLoading);
+  const error = useAppSelector(selectDirectionError);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dirId, setDirId] = useState('');
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: MainColorGreen,
@@ -58,6 +69,27 @@ const CreateDirection = () => {
     await dispatch(createDirection(direction)).unwrap();
     await dispatch(getDirectionsList()).unwrap();
     dispatch(openSnackbar({ status: true, parameter: 'create_direction' }));
+  };
+
+  const onFormSubmit = async (DirToChange: DirectionMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateDir({ id: dirId, area: DirToChange })).unwrap();
+        await dispatch(getDirectionsList()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (DirID: string) => {
+    await dispatch(fetchOneDir(DirID));
+    setDirId(DirID);
+    setIsDialogOpen(true);
   };
 
   const removeCardDirection = async (id: string) => {
@@ -77,7 +109,7 @@ const CreateDirection = () => {
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <FormCreateDirection onSubmit={onSubmit} />
+        <FormCreateDirection onSubmit={onSubmit} error={error} Loading={createLoading} />
       </Container>
       <Container>
         {open && (
@@ -119,6 +151,7 @@ const CreateDirection = () => {
                         key={direct._id}
                         direction={direct}
                         removeCardDirection={() => removeCardDirection(direct._id)}
+                        onEditing={() => openDialog(direct._id)}
                       />
                     ))
                   ) : (
@@ -140,6 +173,17 @@ const CreateDirection = () => {
           </TableContainer>
         </Paper>
       </Container>
+      {existingDir && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateDirection
+            error={error}
+            onSubmit={onFormSubmit}
+            existingDir={existingDir}
+            isEdit
+            Loading={updateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </Box>
   );

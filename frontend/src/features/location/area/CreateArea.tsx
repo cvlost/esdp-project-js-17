@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -21,23 +21,39 @@ import SnackbarCard from '../../../components/SnackbarCard/SnackbarCard';
 import FormCreateArea from './components/FormCreateArea';
 import CardArea from './components/CardArea';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { controlModal, selectAreaList, selectErrorRemove, selectGetAllAreaLoading, selectModal } from './areaSlice';
-import { createArea, fetchAreas, removeArea } from './areaThunk';
+import {
+  controlModal,
+  selectAreaError,
+  selectAreaList,
+  selectCreateAreaLoading,
+  selectErrorRemove,
+  selectGetAllAreaLoading,
+  selectModal,
+  selectOneArea,
+  selectUpdateAreaLoading,
+} from './areaSlice';
+import { createArea, fetchAreas, fetchOneArea, removeArea, updateArea } from './areaThunk';
 import { AreaMutation } from '../../../types';
 import { openSnackbar, selectUser } from '../../users/usersSlice';
 import { Navigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
+import ModalBody from '../../../components/ModalBody';
 
 const CreateArea = () => {
+  const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const areas = useAppSelector(selectAreaList);
   const loadingGetAllAreas = useAppSelector(selectGetAllAreaLoading);
-  const dispatch = useAppDispatch();
+  const error = useAppSelector(selectAreaError);
+  const createLoading = useAppSelector(selectCreateAreaLoading);
+  const existingArea = useAppSelector(selectOneArea);
+  const updateLoading = useAppSelector(selectUpdateAreaLoading);
   const errorRemove = useAppSelector(selectErrorRemove);
   const open = useAppSelector(selectModal);
   const { confirm } = useConfirm();
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [AreaId, setAreaId] = useState('');
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: MainColorGreen,
@@ -53,6 +69,27 @@ const CreateArea = () => {
     await dispatch(createArea(area)).unwrap();
     await dispatch(fetchAreas()).unwrap();
     dispatch(openSnackbar({ status: true, parameter: 'create_area' }));
+  };
+
+  const onFormSubmit = async (AreaToChange: AreaMutation) => {
+    if (await confirm('Уведомление', 'Вы действительно хотите отредактировать ?')) {
+      try {
+        await dispatch(updateArea({ id: AreaId, area: AreaToChange })).unwrap();
+        await dispatch(fetchAreas()).unwrap();
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
+        setIsDialogOpen(false);
+      } catch (error) {
+        throw new Error(`Произошла ошибка: ${error}`);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const openDialog = async (AreaID: string) => {
+    await dispatch(fetchOneArea(AreaID));
+    setAreaId(AreaID);
+    setIsDialogOpen(true);
   };
 
   const removeAreaCard = async (id: string) => {
@@ -72,7 +109,7 @@ const CreateArea = () => {
   return (
     <Box>
       <Container component="main" maxWidth="xs">
-        <FormCreateArea onSubmit={onSubmit} />
+        <FormCreateArea onSubmit={onSubmit} Loading={createLoading} error={error} />
       </Container>
       <Container>
         {open && (
@@ -110,7 +147,12 @@ const CreateArea = () => {
                 {!loadingGetAllAreas ? (
                   areas.length !== 0 ? (
                     areas.map((area) => (
-                      <CardArea removeAreaCard={() => removeAreaCard(area._id)} key={area._id} area={area} />
+                      <CardArea
+                        removeAreaCard={() => removeAreaCard(area._id)}
+                        key={area._id}
+                        area={area}
+                        onEditing={() => openDialog(area._id)}
+                      />
                     ))
                   ) : (
                     <TableRow>
@@ -131,6 +173,17 @@ const CreateArea = () => {
           </TableContainer>
         </Paper>
       </Container>
+      {existingArea && (
+        <ModalBody isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <FormCreateArea
+            error={error}
+            onSubmit={onFormSubmit}
+            existingArea={existingArea}
+            isEdit
+            Loading={updateLoading}
+          />
+        </ModalBody>
+      )}
       <SnackbarCard />
     </Box>
   );

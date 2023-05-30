@@ -25,6 +25,26 @@ legalEntitiesRouter.get('/:id', auth, async (req, res, next) => {
   }
 });
 
+legalEntitiesRouter.put('/:id', auth, async (req, res, next) => {
+  const edit = {
+    name: req.body.name,
+  };
+  try {
+    const id = req.params.id as string;
+    const LE = await LegalEntity.findOne({ _id: id });
+    if (!LE) {
+      return res.status(404).send({ error: 'legal Entity not found!' });
+    }
+    await LegalEntity.updateOne({ _id: id }, { name: edit.name });
+    return res.send(LE);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
+  }
+});
+
 legalEntitiesRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const legalEntityData = await LegalEntity.create({

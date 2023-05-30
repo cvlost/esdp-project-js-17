@@ -16,6 +16,35 @@ directionRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
+directionRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const dir = await Direction.findOne({ _id: req.params.id });
+    return res.send(dir);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+directionRouter.put('/:id', auth, async (req, res, next) => {
+  const editDir = {
+    name: req.body.name,
+  };
+  try {
+    const id = req.params.id as string;
+    const dir = await Direction.findOne({ _id: id });
+    if (!dir) {
+      return res.status(404).send({ error: 'direction not found!' });
+    }
+    await Direction.updateOne({ _id: id }, { name: editDir.name });
+    return res.send(dir);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
+  }
+});
+
 directionRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const directionData = new Direction({

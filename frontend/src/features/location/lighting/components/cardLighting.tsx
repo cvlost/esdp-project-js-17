@@ -5,13 +5,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useAppSelector } from '../../../../app/hooks';
 import { selectLightingDeleteLoading } from '../lightingsSlice';
 import { LightingList } from '../../../../types';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
   lighting: LightingList;
   removeCardLighting: React.MouseEventHandler;
+  onEditing: React.MouseEventHandler;
 }
 
-const CardLighting: React.FC<Props> = ({ lighting, removeCardLighting }) => {
+const CardLighting: React.FC<Props> = ({ lighting, removeCardLighting, onEditing }) => {
   const removeLoading = useAppSelector(selectLightingDeleteLoading);
   return (
     <>
@@ -20,6 +22,9 @@ const CardLighting: React.FC<Props> = ({ lighting, removeCardLighting }) => {
         <TableCell align="right">
           <IconButton disabled={removeLoading} onClick={removeCardLighting} aria-label="delete">
             {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          </IconButton>
+          <IconButton aria-label="success" onClick={onEditing}>
+            <EditIcon />
           </IconButton>
         </TableCell>
       </StyledTableRow>

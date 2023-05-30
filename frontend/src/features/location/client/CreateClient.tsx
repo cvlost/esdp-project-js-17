@@ -75,7 +75,7 @@ const CreateClient = () => {
       try {
         await dispatch(updateClient({ id: clientId, client: clientToChange })).unwrap();
         await dispatch(fetchClients()).unwrap();
-        dispatch(openSnackbar({ status: true, parameter: 'edit' }));
+        dispatch(openSnackbar({ status: true, parameter: 'Main_Edit' }));
         setIsDialogOpen(false);
       } catch (error) {
         throw new Error(`Произошла ошибка: ${error}`);

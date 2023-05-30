@@ -16,6 +16,35 @@ formatRouter.get('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
+formatRouter.get('/:id', auth, async (req, res, next) => {
+  try {
+    const format = await Format.findOne({ _id: req.params.id });
+    return res.send(format);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+formatRouter.put('/:id', auth, async (req, res, next) => {
+  const editFormat = {
+    name: req.body.name,
+  };
+  try {
+    const id = req.params.id as string;
+    const format = await Format.find({ _id: id });
+    if (!format) {
+      return res.status(404).send({ error: 'format not found!' });
+    }
+    await Format.updateOne({ _id: id }, { name: editFormat.name });
+    return res.send(format);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    return next(error);
+  }
+});
+
 formatRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const formatData = await Format.create({

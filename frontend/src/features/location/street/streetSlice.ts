@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../../app/store';
 import { GlobalError, StreetList, ValidationError } from '../../../types';
-import { createStreet, fetchStreet, removeStreet } from './streetThunks';
+import { createStreet, fetchOneStreet, fetchStreet, removeStreet, updateStreet } from './streetThunks';
 
 interface streetSlice {
   listStreet: StreetList[];
@@ -11,6 +11,9 @@ interface streetSlice {
   streetError: ValidationError | null;
   errorRemove: GlobalError | null;
   modal: boolean;
+  oneStreet: null | StreetList;
+  updateStreetLoading: boolean;
+  oneStreetLoading: boolean;
 }
 
 const initialState: streetSlice = {
@@ -21,6 +24,9 @@ const initialState: streetSlice = {
   streetError: null,
   errorRemove: null,
   modal: false,
+  oneStreet: null,
+  updateStreetLoading: false,
+  oneStreetLoading: false,
 };
 
 const streetSlice = createSlice({
@@ -29,6 +35,12 @@ const streetSlice = createSlice({
   reducers: {
     controlModal: (state, { payload: type }: PayloadAction<boolean>) => {
       state.modal = type;
+    },
+    unsetStreet: (state) => {
+      state.oneStreet = null;
+    },
+    setStreet: (state, action) => {
+      state.oneStreet = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -41,6 +53,26 @@ const streetSlice = createSlice({
     });
     builder.addCase(fetchStreet.rejected, (state) => {
       state.getAllStreetLoading = false;
+    });
+    builder.addCase(fetchOneStreet.pending, (state) => {
+      state.oneStreetLoading = true;
+    });
+    builder.addCase(fetchOneStreet.fulfilled, (state, { payload: street }) => {
+      state.oneStreetLoading = false;
+      state.oneStreet = street;
+    });
+    builder.addCase(fetchOneStreet.rejected, (state) => {
+      state.oneStreetLoading = false;
+    });
+    builder.addCase(updateStreet.pending, (state) => {
+      state.updateStreetLoading = true;
+    });
+    builder.addCase(updateStreet.fulfilled, (state) => {
+      state.updateStreetLoading = false;
+    });
+    builder.addCase(updateStreet.rejected, (state, { payload: error }) => {
+      state.updateStreetLoading = false;
+      state.streetError = error || null;
     });
 
     builder.addCase(createStreet.pending, (state) => {
@@ -67,6 +99,7 @@ const streetSlice = createSlice({
     });
   },
 });
+export const { setStreet, unsetStreet } = streetSlice.actions;
 
 export const streetReducer = streetSlice.reducer;
 export const { controlModal } = streetSlice.actions;
@@ -77,3 +110,6 @@ export const selectRemoveStreetLoading = (state: RootState) => state.street.remo
 export const selectStreetError = (state: RootState) => state.street.streetError;
 export const selectErrorRemove = (state: RootState) => state.street.errorRemove;
 export const selectModal = (state: RootState) => state.street.modal;
+export const selectOneStreet = (state: RootState) => state.street.oneStreet;
+export const selectOneStreetLoading = (state: RootState) => state.street.oneStreetLoading;
+export const selectUpdateStreetLoading = (state: RootState) => state.street.updateStreetLoading;
