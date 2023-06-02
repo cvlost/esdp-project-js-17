@@ -157,4 +157,19 @@ commercialLinksRouter.get('/location/:idLink/locationOne/:idLoc', async (req, re
   }
 });
 
+commercialLinksRouter.delete('/:id', auth, async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id области.' });
+  }
+
+  try {
+    await CommercialLink.deleteOne({ _id: req.params.id });
+    return res.send({ remove: req.params.id });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 export default commercialLinksRouter;
