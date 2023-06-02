@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../axios';
-import { CommercialLinkType, CommercialLinkTypeMutation, contentLinkOneType, contentLinkType, Link } from '../../types';
+import { CommercialLinkTypeMutation, contentLinkOneType, contentLinkType, Link, listLinkType } from '../../types';
 
 export const createCommLink = createAsyncThunk<Link | null, CommercialLinkTypeMutation>(
   'commercialLink/createCommLink',
@@ -37,7 +37,13 @@ export const fetchLocationLinkOne = createAsyncThunk<contentLinkOneType, fetchLo
   },
 );
 
-export const fetchLinkList = createAsyncThunk<CommercialLinkType[]>('commercialLink/fetchLocationLinkOne', async () => {
-  const response = await axiosApi.get<CommercialLinkType[]>('/link/listLink');
-  return response.data;
-});
+type RequestParams = { page: number; perPage: number } | undefined;
+
+export const fetchLinkList = createAsyncThunk<listLinkType, RequestParams>(
+  'commercialLink/fetchLinkList',
+  async (params) => {
+    const queryString = params ? `?page=${params.page}&perPage=${params.perPage}` : '';
+    const response = await axiosApi.get<listLinkType>(`/link/listLink${queryString}`);
+    return response.data;
+  },
+);

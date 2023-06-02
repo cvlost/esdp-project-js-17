@@ -353,6 +353,7 @@ export interface CommercialLinkTypeMutation {
 }
 
 export interface CommercialLinkType {
+  _id: string;
   location: string[];
   settings: {
     id: string;
@@ -361,6 +362,16 @@ export interface CommercialLinkType {
   };
   shortUrl: string;
   fullLink: string;
+  title: string;
+  description: string;
+}
+
+export interface listLinkType {
+  listLink: CommercialLinkType[];
+  page: number;
+  pages: number;
+  perPage: number;
+  listLinkLength: number;
 }
 
 export interface ConstructorLinkType {

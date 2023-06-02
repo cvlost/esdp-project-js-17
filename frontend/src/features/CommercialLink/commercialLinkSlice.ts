@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  CommercialLinkType,
   CommercialLinkTypeMutation,
   ConstructorLinkType,
   contentLinkOneType,
   contentLinkType,
   Link,
+  listLinkType,
 } from '../../types';
 import { RootState } from '../../app/store';
 import { createCommLink, fetchLinkList, fetchLocationLink, fetchLocationLinkOne } from './CommercialLinkThunk';
@@ -19,7 +19,7 @@ interface commercialLinkType {
   listLocationLink: contentLinkType;
   locationLinkOne: contentLinkOneType;
   fetchLocationLinkOneLoading: boolean;
-  listLink: CommercialLinkType[];
+  listLink: listLinkType;
   fetchListLinkLoading: boolean;
 }
 
@@ -60,7 +60,13 @@ const initialState: commercialLinkType = {
     title: '',
   },
   fetchLocationLinkOneLoading: false,
-  listLink: [],
+  listLink: {
+    listLink: [],
+    page: 1,
+    pages: 1,
+    listLinkLength: 0,
+    perPage: 10,
+  },
   fetchListLinkLoading: false,
 };
 
@@ -68,6 +74,9 @@ const commercialLinkSlice = createSlice({
   name: 'commercialLink',
   initialState,
   reducers: {
+    setCurrentPage: (state, { payload: page }: PayloadAction<number>) => {
+      state.listLink.page = page;
+    },
     isToggleShow: (state, { payload: id }: PayloadAction<string>) => {
       const index = state.constructorLink.findIndex((item) => item.id === id);
       state.constructorLink[index].show = !state.constructorLink[index].show;
@@ -121,7 +130,7 @@ const commercialLinkSlice = createSlice({
 });
 
 export const commercialLinkReducer = commercialLinkSlice.reducer;
-export const { isToggleShow } = commercialLinkSlice.actions;
+export const { isToggleShow, setCurrentPage } = commercialLinkSlice.actions;
 export const selectUrl = (state: RootState) => state.commercialLink.url;
 export const selectLocationLink = (state: RootState) => state.commercialLink.commLink;
 export const selectCreateLinkLoading = (state: RootState) => state.commercialLink.createLinkLoading;
