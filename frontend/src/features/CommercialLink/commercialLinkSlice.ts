@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
+  CommercialLinkType,
   CommercialLinkTypeMutation,
   ConstructorLinkType,
   contentLinkOneType,
@@ -7,7 +8,7 @@ import {
   Link,
 } from '../../types';
 import { RootState } from '../../app/store';
-import { createCommLink, fetchLocationLink, fetchLocationLinkOne } from './CommercialLinkThunk';
+import { createCommLink, fetchLinkList, fetchLocationLink, fetchLocationLinkOne } from './CommercialLinkThunk';
 
 interface commercialLinkType {
   url: Link | null;
@@ -18,6 +19,8 @@ interface commercialLinkType {
   listLocationLink: contentLinkType;
   locationLinkOne: contentLinkOneType;
   fetchLocationLinkOneLoading: boolean;
+  listLink: CommercialLinkType[];
+  fetchListLinkLoading: boolean;
 }
 
 const initialState: commercialLinkType = {
@@ -57,6 +60,8 @@ const initialState: commercialLinkType = {
     title: '',
   },
   fetchLocationLinkOneLoading: false,
+  listLink: [],
+  fetchListLinkLoading: false,
 };
 
 const commercialLinkSlice = createSlice({
@@ -101,6 +106,17 @@ const commercialLinkSlice = createSlice({
     builder.addCase(fetchLocationLinkOne.rejected, (state) => {
       state.fetchLocationLinkOneLoading = false;
     });
+
+    builder.addCase(fetchLinkList.pending, (state) => {
+      state.fetchListLinkLoading = true;
+    });
+    builder.addCase(fetchLinkList.fulfilled, (state, { payload: linkList }) => {
+      state.fetchListLinkLoading = false;
+      state.listLink = linkList;
+    });
+    builder.addCase(fetchLinkList.rejected, (state) => {
+      state.fetchListLinkLoading = false;
+    });
   },
 });
 
@@ -114,3 +130,5 @@ export const selectConstructor = (state: RootState) => state.commercialLink.cons
 export const selectListLocationLink = (state: RootState) => state.commercialLink.listLocationLink;
 export const selectLocationLinkOne = (state: RootState) => state.commercialLink.locationLinkOne;
 export const selectLocationLinkOneLoading = (state: RootState) => state.commercialLink.fetchLocationLinkOneLoading;
+export const selectListLink = (state: RootState) => state.commercialLink.listLink;
+export const selectLoadingListLink = (state: RootState) => state.commercialLink.fetchListLinkLoading;

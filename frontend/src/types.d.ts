@@ -353,12 +353,13 @@ export interface CommercialLinkTypeMutation {
 }
 
 export interface CommercialLinkType {
-  location: ILocation[];
+  location: string[];
   settings: {
     id: string;
     name: string;
     show: boolean;
   };
+  shortUrl: string;
   fullLink: string;
 }
 
