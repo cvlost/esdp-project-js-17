@@ -231,4 +231,33 @@ describe('commercialLinkRouter', () => {
       expect(body.location._id).not.toBeUndefined();
     });
   });
+
+  describe('delete /link/:id', () => {
+    test('если неавторизованный пользователь пытается удалить ссылку по id, должен возваращаться statusCode 401 и сообщение об ошибке', async () => {
+      const res = await request.delete('/link/randomId');
+      const body = res.body.error;
+      expect(res.statusCode).toBe(401);
+      expect(body).toBe('Отсутствует токен авторизации.');
+    });
+
+    test('если пользователь c рандомным токеном пытается удалить ссылку по id, должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
+      const res = await request.delete('/link/randomId').set({ Authorization: 'some-random-token' });
+      const body = res.body.error;
+      expect(res.statusCode).toBe(401);
+      expect(body).toBe('Предоставлен неверный токен авторизации.');
+    });
+
+    test('если пользователь пытается удалить ссылку по неправильному id, должен возвращаться statusCode 422 и объект с сообщением об ошибке', async () => {
+      const res = await request.delete('/link/randomId').set({ Authorization: token });
+      const body = res.body.error;
+      expect(res.statusCode).toBe(422);
+      expect(body).toBe('Некорректный id ссылки.');
+    });
+
+    test('если пользователь пытается удалить ссылку по правильному id, должен возвращаться statusCode 200', async () => {
+      const link = await createLink();
+      const res = await request.delete(`/link/${link._id}`).set({ Authorization: token });
+      expect(res.statusCode).toBe(200);
+    });
+  });
 });

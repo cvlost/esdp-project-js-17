@@ -161,7 +161,7 @@ commercialLinksRouter.delete('/:id', auth, async (req, res, next) => {
   const _id = req.params.id as string;
 
   if (!mongoose.isValidObjectId(_id)) {
-    return res.status(422).send({ error: 'Некорректный id области.' });
+    return res.status(422).send({ error: 'Некорректный id ссылки.' });
   }
 
   try {
