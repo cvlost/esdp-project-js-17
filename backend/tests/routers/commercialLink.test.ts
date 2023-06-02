@@ -187,9 +187,8 @@ describe('commercialLinkRouter', () => {
         .set({ Authorization: token });
       const body = res.body;
       expect(res.statusCode).toBe(200);
-      expect(body.newCommLink._id).not.toBeUndefined();
-      expect(body.newCommLink.shortUrl).not.toBeUndefined();
-      expect(body.message).toBe('Новая область успешно создана');
+      expect(body._id).not.toBeUndefined();
+      expect(body.shortUrl).not.toBeUndefined();
     });
   });
   describe('get /location/:id', () => {

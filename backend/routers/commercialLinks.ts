@@ -41,10 +41,7 @@ commercialLinksRouter.get('/:shortUrl', async (req, res, next) => {
     if (!commLink) {
       return res.status(404).send({ message: 'Ссылка недествительна !' });
     }
-    return res
-      .status(302)
-      .send({ message: 'Ссылка найдена, перенаправляю' })
-      .redirect(`http://localhost:3000/link/${commLink._id}`);
+    return res.status(302).redirect(`http://localhost:3000/link/${commLink._id}`);
   } catch (e) {
     return next(e);
   }
@@ -62,7 +59,7 @@ commercialLinksRouter.post('/', auth, async (req, res, next) => {
       fullLink: `http://localhost:8000/link/${randomShortUrl}`,
     });
 
-    return res.send({ message: 'Новая область успешно создана', newCommLink });
+    return res.send(newCommLink);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(e);
