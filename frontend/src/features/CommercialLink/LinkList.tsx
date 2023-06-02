@@ -68,6 +68,7 @@ const LinkList = () => {
                 <StyledTableCell align="left">Ссылка</StyledTableCell>
                 <StyledTableCell align="left">Название компании</StyledTableCell>
                 <StyledTableCell align="left">Информация о компании</StyledTableCell>
+                <StyledTableCell align="left">Билборды</StyledTableCell>
                 <StyledTableCell align="right">Управление</StyledTableCell>
               </TableRow>
             </TableHead>
