@@ -9,6 +9,31 @@ import auth from '../middleware/auth';
 
 const commercialLinksRouter = express.Router();
 
+commercialLinksRouter.get('/listLink', async (req, res) => {
+  let perPage = parseInt(req.query.perPage as string);
+  let page = parseInt(req.query.page as string);
+
+  page = isNaN(page) || page <= 0 ? 1 : page;
+  perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
+  try {
+    const listLinkLength = await CommercialLink.count();
+    let pages = Math.ceil(listLinkLength / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
+
+    const listLink = await CommercialLink.find()
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ _id: -1 });
+
+    return res.send(listLink);
+  } catch (e) {
+    return res.sendStatus(404);
+  }
+});
+
 commercialLinksRouter.get('/:shortUrl', async (req, res) => {
   try {
     const commLink = await CommercialLink.findOne({ shortUrl: req.params.shortUrl });
