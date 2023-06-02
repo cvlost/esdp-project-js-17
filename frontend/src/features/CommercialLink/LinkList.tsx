@@ -16,9 +16,12 @@ import {
 import { MainColorGreen, StyledTableCell, StyledTableRow } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectListLink, selectLoadingListLink, setCurrentPage } from './commercialLinkSlice';
-import { fetchLinkList } from './CommercialLinkThunk';
+import { fetchLinkList, removeLink } from './CommercialLinkThunk';
 import CardLink from './components/CardLink';
 import ModalBody from '../../components/ModalBody';
+import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
+import { openSnackbar } from '../users/usersSlice';
+import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 
 const LinkList = () => {
   const [id, setId] = useState('');
@@ -26,6 +29,7 @@ const LinkList = () => {
   const dispatch = useAppDispatch();
   const linkList = useAppSelector(selectListLink);
   const loading = useAppSelector(selectLoadingListLink);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     dispatch(fetchLinkList({ page: linkList.page, perPage: linkList.perPage }));
@@ -34,6 +38,16 @@ const LinkList = () => {
   const openModalLink = (id: string) => {
     setOpenModal(true);
     setId(id);
+  };
+
+  const removeLinkOne = async (id: string) => {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную локацию?')) {
+      await dispatch(removeLink(id)).unwrap();
+      await dispatch(fetchLinkList({ page: linkList.page, perPage: linkList.perPage })).unwrap();
+      dispatch(openSnackbar({ status: true, parameter: 'remove_link' }));
+    } else {
+      return;
+    }
   };
 
   const description = linkList.listLink.find((item) => item._id === id);
@@ -61,7 +75,12 @@ const LinkList = () => {
               {!loading ? (
                 linkList.listLink.length !== 0 ? (
                   linkList.listLink.map((link) => (
-                    <CardLink key={link._id} link={link} openModalLink={() => openModalLink(link._id)} />
+                    <CardLink
+                      key={link._id}
+                      link={link}
+                      openModalLink={() => openModalLink(link._id)}
+                      removeLinkOne={() => removeLinkOne(link._id)}
+                    />
                   ))
                 ) : (
                   <StyledTableRow>
@@ -93,6 +112,7 @@ const LinkList = () => {
       <ModalBody isOpen={openModal} onClose={() => setOpenModal(false)}>
         {description ? description.description : 'Информации нет'}
       </ModalBody>
+      <SnackbarCard />
     </Box>
   );
 };

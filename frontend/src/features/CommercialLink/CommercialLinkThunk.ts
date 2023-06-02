@@ -47,3 +47,7 @@ export const fetchLinkList = createAsyncThunk<listLinkType, RequestParams>(
     return response.data;
   },
 );
+
+export const removeLink = createAsyncThunk<void, string>('commercialLink/removeLink', async (id) => {
+  await axiosApi.delete('/link/' + id);
+});

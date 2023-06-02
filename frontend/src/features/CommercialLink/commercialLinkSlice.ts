@@ -8,7 +8,13 @@ import {
   listLinkType,
 } from '../../types';
 import { RootState } from '../../app/store';
-import { createCommLink, fetchLinkList, fetchLocationLink, fetchLocationLinkOne } from './CommercialLinkThunk';
+import {
+  createCommLink,
+  fetchLinkList,
+  fetchLocationLink,
+  fetchLocationLinkOne,
+  removeLink,
+} from './CommercialLinkThunk';
 
 interface commercialLinkType {
   url: Link | null;
@@ -21,6 +27,7 @@ interface commercialLinkType {
   fetchLocationLinkOneLoading: boolean;
   listLink: listLinkType;
   fetchListLinkLoading: boolean;
+  removeLinkLoading: boolean;
 }
 
 const initialState: commercialLinkType = {
@@ -68,6 +75,7 @@ const initialState: commercialLinkType = {
     perPage: 10,
   },
   fetchListLinkLoading: false,
+  removeLinkLoading: false,
 };
 
 const commercialLinkSlice = createSlice({
@@ -126,6 +134,16 @@ const commercialLinkSlice = createSlice({
     builder.addCase(fetchLinkList.rejected, (state) => {
       state.fetchListLinkLoading = false;
     });
+
+    builder.addCase(removeLink.pending, (state) => {
+      state.removeLinkLoading = true;
+    });
+    builder.addCase(removeLink.fulfilled, (state) => {
+      state.removeLinkLoading = false;
+    });
+    builder.addCase(removeLink.rejected, (state) => {
+      state.removeLinkLoading = false;
+    });
   },
 });
 
@@ -141,3 +159,4 @@ export const selectLocationLinkOne = (state: RootState) => state.commercialLink.
 export const selectLocationLinkOneLoading = (state: RootState) => state.commercialLink.fetchLocationLinkOneLoading;
 export const selectListLink = (state: RootState) => state.commercialLink.listLink;
 export const selectLoadingListLink = (state: RootState) => state.commercialLink.fetchListLinkLoading;
+export const selectRemoveLinkLoading = (state: RootState) => state.commercialLink.removeLinkLoading;
