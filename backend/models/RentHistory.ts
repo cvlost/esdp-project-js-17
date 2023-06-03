@@ -18,6 +18,10 @@ const RentHistorySchema = new Schema<RentHistoryType>({
     required: true,
   },
   rent_date: PeriodSchema,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const RentHistory = model('RentHistory', RentHistorySchema);

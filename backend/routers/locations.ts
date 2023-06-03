@@ -16,7 +16,6 @@ import config from '../config';
 import path from 'path';
 import Size from '../models/Size';
 import Lighting from '../models/Lighting';
-import BookingHistory from '../models/RentHistory';
 import RentHistory from '../models/RentHistory';
 
 const locationsRouter = express.Router();

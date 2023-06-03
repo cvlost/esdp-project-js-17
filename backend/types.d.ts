@@ -121,5 +121,6 @@ export interface RentHistoryType {
   location_id: Schema.Types.ObjectId;
   client_id: Schema.Types.ObjectId;
   price: string;
-  rent_date: Schema.Types.Date;
+  rent_date: IPeriod;
+  createdAt: Date;
 }
