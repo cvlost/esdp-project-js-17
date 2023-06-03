@@ -16,11 +16,8 @@ export const ROLES: IRole[] = [
 
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#1976d2',
+    backgroundColor: MainColorGreen,
     color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
   },
 }));
 

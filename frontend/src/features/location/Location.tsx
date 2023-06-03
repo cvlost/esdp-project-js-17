@@ -23,6 +23,7 @@ const link_options: LinkOption[] = [
   { label: 'Создать Улицу', link: '/create_street' },
   { label: 'Создать Освещение', link: '/create_lighting' },
   { label: 'Создать Клиента', link: '/create_client' },
+  { label: 'Список ссылок', link: '/list_link' },
 ];
 
 const Location = () => {

@@ -24,6 +24,7 @@ import CommercialLink from './features/CommercialLink/CommercialLink';
 import CommercialLinkOne from './features/CommercialLink/CommercialLinkOne';
 import CreateClient from './features/location/client/CreateClient';
 import 'rsuite/dist/rsuite.min.css';
+import LinkList from './features/CommercialLink/LinkList';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -57,6 +58,7 @@ function App() {
           <Route path="/create_street" element={<CreateStreet />} />
           <Route path="/create_client" element={<CreateClient />} />
           <Route path="/constructor_link" element={<ConstructorLink />} />
+          <Route path="/list_link" element={<LinkList />} />
         </Route>
       </Routes>
     </Layout>

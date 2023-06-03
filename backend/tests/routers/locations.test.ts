@@ -76,47 +76,51 @@ const userDto = {
   token: userToken,
 };
 
+export const createOneLocation = async () => {
+  const count = await Location.count();
+  const area = await Area.create({ name: `area${count}` });
+  const city = await City.create({ name: `city${count}`, area: area._id });
+  const region = await Region.create({ name: `region${count}`, city: city._id });
+  const format = await Format.create({ name: `format${count}` });
+  const direction = await Direction.create({ name: `direction${count}` });
+  const lighting = await Lighting.create({ name: `lighting${count}` });
+  const legalEntity = await LegalEntity.create({ name: `legalEntity${count}` });
+  const size = await Size.create({ name: `${count}x${count}` });
+  const placement = Math.random() > 0.5;
+  const rent =
+    Math.random() > 0.5
+      ? null
+      : {
+          start: new Date('2023-02-30T09:38:01.595Z'),
+          end: new Date('2023-10-30T09:38:01.595Z'),
+        };
+  const [street1, street2] = await Street.create(
+    { name: 'street1', city: city._id },
+    { name: 'street2', city: city._id },
+  );
+  return await Location.create({
+    legalEntity: legalEntity._id,
+    format: format._id,
+    direction: direction._id,
+    lighting: lighting._id,
+    region: region._id,
+    size: size._id,
+    area: area._id,
+    city: city._id,
+    streets: [street1._id, street2._id],
+    price: mongoose.Types.Decimal128.fromString(`${1}000`),
+    placement,
+    rent,
+    dayImage: `some/path${1}`,
+    schemaImage: `some/path${1}`,
+  });
+};
+
 const addLocation = async (number: number) => {
   const locations: HydratedDocument<ILocation>[] = [];
 
   for (let i = 0; i < number; i++) {
-    const count = await Location.count();
-    const area = await Area.create({ name: `area${count}` });
-    const city = await City.create({ name: `city${count}`, area: area._id });
-    const region = await Region.create({ name: `region${count}`, city: city._id });
-    const format = await Format.create({ name: `format${count}` });
-    const direction = await Direction.create({ name: `direction${count}` });
-    const lighting = await Lighting.create({ name: `lighting${count}` });
-    const legalEntity = await LegalEntity.create({ name: `legalEntity${count}` });
-    const size = await Size.create({ name: `${count}x${count}` });
-    const placement = Math.random() > 0.5;
-    const rent =
-      Math.random() > 0.5
-        ? null
-        : {
-            start: new Date('2023-02-30T09:38:01.595Z'),
-            end: new Date('2023-10-30T09:38:01.595Z'),
-          };
-    const [street1, street2] = await Street.create(
-      { name: 'street1', city: city._id },
-      { name: 'street2', city: city._id },
-    );
-    const location = await Location.create({
-      legalEntity: legalEntity._id,
-      format: format._id,
-      direction: direction._id,
-      lighting: lighting._id,
-      region: region._id,
-      size: size._id,
-      area: area._id,
-      city: city._id,
-      streets: [street1._id, street2._id],
-      price: mongoose.Types.Decimal128.fromString(`${i}000`),
-      placement,
-      rent,
-      dayImage: `some/path${i}`,
-      schemaImage: `some/path${i}`,
-    });
+    const location = await createOneLocation();
 
     locations.push(location);
   }

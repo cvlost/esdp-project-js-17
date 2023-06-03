@@ -5,9 +5,16 @@ import {
   contentLinkOneType,
   contentLinkType,
   Link,
+  listLinkType,
 } from '../../types';
 import { RootState } from '../../app/store';
-import { createCommLink, fetchLocationLink, fetchLocationLinkOne } from './CommercialLinkThunk';
+import {
+  createCommLink,
+  fetchLinkList,
+  fetchLocationLink,
+  fetchLocationLinkOne,
+  removeLink,
+} from './CommercialLinkThunk';
 
 interface commercialLinkType {
   url: Link | null;
@@ -18,6 +25,9 @@ interface commercialLinkType {
   listLocationLink: contentLinkType;
   locationLinkOne: contentLinkOneType;
   fetchLocationLinkOneLoading: boolean;
+  listLink: listLinkType;
+  fetchListLinkLoading: boolean;
+  removeLinkLoading: boolean;
 }
 
 const initialState: commercialLinkType = {
@@ -57,12 +67,24 @@ const initialState: commercialLinkType = {
     title: '',
   },
   fetchLocationLinkOneLoading: false,
+  listLink: {
+    listLink: [],
+    page: 1,
+    pages: 1,
+    listLinkLength: 0,
+    perPage: 10,
+  },
+  fetchListLinkLoading: false,
+  removeLinkLoading: false,
 };
 
 const commercialLinkSlice = createSlice({
   name: 'commercialLink',
   initialState,
   reducers: {
+    setCurrentPage: (state, { payload: page }: PayloadAction<number>) => {
+      state.listLink.page = page;
+    },
     isToggleShow: (state, { payload: id }: PayloadAction<string>) => {
       const index = state.constructorLink.findIndex((item) => item.id === id);
       state.constructorLink[index].show = !state.constructorLink[index].show;
@@ -101,11 +123,32 @@ const commercialLinkSlice = createSlice({
     builder.addCase(fetchLocationLinkOne.rejected, (state) => {
       state.fetchLocationLinkOneLoading = false;
     });
+
+    builder.addCase(fetchLinkList.pending, (state) => {
+      state.fetchListLinkLoading = true;
+    });
+    builder.addCase(fetchLinkList.fulfilled, (state, { payload: linkList }) => {
+      state.fetchListLinkLoading = false;
+      state.listLink = linkList;
+    });
+    builder.addCase(fetchLinkList.rejected, (state) => {
+      state.fetchListLinkLoading = false;
+    });
+
+    builder.addCase(removeLink.pending, (state) => {
+      state.removeLinkLoading = true;
+    });
+    builder.addCase(removeLink.fulfilled, (state) => {
+      state.removeLinkLoading = false;
+    });
+    builder.addCase(removeLink.rejected, (state) => {
+      state.removeLinkLoading = false;
+    });
   },
 });
 
 export const commercialLinkReducer = commercialLinkSlice.reducer;
-export const { isToggleShow } = commercialLinkSlice.actions;
+export const { isToggleShow, setCurrentPage } = commercialLinkSlice.actions;
 export const selectUrl = (state: RootState) => state.commercialLink.url;
 export const selectLocationLink = (state: RootState) => state.commercialLink.commLink;
 export const selectCreateLinkLoading = (state: RootState) => state.commercialLink.createLinkLoading;
@@ -114,3 +157,6 @@ export const selectConstructor = (state: RootState) => state.commercialLink.cons
 export const selectListLocationLink = (state: RootState) => state.commercialLink.listLocationLink;
 export const selectLocationLinkOne = (state: RootState) => state.commercialLink.locationLinkOne;
 export const selectLocationLinkOneLoading = (state: RootState) => state.commercialLink.fetchLocationLinkOneLoading;
+export const selectListLink = (state: RootState) => state.commercialLink.listLink;
+export const selectLoadingListLink = (state: RootState) => state.commercialLink.fetchListLinkLoading;
+export const selectRemoveLinkLoading = (state: RootState) => state.commercialLink.removeLinkLoading;
