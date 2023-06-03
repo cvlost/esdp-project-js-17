@@ -16,6 +16,8 @@ import config from '../config';
 import path from 'path';
 import Size from '../models/Size';
 import Lighting from '../models/Lighting';
+import BookingHistory from '../models/RentHistory';
+import RentHistory from '../models/RentHistory';
 
 const locationsRouter = express.Router();
 
@@ -339,6 +341,13 @@ locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
     location.rent = rentData.date !== null ? rentData.date : null;
     location.client = rentData.client !== null ? rentData.client : null;
     await location.save();
+    const locationPrice = await Location.findOne({ _id: id }).select('price');
+    await RentHistory.create({
+      client_id: rentData.client,
+      location_id: id,
+      rent_date: rentData.date,
+      price: locationPrice?.price,
+    });
     return res.send(location);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {

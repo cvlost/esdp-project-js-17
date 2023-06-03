@@ -1,8 +1,8 @@
 import { model, Schema } from 'mongoose';
-import { BookingHistoryType } from '../types';
+import { RentHistoryType } from '../types';
 import { PeriodSchema } from './Period';
 
-const BookingHistorySchema = new Schema<BookingHistoryType>({
+const RentHistorySchema = new Schema<RentHistoryType>({
   client_id: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -17,8 +17,8 @@ const BookingHistorySchema = new Schema<BookingHistoryType>({
     type: String,
     required: true,
   },
-  booking_date: PeriodSchema,
+  rent_date: PeriodSchema,
 });
 
-const BookingHistory = model('BookingHistory', BookingHistorySchema);
-export default BookingHistory;
+const RentHistory = model('RentHistory', RentHistorySchema);
+export default RentHistory;

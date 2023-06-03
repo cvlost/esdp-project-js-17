@@ -117,9 +117,9 @@ export interface RentData {
   client: Schema.Types.ObjectId | null;
 }
 
-export interface BookingHistoryType {
+export interface RentHistoryType {
   location_id: Schema.Types.ObjectId;
   client_id: Schema.Types.ObjectId;
   price: string;
-  booking_date: Schema.Types.Date[];
+  rent_date: Schema.Types.Date;
 }
