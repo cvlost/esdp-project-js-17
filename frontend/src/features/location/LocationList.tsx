@@ -323,7 +323,12 @@ const LocationList = () => {
       <ModalBody isOpen={openBookingList} onClose={() => setOpenBookingList(false)} maxWidth="md">
         <BookingList locationId={locationID} />
       </ModalBody>
-      <RentForm onSubmit={onRentUpdateSubmit} isOpen={isRentOpen} closeRentForm={() => setIsRentOpen(false)} />
+      <RentForm
+        locationId={locationID}
+        onSubmit={onRentUpdateSubmit}
+        isOpen={isRentOpen}
+        closeRentForm={() => setIsRentOpen(false)}
+      />
       <LocationDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       <SnackbarCard />
     </Box>
