@@ -1,25 +1,59 @@
 import express from 'express';
-import Booking from '../models/Booking';
-import Location from '../models/Location';
 import auth from '../middleware/auth';
 import RentHistory from '../models/RentHistory';
+import Location from '../models/Location';
+import { Types } from 'mongoose';
+import { flattenLookup } from './locations';
 
 const rentHistoryRouter = express.Router();
 
-rentHistoryRouter.get('/', async (req, res, next) => {
+rentHistoryRouter.get('/', auth, async (req, res, next) => {
   try {
-    const rentHistory = await RentHistory.find();
+    const rentHistory = await RentHistory.find().sort({ createdAt: -1 }).populate('location').populate('client');
     return res.send(rentHistory);
   } catch (e) {
     return next(e);
   }
 });
 
-rentHistoryRouter.get('/:id', async (req, res, next) => {
+rentHistoryRouter.get('/:id', auth, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const rentHistory = await RentHistory.find({ location_id: id });
-    return res.send(rentHistory);
+    const [location] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(id) } }, ...flattenLookup]);
+    const rentHistory = await RentHistory.aggregate([
+      { $match: { location: new Types.ObjectId(id) } },
+      { $sort: { createdAt: -1 } },
+      {
+        $addFields: {
+          price: {
+            $convert: {
+              input: { $toDecimal: '$price' },
+              to: 'string',
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'clients',
+          localField: 'client',
+          foreignField: '_id',
+          as: 'client',
+        },
+      },
+      {
+        $unwind: '$client',
+      },
+    ]);
+
+    const rentHistoryToSend = rentHistory.map((item) => {
+      const { ...rest } = item;
+      return {
+        ...rest,
+        location: location,
+      };
+    });
+    return res.send(rentHistoryToSend);
   } catch (e) {
     return next(e);
   }
