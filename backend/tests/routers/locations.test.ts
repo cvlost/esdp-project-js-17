@@ -5,7 +5,7 @@ import * as db from '../db';
 import User from '../../models/Users';
 import Size from '../../models/Size';
 import Location from '../../models/Location';
-import mongoose, { FilterQuery, HydratedDocument } from 'mongoose';
+import mongoose, { FilterQuery, HydratedDocument, Types } from 'mongoose';
 import Area from '../../models/Area';
 import LegalEntity from '../../models/LegalEntity';
 import Format from '../../models/Format';
@@ -515,6 +515,51 @@ describe('locationsRouter', () => {
         expect(
           Object.keys(items).every((name) => typeof items[name as keyof GetItemsResponse][0].name === 'string'),
         ).toBe(true);
+      });
+    });
+  });
+
+  describe('POST /locations/:id', () => {
+    describe('любой пользователь пытается получить информацию одной локации', () => {
+      test('должен возвращать statusCode 200 и корректные данные', async () => {
+        const loc = await createOneLocation();
+        const id = loc._id.toString();
+        const [aggregatedLoc] = await Location.aggregate([
+          { $match: { _id: new Types.ObjectId(id) } },
+          ...flattenLookup,
+        ]);
+        const expectedLocation = {
+          ...aggregatedLoc,
+          _id: aggregatedLoc._id.toString(),
+          streets: aggregatedLoc.streets.slice().sort(),
+          rent: aggregatedLoc.rent
+            ? { start: aggregatedLoc.rent.start.toISOString(), end: aggregatedLoc.rent.end.toISOString() }
+            : null,
+        };
+        const res = await request.get(`/locations/${id}`);
+        const locationResponse = res.body;
+
+        locationResponse.streets.sort();
+
+        expect(res.statusCode).toBe(200);
+        expect(locationResponse).toEqual(expectedLocation);
+      });
+
+      test('передав некорректный mongodb id, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
+        const res = await request.get(`/locations/invalid-id`);
+        const errorMessage = res.body.error;
+
+        expect(res.statusCode).toBe(422);
+        expect(errorMessage).toBe('Некорректный id локации.');
+      });
+
+      test('передав корректный id , но не существующий в базе, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
+        const validMongoId = new Types.ObjectId();
+        const res = await request.get(`/locations/${validMongoId}`);
+        const errorMessage = res.body.error;
+
+        expect(res.statusCode).toBe(404);
+        expect(errorMessage).toBe('Локация не существует в базе.');
       });
     });
   });

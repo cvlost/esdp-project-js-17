@@ -115,7 +115,7 @@ locationsRouter.post('/filter', async (req, res, next) => {
   }
 });
 
-locationsRouter.get('/getItems', async (req, res) => {
+locationsRouter.get('/getItems', async (req, res, next) => {
   try {
     const [areas, regions, formats, legalEntity, directions, sizes, lighting] = await Promise.all([
       Area.find(),
@@ -129,15 +129,24 @@ locationsRouter.get('/getItems', async (req, res) => {
 
     return res.send({ areas, regions, formats, legalEntity, directions, sizes, lighting });
   } catch (e) {
-    return res.sendStatus(500);
+    return next(e);
   }
 });
 
 locationsRouter.get('/:id', async (req, res, next) => {
   const _id = req.params.id as string;
 
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
   try {
     const [location] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(_id) } }, ...flattenLookup]);
+
+    if (!location) {
+      return res.status(404).send({ error: 'Локация не существует в базе.' });
+    }
+
     return res.send(location);
   } catch (e) {
     return next(e);
