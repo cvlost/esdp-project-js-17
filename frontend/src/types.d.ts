@@ -353,13 +353,25 @@ export interface CommercialLinkTypeMutation {
 }
 
 export interface CommercialLinkType {
-  location: ILocation[];
+  _id: string;
+  location: string[];
   settings: {
     id: string;
     name: string;
     show: boolean;
   };
+  shortUrl: string;
   fullLink: string;
+  title: string;
+  description: string;
+}
+
+export interface listLinkType {
+  listLink: CommercialLinkType[];
+  page: number;
+  pages: number;
+  perPage: number;
+  listLinkLength: number;
 }
 
 export interface ConstructorLinkType {

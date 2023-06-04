@@ -105,6 +105,9 @@ const SnackbarCard = () => {
     case 'Main_Edit':
       txt += ' успешно сохранено';
       break;
+    case 'remove_link':
+      txt += ' ссылка успешно удалена';
+      break;
   }
 
   return (
