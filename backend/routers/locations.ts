@@ -340,12 +340,11 @@ locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
     location.rent = rentData.date !== null ? rentData.date : null;
     location.client = rentData.client !== null ? rentData.client : null;
     await location.save();
-    const locationPrice = await Location.findOne({ _id: id }).select('price');
     await RentHistory.create({
-      client_id: rentData.client,
-      location_id: id,
+      client: rentData.client,
+      location: id,
       rent_date: rentData.date,
-      price: locationPrice?.price,
+      price: mongoose.Types.Decimal128.fromString(rentData.price),
     });
     return res.send(location);
   } catch (e) {

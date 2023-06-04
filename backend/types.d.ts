@@ -115,12 +115,13 @@ export interface SizeType {
 export interface RentData {
   date: DateRange | null;
   client: Schema.Types.ObjectId | null;
+  price: string;
 }
 
 export interface RentHistoryType {
-  location_id: Schema.Types.ObjectId;
-  client_id: Schema.Types.ObjectId;
-  price: string;
+  location: Schema.Types.ObjectId;
+  client: Schema.Types.ObjectId;
+  price: Types.Decimal128;
   rent_date: IPeriod;
   createdAt: Date;
 }
