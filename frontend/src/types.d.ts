@@ -410,4 +410,14 @@ export interface contentLinkOneType {
 export interface RentMutation {
   date: DateRange | null;
   client: string | null;
+  price: string;
+}
+
+export interface RentHistoryList {
+  _id: string;
+  rent_date: IPeriod;
+  client: ClientsList;
+  location: ILocation;
+  createdAt: Date;
+  price: string;
 }

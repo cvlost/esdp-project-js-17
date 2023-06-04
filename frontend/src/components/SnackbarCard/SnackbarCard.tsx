@@ -96,6 +96,12 @@ const SnackbarCard = () => {
     case 'create_booking':
       txt += 'Бронь успешно добавлена';
       break;
+    case 'update_rent':
+      txt += 'Информация об аренде обновлена';
+      break;
+    case 'delete_rentHistory':
+      txt += 'История об аренде удалена';
+      break;
     case 'Main_Edit':
       txt += ' успешно сохранено';
       break;
