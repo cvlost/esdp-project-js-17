@@ -56,6 +56,22 @@ interface IFrontendLocation {
   booking: BookingListType[];
 }
 
+interface WithNameAndId {
+  name: string;
+  _id: string;
+}
+
+interface GetItemsResponse {
+  areas: WithNameAndId[];
+  cities: (WithNameAndId & { area: string })[];
+  formats: WithNameAndId[];
+  regions: (WithNameAndId & { city: string })[];
+  directions: WithNameAndId[];
+  lightings: WithNameAndId[];
+  legalEntities: WithNameAndId[];
+  sizes: WithNameAndId[];
+}
+
 app.use('/locations', locationsRouter);
 const request = supertest(app);
 
@@ -470,6 +486,35 @@ describe('locationsRouter', () => {
         expect(receivedResponse.criteria.sizes.length).toBe(locationsNumber);
         expect(receivedResponse.criteria.legalEntities.length).toBe(locationsNumber);
         expect(receivedResponse.criteria.lightings.length).toBe(locationsNumber);
+      });
+    });
+  });
+
+  describe('POST /locations/getItems', () => {
+    describe('любой пользователь пытается получить данные нескольких сущностей одним запросом', () => {
+      test('должен возвращать statusCode 200 и корректные данные', async () => {
+        for (let i = 0; i < 15; i++) {
+          const area = await Area.create({ name: `area${i}` });
+          const city = await City.create({ name: `city${i}`, area: area._id });
+          await Format.create({ name: `format${i}` });
+          await Region.create({ name: `region${i}`, city: city._id });
+          await Direction.create({ name: `direction${i}` });
+          await Lighting.create({ name: `lighting${i}` });
+          await LegalEntity.create({ name: `legalEntity${i}` });
+          await Size.create({ name: `${i}x${i}` });
+        }
+
+        const res = await request.get(`/locations/getItems`);
+        const items: GetItemsResponse = res.body;
+
+        expect(res.statusCode).toBe(200);
+        expect(Object.keys(items).every((name) => items[name as keyof GetItemsResponse].length === 15)).toBe(true);
+        expect(
+          Object.keys(items).every((name) => mongoose.isValidObjectId(items[name as keyof GetItemsResponse][0]._id)),
+        ).toBe(true);
+        expect(
+          Object.keys(items).every((name) => typeof items[name as keyof GetItemsResponse][0].name === 'string'),
+        ).toBe(true);
       });
     });
   });
