@@ -490,7 +490,7 @@ describe('locationsRouter', () => {
     });
   });
 
-  describe('POST /locations/getItems', () => {
+  describe('GET /locations/getItems', () => {
     describe('любой пользователь пытается получить данные нескольких сущностей одним запросом', () => {
       test('должен возвращать statusCode 200 и корректные данные', async () => {
         for (let i = 0; i < 15; i++) {
@@ -519,7 +519,7 @@ describe('locationsRouter', () => {
     });
   });
 
-  describe('POST /locations/:id', () => {
+  describe('GET /locations/:id', () => {
     describe('любой пользователь пытается получить информацию одной локации', () => {
       test('должен возвращать statusCode 200 и корректные данные', async () => {
         const loc = await createOneLocation();
@@ -560,6 +560,77 @@ describe('locationsRouter', () => {
 
         expect(res.statusCode).toBe(404);
         expect(errorMessage).toBe('Локация не существует в базе.');
+      });
+    });
+  });
+
+  describe('GET /locations/edit/:id', () => {
+    test('неавторизованный пользователь пытается получить 1 локацию без агрегации, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const res = await request.get(`/locations/edit/${id}`);
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+
+    test('пользователь с рандомным токеном пытается получить 1 локацию без агрегации, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const res = await request.get(`/locations/edit/${id}`).set({ Authorization: 'some-token' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
+    });
+
+    describe('пользователь с ролью "user" пытается получить 1 локацию без агрегации', () => {
+      test('указав некоррекный mongodb id, возвращает statusCode 422 и сообщение об ошибке', async () => {
+        const res = await request.get(`/locations/edit/random-id`).set({ Authorization: userToken });
+        const errorMessage = res.body.error;
+
+        expect(res.statusCode).toBe(422);
+        expect(errorMessage).toBe('Некорректный id локации.');
+      });
+
+      test('указав коррекный mongodb id, но не существующий в базе, возвращает statusCode 404 и сообщение об ошибке', async () => {
+        const validMongoID = new Types.ObjectId().toString();
+        const res = await request.get(`/locations/edit/${validMongoID}`).set({ Authorization: userToken });
+        const errorMessage = res.body.error;
+
+        expect(res.statusCode).toBe(404);
+        expect(errorMessage).toBe('Локация не существует в базе.');
+      });
+
+      test('должен возвращать statusCode 200 и корректные данные', async () => {
+        const loc = await createOneLocation();
+        const id = loc._id.toString();
+        const res = await request.get(`/locations/edit/${id}`).set({ Authorization: userToken });
+        const responseLoc = res.body;
+
+        expect(res.statusCode).toBe(200);
+        expect(responseLoc._id).toBe(id);
+        expect(mongoose.isValidObjectId(responseLoc.size)).toBe(true);
+        expect(mongoose.isValidObjectId(responseLoc.city)).toBe(true);
+        expect(mongoose.isValidObjectId(responseLoc.area)).toBe(true);
+        expect(mongoose.isValidObjectId(responseLoc.lighting)).toBe(true);
+      });
+    });
+
+    describe('пользователь с ролью "admin" пытается получить 1 локацию без агрегации', () => {
+      test('должен возвращать statusCode 200 и корректные данные', async () => {
+        const loc = await createOneLocation();
+        const id = loc._id.toString();
+        const res = await request.get(`/locations/edit/${id}`).set({ Authorization: adminToken });
+        const responseLoc = res.body;
+
+        expect(res.statusCode).toBe(200);
+        expect(responseLoc._id).toBe(id);
+        expect(mongoose.isValidObjectId(responseLoc.city)).toBe(true);
+        expect(mongoose.isValidObjectId(responseLoc.size)).toBe(true);
+        expect(mongoose.isValidObjectId(responseLoc.area)).toBe(true);
+        expect(mongoose.isValidObjectId(responseLoc.lighting)).toBe(true);
       });
     });
   });

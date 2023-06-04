@@ -153,11 +153,20 @@ locationsRouter.get('/:id', async (req, res, next) => {
   }
 });
 
-locationsRouter.get('/edit/:id', async (req, res, next) => {
-  const id = req.params.id;
+locationsRouter.get('/edit/:id', auth, async (req, res, next) => {
+  const _id = req.params.id;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
 
   try {
-    const location = await Location.findOne({ _id: id });
+    const location = await Location.findOne({ _id });
+
+    if (!location) {
+      return res.status(404).send({ error: 'Локация не существует в базе.' });
+    }
+
     return res.send(location);
   } catch (e) {
     return next(e);
