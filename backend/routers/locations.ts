@@ -16,6 +16,7 @@ import config from '../config';
 import path from 'path';
 import Size from '../models/Size';
 import Lighting from '../models/Lighting';
+import RentHistory from '../models/RentHistory';
 
 const locationsRouter = express.Router();
 
@@ -339,6 +340,12 @@ locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
     location.rent = rentData.date !== null ? rentData.date : null;
     location.client = rentData.client !== null ? rentData.client : null;
     await location.save();
+    await RentHistory.create({
+      client: rentData.client,
+      location: id,
+      rent_date: rentData.date,
+      price: mongoose.Types.Decimal128.fromString(rentData.price),
+    });
     return res.send(location);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {

@@ -190,7 +190,13 @@ interface UpdateRentParams {
   rent: RentMutation;
 }
 
-export const updateRent = createAsyncThunk<void, UpdateRentParams>('locations/updateRent', async (params) => {
+export const updateRent = createAsyncThunk<
+  void,
+  UpdateRentParams,
+  {
+    rejectValue: ValidationError;
+  }
+>('locations/updateRent', async (params, { rejectWithValue }) => {
   try {
     const rentDate =
       params.rent.date !== null
@@ -202,9 +208,13 @@ export const updateRent = createAsyncThunk<void, UpdateRentParams>('locations/up
     await axiosApi.patch('locations/updateRent/' + params.id, {
       date: rentDate,
       client: params.rent.client !== '' ? params.rent.client : null,
+      price: params.rent.price,
     });
   } catch (e) {
-    console.log(e);
+    if (isAxiosError(e) && e.response && e.response.status === 400) {
+      return rejectWithValue(e.response.data as ValidationError);
+    }
+    throw e;
   }
 });
 

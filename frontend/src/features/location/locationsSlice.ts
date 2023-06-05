@@ -22,6 +22,7 @@ import {
   getItems,
   createBooking,
   removeBooking,
+  updateRent,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -54,6 +55,8 @@ interface LocationsState {
   checkedLocationLoading: false | string;
   itemsList: GetItemsListType;
   getItemsListLoading: boolean;
+  createRentLoading: boolean;
+  createRentError: ValidationError | null;
   createBookingLoading: boolean;
   createBookingError: ValidationError | null;
   removeBookingLoading: boolean;
@@ -162,6 +165,8 @@ const initialState: LocationsState = {
     lighting: [],
   },
   getItemsListLoading: false,
+  createRentLoading: false,
+  createRentError: null,
   createBookingLoading: false,
   createBookingError: null,
   removeBookingLoading: false,
@@ -300,6 +305,16 @@ const locationsSlice = createSlice({
     builder.addCase(getFilterCriteriaData.rejected, (state) => {
       state.filterCriteriaLoading = false;
     });
+    builder.addCase(updateRent.pending, (state) => {
+      state.createRentLoading = true;
+    });
+    builder.addCase(updateRent.fulfilled, (state) => {
+      state.createRentLoading = false;
+    });
+    builder.addCase(updateRent.rejected, (state, { payload: error }) => {
+      state.createRentLoading = false;
+      state.createRentError = error || null;
+    });
 
     builder.addCase(createBooking.pending, (state) => {
       state.createBookingLoading = true;
@@ -346,6 +361,8 @@ export const selectCheckedLocationLoading = (state: RootState) => state.location
 export const selectSelectedLocationId = (state: RootState) => state.locations.selectedLocationId;
 export const selectItemsList = (state: RootState) => state.locations.itemsList;
 export const selectGetItemsListLoading = (state: RootState) => state.locations.getItemsListLoading;
+export const selectCreateRentLoading = (state: RootState) => state.locations.createRentLoading;
+export const selectCreateRentError = (state: RootState) => state.locations.createRentError;
 export const selectCreateBookingLoading = (state: RootState) => state.locations.createBookingLoading;
 export const selectCreateBookingError = (state: RootState) => state.locations.createBookingError;
 export const selectRemoveBookingLoading = (state: RootState) => state.locations.removeBookingLoading;
