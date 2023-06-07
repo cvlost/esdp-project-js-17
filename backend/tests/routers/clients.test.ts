@@ -28,7 +28,7 @@ const adminDto = {
   token: adminToken,
 };
 
-const createClients = async () => {
+export const createClients = async () => {
   return await Client.create({
     companyName: 'test',
     companyKindOfActivity: 'test',

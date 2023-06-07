@@ -6,7 +6,11 @@ import auth from '../middleware/auth';
 
 const bookingsRouter = express.Router();
 
-bookingsRouter.get('/:id', async (req, res, next) => {
+bookingsRouter.get('/:id', auth, async (req, res, next) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(422).send({ error: 'Некорректный id брони.' });
+  }
+
   try {
     const locationId = req.params.id;
     const location = await Location.findOne({ _id: locationId }).select('price');
