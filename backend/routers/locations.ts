@@ -31,6 +31,32 @@ export const flattenLookup: PipelineStage[] = [
   { $lookup: { from: 'lightings', localField: 'lighting', foreignField: '_id', as: 'lighting' } },
   { $lookup: { from: 'sizes', localField: 'size', foreignField: '_id', as: 'size' } },
   { $lookup: { from: 'bookings', localField: 'booking', foreignField: '_id', as: 'booking' } },
+  {
+    $lookup: {
+      from: 'renthistories',
+      localField: 'analytics',
+      foreignField: '_id',
+      as: 'analytics',
+      pipeline: [
+        {
+          $lookup: {
+            from: 'clients',
+            localField: 'client',
+            foreignField: '_id',
+            as: 'client',
+          },
+        },
+        {
+          $lookup: {
+            from: 'locations',
+            localField: 'location',
+            foreignField: '_id',
+            as: 'location',
+          },
+        },
+      ],
+    },
+  },
   { $set: { city: { $first: '$city.name' } } },
   { $set: { region: { $first: '$region.name' } } },
   { $set: { streets: { $map: { input: '$streets', as: 'street', in: '$$street.name' } } } },
@@ -183,6 +209,7 @@ locationsRouter.post(
       description: req.body.description,
       dayImage: req.files && files['dayImage'][0] ? 'images/day/' + files['dayImage'][0].filename : null,
       schemaImage: req.files && files['schemaImage'][0] ? 'images/schema/' + files['schemaImage'][0].filename : null,
+      analytics: [],
     };
 
     try {
@@ -340,12 +367,13 @@ locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
     location.rent = rentData.date !== null ? rentData.date : null;
     location.client = rentData.client !== null ? rentData.client : null;
     await location.save();
-    await RentHistory.create({
+    const history = await RentHistory.create({
       client: rentData.client,
       location: id,
       rent_date: rentData.date,
       price: mongoose.Types.Decimal128.fromString(rentData.price),
     });
+    await Location.updateOne({ _id: id }, { $push: { analytics: history.id } });
     return res.send(location);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {

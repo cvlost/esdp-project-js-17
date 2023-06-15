@@ -54,6 +54,8 @@ const Login = () => {
     };
   }, [dispatch]);
 
+  console.log(loginError);
+
   return (
     <Container component="main" maxWidth="xs">
       <Box

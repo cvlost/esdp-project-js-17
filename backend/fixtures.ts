@@ -192,23 +192,7 @@ const run = async () => {
       lighting: randElement(lightings)._id,
       size: randElement(sizes)._id,
       price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
-      rent:
-        Math.random() > 0.5
-          ? null
-          : {
-              start: new Date(
-                `2023-${String(randNum(1, 3)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-              end: new Date(
-                `2023-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-            },
+      rent: null,
       reserve:
         Math.random() > 0.5
           ? null
@@ -233,6 +217,7 @@ const run = async () => {
       schemaImage: `fixtures/${i + 1}.png`,
       status: null,
       booking: [],
+      analytics: [],
     });
   }
 

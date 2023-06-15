@@ -148,6 +148,10 @@ const LocationSchema = new Schema<ILocation>({
     enum: ['Занят', 'Свободный', null],
     default: null,
   },
+  analytics: {
+    type: [Schema.Types.ObjectId],
+    default: [],
+  },
 });
 
 LocationSchema.set('toJSON', {

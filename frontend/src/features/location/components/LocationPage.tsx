@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Chip, CircularProgress, Grid, Typography } from '@mui/material';
+import { Box, Button, Chip, CircularProgress, Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectOneLocation, selectOneLocationLoading } from '../locationsSlice';
 import { getOneLocation } from '../locationsThunks';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import imagePlaceholder from '../../../assets/billboard-placeholder.jpg';
 import LocationPageTabs from './LocationPageTabs';
 import { apiURL } from '../../../constants';
@@ -20,6 +20,7 @@ const LocationPage = () => {
   const id = useParams().id as string;
   const loc = useAppSelector(selectOneLocation);
   const locLoading = useAppSelector(selectOneLocationLoading);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -39,12 +40,17 @@ const LocationPage = () => {
         <CircularProgress />
       ) : (
         <>
-          <Chip
-            sx={{ fontSize: '20px', p: 3, mb: 2 }}
-            label={`Локация ${loc?.city} ${loc?.streets[0] + '/' + loc?.streets[1]}, ${loc?.direction}`}
-            variant="outlined"
-            color="info"
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Chip
+              sx={{ fontSize: '20px', p: 3, mb: 2 }}
+              label={`Локация ${loc?.city} ${loc?.streets[0] + '/' + loc?.streets[1]}, ${loc?.direction}`}
+              variant="outlined"
+              color="info"
+            />
+            <Button onClick={() => navigate(-1)} sx={{ ml: 1 }} variant="outlined">
+              Вернуться в аналитику
+            </Button>
+          </Box>
           <Grid container spacing={1}>
             <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
               <Box sx={{ top: '1em', width: '50%' }}>

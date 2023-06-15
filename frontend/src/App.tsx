@@ -26,6 +26,7 @@ import CreateClient from './features/location/client/CreateClient';
 import 'rsuite/dist/rsuite.min.css';
 import LinkList from './features/CommercialLink/LinkList';
 import RentHistoryList from './features/rentHistory/RentHistoryList';
+import Analytics from './features/location/Analytics/Analytics';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -46,6 +47,7 @@ function App() {
           <Route path="/" element={<Location />} />
           <Route path="/:id" element={<LocationPage />} />
           <Route path="/rentHistory/:id" element={<RentHistoryList />} />
+          <Route path="/analytics" element={<Analytics />} />
         </Route>
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/create_size" element={<CreateSize />} />

@@ -41,7 +41,7 @@ const RentHistoryList = () => {
   const removeRentHistory = async (id: string) => {
     if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную запись аренды?')) {
       await dispatch(deleteRentHistory(id)).unwrap();
-      dispatch(fetchRentHistories(id));
+      await dispatch(fetchRentHistories(id)).unwrap();
       dispatch(openSnackbar({ status: true, parameter: 'delete_rentHistory' }));
     } else {
       return;

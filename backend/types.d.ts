@@ -58,6 +58,7 @@ export interface ILocation {
   schemaImage: string | null;
   checked?: boolean;
   status?: string | null;
+  analytics: Schema.Types.ObjectId[];
 }
 
 export interface AreaType {

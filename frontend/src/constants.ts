@@ -32,3 +32,50 @@ export const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 export const MainColorGreen = '#2e7d32';
+
+export const MONTHS = [
+  {
+    month: 'январь',
+    day: 31,
+  },
+  {
+    month: 'февраль',
+    day: 27,
+  },
+  {
+    month: 'март',
+    day: 31,
+  },
+  {
+    month: 'апрель',
+    day: 30,
+  },
+  {
+    month: 'май',
+    day: 31,
+  },
+  {
+    month: 'июнь',
+    day: 30,
+  },
+  {
+    month: 'июль',
+    day: 31,
+  },
+  {
+    month: 'август',
+    day: 31,
+  },
+  {
+    month: 'сентябрь',
+    day: 30,
+  },
+  {
+    month: 'ноябрь',
+    day: 31,
+  },
+  {
+    month: 'декабрь',
+    day: 30,
+  },
+];

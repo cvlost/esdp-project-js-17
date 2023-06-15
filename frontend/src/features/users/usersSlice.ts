@@ -83,6 +83,8 @@ const usersSlice = createSlice({
     builder.addCase(login.rejected, (state, { payload: error }) => {
       state.loginError = error || null;
       state.loginLoading = false;
+
+      console.log(error);
     });
 
     builder.addCase(createUser.pending, (state) => {

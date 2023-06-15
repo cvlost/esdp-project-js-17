@@ -153,6 +153,7 @@ export interface ILocation {
   checked: boolean;
   status: string | null;
   booking: BookingListType[];
+  analytics: RentHistoryListAnal[];
 }
 
 export interface LocationsListResponse {
@@ -432,4 +433,49 @@ export interface RentHistoryList {
   location: ILocation;
   createdAt: Date;
   price: string;
+}
+
+export interface RentHistoryListAnal {
+  _id: string;
+  rent_date: IPeriod;
+  client: ClientsList[];
+  location: ILocation[];
+  createdAt: Date;
+  price: string;
+}
+
+interface StartDate {
+  month: string;
+  day: number;
+  date: string;
+}
+
+interface EndDate {
+  month: string;
+  day: number;
+  date: string;
+}
+
+interface ClientHistoryOneType {
+  coll: number[];
+  start: StartDate;
+  end: EndDate;
+  monthNames: string[];
+}
+
+interface ClientsHistoryType {
+  id: string;
+  start: StartDate;
+  end: EndDate;
+  number: number[];
+  client: string;
+  year: number;
+  monthNames: string[];
+}
+
+interface DateHistoryClient {
+  coll: number[];
+  start: StartDate;
+  end: EndDate;
+  monthNames: string[];
 }
