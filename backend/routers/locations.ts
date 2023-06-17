@@ -176,11 +176,11 @@ locationsRouter.get('/edit/:id', auth, async (req, res, next) => {
 
 locationsRouter.post(
   '/create',
+  auth,
   imagesUpload.fields([
     { name: 'dayImage', maxCount: 1 },
     { name: 'schemaImage', maxCount: 1 },
   ]),
-  auth,
   async (req, res, next) => {
     const files = req.files as { [filename: string]: Express.Multer.File[] };
 
@@ -238,47 +238,63 @@ locationsRouter.put(
     const files = req.files as { [filename: string]: Express.Multer.File[] };
     const id = req.params.id as string;
 
-    const locationEdit = {
-      country: req.body.country,
-      area: req.body.area,
-      region: req.body.region.length > 0 ? req.body.region : null,
-      city: req.body.city,
-      streets: [req.body.streets[0], req.body.streets[1]],
-      direction: req.body.direction,
-      legalEntity: req.body.legalEntity,
-      format: req.body.format,
-      price: mongoose.Types.Decimal128.fromString(req.body.price),
-      lighting: req.body.lighting,
-      placement: JSON.parse(req.body.placement),
-      size: req.body.size,
-      addressNote: req.body.addressNote,
-      description: req.body.description,
-    };
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(422).send({ error: 'Некорректный id локации.' });
+    }
+
     try {
-      const locationOne: ILocation | null = await Location.findOne({ _id: id });
+      const locationOne = await Location.findById(id);
+
+      if (!locationOne) {
+        return res.status(404).send({ error: 'Локация не существует в базе.' });
+      }
+
+      const locationEdit = {
+        country: req.body.country,
+        area: req.body.area,
+        region: req.body.region.length > 0 ? req.body.region : null,
+        city: req.body.city,
+        streets: [req.body.streets[0], req.body.streets[1]],
+        direction: req.body.direction,
+        legalEntity: req.body.legalEntity,
+        format: req.body.format,
+        price: mongoose.Types.Decimal128.fromString(req.body.price),
+        lighting: req.body.lighting,
+        placement: JSON.parse(req.body.placement),
+        size: req.body.size,
+        addressNote: req.body.addressNote,
+        description: req.body.description,
+      };
 
       const images = {
         dayImage: files['dayImage'] ? files['dayImage'][0].filename : req.body.dayImage,
         schemaImage: files['schemaImage'] ? files['schemaImage'][0].filename : req.body.schemaImage,
       };
 
-      if (locationOne) {
-        if (images.dayImage !== locationOne.dayImage) {
+      if (images.dayImage !== locationOne.dayImage) {
+        try {
           await fs.unlink(path.join(config.publicPath, `${locationOne.dayImage}`));
-          if (images.dayImage) {
-            await Location.updateOne({ _id: id }, { dayImage: 'images/day/' + images.dayImage });
-          }
+        } catch (e) {
+          console.error(e);
         }
-
-        if (images.schemaImage !== locationOne.schemaImage) {
-          await fs.unlink(path.join(config.publicPath, `${locationOne.schemaImage}`));
-          if (images.schemaImage) {
-            await Location.updateOne({ _id: id }, { schemaImage: 'images/schema/' + images.schemaImage });
-          }
+        if (images.dayImage) {
+          await Location.updateOne({ _id: id }, { dayImage: 'images/day/' + images.dayImage });
         }
       }
+
+      if (images.schemaImage !== locationOne.schemaImage) {
+        try {
+          await fs.unlink(path.join(config.publicPath, `${locationOne.schemaImage}`));
+        } catch (e) {
+          console.error(e);
+        }
+        if (images.schemaImage) {
+          await Location.updateOne({ _id: id }, { schemaImage: 'images/schema/' + images.schemaImage });
+        }
+      }
+
       await Location.updateMany({ _id: id }, locationEdit);
-      return res.send('Edited: ' + id);
+      return res.send({ message: 'Локация успешно отредактирована!' });
     } catch (e) {
       if (req.files) {
         const files = req.files as { [filename: string]: Express.Multer.File[] };
@@ -295,20 +311,29 @@ locationsRouter.put(
 );
 
 locationsRouter.delete('/:id', auth, async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
   try {
-    const _id = req.params.id as string;
     const location = await Location.findById(_id);
 
     if (!location) {
       return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });
     }
 
-    if (location.dayImage) {
+    try {
       await fs.unlink(path.join(config.publicPath, `${location.dayImage}`));
+    } catch (e) {
+      console.error(e);
     }
 
-    if (location.schemaImage) {
+    try {
       await fs.unlink(path.join(config.publicPath, `${location.schemaImage}`));
+    } catch (e) {
+      console.error(e);
     }
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');

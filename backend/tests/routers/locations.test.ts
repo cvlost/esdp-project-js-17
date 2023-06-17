@@ -726,4 +726,159 @@ describe('locationsRouter', () => {
       expect(createLocResponse.message).toBe('Новая локация успешно создана!');
     });
   });
+
+  describe('PUT /location/edit/:id', () => {
+    test('неавторизованный пользователь пытается отредактировать локацию, дожен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const res = await request.put(`/locations/edit/${id}`);
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+
+    test('пользователь с ролью "user" пытается отредактировать локацию, дожен возвращать statusCode 200 и объект созданной локации', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const area = await Area.create({ name: 'some new area' });
+      const city = await City.create({ name: 'some new city', area: area._id });
+      const [newStreet1, newStreet2] = await Street.create(
+        { name: 'some new street 1', city: city._id },
+        { name: 'some new street 2', city: city._id },
+      );
+      const updateDto = {
+        price: '250',
+        street1: newStreet1._id.toString(),
+        street2: newStreet2._id.toString(),
+        region: '',
+        placement: 'true',
+      };
+      const res = await request
+        .put(`/locations/edit/${id}`)
+        .set({ Authorization: userToken })
+        .attach('dayImage', './tests/testFiles/dayImage.jpg')
+        .attach('schemaImage', './tests/testFiles/schemaImage.png')
+        .field('price', updateDto.price)
+        .field('region', updateDto.region)
+        .field('placement', updateDto.placement)
+        .field('streets[]', updateDto.street1)
+        .field('streets[]', updateDto.street2);
+      const updateMessage = res.body.message;
+
+      expect(res.statusCode).toBe(200);
+      expect(updateMessage).toBe('Локация успешно отредактирована!');
+
+      const editedLoc = await Location.findById(id);
+
+      if (editedLoc) {
+        expect(editedLoc.price.toString()).toBe('250');
+      }
+    });
+
+    test('пользователь с ролью "admin" пытается отредактировать локацию, дожен возвращать statusCode 200 и объект созданной локации', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const area = await Area.create({ name: 'some new area' });
+      const city = await City.create({ name: 'some new city', area: area._id });
+      const [newStreet1, newStreet2] = await Street.create(
+        { name: 'some new street 1', city: city._id },
+        { name: 'some new street 2', city: city._id },
+      );
+      const updateDto = {
+        price: '250',
+        street1: newStreet1._id.toString(),
+        street2: newStreet2._id.toString(),
+        region: '',
+        placement: 'true',
+      };
+      const res = await request
+        .put(`/locations/edit/${id}`)
+        .set({ Authorization: adminToken })
+        .attach('dayImage', './tests/testFiles/dayImage.jpg')
+        .attach('schemaImage', './tests/testFiles/schemaImage.png')
+        .field('price', updateDto.price)
+        .field('region', updateDto.region)
+        .field('placement', updateDto.placement)
+        .field('streets[]', updateDto.street1)
+        .field('streets[]', updateDto.street2);
+      const updateMessage = res.body.message;
+
+      expect(res.statusCode).toBe(200);
+      expect(updateMessage).toBe('Локация успешно отредактирована!');
+
+      const editedLoc = await Location.findById(id);
+
+      if (editedLoc) {
+        expect(editedLoc.price.toString()).toBe('250');
+      }
+    });
+
+    test('авторизованный пользователь передал некорректный mongodb id, должен вернуть statusCode 422 и сообщение об ошибке', async () => {
+      const invalidId = 'some-random-id';
+      const res = await request.put(`/locations/edit/${invalidId}`).set({ Authorization: adminToken });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(422);
+      expect(errorMessage).toBe('Некорректный id локации.');
+    });
+
+    test('авторизованный пользователь передал корректный, но не существующий в базе id, должен вернуть statusCode 404 и сообщение об ошибке', async () => {
+      const validMongoId = new Types.ObjectId().toString();
+      const res = await request.put(`/locations/edit/${validMongoId}`).set({ Authorization: adminToken });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(404);
+      expect(errorMessage).toBe('Локация не существует в базе.');
+    });
+  });
+
+  describe('DELETE /locations/:id', () => {
+    test('неавторизованный пользователь пытается удалить локацию по id, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const res = await request.delete(`/locations/${id}`);
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+
+    test('пользователь с ролью "user" пытается удалить локацию по id, должен возвращать statusCode 200', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const res = await request.delete(`/locations/${id}`).set({ Authorization: userToken });
+      const result = res.body;
+
+      expect(res.statusCode).toBe(200);
+      expect(result.deletedCount).toBe(1);
+    });
+
+    test('пользователь с ролью "admin" пытается удалить локацию по id, должен возвращать statusCode 200', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const res = await request.delete(`/locations/${id}`).set({ Authorization: adminToken });
+      const result = res.body;
+
+      expect(res.statusCode).toBe(200);
+      expect(result.deletedCount).toBe(1);
+    });
+
+    test('авторизованный пользователь передал неверный mongodb id, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
+      const res = await request.delete(`/locations/invalid-id`).set({ Authorization: adminToken });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(422);
+      expect(errorMessage).toBe('Некорректный id локации.');
+    });
+
+    test('авторизованный пользователь передал корректный, но не существующий в базе id, должен возвращать statusCode 404 и сообщение об ошибке', async () => {
+      const validMongoId = new Types.ObjectId().toString();
+      const res = await request.delete(`/locations/${validMongoId}`).set({ Authorization: adminToken });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(404);
+      expect(errorMessage).toBe('Удаление невозможно: локация не существует в базе.');
+    });
+  });
 });
