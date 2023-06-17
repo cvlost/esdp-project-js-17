@@ -3,11 +3,14 @@ import Booking from '../models/Booking';
 import Location from '../models/Location';
 import mongoose from 'mongoose';
 import auth from '../middleware/auth';
-import BookingHistory from '../models/BookingHistory';
 
 const bookingsRouter = express.Router();
 
-bookingsRouter.get('/:id', async (req, res, next) => {
+bookingsRouter.get('/:id', auth, async (req, res, next) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(422).send({ error: 'Некорректный id брони.' });
+  }
+
   try {
     const locationId = req.params.id;
     const location = await Location.findOne({ _id: locationId }).select('price');
@@ -24,16 +27,8 @@ bookingsRouter.post('/', auth, async (req, res, next) => {
       locationId: req.body.locationId,
       booking_date: req.body.booking_date,
     };
-    const locationPrice = await Location.findOne({ _id: data.locationId }).select('price');
     const create = await Booking.create(data);
     await Location.updateOne({ _id: req.body.locationId }, { $push: { booking: create._id } });
-    await BookingHistory.create({
-      client_id: data.clientId,
-      location_id: data.locationId,
-      booking_date: data.booking_date,
-      price: locationPrice?.price,
-    });
-
     return res.send(create);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {

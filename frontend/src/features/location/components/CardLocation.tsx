@@ -65,7 +65,7 @@ const CardLocation: React.FC<Props> = ({
     area: <>{loc.area}</>,
     city: <>{loc.city}</>,
     region: <>{loc.region}</>,
-    street: <>{loc.streets[0] + '/' + loc.streets[1]}</>,
+    streets: <>{loc.streets[0] + '/' + loc.streets[1]}</>,
     direction: <>{loc.direction}</>,
     legalEntity: <>{loc.legalEntity}</>,
     size: <>{loc.size}</>,

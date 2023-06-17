@@ -15,6 +15,7 @@ import { commercialLinkReducer } from '../features/CommercialLink/commercialLink
 import { sizesReducer } from '../features/location/size/sizeSlice';
 import { lightingReducer } from '../features/location/lighting/lightingsSlice';
 import { clientReducer } from '../features/location/client/clientSlice';
+import { rentHistoryReducer } from '../features/rentHistory/rentHistorySlice';
 
 const usersPersistConfig = {
   key: 'ESDP-project-js-17:users',
@@ -48,6 +49,7 @@ const rootReducer = combineReducers({
   size: sizesReducer,
   lighting: lightingReducer,
   clients: clientReducer,
+  rentHistories: rentHistoryReducer,
 });
 
 export const store = configureStore({
