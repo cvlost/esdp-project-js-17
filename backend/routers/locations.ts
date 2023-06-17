@@ -205,7 +205,7 @@ locationsRouter.post(
 
     try {
       const locationData = await Location.create(locationObj);
-      return res.send({
+      return res.status(201).send({
         message: 'Новая локация успешно создана!',
         location: await Location.populate(locationData, 'region direction city'),
       });

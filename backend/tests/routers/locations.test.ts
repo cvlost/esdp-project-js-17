@@ -92,6 +92,38 @@ const userDto = {
   token: userToken,
 };
 
+const createLocationDto = async () => {
+  const count = await Location.count();
+  const area = await Area.create({ name: `area${count}` });
+  const city = await City.create({ name: `city${count}`, area: area._id });
+  const region = await Region.create({ name: `region${count}`, city: city._id });
+  const direction = await Direction.create({ name: `direction${count}` });
+  const format = await Format.create({ name: `format${count}` });
+  const legalEntity = await LegalEntity.create({ name: `legalEntity${count}` });
+  const lighting = await Lighting.create({ name: `lighting${count}` });
+  const size = await Size.create({ name: `${count}x${count}` });
+  const placement = Math.random() > 0.5;
+  const [street1, street2] = await Street.create(
+    { name: 'street1', city: city._id },
+    { name: 'street2', city: city._id },
+  );
+
+  return {
+    area: area._id.toString(),
+    city: city._id.toString(),
+    region: region._id.toString(),
+    format: format._id.toString(),
+    direction: direction._id.toString(),
+    lighting: lighting._id.toString(),
+    legalEntity: legalEntity._id.toString(),
+    size: size._id.toString(),
+    street1: street1._id.toString(),
+    street2: street2._id.toString(),
+    price: '5000',
+    placement,
+  };
+};
+
 export const createOneLocation = async () => {
   const count = await Location.count();
   const area = await Area.create({ name: `area${count}` });
@@ -632,6 +664,66 @@ describe('locationsRouter', () => {
         expect(mongoose.isValidObjectId(responseLoc.area)).toBe(true);
         expect(mongoose.isValidObjectId(responseLoc.lighting)).toBe(true);
       });
+    });
+  });
+
+  describe('POST /location/create', () => {
+    test('неавторизованный пользователь пытается создать локацию, дожен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const res = await request.post('/locations/create');
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+
+    test('пользователь с ролью "user" пытается создать локацию, дожен возвращать statusCode 201 и объект созданной локации', async () => {
+      const newLocationDto = await createLocationDto();
+      const res = await request
+        .post('/locations/create')
+        .set({ Authorization: userToken })
+        .attach('dayImage', './tests/testFiles/dayImage.jpg')
+        .attach('schemaImage', './tests/testFiles/schemaImage.png')
+        .field('area', newLocationDto.area.toString())
+        .field('city', newLocationDto.city.toString())
+        .field('region', newLocationDto.region.toString())
+        .field('direction', newLocationDto.direction.toString())
+        .field('format', newLocationDto.format.toString())
+        .field('lighting', newLocationDto.lighting.toString())
+        .field('legalEntity', newLocationDto.legalEntity.toString())
+        .field('placement', newLocationDto.placement)
+        .field('price', newLocationDto.price)
+        .field('size', newLocationDto.size)
+        .field('streets[]', newLocationDto.street1.toString())
+        .field('streets[]', newLocationDto.street2.toString());
+      const createLocResponse = res.body;
+
+      expect(res.statusCode).toBe(201);
+      expect(createLocResponse.message).toBe('Новая локация успешно создана!');
+    });
+
+    test('пользователь с ролью "admin" пытается создать локацию, дожен возвращать statusCode 201 и объект созданной локации', async () => {
+      const newLocationDto = await createLocationDto();
+      const res = await request
+        .post('/locations/create')
+        .set({ Authorization: adminToken })
+        .attach('dayImage', './tests/testFiles/dayImage.jpg')
+        .attach('schemaImage', './tests/testFiles/schemaImage.png')
+        .field('area', newLocationDto.area.toString())
+        .field('city', newLocationDto.city.toString())
+        .field('region', newLocationDto.region.toString())
+        .field('direction', newLocationDto.direction.toString())
+        .field('format', newLocationDto.format.toString())
+        .field('lighting', newLocationDto.lighting.toString())
+        .field('legalEntity', newLocationDto.legalEntity.toString())
+        .field('placement', newLocationDto.placement)
+        .field('price', newLocationDto.price)
+        .field('size', newLocationDto.size)
+        .field('streets[]', newLocationDto.street1.toString())
+        .field('streets[]', newLocationDto.street2.toString());
+      const createLocResponse = res.body;
+
+      expect(res.statusCode).toBe(201);
+      expect(createLocResponse.message).toBe('Новая локация успешно создана!');
     });
   });
 });
