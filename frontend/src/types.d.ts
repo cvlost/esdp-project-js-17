@@ -153,6 +153,7 @@ export interface ILocation {
   checked: boolean;
   status: string | null;
   booking: BookingListType[];
+  __v?: number;
 }
 
 export interface LocationsListResponse {
