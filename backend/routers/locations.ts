@@ -131,7 +131,7 @@ locationsRouter.post('/filter', async (req, res, next) => {
   }
 });
 
-locationsRouter.get('/getItems', async (req, res) => {
+locationsRouter.get('/getItems', async (req, res, next) => {
   try {
     const [areas, regions, formats, legalEntity, directions, sizes, lighting] = await Promise.all([
       Area.find(),
@@ -142,26 +142,47 @@ locationsRouter.get('/getItems', async (req, res) => {
       Size.find(),
       Lighting.find(),
     ]);
+
     return res.send({ areas, regions, formats, legalEntity, directions, sizes, lighting });
   } catch (e) {
-    return res.sendStatus(500);
+    return next(e);
   }
 });
 
 locationsRouter.get('/:id', async (req, res, next) => {
   const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
   try {
     const [location] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(_id) } }, ...flattenLookup]);
+
+    if (!location) {
+      return res.status(404).send({ error: 'Локация не существует в базе.' });
+    }
+
     return res.send(location);
   } catch (e) {
     return next(e);
   }
 });
 
-locationsRouter.get('/edit/:id', async (req, res, next) => {
-  const id = req.params.id;
+locationsRouter.get('/edit/:id', auth, async (req, res, next) => {
+  const _id = req.params.id;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
   try {
-    const location = await Location.findOne({ _id: id });
+    const location = await Location.findOne({ _id });
+
+    if (!location) {
+      return res.status(404).send({ error: 'Локация не существует в базе.' });
+    }
+
     return res.send(location);
   } catch (e) {
     return next(e);
@@ -170,13 +191,14 @@ locationsRouter.get('/edit/:id', async (req, res, next) => {
 
 locationsRouter.post(
   '/create',
+  auth,
   imagesUpload.fields([
     { name: 'dayImage', maxCount: 1 },
     { name: 'schemaImage', maxCount: 1 },
   ]),
-  auth,
   async (req, res, next) => {
     const files = req.files as { [filename: string]: Express.Multer.File[] };
+
     const locationObj: ILocation = {
       country: req.body.country,
       area: req.body.area,
@@ -195,9 +217,10 @@ locationsRouter.post(
       dayImage: req.files && files['dayImage'][0] ? 'images/day/' + files['dayImage'][0].filename : null,
       schemaImage: req.files && files['schemaImage'][0] ? 'images/schema/' + files['schemaImage'][0].filename : null,
     };
+
     try {
       const locationData = await Location.create(locationObj);
-      return res.send({
+      return res.status(201).send({
         message: 'Новая локация успешно создана!',
         location: await Location.populate(locationData, 'region direction city'),
       });
@@ -230,44 +253,63 @@ locationsRouter.put(
     const files = req.files as { [filename: string]: Express.Multer.File[] };
     const id = req.params.id as string;
 
-    const locationEdit = {
-      country: req.body.country,
-      area: req.body.area,
-      region: req.body.region.length > 0 ? req.body.region : null,
-      city: req.body.city,
-      streets: [req.body.streets[0], req.body.streets[1]],
-      direction: req.body.direction,
-      legalEntity: req.body.legalEntity,
-      format: req.body.format,
-      price: mongoose.Types.Decimal128.fromString(req.body.price),
-      lighting: req.body.lighting,
-      placement: JSON.parse(req.body.placement),
-      size: req.body.size,
-      addressNote: req.body.addressNote,
-      description: req.body.description,
-    };
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(422).send({ error: 'Некорректный id локации.' });
+    }
+
     try {
-      const locationOne: ILocation | null = await Location.findOne({ _id: id });
+      const locationOne = await Location.findById(id);
+
+      if (!locationOne) {
+        return res.status(404).send({ error: 'Локация не существует в базе.' });
+      }
+
+      const locationEdit = {
+        country: req.body.country,
+        area: req.body.area,
+        region: req.body.region.length > 0 ? req.body.region : null,
+        city: req.body.city,
+        streets: [req.body.streets[0], req.body.streets[1]],
+        direction: req.body.direction,
+        legalEntity: req.body.legalEntity,
+        format: req.body.format,
+        price: mongoose.Types.Decimal128.fromString(req.body.price),
+        lighting: req.body.lighting,
+        placement: JSON.parse(req.body.placement),
+        size: req.body.size,
+        addressNote: req.body.addressNote,
+        description: req.body.description,
+      };
+
       const images = {
         dayImage: files['dayImage'] ? files['dayImage'][0].filename : req.body.dayImage,
         schemaImage: files['schemaImage'] ? files['schemaImage'][0].filename : req.body.schemaImage,
       };
-      if (locationOne) {
-        if (images.dayImage !== locationOne.dayImage) {
+
+      if (images.dayImage !== locationOne.dayImage) {
+        try {
           await fs.unlink(path.join(config.publicPath, `${locationOne.dayImage}`));
-          if (images.dayImage) {
-            await Location.updateOne({ _id: id }, { dayImage: 'images/day/' + images.dayImage });
-          }
+        } catch (e) {
+          console.error(e);
         }
-        if (images.schemaImage !== locationOne.schemaImage) {
-          await fs.unlink(path.join(config.publicPath, `${locationOne.schemaImage}`));
-          if (images.schemaImage) {
-            await Location.updateOne({ _id: id }, { schemaImage: 'images/schema/' + images.schemaImage });
-          }
+        if (images.dayImage) {
+          await Location.updateOne({ _id: id }, { dayImage: 'images/day/' + images.dayImage });
         }
       }
+
+      if (images.schemaImage !== locationOne.schemaImage) {
+        try {
+          await fs.unlink(path.join(config.publicPath, `${locationOne.schemaImage}`));
+        } catch (e) {
+          console.error(e);
+        }
+        if (images.schemaImage) {
+          await Location.updateOne({ _id: id }, { schemaImage: 'images/schema/' + images.schemaImage });
+        }
+      }
+
       await Location.updateMany({ _id: id }, locationEdit);
-      return res.send('Edited: ' + id);
+      return res.send({ message: 'Локация успешно отредактирована!' });
     } catch (e) {
       if (req.files) {
         const files = req.files as { [filename: string]: Express.Multer.File[] };
@@ -284,19 +326,31 @@ locationsRouter.put(
 );
 
 locationsRouter.delete('/:id', auth, async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
   try {
-    const _id = req.params.id as string;
     const location = await Location.findById(_id);
+
     if (!location) {
       return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });
     }
 
-    if (location.dayImage) {
+    try {
       await fs.unlink(path.join(config.publicPath, `${location.dayImage}`));
+    } catch (e) {
+      console.error(e);
     }
-    if (location.schemaImage) {
+
+    try {
       await fs.unlink(path.join(config.publicPath, `${location.schemaImage}`));
+    } catch (e) {
+      console.error(e);
     }
+
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
   } catch (e) {
@@ -310,7 +364,12 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
       await Location.updateMany({ checked: false });
       return res.send({ patch: false });
     } else if (req.query.checked !== undefined) {
+      if (!mongoose.isValidObjectId(req.query.checked)) {
+        return res.status(422).send({ error: 'Некорректный id локации.' });
+      }
+
       const locationOne = await Location.findOne({ _id: req.query.checked });
+
       if (!locationOne) {
         return res.status(404).send({ error: 'Локации не существует в базе.' });
       }
@@ -320,21 +379,29 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
       } else {
         locationOne.checked = !req.body.checked;
       }
+
       await locationOne.save();
-      return res.send(locationOne.checked);
+      return res.sendStatus(204);
     }
   } catch (e) {
     return next(e);
   }
 });
 
-locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
+locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
+  const id = req.params.id;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
   try {
-    const id = req.params.id;
     const rentData: RentData = req.body;
+
     const location = await Location.findById(id);
+
     if (!location) {
-      return res.status(404).send('Данная локация не найдена!');
+      return res.status(404).send({ error: 'Данная локация не найдена!' });
     }
 
     location.rent = rentData.date !== null ? rentData.date : null;
@@ -349,7 +416,7 @@ locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
     return res.send(location);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+      return res.status(422).send(e);
     }
     return next(e);
   }
