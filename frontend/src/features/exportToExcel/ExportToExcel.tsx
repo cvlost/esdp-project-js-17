@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 import { CellObject, utils, WorkBook, WorkSheet, writeFile } from 'xlsx';
 import { ILocation } from '../../types';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
 interface Props {
   data: ILocation[];
@@ -82,9 +83,11 @@ const ExportToExcel: React.FC<Props> = ({ data, loading }) => {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} disabled={loading}>
+      <Button color="success" variant="contained" onClick={() => setOpen(true)} disabled={loading}>
+        <GetAppIcon sx={{ mr: 1 }} />
         Экспортировать в эксель
       </Button>
+
       <Modal open={open} onClose={handleClose} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Box
           component="div"

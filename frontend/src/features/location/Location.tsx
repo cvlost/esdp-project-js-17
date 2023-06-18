@@ -50,6 +50,9 @@ const Location = () => {
             Список локаций
           </Button>
         </Grid>
+        <Grid item>
+          <ExportToExcel data={locationsList ? locationsList : []} loading={locationsLoading} />
+        </Grid>
         {user?.role === 'admin' ? (
           <>
             <Grid item>
@@ -65,7 +68,6 @@ const Location = () => {
                 renderInput={(params) => <TextField {...params} label="Создание" />}
               />
             </Grid>
-            <ExportToExcel data={locationsList ? locationsList : []} loading={locationsLoading} />
           </>
         ) : null}
       </Grid>
