@@ -30,7 +30,19 @@ export const flattenLookup: PipelineStage[] = [
   { $lookup: { from: 'legalentities', localField: 'legalEntity', foreignField: '_id', as: 'legalEntity' } },
   { $lookup: { from: 'lightings', localField: 'lighting', foreignField: '_id', as: 'lighting' } },
   { $lookup: { from: 'sizes', localField: 'size', foreignField: '_id', as: 'size' } },
-  { $lookup: { from: 'bookings', localField: 'booking', foreignField: '_id', as: 'booking' } },
+  {
+    $lookup: {
+      from: 'bookings',
+      localField: 'booking',
+      foreignField: '_id',
+      as: 'booking',
+      pipeline: [
+        {
+          $lookup: { from: 'clients', localField: 'clientId', foreignField: '_id', as: 'client' },
+        },
+      ],
+    },
+  },
   { $set: { city: { $first: '$city.name' } } },
   { $set: { region: { $first: '$region.name' } } },
   { $set: { streets: { $map: { input: '$streets', as: 'street', in: '$$street.name' } } } },
