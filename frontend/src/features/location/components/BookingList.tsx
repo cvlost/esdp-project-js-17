@@ -73,7 +73,7 @@ const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
                     }}
                   ></Box>
                 </TableCell>
-                <TableCell align="center">Клиент</TableCell>
+                <TableCell align="center">{booking.clientId}</TableCell>
                 <TableCell align="center">{dayjs(booking.booking_date.start).format('DD.MM.YYYY')}</TableCell>
                 <TableCell align="center">{dayjs(booking.booking_date.end).format('DD.MM.YYYY')}</TableCell>
                 <TableCell align="center">
