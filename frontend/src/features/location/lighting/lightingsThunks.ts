@@ -4,6 +4,7 @@ import { LightingList, LightingMutation, GlobalError, ValidationError } from '..
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setLight } from './lightingsSlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const getLightingsList = createAsyncThunk<LightingList[]>('lighting/fetchAll', async () => {
   const response = await axiosApi.get('/lighting');
@@ -63,10 +64,7 @@ export const createLighting = createAsyncThunk<void, LightingMutation, { rejectV
       const comment = await axiosApi.post('/lighting', lightingData);
       return comment.data;
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

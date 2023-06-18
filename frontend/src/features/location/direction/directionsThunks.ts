@@ -4,6 +4,7 @@ import { DirectionList, DirectionMutation, GlobalError, ValidationError } from '
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setDirection } from './directionsSlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const getDirectionsList = createAsyncThunk<DirectionList[]>('direction/fetchAll', async () => {
   const response = await axiosApi.get('/direction');
@@ -63,10 +64,7 @@ export const createDirection = createAsyncThunk<void, DirectionMutation, { rejec
       const comment = await axiosApi.post('/direction', directionData);
       return comment.data;
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

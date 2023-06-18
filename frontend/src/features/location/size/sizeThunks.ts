@@ -4,6 +4,7 @@ import { SizeMutation, GlobalError, SizeList, ValidationError, LightingList } fr
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setSize } from './sizeSlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const getSizesList = createAsyncThunk<SizeList[]>('sizes/fetchAll', async () => {
   const response = await axiosApi.get('/sizes');
@@ -63,10 +64,7 @@ export const createSize = createAsyncThunk<void, SizeMutation, { rejectValue: Va
       const comment = await axiosApi.post('/sizes', sizeData);
       return comment.data;
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

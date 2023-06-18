@@ -4,6 +4,7 @@ import { GlobalError, RegionList, RegionMutation, ValidationError } from '../../
 import axiosApi from '../../../axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setRegion } from './regionSlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const fetchRegions = createAsyncThunk<RegionList[], string | undefined>('location/fetch_regions', async (id) => {
   const response = await axiosApi.get<RegionList[]>(id ? '/regions?cityId=' + id : '/regions');
@@ -48,10 +49,7 @@ export const createRegion = createAsyncThunk<void, RegionMutation, { rejectValue
     try {
       await axiosApi.post('/regions', regionMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

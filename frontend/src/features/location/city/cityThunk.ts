@@ -4,6 +4,7 @@ import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setCity } from './citySlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const fetchCities = createAsyncThunk<CityList[], string | undefined>('city/fetch_cities', async (id) => {
   const response = await axiosApi.get<CityList[]>(id ? '/cities?areaId=' + id : '/cities');
@@ -48,10 +49,7 @@ export const createCity = createAsyncThunk<void, CityMutation, { rejectValue: Va
     try {
       await axiosApi.post('/cities', cityMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

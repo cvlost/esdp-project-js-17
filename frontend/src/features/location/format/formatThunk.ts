@@ -4,6 +4,7 @@ import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setFormat } from './formatSlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const fetchFormat = createAsyncThunk<FormatList[]>('format/fetch_formats', async () => {
   const response = await axiosApi.get<FormatList[]>('/formats');
@@ -48,10 +49,7 @@ export const createFormat = createAsyncThunk<void, FormatMutation, { rejectValue
     try {
       await axiosApi.post('/formats', formatMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

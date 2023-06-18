@@ -14,6 +14,7 @@ import {
 import { isAxiosError } from 'axios';
 import { setUser, unsetUser } from './usersSlice';
 import { AppDispatch, RootState } from '../../app/store';
+import { handleAxiosError } from '../handleAxiosError';
 
 export const login = createAsyncThunk<User, LoginMutation, { rejectValue: GlobalError }>(
   'users/login',
@@ -36,10 +37,7 @@ export const createUser = createAsyncThunk<void, UserMutation, { rejectValue: Va
     try {
       await axiosApi.post<RegisterResponse>('/users', registerMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

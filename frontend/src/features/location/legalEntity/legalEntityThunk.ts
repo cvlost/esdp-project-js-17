@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { GlobalError, LegalEntityList, LegalEntityMutation, ValidationError } from '../../../types';
 import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const fetchLegalEntity = createAsyncThunk<LegalEntityList[]>('legalEntity/fetch_legalEntities', async () => {
   const response = await axiosApi.get<LegalEntityList[]>('/legalEntities');
@@ -19,10 +20,7 @@ export const createLegalEntity = createAsyncThunk<void, LegalEntityMutation, { r
     try {
       await axiosApi.post('/legalEntities', legalEntityMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );
@@ -38,10 +36,7 @@ export const updateLegalEntity = createAsyncThunk<void, UpdateLegalEntityParams,
     try {
       await axiosApi.put('legalEntities/' + params.id, params.legalEntity);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );
