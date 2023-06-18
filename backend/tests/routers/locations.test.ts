@@ -58,7 +58,6 @@ interface IFrontendLocation {
 
 app.use('/locations', locationsRouter);
 const request = supertest(app);
-
 const adminToken = randomUUID();
 const userToken = randomUUID();
 const adminDto = {
@@ -115,16 +114,12 @@ export const createOneLocation = async () => {
     schemaImage: `some/path${1}`,
   });
 };
-
 const addLocation = async (number: number) => {
   const locations: HydratedDocument<ILocation>[] = [];
-
   for (let i = 0; i < number; i++) {
     const location = await createOneLocation();
-
     locations.push(location);
   }
-
   return locations;
 };
 
@@ -132,12 +127,10 @@ describe('locationsRouter', () => {
   beforeAll(async () => {
     await db.connect();
   });
-
   beforeEach(async () => {
     await db.clear();
     await User.create(adminDto, userDto);
   });
-
   afterAll(async () => {
     await db.disconnect();
   });
@@ -165,7 +158,6 @@ describe('locationsRouter', () => {
         }));
         const res = await request.post(`/locations`);
         const locationsListData = res.body;
-
         expect(res.statusCode).toBe(200);
         expect(locationsListData.locations).toEqual(expectedLocationsList);
         expect(locationsListData.locations.length).toEqual(expectedPerPage);
@@ -198,7 +190,6 @@ describe('locationsRouter', () => {
         }));
         const res = await request.post(`/locations?page=${expectedPage}&perPage=${expectedPerPage}`);
         const locationsListData = res.body;
-
         expect(res.statusCode).toBe(200);
         expect(locationsListData.locations).toEqual(expectedLocationsList);
         expect(locationsListData.locations.length).toEqual(expectedPerPage);
@@ -208,7 +199,6 @@ describe('locationsRouter', () => {
         expect(locationsListData.perPage).toBe(expectedPerPage);
         expect(locationsListData.count).toBe(locationsNumber);
       });
-
       test('с невалидными query параметрами и большим значением номера страницы, должен возвращать statusCode 200 и данные для пагинации', async () => {
         const locationsNumber = 30;
         const expectedPage = 3;
@@ -231,7 +221,6 @@ describe('locationsRouter', () => {
         }));
         const res = await request.post(`/locations?page=1000000f&perPage=asdfasdf`);
         const locationsListData = res.body;
-
         expect(res.statusCode).toBe(200);
         expect(locationsListData.locations).toEqual(expectedLocationsList);
         expect(locationsListData.locations.length).toEqual(expectedPerPage);
@@ -244,7 +233,6 @@ describe('locationsRouter', () => {
 
       describe('указав критерии в фильтре, дожен получать корректные данные', () => {
         const locationsNumber = 20;
-
         test('фильтрация по областям', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const areaIds = [loc1.area.toString(), loc2.area.toString()];
@@ -255,14 +243,12 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedAreaNames = locationsList.map((loc) => loc.area).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedAreaNames).toEqual(expectedAreaNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по городам', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const cityIds = [loc1.city.toString(), loc2.city.toString()];
@@ -273,14 +259,12 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedNames = locationsList.map((loc) => loc.city).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedNames).toEqual(expectedNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по районам', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const regionIds = [loc1.region.toString(), loc2.region.toString()];
@@ -291,14 +275,12 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedNames = locationsList.map((loc) => loc.region).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedNames).toEqual(expectedNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по улицам', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const streetsIds = [loc1.streets[0].toString(), loc2.streets[0].toString()];
@@ -309,14 +291,12 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedNames = locationsList.map((loc) => loc.streets[0]).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedNames).toEqual(expectedNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по направлениям', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const directionIds = [loc1.direction.toString(), loc2.direction.toString()];
@@ -329,14 +309,12 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedNames = locationsList.map((loc) => loc.direction).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedNames).toEqual(expectedNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по юр. лицам', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const legalEntityIds = [loc1.legalEntity.toString(), loc2.legalEntity.toString()];
@@ -349,14 +327,12 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedNames = locationsList.map((loc) => loc.legalEntity).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedNames).toEqual(expectedNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по форматам', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const formatIds = [loc1.format.toString(), loc2.format.toString()];
@@ -367,14 +343,12 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedNames = locationsList.map((loc) => loc.format).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedNames).toEqual(expectedNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по размерам', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const sizeIds = [loc1.size.toString(), loc2.size.toString()];
@@ -385,14 +359,12 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedNames = locationsList.map((loc) => loc.size).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedNames).toEqual(expectedNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по освещению', async () => {
           const [loc1, loc2] = await addLocation(locationsNumber);
           const lightingIds = [loc1.lighting.toString(), loc2.lighting.toString()];
@@ -405,33 +377,28 @@ describe('locationsRouter', () => {
           const locationsListData = res.body;
           const locationsList = locationsListData.locations as IFrontendLocation[];
           const receivedNames = locationsList.map((loc) => loc.lighting).sort();
-
           expect(res.statusCode).toBe(200);
           expect(locationsList.length).toBe(2);
           expect(receivedNames).toEqual(expectedNames);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по расположению', async () => {
           await addLocation(locationsNumber);
           const filteredCount = await Location.find({ rent: null }).count();
           const filterQuery: FilterQuery<ILocation> = { $and: [{ rent: null }] };
           const res = await request.post(`/locations`).send({ filterQuery });
           const locationsListData = res.body;
-
           expect(res.statusCode).toBe(200);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
         });
-
         test('фильтрация по аренде', async () => {
           await addLocation(locationsNumber);
           const filteredCount = await Location.find({ placement: true }).count();
           const filterQuery: FilterQuery<ILocation> = { $and: [{ placement: true }] };
           const res = await request.post(`/locations`).send({ filterQuery });
           const locationsListData = res.body;
-
           expect(res.statusCode).toBe(200);
           expect(locationsListData.filtered).toBe(true);
           expect(locationsListData.count).toBe(filteredCount);
@@ -458,7 +425,6 @@ describe('locationsRouter', () => {
         ]);
         const res = await request.post(`/locations/filter`);
         const receivedResponse = res.body;
-
         expect(res.statusCode).toBe(200);
         expect(receivedResponse.count).toBe(locationsNumber);
         expect(receivedResponse.criteria.streets.length).toBe(locationsNumber * 2);
