@@ -48,7 +48,6 @@ formatRouter.put('/:id', auth, async (req, res, next) => {
 formatRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const format = await Format.create({ name: req.body.name });
-
     return res.status(201).send({ message: 'Новый формат успешно создан!', format });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -60,7 +59,6 @@ formatRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 formatRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   const _id = req.params.id as string;
-
   if (!mongoose.isValidObjectId(_id)) {
     return res.status(422).send({ error: 'Некорректный id формата.' });
   }
@@ -73,7 +71,6 @@ formatRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
     } else if (location.length > 0) {
       return res.status(409).send({ error: 'Формат привязан к локациям! Удаление запрещено.' });
     }
-
     const result = await Format.deleteOne({ _id });
     return res.send(result);
   } catch (e) {

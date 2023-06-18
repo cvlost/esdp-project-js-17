@@ -11,13 +11,11 @@ const citiesRouter = express.Router();
 
 citiesRouter.get('/', auth, async (req, res, next) => {
   const areaId = req.query.areaId as string;
-
   try {
     if (areaId !== undefined) {
       if (!mongoose.isValidObjectId(areaId)) {
         return res.status(422).send({ error: 'Некорректный id области.' });
       }
-
       const cities = await City.find({ area: areaId });
       return res.send(cities);
     } else {
@@ -82,19 +80,16 @@ citiesRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   if (!mongoose.isValidObjectId(_id)) {
     return res.status(422).send({ error: 'Некорректный id города.' });
   }
-
   try {
     const city = await City.findOne({ _id });
     const location = await Location.findOne({ city: _id });
     const street = await Street.findOne({ city: _id });
     const region = await Region.findOne({ city: _id });
-
     if (!city) {
       return res.status(404).send({ error: 'Город не существует в базе.' });
     } else if (location || street || region) {
       return res.status(409).send({ error: 'Город привязан к другим сущностям! Удаление запрещено.' });
     }
-
     const result = await City.deleteOne({ _id });
     return res.send(result);
   } catch (e) {

@@ -12,22 +12,18 @@ const commercialLinksRouter = express.Router();
 commercialLinksRouter.get('/listLink', auth, async (req, res, next) => {
   let perPage = parseInt(req.query.perPage as string);
   let page = parseInt(req.query.page as string);
-
   page = isNaN(page) || page <= 0 ? 1 : page;
   perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
 
   try {
     const listLinkLength = await CommercialLink.count();
     let pages = Math.ceil(listLinkLength / perPage);
-
     if (pages === 0) pages = 1;
     if (page > pages) page = pages;
-
     const listLink = await CommercialLink.find()
       .skip((page - 1) * perPage)
       .limit(perPage)
       .sort({ _id: -1 });
-
     return res.send({ listLink, page, pages, listLinkLength, perPage });
   } catch (e) {
     return next(e);
@@ -37,7 +33,6 @@ commercialLinksRouter.get('/listLink', auth, async (req, res, next) => {
 commercialLinksRouter.get('/:shortUrl', async (req, res, next) => {
   try {
     const commLink = await CommercialLink.findOne({ shortUrl: req.params.shortUrl });
-
     if (!commLink) {
       return res.status(404).send({ message: 'Ссылка недествительна !' });
     }
@@ -58,7 +53,6 @@ commercialLinksRouter.post('/', auth, async (req, res, next) => {
       shortUrl: randomShortUrl,
       fullLink: `http://localhost:8000/link/${randomShortUrl}`,
     });
-
     return res.send(newCommLink);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -71,9 +65,7 @@ commercialLinksRouter.post('/', auth, async (req, res, next) => {
 commercialLinksRouter.get('/location/:id', async (req, res, next) => {
   try {
     const commLink: CommercialLinkType | null = await CommercialLink.findOne({ _id: req.params.id });
-
     if (!commLink) return res.status(404).send({ error: 'Ссылка недействительна !' });
-
     const locations = await Location.find({ _id: commLink.location });
 
     const selects: { [key: string]: number } = {};

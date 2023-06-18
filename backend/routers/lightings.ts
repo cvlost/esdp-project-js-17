@@ -48,7 +48,6 @@ lightingRouter.put('/:id', auth, async (req, res, next) => {
 lightingRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const lighting = await Lighting.create({ name: req.body.name });
-
     return res.status(201).send({ message: 'Новое освещение успешно создано!', lighting });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -61,7 +60,6 @@ lightingRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 lightingRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   const _id = req.params.id as string;
-
   if (!mongoose.isValidObjectId(_id)) {
     return res.status(422).send({ error: 'Некорректный id освещения.' });
   }

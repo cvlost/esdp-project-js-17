@@ -9,13 +9,11 @@ const streetsRouter = express.Router();
 
 streetsRouter.get('/', auth, async (req, res, next) => {
   const cityId = req.query.cityId as string;
-
   try {
     if (cityId !== undefined) {
       if (!mongoose.isValidObjectId(cityId)) {
         return res.status(422).send({ error: 'Некорректный id города.' });
       }
-
       const streets = await Street.find({ city: cityId });
       return res.send(streets);
     } else {
@@ -76,11 +74,9 @@ streetsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 streetsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   const _id = req.params.id as string;
-
   if (!mongoose.isValidObjectId(_id)) {
     return res.status(422).send({ error: 'Некорректный id улицы.' });
   }
-
   try {
     const street = await Street.findById(_id);
     const location = await Location.findOne({ streets: { $in: [_id] } });
@@ -89,7 +85,6 @@ streetsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
     } else if (location) {
       return res.status(409).send({ error: 'Улица привязана к локациям! Удаление запрещено.' });
     }
-
     const result = await Street.deleteOne({ _id });
     return res.send(result);
   } catch (e) {
