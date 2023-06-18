@@ -5,6 +5,8 @@ import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import LocationList from './LocationList';
 import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../users/usersSlice';
+import ExportToExcel from '../exportToExcel/ExportToExcel';
+import { selectLocationsListData, selectLocationsListLoading } from './locationsSlice';
 
 interface LinkOption {
   label: string;
@@ -28,6 +30,8 @@ const link_options: LinkOption[] = [
 
 const Location = () => {
   const user = useAppSelector(selectUser);
+  const locationsLoading = useAppSelector(selectLocationsListLoading);
+  const locationsList = useAppSelector(selectLocationsListData).locations;
   const navigate = useNavigate();
   const outlet = useOutlet();
 
@@ -61,6 +65,7 @@ const Location = () => {
                 renderInput={(params) => <TextField {...params} label="Создание" />}
               />
             </Grid>
+            <ExportToExcel data={locationsList ? locationsList : []} loading={locationsLoading} />
           </>
         ) : null}
       </Grid>
