@@ -16,6 +16,8 @@ import Street from '../../models/Street';
 import Lighting from '../../models/Lighting';
 import locationsRouter, { flattenLookup } from '../../routers/locations';
 import { ILocation } from '../../types';
+import Client from '../../models/Client';
+import RentHistory from '../../models/RentHistory';
 
 export interface BookingListType {
   _id: string;
@@ -70,6 +72,17 @@ interface GetItemsResponse {
   lightings: WithNameAndId[];
   legalEntities: WithNameAndId[];
   sizes: WithNameAndId[];
+}
+
+interface IPeriod {
+  start: string;
+  end: string;
+}
+
+interface IRentUpdateDto {
+  client: string;
+  date: IPeriod;
+  price: string;
 }
 
 app.use('/locations', locationsRouter);
@@ -967,6 +980,66 @@ describe('locationsRouter', () => {
         expect(changedLoc1.checked).toBe(false);
         expect(changedLoc2.checked).toBe(false);
       }
+    });
+  });
+
+  describe('PATCH /locations/updateRent/:id', () => {
+    test('неавторизованный пользователь пытается изменить поле rent локации, дожен возврещать statusCode 401 и сообщение об ошибке', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const res = await request.patch(`/locations/updateRent/${id}`);
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+
+    test('авторизованный пытается изменить поле rent локации, дожен возврещать statusCode 200', async () => {
+      const loc = await createOneLocation();
+      const id = loc._id.toString();
+      const client = await Client.create({
+        companyName: 'Арбуз',
+        companyPhone: '+996551178715',
+        companyEmail: 'arbuz@gmail.com',
+      });
+      loc.rent = null;
+      await loc.save();
+      const rentUpdateDto: IRentUpdateDto = {
+        price: '5500',
+        date: {
+          start: '2023-06-17T04:46:29.958Z',
+          end: '2023-11-18T04:46:29.958Z',
+        },
+        client: client._id.toString(),
+      };
+      const res = await request
+        .patch(`/locations/updateRent/${id}`)
+        .set({ Authorization: userToken })
+        .send(rentUpdateDto);
+
+      expect(res.statusCode).toBe(200);
+
+      const updateHistoryRecord = await RentHistory.findOne({ $and: [{ client: client._id }, { location: loc._id }] });
+
+      expect(updateHistoryRecord).toBeTruthy();
+    });
+
+    test('авторизованный пользователь пытается изменить поле rent локации, передав некорректный mongodb id, дожен возврещать statusCode 422 и сообщение об ошибке', async () => {
+      const id = 'random-invalid-id';
+      const res = await request.patch(`/locations/updateRent/${id}`).set({ Authorization: userToken });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(422);
+      expect(errorMessage).toBe('Некорректный id локации.');
+    });
+
+    test('авторизованный пользователь пытается изменить поле rent локации, передав несуществующий id, дожен возврещать statusCode 404 и сообщение об ошибке', async () => {
+      const id = new Types.ObjectId().toString();
+      const res = await request.patch(`/locations/updateRent/${id}`).set({ Authorization: userToken });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(404);
+      expect(errorMessage).toBe('Данная локация не найдена!');
     });
   });
 });

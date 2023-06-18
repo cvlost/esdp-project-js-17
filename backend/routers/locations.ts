@@ -373,15 +373,20 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
   }
 });
 
-locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
+locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
+  const id = req.params.id;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
   try {
-    const id = req.params.id;
     const rentData: RentData = req.body;
 
     const location = await Location.findById(id);
 
     if (!location) {
-      return res.status(404).send('Данная локация не найдена!');
+      return res.status(404).send({ error: 'Данная локация не найдена!' });
     }
 
     location.rent = rentData.date !== null ? rentData.date : null;
@@ -396,7 +401,7 @@ locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
     return res.send(location);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(e);
+      return res.status(422).send(e);
     }
     return next(e);
   }
