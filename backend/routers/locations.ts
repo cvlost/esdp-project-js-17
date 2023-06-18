@@ -349,6 +349,10 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
       await Location.updateMany({ checked: false });
       return res.send({ patch: false });
     } else if (req.query.checked !== undefined) {
+      if (!mongoose.isValidObjectId(req.query.checked)) {
+        return res.status(422).send({ error: 'Некорректный id локации.' });
+      }
+
       const locationOne = await Location.findOne({ _id: req.query.checked });
 
       if (!locationOne) {
@@ -362,7 +366,7 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
       }
 
       await locationOne.save();
-      return res.send(locationOne.checked);
+      return res.sendStatus(204);
     }
   } catch (e) {
     return next(e);
