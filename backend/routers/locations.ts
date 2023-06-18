@@ -38,7 +38,10 @@ export const flattenLookup: PipelineStage[] = [
       as: 'booking',
       pipeline: [
         {
-          $lookup: { from: 'clients', localField: 'clientId', foreignField: '_id', as: 'client' },
+          $lookup: { from: 'clients', localField: 'clientId', foreignField: '_id', as: 'clientId' },
+        },
+        {
+          $set: { clientId: { $first: '$clientId.companyName' } },
         },
       ],
     },
