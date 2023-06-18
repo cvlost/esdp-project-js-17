@@ -48,7 +48,6 @@ directionRouter.put('/:id', auth, async (req, res, next) => {
 directionRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const direction = await Direction.create({ name: req.body.name });
-
     return res.status(201).send({ message: 'Новое направление успешно создано!', direction });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -61,7 +60,6 @@ directionRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
 directionRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   const _id = req.params.id as string;
-
   if (!mongoose.isValidObjectId(_id)) {
     return res.status(422).send({ error: 'Некорректный id направления.' });
   }

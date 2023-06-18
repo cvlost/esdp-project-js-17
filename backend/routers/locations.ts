@@ -127,7 +127,6 @@ locationsRouter.get('/getItems', async (req, res) => {
       Size.find(),
       Lighting.find(),
     ]);
-
     return res.send({ areas, regions, formats, legalEntity, directions, sizes, lighting });
   } catch (e) {
     return res.sendStatus(500);
@@ -136,7 +135,6 @@ locationsRouter.get('/getItems', async (req, res) => {
 
 locationsRouter.get('/:id', async (req, res, next) => {
   const _id = req.params.id as string;
-
   try {
     const [location] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(_id) } }, ...flattenLookup]);
     return res.send(location);
@@ -147,7 +145,6 @@ locationsRouter.get('/:id', async (req, res, next) => {
 
 locationsRouter.get('/edit/:id', async (req, res, next) => {
   const id = req.params.id;
-
   try {
     const location = await Location.findOne({ _id: id });
     return res.send(location);
@@ -165,7 +162,6 @@ locationsRouter.post(
   auth,
   async (req, res, next) => {
     const files = req.files as { [filename: string]: Express.Multer.File[] };
-
     const locationObj: ILocation = {
       country: req.body.country,
       area: req.body.area,
@@ -184,7 +180,6 @@ locationsRouter.post(
       dayImage: req.files && files['dayImage'][0] ? 'images/day/' + files['dayImage'][0].filename : null,
       schemaImage: req.files && files['schemaImage'][0] ? 'images/schema/' + files['schemaImage'][0].filename : null,
     };
-
     try {
       const locationData = await Location.create(locationObj);
       return res.send({
@@ -238,12 +233,10 @@ locationsRouter.put(
     };
     try {
       const locationOne: ILocation | null = await Location.findOne({ _id: id });
-
       const images = {
         dayImage: files['dayImage'] ? files['dayImage'][0].filename : req.body.dayImage,
         schemaImage: files['schemaImage'] ? files['schemaImage'][0].filename : req.body.schemaImage,
       };
-
       if (locationOne) {
         if (images.dayImage !== locationOne.dayImage) {
           await fs.unlink(path.join(config.publicPath, `${locationOne.dayImage}`));
@@ -251,7 +244,6 @@ locationsRouter.put(
             await Location.updateOne({ _id: id }, { dayImage: 'images/day/' + images.dayImage });
           }
         }
-
         if (images.schemaImage !== locationOne.schemaImage) {
           await fs.unlink(path.join(config.publicPath, `${locationOne.schemaImage}`));
           if (images.schemaImage) {
@@ -280,7 +272,6 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
   try {
     const _id = req.params.id as string;
     const location = await Location.findById(_id);
-
     if (!location) {
       return res.status(404).send({ error: 'Удаление невозможно: локация не существует в базе.' });
     }
@@ -288,11 +279,9 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
     if (location.dayImage) {
       await fs.unlink(path.join(config.publicPath, `${location.dayImage}`));
     }
-
     if (location.schemaImage) {
       await fs.unlink(path.join(config.publicPath, `${location.schemaImage}`));
     }
-
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
   } catch (e) {
@@ -307,7 +296,6 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
       return res.send({ patch: false });
     } else if (req.query.checked !== undefined) {
       const locationOne = await Location.findOne({ _id: req.query.checked });
-
       if (!locationOne) {
         return res.status(404).send({ error: 'Локации не существует в базе.' });
       }
@@ -317,7 +305,6 @@ locationsRouter.patch('/checked', auth, async (req, res, next) => {
       } else {
         locationOne.checked = !req.body.checked;
       }
-
       await locationOne.save();
       return res.send(locationOne.checked);
     }
@@ -330,9 +317,7 @@ locationsRouter.patch('/updateRent/:id', async (req, res, next) => {
   try {
     const id = req.params.id;
     const rentData: RentData = req.body;
-
     const location = await Location.findById(id);
-
     if (!location) {
       return res.status(404).send('Данная локация не найдена!');
     }
