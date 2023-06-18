@@ -115,6 +115,22 @@ const CardLocation: React.FC<Props> = ({
         </Tooltip>
       </div>
     ),
+    booking: (
+      <>
+        {loc.booking.length !== 0 ? (
+          <Box>
+            <Typography>Есть</Typography>
+            <Tooltip title="Список броней">
+              <Button onClick={openBookingList} size="small" color="success">
+                <FormatListBulletedIcon />
+              </Button>
+            </Tooltip>
+          </Box>
+        ) : (
+          <Typography>Нет</Typography>
+        )}
+      </>
+    ),
   };
   return (
     <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
@@ -153,11 +169,6 @@ const CardLocation: React.FC<Props> = ({
           <Tooltip title="Бронь">
             <Button onClick={openBooking} size="small" color="success">
               <GroupAddIcon />
-            </Button>
-          </Tooltip>
-          <Tooltip title="Список броней">
-            <Button onClick={openBookingList} size="small" color="success">
-              <FormatListBulletedIcon />
             </Button>
           </Tooltip>
         </ButtonGroup>
