@@ -45,7 +45,6 @@ describe('citiesRouter', () => {
   beforeAll(async () => {
     await db.connect();
   });
-
   beforeEach(async () => {
     await db.clear();
     await User.create(adminDto, userDto);
@@ -91,19 +90,15 @@ describe('citiesRouter', () => {
     test('неавторизованный пользователь пытается получить список, должен созвращать statusCode 401 и сообщение об ошибке', async () => {
       const res = await request.get(`/cities`);
       const errorMessage = res.body.error;
-
       expect(res.statusCode).toBe(401);
       expect(errorMessage).toBe('Отсутствует токен авторизации.');
     });
-
     test('пользователь с рандомным токеном пытается получить список, должен созвращать statusCode 401 и сообщение об ошибке', async () => {
       const res = await request.get(`/cities`).set({ Authorization: 'random-token' });
       const errorMessage = res.body.error;
-
       expect(res.statusCode).toBe(401);
       expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
     });
-
     test('пользователь с ролью "user" пытается получить список, должен созвращать statusCode 200 и список элементов длиной 1', async () => {
       await City.deleteMany();
       await Area.deleteMany();
@@ -111,12 +106,10 @@ describe('citiesRouter', () => {
       await City.create({ name: 'city', area: area._id });
       const res = await request.get(`/cities`).set({ Authorization: userToken });
       const citiesList = res.body;
-
       expect(res.statusCode).toBe(200);
       expect(Array.isArray(citiesList)).toBe(true);
       expect(citiesList.length).toBe(1);
     });
-
     test('пользователь с ролью "admin" пытается получить список, должен созвращать statusCode 200 и список элементов длиной 1', async () => {
       await City.deleteMany();
       await Area.deleteMany();
@@ -124,12 +117,10 @@ describe('citiesRouter', () => {
       await City.create({ name: 'city', area: area._id });
       const res = await request.get(`/cities`).set({ Authorization: adminToken });
       const citiesList = res.body;
-
       expect(res.statusCode).toBe(200);
       expect(Array.isArray(citiesList)).toBe(true);
       expect(citiesList.length).toBe(1);
     });
-
     test('элементы списка должны иметь свойства _id, name, area', async () => {
       await Area.deleteMany();
       await City.deleteMany();
@@ -138,32 +129,26 @@ describe('citiesRouter', () => {
       const res = await request.get(`/cities`).set({ Authorization: adminToken });
       const citiesList = res.body;
       const city = citiesList[0];
-
       expect(res.statusCode).toBe(200);
       expect(citiesList.length).toBe(1);
       expect(city._id).toBe(createdCity._id.toString());
       expect(city.name).toBe(createdCity.name);
       expect(city.area).toBe(area._id.toString());
     });
-
     describe('GET /cities?areaId=id - авторизованный пользователь пытается получить список с query параметром areaId', () => {
       test('указав некорректный mongodb id area, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
         const res = await request.get(`/cities?areaId=random-string`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
-
         expect(res.statusCode).toBe(422);
         expect(errorMessage).toBe('Некорректный id области.');
       });
-
       test('указав корректный, но не существующий mongodb id area, должен возвращать statusCode 200 и пустой список', async () => {
         const randomMongoId = new mongoose.Types.ObjectId().toString();
         const res = await request.get(`/cities?areaId=${randomMongoId}`).set({ Authorization: adminToken });
         const citiesList = res.body;
-
         expect(res.statusCode).toBe(200);
         expect(citiesList.length).toBe(0);
       });
-
       test('указав корректный mongodb id area, должен возвращать statusCode 200 и соответствующий параметру список', async () => {
         await Area.deleteMany();
         await City.deleteMany();
@@ -176,7 +161,6 @@ describe('citiesRouter', () => {
         );
         const res = await request.get(`/cities?areaId=${area1._id.toString()}`).set({ Authorization: adminToken });
         const citiesList: Record<string, string>[] = res.body;
-
         expect(citiesList.length).toBe(2);
         expect(citiesList.some((city) => city._id === city1._id.toString())).toBe(true);
         expect(citiesList.some((city) => city._id === city2._id.toString())).toBe(true);
@@ -194,11 +178,9 @@ describe('citiesRouter', () => {
       const area = await Area.create({ name: 'area' });
       const res = await request.post('/cities').send({ name: 'new city', area: area._id.toString() });
       const errorMessage = res.body.error;
-
       expect(res.statusCode).toBe(401);
       expect(errorMessage).toBe('Отсутствует токен авторизации.');
     });
-
     test('пользователь с рандомным токеном пытается создать новую запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
       await Area.deleteMany();
       await City.deleteMany();
@@ -208,11 +190,9 @@ describe('citiesRouter', () => {
         .send({ name: 'new city', area: area._id.toString() })
         .set({ Authorization: 'some-random-token' });
       const errorMessage = res.body.error;
-
       expect(res.statusCode).toBe(401);
       expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
     });
-
     test('пользователь с ролью "user" пытается создать новую запись, должен возвращать statusCode 403 и сообщение об ошибке', async () => {
       await Area.deleteMany();
       await City.deleteMany();
@@ -222,7 +202,6 @@ describe('citiesRouter', () => {
         .send({ name: 'new city', area: area._id.toString() })
         .set({ Authorization: userToken });
       const error = res.body.error;
-
       expect(res.statusCode).toBe(403);
       expect(error).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
     });
@@ -236,20 +215,16 @@ describe('citiesRouter', () => {
         await City.create(duplicateDto);
         const res = await request.post('/cities').send(duplicateDto).set({ Authorization: adminToken });
         const validationError = res.body;
-
         expect(res.statusCode).toBe(422);
         expect(validationError.name).toBe('ValidationError');
         expect(validationError.errors.name).not.toBeUndefined();
       });
-
       test('с некорректными данными, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
         const res = await request.post('/cities').send({ bla: 'bla' }).set({ Authorization: adminToken });
         const name = res.body.name;
-
         expect(res.statusCode).toBe(422);
         expect(name).toBe('ValidationError');
       });
-
       test('с корректными данными, дожен возвращать statusCode 201 и объект с сообщением и созданной записью', async () => {
         await Area.deleteMany();
         await City.deleteMany();
@@ -257,7 +232,6 @@ describe('citiesRouter', () => {
         const createCityDto = { name: 'new city', area: area._id.toString() };
         const res = await request.post('/cities').send(createCityDto).set({ Authorization: adminToken });
         const { message, city } = res.body;
-
         expect(res.statusCode).toBe(201);
         expect(message).toBe('Новый город успешно создан!');
         expect(typeof city._id === 'string').toBe(true);
@@ -271,25 +245,20 @@ describe('citiesRouter', () => {
     test('неавторизованный пользователь пытается удалить 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
       const res = await request.delete(`/cities/${cityIdWithNoRelationship}`);
       const errorMessage = res.body.error;
-
       expect(res.statusCode).toBe(401);
       expect(errorMessage).toBe('Отсутствует токен авторизации.');
     });
-
     test('пользователь с рандомным токеном пытается удалить 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
       const res = await request
         .delete(`/cities/${cityIdWithNoRelationship}`)
         .set({ Authorization: 'some-random-token' });
       const errorMessage = res.body.error;
-
       expect(res.statusCode).toBe(401);
       expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
     });
-
     test('пользователь с ролью "user" пытается удалить 1 запись, должен возвращать statusCode 403 и сообщение о недостаточных правах', async () => {
       const res = await request.delete(`/cities/${cityIdWithNoRelationship}`).set({ Authorization: userToken });
       const errorMessage = res.body.error;
-
       expect(res.statusCode).toBe(403);
       expect(errorMessage).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
     });
@@ -298,48 +267,37 @@ describe('citiesRouter', () => {
       test('указав некорректный mongodb id, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
         const res = await request.delete(`/cities/random-string`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
-
         expect(res.statusCode).toBe(422);
         expect(errorMessage).toBe('Некорректный id города.');
       });
-
       test('указав корректный, но несуществующий в базе id, должен возвращать statusCode 404 и сообщение об ошибке', async () => {
         const randomMongoId = new mongoose.Types.ObjectId().toString();
         const res = await request.delete(`/cities/${randomMongoId}`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
-
         expect(res.statusCode).toBe(404);
         expect(errorMessage).toBe('Город не существует в базе.');
       });
-
       test('указав корректный id, но имеется связь с локациями, должен возвращать statusCode 409 и сообщение об ошибке', async () => {
         const res = await request.delete(`/cities/${cityIdRelatedToLocation}`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
-
         expect(res.statusCode).toBe(409);
         expect(errorMessage).toBe('Город привязан к другим сущностям! Удаление запрещено.');
       });
-
       test('указав корректный id, но имеется связь с улицами, должен возвращать statusCode 409 и сообщение об ошибке', async () => {
         const res = await request.delete(`/cities/${cityIdWithRelatedStreets}`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
-
         expect(res.statusCode).toBe(409);
         expect(errorMessage).toBe('Город привязан к другим сущностям! Удаление запрещено.');
       });
-
       test('указав корректный id, но имеется связь с районами, должен возвращать statusCode 409 и сообщение об ошибке', async () => {
         const res = await request.delete(`/cities/${cityIdWithRelatedRegions}`).set({ Authorization: adminToken });
         const errorMessage = res.body.error;
-
         expect(res.statusCode).toBe(409);
         expect(errorMessage).toBe('Город привязан к другим сущностям! Удаление запрещено.');
       });
-
       test('указав корректный id сущности без связей, должен возвращать statusCode 200 и объект с информацию об удалении со свойством deletedCount = 1', async () => {
         const res = await request.delete(`/cities/${cityIdWithNoRelationship}`).set({ Authorization: adminToken });
         const result = res.body;
-
         expect(res.statusCode).toBe(200);
         expect(result.deletedCount).toBe(1);
       });

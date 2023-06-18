@@ -76,7 +76,6 @@ clientsRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
       return res.status(404).send({ error: 'Данный клиент не найден!' });
     }
     await Client.updateMany({ _id: id }, clientEdit);
-
     return res.send('Edited: ' + id);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
@@ -92,13 +91,10 @@ clientsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
     if (!client) {
       return res.send({ error: 'Данный клиент не найден!' });
     }
-
     const location = await Location.findOne({ client: req.params.id });
-
     if (location) {
       return res.status(403).send({ error: 'Удаление запрещено!' });
     }
-
     const deletedClient = await Client.deleteOne({ _id: req.params.id });
     return res.send(deletedClient);
   } catch (e) {
