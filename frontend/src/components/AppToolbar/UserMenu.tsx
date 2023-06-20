@@ -20,6 +20,7 @@ import {
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import useConfirm from '../Dialogs/Confirm/useConfirm';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 
 interface Props {
   user: User;
@@ -94,6 +95,19 @@ const UserMenu: React.FC<Props> = ({ user }) => {
           >
             <ShareLocationIcon sx={{ mr: 1 }} />
             Управление локациями
+          </MenuItem>,
+          <Divider key="user-divider" />,
+        ]}
+        {user && [
+          <MenuItem
+            key="user-management"
+            onClick={() => {
+              handleClose();
+              navigate('/clients-analytics');
+            }}
+          >
+            <AnalyticsIcon sx={{ mr: 1 }} />
+            Аналитика клиентов
           </MenuItem>,
           <Divider key="user-divider" />,
         ]}
