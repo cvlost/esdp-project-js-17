@@ -290,7 +290,7 @@ locationsRouter.put(
         try {
           await fs.unlink(path.join(config.publicPath, `${locationOne.dayImage}`));
         } catch (e) {
-          console.error(e);
+          console.log(e);
         }
         if (images.dayImage) {
           await Location.updateOne({ _id: id }, { dayImage: 'images/day/' + images.dayImage });
@@ -301,7 +301,7 @@ locationsRouter.put(
         try {
           await fs.unlink(path.join(config.publicPath, `${locationOne.schemaImage}`));
         } catch (e) {
-          console.error(e);
+          console.log(e);
         }
         if (images.schemaImage) {
           await Location.updateOne({ _id: id }, { schemaImage: 'images/schema/' + images.schemaImage });
@@ -342,13 +342,13 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
     try {
       await fs.unlink(path.join(config.publicPath, `${location.dayImage}`));
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
 
     try {
       await fs.unlink(path.join(config.publicPath, `${location.schemaImage}`));
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
