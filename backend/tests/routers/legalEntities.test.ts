@@ -333,7 +333,7 @@ describe('legalEntitiesRouter', () => {
         expect(errorMessage).toBe('Юридическое лицо не существует в базе.');
       });
       test('указав корректный id и валидные данные, должен возвращать statusCode 200 и объект измененной записи', async () => {
-        const updateDto = { name: 'Updated name by admin' };
+        const updateDto = { name: 'legal entity 1' };
         const res = await request
           .put(`/legalEntities/${entityIdNotRelatedToLocation}`)
           .set({ Authorization: adminToken })
