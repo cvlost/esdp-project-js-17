@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectAnalyticsClientList, setCurrentPage } from './AnalyticsClientSlice';
+import { selectAnalyticsClientFetch, selectAnalyticsClientList, setCurrentPage } from './AnalyticsClientSlice';
 import {
+  Alert,
   Box,
-  Checkbox,
-  Chip,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  MenuItem,
+  CircularProgress,
   Pagination,
   Paper,
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableRow,
-  TextField,
   Tooltip,
 } from '@mui/material';
-import { ARR, MainColorGreen, StyledTableCell, YEAR } from '../../constants';
+import { ARR, StyledTableCell } from '../../constants';
 import { fetchAnalyticClientList } from './AnalyticsClientThunk';
 import dayjs from 'dayjs';
 import AnalyticsClientCard from './components/AnalyticsClientCard';
+import ControlPanel from './components/ControlPanel';
 
 const AnalyticsClient = () => {
   const [filterYearValue, setFilterYearValue] = useState<string>(dayjs().year().toString());
   const dispatch = useAppDispatch();
   const analyticsClientList = useAppSelector(selectAnalyticsClientList);
   const [filterDate, setFilterDate] = useState(false);
+  const loading = useAppSelector(selectAnalyticsClientFetch);
 
   useEffect(() => {
     dispatch(
@@ -64,45 +62,11 @@ const AnalyticsClient = () => {
 
   return (
     <Box sx={{ py: 2 }}>
-      <Grid container alignItems="center" mb={2}>
-        <Grid item>
-          <Chip
-            sx={{ fontSize: '20px', p: 3, color: MainColorGreen }}
-            label={`Аналитика клиентов за ${filterYearValue} год`}
-            variant="outlined"
-            color="success"
-          />
-        </Grid>
-        <Grid item>
-          <TextField
-            select
-            value={filterYearValue}
-            name="filterYear"
-            label="Выбор года"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterYearValue(e.target.value)}
-            sx={{ width: '300px', ml: 1 }}
-          >
-            <MenuItem value="" disabled>
-              Выберите год
-            </MenuItem>
-            {YEAR.map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid sx={{ ml: 1 }} item>
-          <FormGroup aria-label="position" row>
-            <FormControlLabel
-              value="end"
-              control={<Checkbox onClick={() => setFilterDate((prev) => !prev)} />}
-              label="Популярный клиент"
-              labelPlacement="end"
-            />
-          </FormGroup>
-        </Grid>
-      </Grid>
+      <ControlPanel
+        filterYearValue={filterYearValue}
+        setFilterYearValue={(e: React.ChangeEvent<HTMLInputElement>) => setFilterYearValue(e.target.value)}
+        setFilterDate={() => setFilterDate((prev) => !prev)}
+      />
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -133,13 +97,30 @@ const AnalyticsClient = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {analyticsClientList.clintAnalNew.map((client) => (
-              <AnalyticsClientCard key={client._id} client={client} />
-            ))}
+            {analyticsClientList.clintAnalNew.length !== 0 ? (
+              !loading ? (
+                analyticsClientList.clintAnalNew.map((client) => (
+                  <AnalyticsClientCard key={client.client._id} client={client} />
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell>
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+              )
+            ) : (
+              <TableRow>
+                <TableCell>
+                  <Alert severity="info">Список аналитики пуст</Alert>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </Paper>
       <Pagination
+        disabled={loading}
         size="small"
         sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
         count={analyticsClientList.pages}

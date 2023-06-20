@@ -1,6 +1,6 @@
 import React from 'react';
 import { ARR, StyledTableRow } from '../../../constants';
-import { TableCell, Tooltip } from '@mui/material';
+import { Paper, TableCell, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { AnalClientType } from '../../../types';
 
@@ -27,7 +27,11 @@ const AnalyticsClientCard: React.FC<Props> = ({ client }) => {
               )
             }
           >
-            <p>{client.anal.find((item) => item.month === month)?.total || '0'}</p>
+            {client.anal.find((item) => item.month === month) ? (
+              <Paper elevation={3}>{client.anal.find((item) => item.month === month)?.total || '0'}</Paper>
+            ) : (
+              <p>0</p>
+            )}
           </Tooltip>
         </TableCell>
       ))}

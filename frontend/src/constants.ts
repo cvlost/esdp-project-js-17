@@ -47,4 +47,4 @@ export const ARR = [
   'декабрь',
 ];
 
-export const YEAR = [2020, 2021, 2022, 2023, 2024];
+export const YEAR = [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027];
