@@ -434,3 +434,27 @@ export interface RentHistoryList {
   createdAt: Date;
   price: string;
 }
+
+export interface AnalType {
+  date: IPeriod;
+  total: string;
+  month: string;
+  locationId: string;
+}
+
+export interface AnalClientType {
+  _id: string;
+  client: ClientsList;
+  anal: AnalType[];
+  overallBudget: number;
+  rentDay: number;
+  numberOfBanners: number;
+}
+
+export interface AnalClientList {
+  clintAnalNew: AnalClientType[];
+  page: number;
+  pages: number;
+  perPage: number;
+  count: number;
+}

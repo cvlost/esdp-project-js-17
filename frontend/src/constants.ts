@@ -32,3 +32,19 @@ export const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 export const MainColorGreen = '#2e7d32';
+export const ARR = [
+  'январь',
+  'февраль',
+  'март',
+  'апрель',
+  'май',
+  'июнь',
+  'июль',
+  'август',
+  'сентябрь',
+  'октябрь',
+  'ноябрь',
+  'декабрь',
+];
+
+export const YEAR = [2020, 2021, 2022, 2023, 2024];
