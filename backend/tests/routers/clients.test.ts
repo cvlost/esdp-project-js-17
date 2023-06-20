@@ -5,6 +5,7 @@ import * as db from '../db';
 import User from '../../models/Users';
 import Client from '../../models/Client';
 import clientsRouter from '../../routers/clients';
+import { expect } from '@jest/globals';
 
 app.use('/clients', clientsRouter);
 const request = supertest(app);
@@ -58,6 +59,36 @@ describe('clientsRouter', () => {
   });
   afterAll(async () => {
     await db.disconnect();
+  });
+
+  describe('GET /anal', () => {
+    test('если неавторизованный пользователь пытается получить список аналитики клиентов, должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
+      const res = await request.get('/clients/anal');
+      const error = res.body.error;
+      expect(res.statusCode).toBe(401);
+      expect(error).toBe('Отсутствует токен авторизации.');
+    });
+    test('если пользователь c рандомным токеном пытается получить список аналитики клиентов, должен возвращаться statusCode 401 и объект с сообщением об ошибке', async () => {
+      const res = await request.get('/clients/anal').set({ Authorization: 'some-random-token' });
+      const error = res.body.error;
+      expect(res.statusCode).toBe(401);
+      expect(error).toBe('Предоставлен неверный токен авторизации.');
+    });
+    test('если пользователь с ролью "user && admin" пытается получить список аналитики клиентов, то должен возвращаться список', async () => {
+      const length = await Client.count();
+      const expectedPage = 3;
+      const expectedPerPage = 10;
+      const expectedPages = Math.ceil(length / expectedPerPage);
+      const res = await request
+        .get(`/clients/anal?filter=2023&constantClient=true&page=${expectedPage}&perPage=${expectedPerPage}`)
+        .set({ Authorization: userToken });
+      const body = res.body;
+      expect(res.statusCode).toBe(200);
+      expect(Array.isArray(body.clintAnalNew)).toBe(true);
+      expect(body.clintAnalNew.length).toBe(length);
+      expect(body.pages).toBe(expectedPages);
+      expect(body.perPage).toBe(expectedPerPage);
+    });
   });
 
   describe('GET /clients', () => {

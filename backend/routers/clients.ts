@@ -4,8 +4,88 @@ import Client from '../models/Client';
 import mongoose from 'mongoose';
 import permit from '../middleware/permit';
 import Location from '../models/Location';
+import { AnalClientType, ClientListType, RentHistoryListType } from '../types';
+import RentHistory from '../models/RentHistory';
+import dayjs from 'dayjs';
+import ru from 'dayjs/locale/ru';
 
 const clientsRouter = express.Router();
+
+clientsRouter.get('/anal', auth, async (req, res, next) => {
+  let perPage = parseInt(req.query.perPage as string);
+  let page = parseInt(req.query.page as string);
+  const filter = parseInt(req.query.filter as string) || dayjs().year();
+  const constantClient = req.query.constantClient;
+
+  page = isNaN(page) || page <= 0 ? 1 : page;
+  perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
+  try {
+    const count = await Client.count();
+    let pages = Math.ceil(count / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
+
+    const clients: ClientListType[] = await Client.find()
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+    const history: RentHistoryListType[] = await RentHistory.find();
+    const clintAnal: AnalClientType[] = [];
+
+    clients.forEach((item) => {
+      const clientHistory = history.filter((his) => his.client.toString() === item._id.toString());
+
+      if (clientHistory) {
+        const obj: AnalClientType = {
+          client: item,
+          anal: clientHistory.map((item) => {
+            return {
+              date: item.rent_date,
+              total: item.price.toString(),
+              month: dayjs(item.rent_date.end).locale(ru).format('MMMM'),
+              locationId: item.location.toString(),
+            };
+          }),
+          overallBudget: clientHistory
+            .filter((item) => dayjs(item.rent_date.end).year() === filter)
+            .reduce((accumulator, currentValue) => accumulator + parseInt(currentValue.price.toString()), 0),
+          rentDay: clientHistory
+            .filter((item) => dayjs(item.rent_date.end).year() === filter)
+            .reduce((accumulator, currentValue) => {
+              return accumulator + dayjs(currentValue.rent_date.end).diff(dayjs(currentValue.rent_date.start), 'day');
+            }, 0),
+          numberOfBanners: clientHistory.filter((item) => dayjs(item.rent_date.end).year() === filter).length,
+        };
+
+        clintAnal.push(obj);
+      }
+
+      return;
+    });
+
+    const clintAnalNew = clintAnal.map((item) => {
+      return {
+        client: item.client,
+        anal: item.anal.filter((el) => {
+          const date = dayjs(el.date.start).year();
+          if (date === filter) {
+            return item;
+          } else if (constantClient && constantClient === 'true') {
+            if (Math.max(parseInt(el.total)) && Math.max(item.numberOfBanners)) return item;
+          }
+        }),
+        overallBudget: item.overallBudget,
+        rentDay: item.rentDay,
+        numberOfBanners: item.numberOfBanners,
+      };
+    });
+
+    return res.send({ clintAnalNew, page, pages, count, perPage });
+  } catch (e) {
+    return next(e);
+  }
+});
 
 clientsRouter.post('/', auth, async (req, res, next) => {
   try {
