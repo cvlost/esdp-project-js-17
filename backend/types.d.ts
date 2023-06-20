@@ -89,6 +89,10 @@ export interface ClientType {
   advertisingChannel: string;
 }
 
+export interface ClientListType extends ClientType {
+  _id: Types.ObjectId;
+}
+
 export interface BookingType {
   clientId: Schema.Types.ObjectId;
   locationId: Schema.Types.ObjectId;
@@ -119,9 +123,26 @@ export interface RentData {
 }
 
 export interface RentHistoryType {
-  location: Schema.Types.ObjectId;
-  client: Schema.Types.ObjectId;
+  location: Types.ObjectId;
+  client: Types.ObjectId;
   price: Types.Decimal128;
   rent_date: IPeriod;
   createdAt: Date;
+}
+
+export interface RentHistoryListType extends RentHistoryType {
+  _id: string;
+}
+
+export interface AnalClientType {
+  client: ClientListType;
+  anal: {
+    date: IPeriod;
+    total: string;
+    month: string;
+    locationId: string;
+  }[];
+  overallBudget: number;
+  rentDay: number;
+  numberOfBanners: number;
 }
