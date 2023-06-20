@@ -4,6 +4,7 @@ import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setClient } from './clientSlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const fetchClients = createAsyncThunk<ClientsList[]>('clients/fetch_clients', async () => {
   const response = await axiosApi.get<ClientsList[]>('/clients');
@@ -21,10 +22,7 @@ export const createClient = createAsyncThunk<void, ClientMutation, { rejectValue
     try {
       await axiosApi.post('/clients', clientMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

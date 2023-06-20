@@ -4,6 +4,7 @@ import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setStreet } from './streetSlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 type StreetType =
   | {
@@ -35,6 +36,7 @@ interface UpdateParams {
   id: string;
   name: StreetMutation;
 }
+
 export const updateStreet = createAsyncThunk<
   void,
   UpdateParams,
@@ -60,10 +62,7 @@ export const createStreet = createAsyncThunk<void, StreetMutation, { rejectValue
     try {
       await axiosApi.post('/streets', streetMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

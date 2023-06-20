@@ -4,6 +4,7 @@ import axiosApi from '../../../axios';
 import { isAxiosError } from 'axios';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setArea } from './areaSlice';
+import { handleAxiosError } from '../../handleAxiosError';
 
 export const fetchAreas = createAsyncThunk<AreaList[]>('area/fetch_areas', async () => {
   const response = await axiosApi.get<AreaList[]>('/areas');
@@ -48,10 +49,7 @@ export const createArea = createAsyncThunk<void, AreaMutation, { rejectValue: Va
     try {
       await axiosApi.post('/areas', areaMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );

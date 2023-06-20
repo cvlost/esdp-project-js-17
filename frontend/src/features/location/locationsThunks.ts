@@ -13,6 +13,7 @@ import {
 import axiosApi from '../../axios';
 import { isAxiosError } from 'axios';
 import { RootState } from '../../app/store';
+import { handleAxiosError } from '../handleAxiosError';
 
 const combineFilterQuery = (filter: FilterState) => {
   const combinedQuery: object[] = [];
@@ -96,10 +97,7 @@ export const createLocation = createAsyncThunk<void, LocationMutation, { rejectV
 
       await axiosApi.post('/locations/create', formData);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );
@@ -147,10 +145,7 @@ export const updateLocation = createAsyncThunk<void, UpdateLocationParams, { rej
       }
       await axiosApi.put(`/locations/edit/${id}`, formData);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );
@@ -224,10 +219,7 @@ export const createBooking = createAsyncThunk<void, BookingMutation, { rejectVal
     try {
       await axiosApi.post('/bookings', bookingMutation);
     } catch (e) {
-      if (isAxiosError(e) && e.response && e.response.status === 400) {
-        return rejectWithValue(e.response.data as ValidationError);
-      }
-      throw e;
+      handleAxiosError(e, rejectWithValue);
     }
   },
 );
