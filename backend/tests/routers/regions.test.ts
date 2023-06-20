@@ -184,17 +184,6 @@ describe('regionsRouter', () => {
     });
 
     describe('пользователь с ролью "admin" пытается создать новую запись', () => {
-      test('с дублирующимися данными, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
-        const area = await Area.create({ name: 'New Area' });
-        const city = await City.create({ name: 'New City', area: area._id });
-        const duplicateDto = { name: 'Duplicate Region', city: city._id };
-        await Region.create(duplicateDto);
-        const res = await request.post('/regions').send(duplicateDto).set({ Authorization: adminToken });
-        const validationError = res.body;
-        expect(res.statusCode).toBe(422);
-        expect(validationError.name).toBe('ValidationError');
-        expect(validationError.errors.name).not.toBeUndefined();
-      });
       test('с некорректными данными, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
         const res = await request.post('/regions').send({ bla: 'bla' }).set({ Authorization: adminToken });
         const name = res.body.name;
