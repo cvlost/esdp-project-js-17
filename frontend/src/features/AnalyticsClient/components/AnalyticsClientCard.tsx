@@ -1,8 +1,20 @@
 import React from 'react';
 import { ARR, StyledTableRow } from '../../../constants';
-import { Paper, TableCell, Tooltip } from '@mui/material';
+import {
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Paper,
+  TableCell,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { Link } from 'react-router-dom';
 import { AnalClientType } from '../../../types';
+import FolderIcon from '@mui/icons-material/Folder';
+import dayjs from 'dayjs';
 
 interface Props {
   client: AnalClientType;
@@ -18,26 +30,70 @@ const AnalyticsClientCard: React.FC<Props> = ({ client }) => {
         <TableCell key={month} align="center">
           <Tooltip
             title={
-              client.anal.find((item) => item.month === month) ? (
-                <Link style={{ color: '#fff' }} to={`/${client.anal.find((item) => item.month === month)?.locationId}`}>
-                  Локация
-                </Link>
-              ) : (
-                <p>Аренды нет</p>
-              )
+              <List>
+                {client.anal
+                  .filter((item) => item.month === month)
+                  .map((item, index) => (
+                    <ListItem key={item.date.start}>
+                      <ListItemAvatar sx={{ mb: 'auto' }}>
+                        <Avatar>
+                          <FolderIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={`Локация №${index + 1}`}
+                        secondary={
+                          <>
+                            <Link style={{ color: '#fff' }} to={`/${item.locationId}`}>
+                              Перейти к локации...
+                            </Link>
+                            <Typography
+                              sx={{ color: '#fff', display: 'block', my: 1 }}
+                              component="span"
+                              color="inherit"
+                            >
+                              {`Занятость от ${dayjs(item.date.start).format('DD.MM.YYYY')} до ${dayjs(
+                                item.date.end,
+                              ).format('DD.MM.YYYY')}`}
+                            </Typography>
+                            <Typography sx={{ color: '#fff', display: 'block' }} component="span" color="inherit">
+                              Цена: {item.total}
+                            </Typography>
+                          </>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+              </List>
             }
           >
             {client.anal.find((item) => item.month === month) ? (
-              <Paper elevation={3}>{client.anal.find((item) => item.month === month)?.total || '0'}</Paper>
+              client.anal.filter((anal) => anal.month === month).length >= 2 ? (
+                <Paper sx={{ p: 1, background: '#2e7d32', color: '#fff' }} elevation={3}>
+                  Локации...
+                </Paper>
+              ) : (
+                <Paper sx={{ p: 1, background: '#2e7d32', color: '#fff' }} elevation={3}>
+                  {client.anal.find((item) => item.month === month)?.total}
+                </Paper>
+              )
             ) : (
-              <p>0</p>
+              <Paper sx={{ p: 1 }} elevation={3}>
+                0
+              </Paper>
             )}
           </Tooltip>
         </TableCell>
       ))}
-      <TableCell align="center">{client.overallBudget}</TableCell>
-      <TableCell align="center">{client.rentDay}</TableCell>
-      <TableCell align="center">{client.numberOfBanners}</TableCell>
+      <TableCell align="center">
+        <Paper sx={{ background: '#ddd', p: 1 }}>{client.overallBudget}</Paper>
+      </TableCell>
+      <TableCell align="center">
+        <Paper sx={{ background: '#ddd', p: 1 }}>{client.rentDay}</Paper>
+      </TableCell>
+      <TableCell align="center">
+        <Paper sx={{ background: '#ddd', p: 1 }}>{client.numberOfBanners}</Paper>
+      </TableCell>
     </StyledTableRow>
   );
 };

@@ -12,13 +12,12 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Tooltip,
 } from '@mui/material';
-import { ARR, StyledTableCell } from '../../constants';
 import { fetchAnalyticClientList } from './AnalyticsClientThunk';
 import dayjs from 'dayjs';
 import AnalyticsClientCard from './components/AnalyticsClientCard';
 import ControlPanel from './components/ControlPanel';
+import AnalyticsClientMenuList from './components/AnalyticsClientMenuList';
 
 const AnalyticsClient = () => {
   const [filterYearValue, setFilterYearValue] = useState<string>(dayjs().year().toString());
@@ -38,28 +37,6 @@ const AnalyticsClient = () => {
     );
   }, [dispatch, analyticsClientList.page, analyticsClientList.perPage, filterYearValue, filterDate]);
 
-  const totalBudgetPerMonth = (month: string) => {
-    const total = analyticsClientList.clintAnalNew
-      .map((item) => {
-        return item.anal.filter((item) => item.month === month).map((anal) => anal.total);
-      })
-      .flat(1);
-
-    return total.reduce((acc, value) => acc + parseInt(value), 0);
-  };
-
-  const generalBudget = () => {
-    return analyticsClientList.clintAnalNew.reduce((acc, value) => acc + value.overallBudget, 0);
-  };
-
-  const totalNumberOfRentalDays = () => {
-    return analyticsClientList.clintAnalNew.reduce((acc, value) => acc + value.rentDay, 0);
-  };
-
-  const generalNumberOfBanners = () => {
-    return analyticsClientList.clintAnalNew.reduce((acc, value) => acc + value.numberOfBanners, 0);
-  };
-
   return (
     <Box sx={{ py: 2 }}>
       <ControlPanel
@@ -71,29 +48,7 @@ const AnalyticsClient = () => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Клиенты</StyledTableCell>
-              {ARR.map((month) => (
-                <StyledTableCell key={month} align="center">
-                  <Tooltip placement="top" title={<p>{totalBudgetPerMonth(month)}</p>}>
-                    <p style={{ cursor: 'pointer' }}>{month}</p>
-                  </Tooltip>
-                </StyledTableCell>
-              ))}
-              <StyledTableCell align="center">
-                <Tooltip placement="top" title={<p>{generalBudget()}</p>}>
-                  <p style={{ cursor: 'pointer' }}>Общий бюджет</p>
-                </Tooltip>
-              </StyledTableCell>
-              <StyledTableCell align="center">
-                <Tooltip placement="top" title={<p>{totalNumberOfRentalDays()}</p>}>
-                  <p style={{ cursor: 'pointer' }}>Дни аредны</p>
-                </Tooltip>
-              </StyledTableCell>
-              <StyledTableCell align="center">
-                <Tooltip placement="top" title={<p>{generalNumberOfBanners()}</p>}>
-                  <p style={{ cursor: 'pointer' }}>Колличество баннеров</p>
-                </Tooltip>
-              </StyledTableCell>
+              <AnalyticsClientMenuList />
             </TableRow>
           </TableHead>
           <TableBody>
