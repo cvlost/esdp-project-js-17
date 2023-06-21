@@ -27,7 +27,7 @@ interface commercialLinkType {
   fetchLocationLinkOneLoading: boolean;
   listLink: listLinkType;
   fetchListLinkLoading: boolean;
-  removeLinkLoading: boolean;
+  removeLinkLoading: string | false;
 }
 
 const initialState: commercialLinkType = {
@@ -135,8 +135,8 @@ const commercialLinkSlice = createSlice({
       state.fetchListLinkLoading = false;
     });
 
-    builder.addCase(removeLink.pending, (state) => {
-      state.removeLinkLoading = true;
+    builder.addCase(removeLink.pending, (state, { meta: { arg: id } }) => {
+      state.removeLinkLoading = id;
     });
     builder.addCase(removeLink.fulfilled, (state) => {
       state.removeLinkLoading = false;
