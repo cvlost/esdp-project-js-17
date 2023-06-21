@@ -260,4 +260,65 @@ describe('streetsRouter', () => {
       });
     });
   });
+
+  describe('PUT /streets/:id', () => {
+    test('неавторизованный пользователь пытается редактировать 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const res = await request
+        .put(`/streets/${streetIdWithNoRelationship}`)
+        .send({ name: 'Updated name by anonymous' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+    test('пользователь с рандомным токеном пытается редактировать 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const res = await request
+        .put(`/streets/${streetIdWithNoRelationship}`)
+        .set({ Authorization: 'some-random-token' })
+        .send({ name: 'Updated name by anonymous with random token' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
+    });
+
+    describe('авторизованный пользователь пытается редактировать 1 запись', () => {
+      test('указав некорректный mongodb id, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
+        const res = await request
+          .put(`/streets/random-string`)
+          .set({ Authorization: adminToken })
+          .send({ name: 'Updated name by admin' });
+        const errorMessage = res.body.error;
+
+        expect(res.statusCode).toBe(422);
+        expect(errorMessage).toBe('Некорректный id улицы.');
+      });
+      test('указав корректный, но несуществующий в базе id, должен возвращать statusCode 404 и сообщение об ошибке', async () => {
+        const randomMongoId = new mongoose.Types.ObjectId().toString();
+        const res = await request
+          .put(`/streets/${randomMongoId}`)
+          .set({ Authorization: adminToken })
+          .send({ name: 'Updated name by admin' });
+        const errorMessage = res.body.error;
+        expect(res.statusCode).toBe(404);
+        expect(errorMessage).toBe('Улица не существует в базе.');
+      });
+      test('указав корректный id и валидные данные, должен возвращать statusCode 200 и объект измененной записи', async () => {
+        const updateDto = { name: 'updated street 1' };
+        const res = await request
+          .put(`/streets/${streetIdWithNoRelationship}`)
+          .set({ Authorization: adminToken })
+          .send(updateDto);
+
+        expect(res.statusCode).toBe(200);
+
+        const updatedStreet = await Street.findById(streetIdWithNoRelationship);
+        expect(updatedStreet).toBeTruthy();
+
+        if (updatedStreet) {
+          expect(updatedStreet.name).toBe(updateDto.name);
+        }
+      });
+    });
+  });
 });
