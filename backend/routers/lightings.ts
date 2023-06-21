@@ -44,7 +44,7 @@ lightingRouter.put('/:id', auth, async (req, res, next) => {
     return res.send(light);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }

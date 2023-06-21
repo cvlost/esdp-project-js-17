@@ -39,17 +39,22 @@ regionsRouter.put('/:id', auth, async (req, res, next) => {
     name: req.body.name,
     city: req.body.city,
   };
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id района.' });
+  }
+
   try {
-    const id = req.params.id as string;
-    const region = await Region.find({ _id: req.params.id });
+    const region = await Region.findById(_id);
     if (!region) {
-      return res.status(404).send({ error: 'region not found!' });
+      return res.status(404).send({ error: 'Район не существует в базе.' });
     }
-    await Region.updateOne({ _id: id }, edit);
+    await Region.updateOne({ _id }, edit);
     return res.send(region);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }
