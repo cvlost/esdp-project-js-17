@@ -16,7 +16,7 @@ interface UsersState {
   editingError: ValidationError | null;
   loginLoading: boolean;
   registerLoading: boolean;
-  deleteOneLoading: boolean;
+  deleteOneLoading: string | false;
   editOneLoading: boolean;
   snackbar: {
     status: boolean;
@@ -131,8 +131,8 @@ const usersSlice = createSlice({
       state.getOneLoading = false;
     });
 
-    builder.addCase(deleteUser.pending, (state) => {
-      state.deleteOneLoading = true;
+    builder.addCase(deleteUser.pending, (state, { meta: { arg: id } }) => {
+      state.deleteOneLoading = id;
     });
     builder.addCase(deleteUser.fulfilled, (state, { payload: deletedUser }) => {
       state.deleteOneLoading = false;
