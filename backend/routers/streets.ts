@@ -39,17 +39,22 @@ streetsRouter.put('/:id', auth, async (req, res, next) => {
     name: req.body.name,
     city: req.body.city,
   };
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id улицы.' });
+  }
+
   try {
-    const id = req.params.id as string;
-    const street = await Street.findOne({ _id: req.params.id });
+    const street = await Street.findById(_id);
     if (!street) {
-      return res.status(404).send({ error: 'street not found!' });
+      return res.status(404).send({ error: 'Улица не существует в базе.' });
     }
-    await Street.updateOne({ _id: id }, edit);
+    await Street.updateOne({ _id }, edit);
     return res.send(street);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }

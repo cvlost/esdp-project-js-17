@@ -29,17 +29,22 @@ lightingRouter.put('/:id', auth, async (req, res, next) => {
   const edit = {
     name: req.body.name,
   };
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id освещения.' });
+  }
+
   try {
-    const id = req.params.id as string;
-    const light = await Lighting.findOne({ _id: id });
+    const light = await Lighting.findById(_id);
     if (!light) {
-      return res.status(404).send({ error: 'light not found!' });
+      return res.status(404).send({ error: 'Освещение не существует в базе.' });
     }
-    await Lighting.updateOne({ _id: id }, { name: edit.name });
+    await Lighting.updateOne({ _id }, edit);
     return res.send(light);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }

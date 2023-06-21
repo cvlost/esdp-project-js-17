@@ -29,17 +29,22 @@ sizesRouter.put('/:id', auth, async (req, res, next) => {
   const edit = {
     name: req.body.name,
   };
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id размера.' });
+  }
+
   try {
-    const id = req.params.id as string;
-    const size = await Size.findOne({ _id: req.params.id });
+    const size = await Size.findById(_id);
     if (!size) {
-      return res.status(404).send({ error: 'size not found!' });
+      return res.status(404).send({ error: 'Размер не существует в базе.' });
     }
-    await Size.updateMany({ _id: id }, { name: edit.name });
+    await Size.updateMany({ _id }, { name: edit.name });
     return res.send(size);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }
