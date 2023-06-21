@@ -411,7 +411,8 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
       client: rentData.client,
       location: id,
       rent_date: rentData.date,
-      price: mongoose.Types.Decimal128.fromString(rentData.price),
+      rent_price: location.price,
+      rent_cost: mongoose.Types.Decimal128.fromString(rentData.rent_cost),
     });
     return res.send(location);
   } catch (e) {
