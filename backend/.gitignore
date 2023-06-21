@@ -1,6 +1,8 @@
 .idea
 node_modules
 
+public/images-test
+
 .env
 .env.development
 .env.production
