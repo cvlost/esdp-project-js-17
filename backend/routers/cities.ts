@@ -41,17 +41,22 @@ citiesRouter.put('/:id', auth, async (req, res, next) => {
     name: req.body.name,
     area: req.body.area,
   };
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id города.' });
+  }
+
   try {
-    const id = req.params.id as string;
-    const city = await City.findOne({ _id: req.params.id });
+    const city = await City.findById(_id);
     if (!city) {
-      return res.status(404).send({ error: 'City not found!' });
+      return res.status(404).send({ error: 'Город не существует в базе.' });
     }
-    await City.updateOne({ _id: id }, edit);
+    await City.updateOne({ _id }, edit);
     return res.send(city);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }

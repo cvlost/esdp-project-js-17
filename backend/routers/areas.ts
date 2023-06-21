@@ -44,7 +44,6 @@ areasRouter.put('/:id', auth, async (req, res, next) => {
     await Area.updateOne({ _id }, editArea);
     return res.send(area);
   } catch (error) {
-    console.log('error: ', error);
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(error);
     }
