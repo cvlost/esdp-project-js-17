@@ -8,6 +8,7 @@ import { createOneLocation } from './locations.test';
 import commercialLinksRouter from '../../routers/commercialLinks';
 import { CommercialLinkType } from '../../types';
 import { expect } from '@jest/globals';
+import config from '../../config';
 
 app.use('/link', commercialLinksRouter);
 const request = supertest(app);
@@ -33,7 +34,7 @@ const sendLink = {
   description: 'test description',
   title: 'test title',
   shortUrl: shorUrlR,
-  fullLink: `http://localhost:8000/link/${shorUrlR}`,
+  fullLink: `${config.apiUrl}/link/${shorUrlR}`,
 };
 
 const createLink = async () => {

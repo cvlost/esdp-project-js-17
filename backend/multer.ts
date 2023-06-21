@@ -6,7 +6,7 @@ import config from './config';
 
 const imageStorage = multer.diskStorage({
   destination: async (_req, _file, cb) => {
-    const destDir = path.join(config.publicPath, 'images');
+    const destDir = path.join(config.publicPath, config.imgDirName);
     const destDirDay = path.join(destDir, 'day');
     const destDirSchema = path.join(destDir, 'schema');
 
