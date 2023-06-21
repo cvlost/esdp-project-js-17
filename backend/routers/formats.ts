@@ -29,13 +29,18 @@ formatRouter.put('/:id', auth, async (req, res, next) => {
   const editFormat = {
     name: req.body.name,
   };
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id формата.' });
+  }
+
   try {
-    const id = req.params.id as string;
-    const format = await Format.find({ _id: id });
+    const format = await Format.findById(_id);
     if (!format) {
-      return res.status(404).send({ error: 'format not found!' });
+      return res.status(404).send({ error: 'Формат не существует в базе.' });
     }
-    await Format.updateOne({ _id: id }, { name: editFormat.name });
+    await Format.updateOne({ _id }, editFormat);
     return res.send(format);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
