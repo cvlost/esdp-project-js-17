@@ -58,6 +58,8 @@ export interface ILocation {
   schemaImage: string | null;
   checked?: boolean;
   status?: string | null;
+  month: string;
+  year: number;
 }
 
 export interface AreaType {

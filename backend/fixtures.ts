@@ -13,6 +13,8 @@ import Area from './models/Area';
 import Lighting from './models/Lighting';
 import Size from './models/Size';
 import Client from './models/Client';
+import dayjs from 'dayjs';
+import ru from 'dayjs/locale/ru';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -234,6 +236,8 @@ const run = async () => {
       schemaImage: `fixtures/${i + 1}.png`,
       status: null,
       booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
     });
   }
 
