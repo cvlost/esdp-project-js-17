@@ -6,7 +6,7 @@ import { RootState } from '../../app/store';
 interface RentHistoryState {
   items: RentHistoryList[];
   fetchAllLoading: boolean;
-  deleteLoading: boolean;
+  deleteLoading: string | boolean;
 }
 
 const initialState: RentHistoryState = {
@@ -30,8 +30,8 @@ const rentHistorySlice = createSlice({
     builder.addCase(fetchRentHistories.rejected, (state) => {
       state.fetchAllLoading = false;
     });
-    builder.addCase(deleteRentHistory.pending, (state) => {
-      state.deleteLoading = true;
+    builder.addCase(deleteRentHistory.pending, (state, { meta: { arg: id } }) => {
+      state.deleteLoading = id;
     });
     builder.addCase(deleteRentHistory.fulfilled, (state) => {
       state.deleteLoading = false;

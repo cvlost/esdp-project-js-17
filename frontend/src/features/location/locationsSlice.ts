@@ -59,7 +59,7 @@ interface LocationsState {
   createRentError: ValidationError | null;
   createBookingLoading: boolean;
   createBookingError: ValidationError | null;
-  removeBookingLoading: boolean;
+  removeBookingLoading: string | false;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -328,8 +328,8 @@ const locationsSlice = createSlice({
       state.createBookingError = error || null;
     });
 
-    builder.addCase(removeBooking.pending, (state) => {
-      state.removeBookingLoading = true;
+    builder.addCase(removeBooking.pending, (state, { meta: { arg: id } }) => {
+      state.removeBookingLoading = id.idBook;
     });
     builder.addCase(removeBooking.fulfilled, (state) => {
       state.removeBookingLoading = false;

@@ -9,7 +9,7 @@ interface areaState {
   oneArea: null | AreaList;
   oneAreaLoading: boolean;
   createAreaLoading: boolean;
-  removeAreaLoading: boolean;
+  removeAreaLoading: string | false;
   updateAreaLoading: boolean;
   areaError: ValidationError | null;
   errorRemove: GlobalError | null;
@@ -88,8 +88,8 @@ const areaSlice = createSlice({
       state.areaError = error || null;
     });
 
-    builder.addCase(removeArea.pending, (state) => {
-      state.removeAreaLoading = true;
+    builder.addCase(removeArea.pending, (state, { meta: { arg: id } }) => {
+      state.removeAreaLoading = id;
     });
     builder.addCase(removeArea.fulfilled, (state) => {
       state.removeAreaLoading = false;

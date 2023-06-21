@@ -10,7 +10,7 @@ import { selectCheckedLocationLoading, selectLocationsColumnSettings } from '../
 import { useNavigate } from 'react-router-dom';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-
+import TimelineIcon from '@mui/icons-material/Timeline';
 interface Props {
   onDelete: React.MouseEventHandler;
   deleteLoading: false | string;
@@ -149,18 +149,27 @@ const CardLocation: React.FC<Props> = ({
         ))}
       <TableCell align="right">
         <ButtonGroup sx={{ mr: 1 }} variant="contained">
-          <Button
-            size="small"
-            color="error"
-            onClick={onDelete}
-            disabled={deleteLoading ? deleteLoading === loc._id : false}
-          >
-            <DeleteIcon />
-          </Button>
-          <Button size="small" color="success" onClick={onEdit}>
-            <EditIcon />
-          </Button>
-          <Tooltip title="Бронь">
+          <Tooltip title="Удалить">
+            <Button
+              size="small"
+              color="error"
+              onClick={onDelete}
+              disabled={deleteLoading ? deleteLoading === loc._id : false}
+            >
+              <DeleteIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Редактировать">
+            <Button size="small" color="success" onClick={onEdit}>
+              <EditIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="История Аренды">
+            <Button onClick={() => navigate('/rentHistory/' + loc._id)} size="small" color="info">
+              <TimelineIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Добавить бронь">
             <Button onClick={openBooking} size="small" color="primary">
               <GroupAddIcon />
             </Button>

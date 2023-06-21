@@ -7,7 +7,7 @@ interface regionState {
   listRegion: RegionList[];
   getAllRegionLoading: boolean;
   createRegionLoading: boolean;
-  removeRegionLoading: boolean;
+  removeRegionLoading: string | false;
   regionError: ValidationError | null;
   errorRemove: GlobalError | null;
   modal: boolean;
@@ -87,8 +87,8 @@ const regionSlice = createSlice({
       state.regionError = error || null;
     });
 
-    builder.addCase(removeRegion.pending, (state) => {
-      state.removeRegionLoading = true;
+    builder.addCase(removeRegion.pending, (state, { meta: { arg: id } }) => {
+      state.removeRegionLoading = id;
     });
     builder.addCase(removeRegion.fulfilled, (state) => {
       state.removeRegionLoading = false;
