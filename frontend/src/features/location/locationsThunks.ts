@@ -203,7 +203,7 @@ export const updateRent = createAsyncThunk<
     await axiosApi.patch('locations/updateRent/' + params.id, {
       date: rentDate,
       client: params.rent.client !== '' ? params.rent.client : null,
-      price: params.rent.price,
+      rent_cost: params.rent.rent_cost,
     });
   } catch (e) {
     if (isAxiosError(e) && e.response && e.response.status === 400) {

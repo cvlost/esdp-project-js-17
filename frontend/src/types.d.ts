@@ -423,7 +423,7 @@ export interface contentLinkOneType {
 export interface RentMutation {
   date: DateRange | null;
   client: string | null;
-  price: string;
+  rent_cost: string;
 }
 
 export interface RentHistoryList {
@@ -432,7 +432,8 @@ export interface RentHistoryList {
   client: ClientsList;
   location: ILocation;
   createdAt: Date;
-  price: string;
+  rent_cost: string;
+  rent_price: string;
 }
 
 export interface AnalType {
