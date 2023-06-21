@@ -131,7 +131,7 @@ const CardLocation: React.FC<Props> = ({
             </Tooltip>
           </Box>
         ) : (
-          <Typography>Нет</Typography>
+          <Typography onClick={openBooking}>Нет</Typography>
         )}
       </>
     ),

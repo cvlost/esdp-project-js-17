@@ -5,7 +5,7 @@ import * as db from '../db';
 import User from '../../models/Users';
 import Size from '../../models/Size';
 import Location from '../../models/Location';
-import mongoose, { Decimal128, FilterQuery, HydratedDocument, Types } from 'mongoose';
+import mongoose, { FilterQuery, HydratedDocument, Types } from 'mongoose';
 import Area from '../../models/Area';
 import LegalEntity from '../../models/LegalEntity';
 import Format from '../../models/Format';
