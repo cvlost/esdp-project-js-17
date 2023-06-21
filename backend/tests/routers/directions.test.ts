@@ -231,4 +231,65 @@ describe('directionRouter', () => {
       });
     });
   });
+
+  describe('PUT /directions/:id', () => {
+    test('неавторизованный пользователь пытается редактировать 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const res = await request
+        .put(`/directions/${directionIdNotRelatedToLocation}`)
+        .send({ name: 'Updated name by anonymous' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+    test('пользователь с рандомным токеном пытается редактировать 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const res = await request
+        .put(`/directions/${directionIdNotRelatedToLocation}`)
+        .set({ Authorization: 'some-random-token' })
+        .send({ name: 'Updated name by anonymous with random token' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
+    });
+
+    describe('авторизованный пользователь пытается редактировать 1 запись', () => {
+      test('указав некорректный mongodb id, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
+        const res = await request
+          .put(`/directions/random-string`)
+          .set({ Authorization: adminToken })
+          .send({ name: 'Updated name by admin' });
+        const errorMessage = res.body.error;
+
+        expect(res.statusCode).toBe(422);
+        expect(errorMessage).toBe('Некорректный id направления.');
+      });
+      test('указав корректный, но несуществующий в базе id, должен возвращать statusCode 404 и сообщение об ошибке', async () => {
+        const randomMongoId = new mongoose.Types.ObjectId().toString();
+        const res = await request
+          .put(`/directions/${randomMongoId}`)
+          .set({ Authorization: adminToken })
+          .send({ name: 'Updated name by admin' });
+        const errorMessage = res.body.error;
+        expect(res.statusCode).toBe(404);
+        expect(errorMessage).toBe('Направление не существует в базе.');
+      });
+      test('указав корректный id и валидные данные, должен возвращать statusCode 200 и объект измененной записи', async () => {
+        const updateDto = { name: 'updated direction 1' };
+        const res = await request
+          .put(`/directions/${directionIdNotRelatedToLocation}`)
+          .set({ Authorization: adminToken })
+          .send(updateDto);
+
+        expect(res.statusCode).toBe(200);
+
+        const updatedDirection = await Direction.findById(directionIdNotRelatedToLocation);
+        expect(updatedDirection).toBeTruthy();
+
+        if (updatedDirection) {
+          expect(updatedDirection.name).toBe(updateDto.name);
+        }
+      });
+    });
+  });
 });

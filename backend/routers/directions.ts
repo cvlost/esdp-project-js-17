@@ -29,13 +29,18 @@ directionRouter.put('/:id', auth, async (req, res, next) => {
   const editDir = {
     name: req.body.name,
   };
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id направления.' });
+  }
+
   try {
-    const id = req.params.id as string;
-    const dir = await Direction.findOne({ _id: id });
+    const dir = await Direction.findById(_id);
     if (!dir) {
-      return res.status(404).send({ error: 'direction not found!' });
+      return res.status(404).send({ error: 'Направление не существует в базе.' });
     }
-    await Direction.updateOne({ _id: id }, { name: editDir.name });
+    await Direction.updateOne({ _id }, editDir);
     return res.send(dir);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
