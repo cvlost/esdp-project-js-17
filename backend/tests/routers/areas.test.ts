@@ -187,4 +187,60 @@ describe('areasRouter', () => {
       });
     });
   });
+
+  describe('PUT /areas/:id', () => {
+    test('неавторизованный пользователь пытается редактировать 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const res = await request.put(`/areas/${area1Id}`).send({ name: 'Updated name by anonymous' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Отсутствует токен авторизации.');
+    });
+    test('пользователь с рандомным токеном пытается редактировать 1 запись, должен возвращать statusCode 401 и сообщение об ошибке', async () => {
+      const res = await request
+        .put(`/areas/${area1Id}`)
+        .set({ Authorization: 'some-random-token' })
+        .send({ name: 'Updated name by anonymous with random token' });
+      const errorMessage = res.body.error;
+
+      expect(res.statusCode).toBe(401);
+      expect(errorMessage).toBe('Предоставлен неверный токен авторизации.');
+    });
+
+    describe('авторизованный пользователь пытается редактировать 1 запись', () => {
+      test('указав некорректный mongodb id, должен возвращать statusCode 422 и сообщение об ошибке', async () => {
+        const res = await request
+          .put(`/areas/random-string`)
+          .set({ Authorization: adminToken })
+          .send({ name: 'Updated name by admin' });
+        const errorMessage = res.body.error;
+
+        expect(res.statusCode).toBe(422);
+        expect(errorMessage).toBe('Некорректный id области.');
+      });
+      test('указав корректный, но несуществующий в базе id, должен возвращать statusCode 404 и сообщение об ошибке', async () => {
+        const randomMongoId = new mongoose.Types.ObjectId().toString();
+        const res = await request
+          .put(`/areas/${randomMongoId}`)
+          .set({ Authorization: adminToken })
+          .send({ name: 'Updated name by admin' });
+        const errorMessage = res.body.error;
+        expect(res.statusCode).toBe(404);
+        expect(errorMessage).toBe('Область не существует в базе.');
+      });
+      test('указав корректный id и валидные данные, должен возвращать statusCode 200 и объект измененной записи', async () => {
+        const updateDto = { name: 'updated area 1' };
+        const res = await request.put(`/areas/${area1Id}`).set({ Authorization: adminToken }).send(updateDto);
+
+        expect(res.statusCode).toBe(200);
+
+        const updatedArea = await Area.findById(area1Id);
+        expect(updatedArea).toBeTruthy();
+
+        if (updatedArea) {
+          expect(updatedArea.name).toBe(updateDto.name);
+        }
+      });
+    });
+  });
 });

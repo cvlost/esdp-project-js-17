@@ -30,17 +30,23 @@ areasRouter.put('/:id', auth, async (req, res, next) => {
   const editArea = {
     name: req.body.name,
   };
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id области.' });
+  }
+
   try {
-    const id = req.params.id as string;
-    const area = await Area.find({ _id: id });
+    const area = await Area.findById(_id);
     if (!area) {
-      return res.status(404).send({ error: 'area not found!' });
+      return res.status(404).send({ error: 'Область не существует в базе.' });
     }
-    await Area.updateOne({ _id: id }, { name: editArea.name });
+    await Area.updateOne({ _id }, editArea);
     return res.send(area);
   } catch (error) {
+    console.log('error: ', error);
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send(error);
+      return res.status(422).send(error);
     }
     return next(error);
   }
