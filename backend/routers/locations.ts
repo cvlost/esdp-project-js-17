@@ -30,6 +30,7 @@ export const flattenLookup: PipelineStage[] = [
   { $lookup: { from: 'legalentities', localField: 'legalEntity', foreignField: '_id', as: 'legalEntity' } },
   { $lookup: { from: 'lightings', localField: 'lighting', foreignField: '_id', as: 'lighting' } },
   { $lookup: { from: 'sizes', localField: 'size', foreignField: '_id', as: 'size' } },
+  { $lookup: { from: 'clients', localField: 'client', foreignField: '_id', as: 'client' } },
   {
     $lookup: {
       from: 'bookings',
@@ -56,6 +57,7 @@ export const flattenLookup: PipelineStage[] = [
   { $set: { lighting: { $first: '$lighting.name' } } },
   { $set: { size: { $first: '$size.name' } } },
   { $set: { price: { $convert: { input: '$price', to: 'string' } } } },
+  { $set: { client: { $first: '$client.companyName' } } },
 ];
 
 locationsRouter.post('/', async (req, res, next) => {
