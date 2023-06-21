@@ -17,9 +17,10 @@ interface Props {
   closeRentForm: React.MouseEventHandler;
   onSubmit: (rent: RentMutation) => void;
   locationId: string;
+  clearLocationRent: React.MouseEventHandler;
 }
 
-const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId }) => {
+const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId, clearLocationRent }) => {
   const dispatch = useAppDispatch();
   const clients = useAppSelector(selectClientsList);
   const loading = useAppSelector(selectCreateRentLoading);
@@ -118,7 +119,6 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
           </Grid>
           <Grid item>
             <TextField
-              required
               fullWidth
               label="Стоимость аренды"
               type="text"
@@ -129,6 +129,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
               onChange={inputChangeHandler}
               error={Boolean(getFieldError('rent_cost'))}
               helperText={getFieldError('rent_cost')}
+              required
             />
           </Grid>
           <Grid item>
@@ -144,6 +145,9 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
           <Grid item sx={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
             <Button type="submit" variant="contained" color="success" sx={{ mt: 3, mb: 2 }} disabled={loading}>
               {loading ? <CircularProgress size="small" color="success" /> : 'Обновить аренду'}
+            </Button>
+            <Button onClick={clearLocationRent} variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
+              Очистить
             </Button>
             <Button
               component={Link}

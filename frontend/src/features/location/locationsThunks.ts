@@ -213,6 +213,11 @@ export const updateRent = createAsyncThunk<
   }
 });
 
+export const clearRent = createAsyncThunk<ILocation, string>('locations/clearRent', async (id: string) => {
+  const response = await axiosApi.patch('/locations/clearRent/' + id);
+  return response.data;
+});
+
 export const createBooking = createAsyncThunk<void, BookingMutation, { rejectValue: ValidationError }>(
   'locations/createBooking',
   async (bookingMutation, { rejectWithValue }) => {

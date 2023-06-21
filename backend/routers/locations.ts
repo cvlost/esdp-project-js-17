@@ -423,4 +423,32 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
   }
 });
 
+locationsRouter.patch('/clearRent/:id', auth, async (req, res, next) => {
+  const id = req.params.id;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
+  try {
+    const location = await Location.findById(id);
+
+    if (!location) {
+      return res.status(404).send({ error: 'Данная локация не найдена!' });
+    }
+
+    location.rent = null;
+    location.client = null;
+    await location.save();
+    const [updatedLocation] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(id) } }, ...flattenLookup]);
+
+    return res.send(updatedLocation);
+  } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(422).send(e);
+    }
+    return next(e);
+  }
+});
+
 export default locationsRouter;

@@ -23,6 +23,7 @@ import {
   createBooking,
   removeBooking,
   updateRent,
+  clearRent,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -57,6 +58,7 @@ interface LocationsState {
   getItemsListLoading: boolean;
   createRentLoading: boolean;
   createRentError: ValidationError | null;
+  clearRentLoading: boolean;
   createBookingLoading: boolean;
   createBookingError: ValidationError | null;
   removeBookingLoading: boolean;
@@ -168,6 +170,7 @@ const initialState: LocationsState = {
   getItemsListLoading: false,
   createRentLoading: false,
   createRentError: null,
+  clearRentLoading: false,
   createBookingLoading: false,
   createBookingError: null,
   removeBookingLoading: false,
@@ -265,6 +268,22 @@ const locationsSlice = createSlice({
     builder.addCase(createLocation.rejected, (state, { payload: error }) => {
       state.createLocationLoading = false;
       state.createError = error || null;
+    });
+    builder.addCase(clearRent.pending, (state) => {
+      state.clearRentLoading = true;
+    });
+    builder.addCase(clearRent.fulfilled, (state, { payload: location }) => {
+      state.clearRentLoading = false;
+      const locationId = location._id;
+      const foundLocationIndex = state.locationsListData.locations.findIndex((loc) => loc._id === locationId);
+      if (foundLocationIndex !== -1) {
+        state.locationsListData.locations[foundLocationIndex] = location;
+      } else {
+        return;
+      }
+    });
+    builder.addCase(clearRent.rejected, (state) => {
+      state.clearRentLoading = false;
     });
     builder.addCase(removeLocation.pending, (state, { meta: { arg: id } }) => {
       state.locationDeleteLoading = id;
