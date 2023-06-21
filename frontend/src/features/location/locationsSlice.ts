@@ -67,7 +67,7 @@ export const initialColumns: LocationColumn[] = [
   { id: '1', name: 'address', prettyName: 'Полный адрес', show: true, type: 'location' },
   { id: '2', name: 'area', prettyName: 'Область', show: true, type: 'location' },
   { id: '3', name: 'city', prettyName: 'Город', show: true, type: 'location' },
-  { id: '4', name: 'region', prettyName: 'Регион', show: true, type: 'location' },
+  { id: '4', name: 'region', prettyName: 'Район', show: true, type: 'location' },
   { id: '5', name: 'streets', prettyName: 'Улица', show: true, type: 'location' },
   { id: '6', name: 'direction', prettyName: 'Направление', show: true, type: 'location' },
   { id: '7', name: 'legalEntity', prettyName: 'Юр. лицо', show: true, type: 'location' },

@@ -157,40 +157,11 @@ const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingL
             <Grid container spacing={1}>
               <Grid item>
                 <LoadingButton
-                  loading={false}
-                  variant="contained"
-                  loadingPosition="start"
-                  startIcon={<EditIcon />}
-                  onClick={async () => {
-                    if (await confirm('Редактирование локации', 'Приступить к редактированию этой локации?')) {
-                      console.log('confirmed');
-                    }
-                  }}
-                >
-                  Изменить
-                </LoadingButton>
-              </Grid>
-              <Grid item>
-                <LoadingButton
-                  loading={false}
-                  variant="contained"
-                  loadingPosition="start"
-                  startIcon={<DeleteIcon />}
-                  onClick={async () => {
-                    if (await confirm('Удаление локации', 'Вы действительно хотите удалить эту локацию?')) {
-                      console.log('confirmed');
-                    }
-                  }}
-                >
-                  Удалить
-                </LoadingButton>
-              </Grid>
-              <Grid item>
-                <LoadingButton
                   onClick={openModalBooking}
                   loading={false}
                   variant="contained"
                   loadingPosition="start"
+                  color="success"
                   startIcon={<GroupAddIcon />}
                 >
                   Бронировать
@@ -202,6 +173,7 @@ const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingL
                   loading={false}
                   variant="contained"
                   loadingPosition="start"
+                  color="success"
                   startIcon={<FormatListBulletedIcon />}
                 >
                   Список броней

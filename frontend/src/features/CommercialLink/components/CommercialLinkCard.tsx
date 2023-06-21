@@ -15,7 +15,7 @@ import {
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ILocationLink } from '../../../types';
 import { apiURL } from '../../../constants';
 
@@ -42,6 +42,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 const CommercialLinkCard: React.FC<Props> = ({ location, id }) => {
   const [expanded, setExpanded] = React.useState(false);
+  const navigate = useNavigate();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -51,10 +52,20 @@ const CommercialLinkCard: React.FC<Props> = ({ location, id }) => {
       <Card sx={{ maxWidth: 345 }}>
         <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
           <SwiperSlide>
-            <CardMedia component="img" height="300" image={apiURL + '/' + location.schemaImage} alt="Paella dish" />
+            <CardMedia
+              component="img"
+              height="300"
+              image={apiURL + '/' + location.schemaImage}
+              alt={location.addressNote}
+            />
           </SwiperSlide>
           <SwiperSlide>
-            <CardMedia component="img" height="300" image={apiURL + '/' + location.dayImage} alt="Paella dish" />
+            <CardMedia
+              component="img"
+              height="300"
+              image={apiURL + '/' + location.dayImage}
+              alt={location.addressNote}
+            />
           </SwiperSlide>
         </Swiper>
         <CardActions disableSpacing>

@@ -7,6 +7,7 @@ import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../users/usersSlice';
 import ExportToExcel from '../exportToExcel/ExportToExcel';
 import { selectLocationsListData, selectLocationsListLoading } from './locationsSlice';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
 
 interface LinkOption {
   label: string;
@@ -25,7 +26,6 @@ const link_options: LinkOption[] = [
   { label: 'Создать Улицу', link: '/create_street' },
   { label: 'Создать Освещение', link: '/create_lighting' },
   { label: 'Создать Клиента', link: '/create_client' },
-  { label: 'Список ссылок', link: '/list_link' },
 ];
 
 const Location = () => {
@@ -48,6 +48,18 @@ const Location = () => {
           >
             <ShareLocationIcon sx={{ mr: 1 }} />
             Список локаций
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            color="success"
+            variant="contained"
+            onClick={() => {
+              navigate('/list_link');
+            }}
+          >
+            <InsertLinkIcon sx={{ mr: 1 }} />
+            Список ссылок
           </Button>
         </Grid>
         <Grid item>

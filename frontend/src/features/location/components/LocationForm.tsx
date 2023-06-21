@@ -483,7 +483,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
           />
         </Grid>
         {image.imageDay !== null || image.imageSchema !== null ? (
-          <Grid display="flex" flexWrap="wrap" justifyContent="space-between" item>
+          <Grid display="flex" flexWrap="wrap" justifyContent="space-evenly" item>
             <Card sx={{ maxWidth: 345 }}>
               <CardMedia component="img" height="194" image={image.imageDay || noImage} alt="Paella dish" />
               <CardContent>

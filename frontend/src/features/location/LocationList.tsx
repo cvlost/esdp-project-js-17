@@ -196,7 +196,10 @@ const LocationList = () => {
         <Grid item>
           <Chip
             sx={{ fontSize: '20px', p: 3, color: MainColorGreen }}
-            label={(locationsListData.filtered ? `Подходящие локации: ` : `Список локаций: `) + locationsListData.count}
+            label={
+              (locationsListData.filtered ? `Подходящие локации: ` : `Общее количество локаций: `) +
+              locationsListData.count
+            }
             variant="outlined"
             color="success"
           />
@@ -228,6 +231,8 @@ const LocationList = () => {
             size="large"
             variant="contained"
             to={'constructor_link'}
+            color={'success'}
+            sx={{ marginRight: '5px', color: 'white' }}
           >
             Создать ссылку
           </Button>
