@@ -195,7 +195,6 @@ const LocationList = () => {
     await dispatch(clearRent(locationID));
     setIsRentOpen(false);
   };
-  console.log(columns);
 
   return (
     <Box sx={{ py: 2 }}>

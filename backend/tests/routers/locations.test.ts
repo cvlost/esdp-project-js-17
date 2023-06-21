@@ -5,7 +5,7 @@ import * as db from '../db';
 import User from '../../models/Users';
 import Size from '../../models/Size';
 import Location from '../../models/Location';
-import mongoose, { FilterQuery, HydratedDocument, Types } from 'mongoose';
+import mongoose, { Decimal128, FilterQuery, HydratedDocument, Types } from 'mongoose';
 import Area from '../../models/Area';
 import LegalEntity from '../../models/LegalEntity';
 import Format from '../../models/Format';
@@ -77,12 +77,6 @@ interface GetItemsResponse {
 interface IPeriod {
   start: string;
   end: string;
-}
-
-interface IRentUpdateDto {
-  client: string;
-  date: IPeriod;
-  price: string;
 }
 
 app.use('/locations', locationsRouter);
@@ -960,7 +954,7 @@ describe('locationsRouter', () => {
       expect(errorMessage).toBe('Отсутствует токен авторизации.');
     });
 
-    test('авторизованный пытается изменить поле rent локации, дожен возврещать statusCode 200', async () => {
+    test('авторизованный пытается изменить поле rent локации, должен возврещать statusCode 200', async () => {
       const loc = await createOneLocation();
       const id = loc._id.toString();
       const client = await Client.create({
@@ -970,8 +964,9 @@ describe('locationsRouter', () => {
       });
       loc.rent = null;
       await loc.save();
-      const rentUpdateDto: IRentUpdateDto = {
-        price: '5500',
+      const rentUpdateDto = {
+        rent_price: loc.price,
+        rent_cost: '5500',
         date: {
           start: '2023-06-17T04:46:29.958Z',
           end: '2023-11-18T04:46:29.958Z',

@@ -18,7 +18,7 @@ import { handleAxiosError } from '../handleAxiosError';
 const combineFilterQuery = (filter: FilterState) => {
   const combinedQuery: object[] = [];
 
-  const streetFilter = { street: { $in: filter.streets.map((street) => street._id) } };
+  const streetFilter = { streets: { $in: filter.streets.map((street) => street._id) } };
   const areaFilter = { area: { $in: filter.areas.map((area) => area._id) } };
   const cityFilter = { city: { $in: filter.cities.map((city) => city._id) } };
   const formatFilter = { format: { $in: filter.formats.map((format) => format._id) } };
@@ -36,7 +36,7 @@ const combineFilterQuery = (filter: FilterState) => {
       ? { placement: false }
       : null;
 
-  if (streetFilter.street.$in.length) combinedQuery.push(streetFilter);
+  if (streetFilter.streets.$in.length) combinedQuery.push(streetFilter);
   if (areaFilter.area.$in.length) combinedQuery.push(areaFilter);
   if (cityFilter.city.$in.length) combinedQuery.push(cityFilter);
   if (formatFilter.format.$in.length) combinedQuery.push(formatFilter);
