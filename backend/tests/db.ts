@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
+import config from '../config';
 
 export const connect = async () => {
-  const uri = 'mongodb://localhost/ESDP-17-test-db';
+  const uri = config.db;
   mongoose.set('strictQuery', false);
   await mongoose.connect(uri);
 };
