@@ -138,7 +138,12 @@ const CardLocation: React.FC<Props> = ({
       {columns
         .filter((col) => col.show)
         .map((col) => (
-          <TableCell key={col.prettyName} align="center" sx={{ whiteSpace: 'nowrap' }}>
+          <TableCell
+            key={col.prettyName}
+            align="center"
+            sx={{ whiteSpace: 'nowrap' }}
+            onClick={() => navigate(`/${loc._id}`)}
+          >
             {cells[col.name]}
           </TableCell>
         ))}
