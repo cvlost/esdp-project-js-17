@@ -7,6 +7,7 @@ import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../users/usersSlice';
 import ExportToExcel from '../exportToExcel/ExportToExcel';
 import { selectLocationsListData, selectLocationsListLoading } from './locationsSlice';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 interface LinkOption {
   label: string;
@@ -48,6 +49,18 @@ const Location = () => {
           >
             <ShareLocationIcon sx={{ mr: 1 }} />
             Список локаций
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            color="success"
+            variant="contained"
+            onClick={() => {
+              navigate('/location-graphic');
+            }}
+          >
+            <CalendarMonthIcon sx={{ mr: 1 }} />
+            Календарный список
           </Button>
         </Grid>
         <Grid item>

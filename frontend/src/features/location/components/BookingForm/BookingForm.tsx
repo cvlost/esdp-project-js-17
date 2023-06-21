@@ -17,10 +17,12 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectClientsList, selectGetAllClientsLoading } from '../../client/clientSlice';
 import { fetchClients } from '../../client/clientThunk';
 import { DateRange } from 'rsuite/DateRangePicker';
-import { createBooking, getOneLocation } from '../../locationsThunks';
+import { createBooking, getLocationsList, getOneLocation } from '../../locationsThunks';
 import {
   selectCreateBookingError,
   selectCreateBookingLoading,
+  selectLocationsFilter,
+  selectLocationsListData,
   selectOneLocation,
   selectOneLocationLoading,
 } from '../../locationsSlice';
@@ -44,6 +46,8 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
   const oneLocation = useAppSelector(selectOneLocation);
   const loadingOneLocation = useAppSelector(selectOneLocationLoading);
   const createLoading = useAppSelector(selectCreateBookingLoading);
+  const filter = useAppSelector(selectLocationsFilter);
+  const locationsListData = useAppSelector(selectLocationsListData);
 
   useEffect(() => {
     dispatch(fetchClients());
@@ -69,7 +73,13 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
     };
 
     await dispatch(createBooking(obj)).unwrap();
-    await dispatch(getOneLocation(locationId)).unwrap();
+    await dispatch(
+      getLocationsList({
+        page: locationsListData.page,
+        perPage: locationsListData.perPage,
+        filtered: filter.filtered,
+      }),
+    ).unwrap();
     dispatch(openSnackbar({ status: true, parameter: 'create_booking' }));
     setValueClient('');
     setValueDate([new Date(), new Date()]);

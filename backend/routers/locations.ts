@@ -17,6 +17,8 @@ import path from 'path';
 import Size from '../models/Size';
 import Lighting from '../models/Lighting';
 import RentHistory from '../models/RentHistory';
+import dayjs from 'dayjs';
+import ru from 'dayjs/locale/ru';
 
 const locationsRouter = express.Router();
 
@@ -131,6 +133,14 @@ locationsRouter.post('/filter', async (req, res, next) => {
   }
 });
 
+// locationsRouter.get('/listGraphic', async (req, res, next) => {
+//   try {
+//     const location = await Location.find({});
+//   } catch (e) {
+//     return next(e);
+//   }
+// });
+
 locationsRouter.get('/getItems', async (req, res, next) => {
   try {
     const [areas, regions, formats, legalEntity, directions, sizes, lighting] = await Promise.all([
@@ -216,6 +226,8 @@ locationsRouter.post(
       description: req.body.description,
       dayImage: req.files && files['dayImage'][0] ? 'images/day/' + files['dayImage'][0].filename : null,
       schemaImage: req.files && files['schemaImage'][0] ? 'images/schema/' + files['schemaImage'][0].filename : null,
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
     };
 
     try {

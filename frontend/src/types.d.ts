@@ -153,6 +153,8 @@ export interface ILocation {
   checked: boolean;
   status: string | null;
   booking: BookingListType[];
+  month: string;
+  year: number;
   __v?: number;
 }
 
