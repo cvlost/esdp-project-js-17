@@ -63,6 +63,7 @@ export const flattenLookup: PipelineStage[] = [
 ];
 
 locationsRouter.post('/', async (req, res, next) => {
+  const filterYear = parseInt(req.query.filterYear as string) || dayjs().year();
   let perPage = parseInt(req.query.perPage as string);
   let page = parseInt(req.query.page as string);
   const filter: FilterQuery<ILocation> = req.body.filterQuery ? req.body.filterQuery : {};
@@ -85,6 +86,7 @@ locationsRouter.post('/', async (req, res, next) => {
       { $sort: { _id: -1 } },
       ...flattenLookup,
       { $project: { country: 0, description: 0 } },
+      { $match: { $or: [{ year: filterYear }] } },
     ]);
 
     return res.send({ locations, filtered: !!req.body.filterQuery, page, pages, count, perPage });

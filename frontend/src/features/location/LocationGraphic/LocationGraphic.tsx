@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Chip, Container, Grid, Pagination, Paper } from '@mui/material';
+import { Alert, Box, Chip, CircularProgress, Container, Grid, Pagination, Paper } from '@mui/material';
 import { ARR, MainColorGreen } from '../../../constants';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -29,18 +29,21 @@ const LocationGraphic = () => {
   const [value, setValue] = useState(
     (ARR.findIndex((item) => item === dayjs().locale(ru).format('MMMM')) + 1).toString(),
   );
+  const [filterYear, setFilterYear] = useState(dayjs().year().toString());
   const locationsListLoading = useAppSelector(selectLocationsListLoading);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const locationLoading = useAppSelector(selectLocationsListLoading);
 
   useEffect(() => {
     dispatch(
       getLocationsList({
         page: locationsListData.page,
         perPage: locationsListData.perPage,
+        filterYear: parseInt(filterYear),
         filtered: filter.filtered,
       }),
     );
-  }, [dispatch, filter.filtered, locationsListData.page, locationsListData.perPage]);
+  }, [dispatch, filter.filtered, locationsListData.page, locationsListData.perPage, filterYear]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -61,7 +64,11 @@ const LocationGraphic = () => {
 
           <Grid xs={12} item>
             <Box sx={{ display: 'flex', mb: 1 }}>
-              <PanelMenu setIsFilterOpen={() => setIsFilterOpen((prev) => !prev)} />
+              <PanelMenu
+                filterYear={filterYear}
+                setFilterYear={(e: React.ChangeEvent<HTMLInputElement>) => setFilterYear(e.target.value)}
+                setIsFilterOpen={() => setIsFilterOpen((prev) => !prev)}
+              />
             </Box>
             <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
               <TabContext value={value}>
@@ -71,7 +78,7 @@ const LocationGraphic = () => {
                       <Tab
                         onClick={() => setPullingMonth(ARR[index])}
                         key={month}
-                        label={`${month}, ${dayjs().year()}`}
+                        label={`${month}, ${filterYear}`}
                         value={(index + 1).toString()}
                       />
                     ))}
@@ -80,9 +87,17 @@ const LocationGraphic = () => {
                 {ARR.map((month, index) => (
                   <TabPanel key={index} value={(index + 1).toString()}>
                     <Grid sx={{ p: 1 }} container spacing={3}>
-                      {locationsListData.locations.map((loc, index) => (
-                        <LocationCardGrap key={loc._id} loc={loc} month={month} index={index} />
-                      ))}
+                      {locationsListData.locations.length !== 0 ? (
+                        !locationLoading ? (
+                          locationsListData.locations.map((loc, index) => (
+                            <LocationCardGrap key={loc._id} loc={loc} month={month} index={index} />
+                          ))
+                        ) : (
+                          <CircularProgress />
+                        )
+                      ) : (
+                        <Alert severity="info">Список локаций пуст</Alert>
+                      )}
                     </Grid>
                   </TabPanel>
                 ))}

@@ -11,6 +11,7 @@ interface Props {
 }
 
 const LocationCardGrap: React.FC<Props> = ({ loc, month, index }) => {
+  const year = dayjs().year();
   const getStyle = (loc: ILocation, month: string) => {
     if (loc.month === month) {
       if (loc.rent !== null && loc.booking.length > 0) {
@@ -28,7 +29,7 @@ const LocationCardGrap: React.FC<Props> = ({ loc, month, index }) => {
     <Tooltip
       key={loc._id}
       title={
-        loc.month === month && (
+        loc.month === month && loc.year === year ? (
           <>
             <Link style={{ color: '#fff', fontSize: '25px' }} to={`/${loc._id}`}>
               Перейти к локации...
@@ -60,7 +61,7 @@ const LocationCardGrap: React.FC<Props> = ({ loc, month, index }) => {
               Цена: {loc.price} сом
             </Typography>
           </>
-        )
+        ) : null
       }
     >
       <Paper
