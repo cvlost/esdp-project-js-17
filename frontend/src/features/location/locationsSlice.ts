@@ -61,7 +61,7 @@ interface LocationsState {
   clearRentLoading: boolean;
   createBookingLoading: boolean;
   createBookingError: ValidationError | null;
-  removeBookingLoading: boolean;
+  removeBookingLoading: string | false;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -69,7 +69,7 @@ export const initialColumns: LocationColumn[] = [
   { id: '1', name: 'address', prettyName: 'Полный адрес', show: true, type: 'location' },
   { id: '2', name: 'area', prettyName: 'Область', show: true, type: 'location' },
   { id: '3', name: 'city', prettyName: 'Город', show: true, type: 'location' },
-  { id: '4', name: 'region', prettyName: 'Регион', show: true, type: 'location' },
+  { id: '4', name: 'region', prettyName: 'Район', show: true, type: 'location' },
   { id: '5', name: 'streets', prettyName: 'Улица', show: true, type: 'location' },
   { id: '6', name: 'direction', prettyName: 'Направление', show: true, type: 'location' },
   { id: '7', name: 'legalEntity', prettyName: 'Юр. лицо', show: true, type: 'location' },
@@ -347,8 +347,8 @@ const locationsSlice = createSlice({
       state.createBookingError = error || null;
     });
 
-    builder.addCase(removeBooking.pending, (state) => {
-      state.removeBookingLoading = true;
+    builder.addCase(removeBooking.pending, (state, { meta: { arg: id } }) => {
+      state.removeBookingLoading = id.idBook;
     });
     builder.addCase(removeBooking.fulfilled, (state) => {
       state.removeBookingLoading = false;

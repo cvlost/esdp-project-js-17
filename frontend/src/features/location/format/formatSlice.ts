@@ -7,7 +7,7 @@ interface formatSlice {
   listFormat: FormatList[];
   getAllFormatLoading: boolean;
   createFormatLoading: boolean;
-  removeFormatLoading: boolean;
+  removeFormatLoading: string | false;
   formatError: ValidationError | null;
   errorRemove: GlobalError | null;
   modal: boolean;
@@ -89,8 +89,8 @@ const formatSlice = createSlice({
       state.createFormatLoading = false;
     });
 
-    builder.addCase(removeFormat.pending, (state) => {
-      state.removeFormatLoading = true;
+    builder.addCase(removeFormat.pending, (state, { meta: { arg: id } }) => {
+      state.removeFormatLoading = id;
     });
     builder.addCase(removeFormat.fulfilled, (state) => {
       state.removeFormatLoading = false;

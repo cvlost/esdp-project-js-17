@@ -9,7 +9,7 @@ interface clientState {
   getOneClientLoading: boolean;
   oneClient: ClientsList | null;
   createClientLoading: boolean;
-  removeClientLoading: boolean;
+  removeClientLoading: string | false;
   updateClientLoading: boolean;
   clientError: ValidationError | null;
   errorRemove: GlobalError | null;
@@ -88,8 +88,8 @@ const clientsSlice = createSlice({
       state.clientError = error || null;
     });
 
-    builder.addCase(removeClient.pending, (state) => {
-      state.removeClientLoading = true;
+    builder.addCase(removeClient.pending, (state, { meta: { arg: id } }) => {
+      state.removeClientLoading = id;
     });
     builder.addCase(removeClient.fulfilled, (state) => {
       state.removeClientLoading = false;

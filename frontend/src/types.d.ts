@@ -146,6 +146,7 @@ export interface ILocation {
   format: string;
   placement: boolean;
   country?: string;
+  client?: string;
   dayImage?: string;
   schemaImage?: string;
   addressNote?: string;

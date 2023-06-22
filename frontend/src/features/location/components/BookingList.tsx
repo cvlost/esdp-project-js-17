@@ -25,6 +25,7 @@ import {
 import { getLocationsList, getOneLocation, removeBooking } from '../locationsThunks';
 import dayjs from 'dayjs';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Props {
   locationId: string;
@@ -99,11 +100,12 @@ const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
                 <TableCell align="center">
                   <ButtonGroup variant="contained" aria-label="outlined primary button group">
                     <IconButton
-                      disabled={loadingRemove}
+                      disabled={loadingRemove ? loadingRemove === booking._id : false}
                       onClick={() => removeCardBooking(booking._id)}
                       aria-label="delete"
                     >
-                      {!loadingRemove ? <RemoveCircleIcon /> : <CircularProgress />}
+                      {loadingRemove && loadingRemove === booking._id && <CircularProgress />}
+                      <DeleteIcon />
                     </IconButton>
                     <Link to={`/${booking.locationId}`}>
                       <IconButton aria-label="delete">

@@ -20,8 +20,13 @@ const CardDirection: React.FC<Props> = ({ direction, removeCardDirection, onEdit
       <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
         <TableCell align="left">{direction.name}</TableCell>
         <TableCell align="right">
-          <IconButton disabled={removeLoading} onClick={removeCardDirection} aria-label="delete">
-            {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          <IconButton
+            disabled={removeLoading ? removeLoading === direction._id : false}
+            onClick={removeCardDirection}
+            aria-label="delete"
+          >
+            {removeLoading && removeLoading === direction._id && <CircularProgress />}
+            <DeleteIcon />
           </IconButton>
           <IconButton aria-label="success" onClick={onEditing}>
             <EditIcon />

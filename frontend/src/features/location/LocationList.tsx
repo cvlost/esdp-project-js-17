@@ -202,7 +202,10 @@ const LocationList = () => {
         <Grid item>
           <Chip
             sx={{ fontSize: '20px', p: 3, color: MainColorGreen }}
-            label={(locationsListData.filtered ? `Подходящие локации: ` : `Список локаций: `) + locationsListData.count}
+            label={
+              (locationsListData.filtered ? `Подходящие локации: ` : `Общее количество локаций: `) +
+              locationsListData.count
+            }
             variant="outlined"
             color="success"
           />

@@ -20,8 +20,13 @@ const CardLighting: React.FC<Props> = ({ lighting, removeCardLighting, onEditing
       <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
         <TableCell align="left">{lighting.name}</TableCell>
         <TableCell align="right">
-          <IconButton disabled={removeLoading} onClick={removeCardLighting} aria-label="delete">
-            {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          <IconButton
+            disabled={removeLoading ? removeLoading === lighting._id : false}
+            onClick={removeCardLighting}
+            aria-label="delete"
+          >
+            {removeLoading && removeLoading === lighting._id && <CircularProgress />}
+            <DeleteIcon />
           </IconButton>
           <IconButton aria-label="success" onClick={onEditing}>
             <EditIcon />

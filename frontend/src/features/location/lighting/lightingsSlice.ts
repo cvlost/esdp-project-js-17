@@ -8,7 +8,7 @@ interface LightingState {
   getAllLightingsLoading: boolean;
   createLightingLoading: boolean;
   lightingError: null | ValidationError;
-  deleteLightingLoading: boolean;
+  deleteLightingLoading: string | false;
   errorRemove: GlobalError | null;
   modal: boolean;
   oneLight: null | LightingList;
@@ -88,8 +88,8 @@ const lightingsSlice = createSlice({
       state.lightingError = error || null;
     });
 
-    builder.addCase(deleteLighting.pending, (state) => {
-      state.deleteLightingLoading = true;
+    builder.addCase(deleteLighting.pending, (state, { meta: { arg: id } }) => {
+      state.deleteLightingLoading = id;
     });
     builder.addCase(deleteLighting.fulfilled, (state) => {
       state.deleteLightingLoading = false;

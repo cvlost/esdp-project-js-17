@@ -5,8 +5,6 @@ import { useAppSelector } from '../../../app/hooks';
 import { selectOneLocation } from '../locationsSlice';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 import { selectUser } from '../../users/usersSlice';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -55,21 +53,6 @@ const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingL
               <Alert severity="info" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', mb: 3 }}>
                 <Typography>Описание локации отсутствует</Typography>
               </Alert>
-              {user?.role === 'admin' && (
-                <LoadingButton
-                  loading={false}
-                  sx={{ fontWeight: 'bold' }}
-                  loadingPosition="start"
-                  startIcon={<EditIcon />}
-                  onClick={async () => {
-                    if (await confirm('Редактирование локации', 'Приступить к редактированию этой локации?')) {
-                      console.log('confirmed');
-                    }
-                  }}
-                >
-                  Добавить
-                </LoadingButton>
-              )}
             </Box>
           )}
         </TabPanel>
@@ -157,40 +140,11 @@ const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingL
             <Grid container spacing={1}>
               <Grid item>
                 <LoadingButton
-                  loading={false}
-                  variant="contained"
-                  loadingPosition="start"
-                  startIcon={<EditIcon />}
-                  onClick={async () => {
-                    if (await confirm('Редактирование локации', 'Приступить к редактированию этой локации?')) {
-                      console.log('confirmed');
-                    }
-                  }}
-                >
-                  Изменить
-                </LoadingButton>
-              </Grid>
-              <Grid item>
-                <LoadingButton
-                  loading={false}
-                  variant="contained"
-                  loadingPosition="start"
-                  startIcon={<DeleteIcon />}
-                  onClick={async () => {
-                    if (await confirm('Удаление локации', 'Вы действительно хотите удалить эту локацию?')) {
-                      console.log('confirmed');
-                    }
-                  }}
-                >
-                  Удалить
-                </LoadingButton>
-              </Grid>
-              <Grid item>
-                <LoadingButton
                   onClick={openModalBooking}
                   loading={false}
                   variant="contained"
                   loadingPosition="start"
+                  color="success"
                   startIcon={<GroupAddIcon />}
                 >
                   Бронировать
@@ -202,6 +156,7 @@ const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingL
                   loading={false}
                   variant="contained"
                   loadingPosition="start"
+                  color="success"
                   startIcon={<FormatListBulletedIcon />}
                 >
                   Список броней

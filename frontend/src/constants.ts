@@ -1,7 +1,7 @@
 import { IRole } from './types';
 import { styled, TableCell, tableCellClasses, TableRow } from '@mui/material';
 
-export const apiURL = process.env.REACT_APP_API_URL || 'http://localhost:6000';
+export const apiURL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export const ROLES: IRole[] = [
   {
