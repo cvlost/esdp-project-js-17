@@ -1,12 +1,12 @@
 import React from 'react';
-import { Autocomplete, Box, Button, Grid, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, CircularProgress, Grid, TextField } from '@mui/material';
 import { useNavigate, useOutlet } from 'react-router-dom';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import LocationList from './LocationList';
 import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../users/usersSlice';
 import ExportToExcel from '../exportToExcel/ExportToExcel';
-import { selectLocationsListData, selectLocationsListLoading } from './locationsSlice';
+import { selectLocationsListData } from './locationsSlice';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
 
 interface LinkOption {
@@ -30,7 +30,6 @@ const link_options: LinkOption[] = [
 
 const Location = () => {
   const user = useAppSelector(selectUser);
-  const locationsLoading = useAppSelector(selectLocationsListLoading);
   const locationsList = useAppSelector(selectLocationsListData).locations;
   const navigate = useNavigate();
   const outlet = useOutlet();
@@ -62,9 +61,13 @@ const Location = () => {
             Список ссылок
           </Button>
         </Grid>
-        <Grid item>
-          <ExportToExcel data={locationsList ? locationsList : []} loading={locationsLoading} />
-        </Grid>
+        {locationsList.length !== 0 ? (
+          <Grid item>
+            <ExportToExcel data={locationsList ? locationsList : []} />
+          </Grid>
+        ) : (
+          <CircularProgress sx={{ ml: 1 }} />
+        )}
         {user?.role === 'admin' ? (
           <>
             <Grid item>

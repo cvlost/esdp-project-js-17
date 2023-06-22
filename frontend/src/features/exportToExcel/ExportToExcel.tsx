@@ -6,10 +6,9 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 
 interface Props {
   data: ILocation[];
-  loading: boolean;
 }
 
-const ExportToExcel: React.FC<Props> = ({ data, loading }) => {
+const ExportToExcel: React.FC<Props> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const [fileName, setFileName] = useState('');
 
@@ -83,7 +82,7 @@ const ExportToExcel: React.FC<Props> = ({ data, loading }) => {
 
   return (
     <>
-      <Button color="success" variant="contained" onClick={() => setOpen(true)} disabled={loading}>
+      <Button color="success" variant="contained" onClick={() => setOpen(true)}>
         <GetAppIcon sx={{ mr: 1 }} />
         Экспортировать в эксель
       </Button>
