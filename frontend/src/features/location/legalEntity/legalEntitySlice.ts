@@ -14,7 +14,7 @@ interface legalEntitySlice {
   oneLegalEntity: LegalEntityList | null;
   getAllLegalEntityLoading: boolean;
   createLegalEntityLoading: boolean;
-  removeLegalEntityLoading: boolean;
+  removeLegalEntityLoading: string | false;
   updateLegalEntityLoading: boolean;
   oneLegalEntityLoading: boolean;
   legalEntityError: ValidationError | null;
@@ -83,8 +83,8 @@ const legalEntitySlice = createSlice({
       state.createLegalEntityLoading = false;
     });
 
-    builder.addCase(removeLegalEntity.pending, (state) => {
-      state.removeLegalEntityLoading = true;
+    builder.addCase(removeLegalEntity.pending, (state, { meta: { arg: id } }) => {
+      state.removeLegalEntityLoading = id;
     });
     builder.addCase(removeLegalEntity.fulfilled, (state) => {
       state.removeLegalEntityLoading = false;

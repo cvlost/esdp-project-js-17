@@ -8,7 +8,7 @@ interface SizeState {
   getAllSizesLoading: boolean;
   createSizeLoading: boolean;
   sizeError: null | ValidationError;
-  deleteSizeLoading: boolean;
+  deleteSizeLoading: string | false;
   errorRemove: GlobalError | null;
   modal: boolean;
   oneSize: null | SizeList;
@@ -88,8 +88,8 @@ const sizeSlice = createSlice({
       state.sizeError = error || null;
     });
 
-    builder.addCase(deleteSize.pending, (state) => {
-      state.deleteSizeLoading = true;
+    builder.addCase(deleteSize.pending, (state, { meta: { arg: id } }) => {
+      state.deleteSizeLoading = id;
     });
     builder.addCase(deleteSize.fulfilled, (state) => {
       state.deleteSizeLoading = false;

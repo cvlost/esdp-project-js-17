@@ -42,14 +42,14 @@ clientsRouter.get('/anal', auth, async (req, res, next) => {
           anal: clientHistory.map((item) => {
             return {
               date: item.rent_date,
-              total: item.price.toString(),
+              total: item.rent_cost.toString(),
               month: dayjs(item.rent_date.end).locale(ru).format('MMMM'),
               locationId: item.location.toString(),
             };
           }),
           overallBudget: clientHistory
             .filter((item) => dayjs(item.rent_date.end).year() === filter)
-            .reduce((accumulator, currentValue) => accumulator + parseInt(currentValue.price.toString()), 0),
+            .reduce((accumulator, currentValue) => accumulator + parseInt(currentValue.rent_cost.toString()), 0),
           rentDay: clientHistory
             .filter((item) => dayjs(item.rent_date.end).year() === filter)
             .reduce((accumulator, currentValue) => {

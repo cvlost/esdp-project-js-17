@@ -150,7 +150,7 @@ const ConstructorLink = () => {
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <Button onClick={createCommercialLink} variant="contained" sx={{ mt: 3 }}>
+            <Button onClick={createCommercialLink} color="success" variant="contained" sx={{ mt: 3 }}>
               Создать предложение
             </Button>
           </Grid>

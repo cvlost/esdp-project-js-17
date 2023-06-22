@@ -11,7 +11,7 @@ interface DirectionState {
   oneDirLoading: boolean;
   createDirectionLoading: boolean;
   directionError: null | ValidationError;
-  deleteDirectionLoading: boolean;
+  deleteDirectionLoading: string | false;
   errorRemove: GlobalError | null;
   modal: boolean;
 }
@@ -88,8 +88,8 @@ const directionsSlice = createSlice({
       state.directionError = error || null;
     });
 
-    builder.addCase(deleteDirection.pending, (state) => {
-      state.deleteDirectionLoading = true;
+    builder.addCase(deleteDirection.pending, (state, { meta: { arg: id } }) => {
+      state.deleteDirectionLoading = id;
     });
     builder.addCase(deleteDirection.fulfilled, (state) => {
       state.deleteDirectionLoading = false;

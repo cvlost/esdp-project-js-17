@@ -1,12 +1,13 @@
 import React from 'react';
-import { Autocomplete, Box, Button, Grid, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, CircularProgress, Grid, TextField } from '@mui/material';
 import { useNavigate, useOutlet } from 'react-router-dom';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import LocationList from './LocationList';
 import { useAppSelector } from '../../app/hooks';
 import { selectUser } from '../users/usersSlice';
 import ExportToExcel from '../exportToExcel/ExportToExcel';
-import { selectLocationsListData, selectLocationsListLoading } from './locationsSlice';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import { selectLocationsListData } from './locationsSlice';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 interface LinkOption {
@@ -26,12 +27,10 @@ const link_options: LinkOption[] = [
   { label: 'Создать Улицу', link: '/create_street' },
   { label: 'Создать Освещение', link: '/create_lighting' },
   { label: 'Создать Клиента', link: '/create_client' },
-  { label: 'Список ссылок', link: '/list_link' },
 ];
 
 const Location = () => {
   const user = useAppSelector(selectUser);
-  const locationsLoading = useAppSelector(selectLocationsListLoading);
   const locationsList = useAppSelector(selectLocationsListData).locations;
   const navigate = useNavigate();
   const outlet = useOutlet();
@@ -64,8 +63,24 @@ const Location = () => {
           </Button>
         </Grid>
         <Grid item>
-          <ExportToExcel data={locationsList ? locationsList : []} loading={locationsLoading} />
+          <Button
+            color="success"
+            variant="contained"
+            onClick={() => {
+              navigate('/list_link');
+            }}
+          >
+            <InsertLinkIcon sx={{ mr: 1 }} />
+            Список ссылок
+          </Button>
         </Grid>
+        {locationsList.length !== 0 ? (
+          <Grid item>
+            <ExportToExcel data={locationsList ? locationsList : []} />
+          </Grid>
+        ) : (
+          <CircularProgress sx={{ ml: 1 }} />
+        )}
         {user?.role === 'admin' ? (
           <>
             <Grid item>

@@ -62,8 +62,13 @@ const CardLink: React.FC<Props> = ({ link, openModalLink, removeLinkOne }) => {
         </Tooltip>
       </TableCell>
       <TableCell align="right">
-        <IconButton disabled={loadingRemove} onClick={removeLinkOne} aria-label="delete">
-          {!loadingRemove ? <DeleteIcon /> : <CircularProgress />}
+        <IconButton
+          disabled={loadingRemove ? loadingRemove === link._id : false}
+          onClick={removeLinkOne}
+          aria-label="delete"
+        >
+          {loadingRemove && loadingRemove === link._id && <CircularProgress />}
+          <DeleteIcon />
         </IconButton>
       </TableCell>
     </StyledTableRow>

@@ -10,7 +10,7 @@ import { selectCheckedLocationLoading, selectLocationsColumnSettings } from '../
 import { useNavigate } from 'react-router-dom';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-
+import TimelineIcon from '@mui/icons-material/Timeline';
 interface Props {
   onDelete: React.MouseEventHandler;
   deleteLoading: false | string;
@@ -62,21 +62,26 @@ const CardLocation: React.FC<Props> = ({
         )}
       </Box>
     ),
-    area: <>{loc.area}</>,
-    city: <>{loc.city}</>,
-    region: <>{loc.region}</>,
-    streets: <>{loc.streets[0] + '/' + loc.streets[1]}</>,
-    direction: <>{loc.direction}</>,
-    legalEntity: <>{loc.legalEntity}</>,
-    size: <>{loc.size}</>,
-    format: <>{loc.format}</>,
-    lighting: <>{loc.lighting}</>,
-    placement: <>{loc.placement ? 'По направлению' : 'Не по направлению'}</>,
-    price: <>{loc.price}</>,
+    area: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.area}</Typography>,
+    city: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.city}</Typography>,
+    region: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.region}</Typography>,
+    streets: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.streets[0] + '/' + loc.streets[1]}</Typography>,
+    direction: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.direction}</Typography>,
+    legalEntity: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.legalEntity}</Typography>,
+    size: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.size}</Typography>,
+    format: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.format}</Typography>,
+    lighting: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.lighting}</Typography>,
+    placement: (
+      <Typography onClick={() => navigate(`/${loc._id}`)}>
+        {loc.placement ? 'По направлению' : 'Не по направлению'}
+      </Typography>
+    ),
+    price: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.price}</Typography>,
     rent: (
       <div onClick={rentOpen}>
         {loc.rent ? (
           <>
+            <Typography sx={{ color: 'green' }}>{loc.client}</Typography>
             <Typography>{dayjs(loc.rent.start).format('DD.MM.YYYY')}</Typography>
             <Typography>{dayjs(loc.rent.end).format('DD.MM.YYYY')}</Typography>
           </>
@@ -119,7 +124,11 @@ const CardLocation: React.FC<Props> = ({
       <>
         {loc.booking.length !== 0 ? (
           <Box>
-            <Typography>Есть</Typography>
+            <Tooltip title="Добавить бронь">
+              <Button onClick={openBooking} size="small" color="success">
+                <GroupAddIcon />
+              </Button>
+            </Tooltip>
             <Tooltip title="Список броней">
               <Button onClick={openBookingList} size="small" color="success">
                 <FormatListBulletedIcon />
@@ -127,11 +136,12 @@ const CardLocation: React.FC<Props> = ({
             </Tooltip>
           </Box>
         ) : (
-          <Typography>Нет</Typography>
+          <Typography onClick={openBooking}>Нет</Typography>
         )}
       </>
     ),
   };
+
   return (
     <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
       <TableCell align="center">{number}</TableCell>
@@ -143,18 +153,32 @@ const CardLocation: React.FC<Props> = ({
           </TableCell>
         ))}
       <TableCell align="right">
-        <ButtonGroup sx={{ mr: 1 }} variant="contained" aria-label="outlined primary button group">
-          <Button
-            size="small"
-            color="error"
-            onClick={onDelete}
-            disabled={deleteLoading ? deleteLoading === loc._id : false}
-          >
-            <DeleteIcon />
-          </Button>
-          <Button size="small" color="success" onClick={onEdit}>
-            <EditIcon />
-          </Button>
+        <ButtonGroup sx={{ mr: 1 }} variant="contained">
+          <Tooltip title="Удалить">
+            <Button
+              size="small"
+              color="error"
+              onClick={onDelete}
+              disabled={deleteLoading ? deleteLoading === loc._id : false}
+            >
+              <DeleteIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Редактировать">
+            <Button size="small" color="success" onClick={onEdit}>
+              <EditIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="История Аренды">
+            <Button onClick={() => navigate('/rentHistory/' + loc._id)} size="small" color="info">
+              <TimelineIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Добавить бронь">
+            <Button onClick={openBooking} size="small" color="primary">
+              <GroupAddIcon />
+            </Button>
+          </Tooltip>
           {open && (
             <Paper sx={{ ml: 1 }} elevation={3}>
               <Switch
@@ -164,13 +188,6 @@ const CardLocation: React.FC<Props> = ({
               />
             </Paper>
           )}
-        </ButtonGroup>
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Tooltip title="Бронь">
-            <Button onClick={openBooking} size="small" color="success">
-              <GroupAddIcon />
-            </Button>
-          </Tooltip>
         </ButtonGroup>
       </TableCell>
     </StyledTableRow>

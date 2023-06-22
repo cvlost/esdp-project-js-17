@@ -7,7 +7,7 @@ interface streetSlice {
   listStreet: StreetList[];
   getAllStreetLoading: boolean;
   createStreetLoading: boolean;
-  removeStreetLoading: boolean;
+  removeStreetLoading: string | boolean;
   streetError: ValidationError | null;
   errorRemove: GlobalError | null;
   modal: boolean;
@@ -86,8 +86,8 @@ const streetSlice = createSlice({
       state.streetError = error || null;
     });
 
-    builder.addCase(removeStreet.pending, (state) => {
-      state.removeStreetLoading = true;
+    builder.addCase(removeStreet.pending, (state, { meta: { arg: id } }) => {
+      state.removeStreetLoading = id;
     });
     builder.addCase(removeStreet.fulfilled, (state) => {
       state.removeStreetLoading = false;

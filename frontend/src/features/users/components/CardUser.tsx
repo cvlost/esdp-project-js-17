@@ -25,8 +25,14 @@ const CardUser: React.FC<Props> = ({ user, onDelete, onEditing }) => {
       <TableCell align="center">{userRole?.prettyName}</TableCell>
       <TableCell align="right">
         <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button size="small" color="error" onClick={onDelete} disabled={deleteLoading}>
-            {!deleteLoading ? <DeleteIcon /> : <CircularProgress size={20} />}
+          <Button
+            size="small"
+            color="error"
+            onClick={onDelete}
+            disabled={deleteLoading ? deleteLoading === user._id : false}
+          >
+            {deleteLoading && deleteLoading === user._id && <CircularProgress />}
+            <DeleteIcon />
           </Button>
           <Button size="small" color="success" onClick={onEditing}>
             <EditIcon />

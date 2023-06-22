@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 const ConstructorCard = () => {
   const constructorLocation = useAppSelector(selectConstructor);
   const dispatch = useAppDispatch();
+  console.log(constructorLocation);
   return (
     <>
       {constructorLocation.map((item) => (
@@ -27,11 +28,24 @@ const ConstructorCard = () => {
             <Box>
               <CardContent sx={{ flex: '1 0 auto' }}>
                 <Typography component="div" variant="h5">
-                  {item.name}
+                  {item.name === 'addressNote' && 'Адрес'}
+                  {item.name === 'area' && 'Область'}
+                  {item.name === 'city' && 'Город'}
+                  {item.name === 'region' && 'Район'}
+                  {item.name === 'street' && 'Улица'}
+                  {item.name === 'direction' && 'Направление'}
+                  {item.name === 'legalEntity' && 'Юр.лицо'}
+                  {item.name === 'size' && 'Размер'}
+                  {item.name === 'format' && 'Формат'}
+                  {item.name === 'lighting' && 'Освещение'}
+                  {item.name === 'placement' && 'Размещение'}
+                  {item.name === 'price' && 'Цена'}
+                  {item.name === 'rent' && 'Аренда'}
+                  {item.name === 'reserve' && 'Бронь'}
                 </Typography>
               </CardContent>
             </Box>
-            {item.name === 'address' && <ShareLocationIcon sx={{ fontSize: '50px' }} />}
+            {item.name === 'addressNote' && <ShareLocationIcon sx={{ fontSize: '50px' }} />}
             {item.name === 'area' && <SouthAmericaIcon sx={{ fontSize: '50px' }} />}
             {item.name === 'city' && <ApartmentIcon sx={{ fontSize: '50px' }} />}
             {item.name === 'region' && <SouthAmericaIcon sx={{ fontSize: '50px' }} />}

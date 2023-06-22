@@ -10,6 +10,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
 } from '@mui/material';
@@ -45,34 +46,36 @@ const AnalyticsClient = () => {
         setFilterDate={() => setFilterDate((prev) => !prev)}
       />
       <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <AnalyticsClientMenuList />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {analyticsClientList.clintAnalNew.length !== 0 ? (
-              !loading ? (
-                analyticsClientList.clintAnalNew.map((client) => (
-                  <AnalyticsClientCard key={client.client._id} client={client} />
-                ))
+        <TableContainer>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <AnalyticsClientMenuList />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {analyticsClientList.clintAnalNew.length !== 0 ? (
+                !loading ? (
+                  analyticsClientList.clintAnalNew.map((client) => (
+                    <AnalyticsClientCard key={client.client._id} client={client} />
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell>
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                )
               ) : (
                 <TableRow>
                   <TableCell>
-                    <CircularProgress />
+                    <Alert severity="info">Список аналитики пуст</Alert>
                   </TableCell>
                 </TableRow>
-              )
-            ) : (
-              <TableRow>
-                <TableCell>
-                  <Alert severity="info">Список аналитики пуст</Alert>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Paper>
       <Pagination
         disabled={loading}

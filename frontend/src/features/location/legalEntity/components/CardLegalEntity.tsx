@@ -13,9 +13,6 @@ import useConfirm from '../../../../components/Dialogs/Confirm/useConfirm';
 const CardLegalEntity: React.FC<LegalEntityList> = ({ name, _id }) => {
   const dispatch = useAppDispatch();
   const removeLoading = useAppSelector(selectRemoveLegalEntityLoading);
-  const editLoading = useAppSelector(selectEditOneUserLoading);
-  const oneEntityLoading = useAppSelector(selectOneLegalEntityLoading);
-  const anyLoading = removeLoading || editLoading;
   const { confirm } = useConfirm();
 
   const removeEntity = async () => {
@@ -34,11 +31,12 @@ const CardLegalEntity: React.FC<LegalEntityList> = ({ name, _id }) => {
     <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
       <TableCell align="left">{name}</TableCell>
       <TableCell align="right">
-        <IconButton disabled={anyLoading} onClick={removeEntity}>
-          {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+        <IconButton disabled={removeLoading ? removeLoading === _id : false} onClick={removeEntity}>
+          {removeLoading && removeLoading === _id && <CircularProgress />}
+          <DeleteIcon />
         </IconButton>
-        <IconButton disabled={anyLoading} onClick={editEntity}>
-          {!editLoading && !oneEntityLoading ? <EditIcon /> : <CircularProgress />}
+        <IconButton onClick={editEntity}>
+          <EditIcon />
         </IconButton>
       </TableCell>
     </StyledTableRow>

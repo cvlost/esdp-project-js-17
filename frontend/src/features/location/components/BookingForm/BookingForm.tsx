@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { DateRangePicker } from 'rsuite';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectClientsList, selectGetAllClientsLoading } from '../../client/clientSlice';
 import { fetchClients } from '../../client/clientThunk';
@@ -48,6 +48,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
   const createLoading = useAppSelector(selectCreateBookingLoading);
   const filter = useAppSelector(selectLocationsFilter);
   const locationsListData = useAppSelector(selectLocationsListData);
+  const location = useLocation();
 
   useEffect(() => {
     dispatch(fetchClients());
@@ -73,13 +74,17 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
     };
 
     await dispatch(createBooking(obj)).unwrap();
-    await dispatch(
-      getLocationsList({
-        page: locationsListData.page,
-        perPage: locationsListData.perPage,
-        filtered: filter.filtered,
-      }),
-    ).unwrap();
+    if (location.pathname === `/${locationId}`) {
+      await dispatch(getOneLocation(locationId)).unwrap();
+    } else {
+      await dispatch(
+        getLocationsList({
+          page: locationsListData.page,
+          perPage: locationsListData.perPage,
+          filtered: filter.filtered,
+        }),
+      );
+    }
     dispatch(openSnackbar({ status: true, parameter: 'create_booking' }));
     setValueClient('');
     setValueDate([new Date(), new Date()]);
