@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Button, Modal, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { CellObject, utils, WorkBook, WorkSheet, writeFile } from 'xlsx';
 import { ILocation } from '../../types';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import ModalBody from '../../components/ModalBody';
 
 interface Props {
   data: ILocation[];
@@ -77,7 +78,7 @@ const ExportToExcel: React.FC<Props> = ({ data, loading }) => {
 
     const workbook: WorkBook = utils.book_new();
     utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    writeFile(workbook, fileName + '.xlsx');
+    writeFile(workbook, fileName.trim() !== '' ? fileName : 'Шамдагай документ' + '.xlsx');
     handleClose();
   };
 
@@ -88,31 +89,27 @@ const ExportToExcel: React.FC<Props> = ({ data, loading }) => {
         Экспортировать в эксель
       </Button>
 
-      <Modal open={open} onClose={handleClose} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Box
-          component="div"
-          color="white"
-          display="flex"
-          justifyContent="center"
-          flexDirection="column"
-          alignItems="flex-baseline"
-        >
-          <Typography variant="h2">Сохранить как</Typography>
+      <ModalBody isOpen={open} onClose={handleClose}>
+        <Box component="div" display="flex" justifyContent="center" flexDirection="column" alignItems="flex-baseline">
+          <Typography variant="h5" sx={{ textAlign: 'center', mb: 3 }}>
+            Сохранить как
+          </Typography>
           <TextField
-            sx={{ input: { color: 'white' } }}
+            color="success"
+            label="Имя документа"
             onChange={handleFileNameChange}
             onKeyDown={handleEnterPress}
             type="text"
             autoFocus
           />
-          <Button sx={{ m: 2 }} variant="contained" onClick={handleSave}>
+          <Button sx={{ m: 2 }} variant="contained" color="success" onClick={handleSave}>
             Сохранить
           </Button>
-          <Button sx={{ m: 2 }} variant="contained" onClick={handleClose}>
+          <Button sx={{ m: 2 }} variant="contained" color="success" onClick={handleClose}>
             Отмена
           </Button>
         </Box>
-      </Modal>
+      </ModalBody>
     </>
   );
 };

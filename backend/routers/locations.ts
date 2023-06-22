@@ -411,9 +411,38 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
       client: rentData.client,
       location: id,
       rent_date: rentData.date,
-      price: mongoose.Types.Decimal128.fromString(rentData.price),
+      rent_price: location.price,
+      rent_cost: mongoose.Types.Decimal128.fromString(rentData.rent_cost),
     });
     return res.send(location);
+  } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(422).send(e);
+    }
+    return next(e);
+  }
+});
+
+locationsRouter.patch('/clearRent/:id', auth, async (req, res, next) => {
+  const id = req.params.id;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(422).send({ error: 'Некорректный id локации.' });
+  }
+
+  try {
+    const location = await Location.findById(id);
+
+    if (!location) {
+      return res.status(404).send({ error: 'Данная локация не найдена!' });
+    }
+
+    location.rent = null;
+    location.client = null;
+    await location.save();
+    const [updatedLocation] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(id) } }, ...flattenLookup]);
+
+    return res.send(updatedLocation);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);

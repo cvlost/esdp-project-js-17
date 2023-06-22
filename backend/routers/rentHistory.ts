@@ -25,9 +25,15 @@ rentHistoryRouter.get('/:id', auth, async (req, res, next) => {
       { $sort: { createdAt: -1 } },
       {
         $addFields: {
-          price: {
+          rent_cost: {
             $convert: {
-              input: { $toDecimal: '$price' },
+              input: { $toDecimal: '$rent_cost' },
+              to: 'string',
+            },
+          },
+          rent_price: {
+            $convert: {
+              input: { $toDecimal: '$rent_price' },
               to: 'string',
             },
           },

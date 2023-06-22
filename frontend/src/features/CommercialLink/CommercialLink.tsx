@@ -35,7 +35,7 @@ const CommercialLink = () => {
               <CommercialLinkCard key={location._id} location={location} id={id} />
             ))
           ) : (
-            <Alert severity="error">Сссылка удаленна !</Alert>
+            <Alert severity="error">Сcылка удалена !</Alert>
           )
         ) : (
           <CircularProgress />
