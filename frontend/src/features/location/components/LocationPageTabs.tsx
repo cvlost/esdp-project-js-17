@@ -5,8 +5,6 @@ import { useAppSelector } from '../../../app/hooks';
 import { selectOneLocation } from '../locationsSlice';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 import { selectUser } from '../../users/usersSlice';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -55,21 +53,6 @@ const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingL
               <Alert severity="info" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', mb: 3 }}>
                 <Typography>Описание локации отсутствует</Typography>
               </Alert>
-              {user?.role === 'admin' && (
-                <LoadingButton
-                  loading={false}
-                  sx={{ fontWeight: 'bold' }}
-                  loadingPosition="start"
-                  startIcon={<EditIcon />}
-                  onClick={async () => {
-                    if (await confirm('Редактирование локации', 'Приступить к редактированию этой локации?')) {
-                      console.log('confirmed');
-                    }
-                  }}
-                >
-                  Добавить
-                </LoadingButton>
-              )}
             </Box>
           )}
         </TabPanel>
