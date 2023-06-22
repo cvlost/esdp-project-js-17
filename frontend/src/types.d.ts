@@ -462,3 +462,9 @@ export interface AnalClientList {
   perPage: number;
   count: number;
 }
+
+export interface IData {
+  tooltip: BookingListType[];
+  label: string;
+  value: number;
+}

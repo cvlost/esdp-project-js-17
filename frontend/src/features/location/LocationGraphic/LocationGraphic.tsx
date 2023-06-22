@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Box, Chip, CircularProgress, Container, Grid, Pagination, Paper } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Pagination,
+  Paper,
+} from '@mui/material';
 import { ARR, MainColorGreen } from '../../../constants';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -20,6 +34,7 @@ import LocationFilter from '../components/LocationsFilter';
 import PanelMenu from './compnents/PanelMenu';
 import LocationCardGrap from './compnents/LocationCardGrap';
 import PanelAccounts from './compnents/PanelAccounts';
+import BarChart from './compnents/BarChart/BarChart';
 
 const LocationGraphic = () => {
   const [pullingMonth, setPullingMonth] = useState(ARR[0]);
@@ -33,6 +48,7 @@ const LocationGraphic = () => {
   const locationsListLoading = useAppSelector(selectLocationsListLoading);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const locationLoading = useAppSelector(selectLocationsListLoading);
+  const [openBar, setOpenBar] = useState(false);
 
   useEffect(() => {
     dispatch(
@@ -49,6 +65,14 @@ const LocationGraphic = () => {
     setValue(newValue);
   };
 
+  const BAR_CHART_DATA = locationsListData.locations.map((item, index) => {
+    return {
+      label: (index + 1).toString(),
+      value: item.booking.length,
+      tooltip: item.booking,
+    };
+  });
+
   return (
     <Box sx={{ py: 2 }}>
       <Container>
@@ -56,7 +80,7 @@ const LocationGraphic = () => {
           <Grid sx={{ display: 'flex' }} xs={12} item>
             <Chip
               sx={{ fontSize: '20px', p: 3, color: MainColorGreen, mb: 2 }}
-              label={`Графическое представление`}
+              label={`Календарный список`}
               variant="outlined"
               color="success"
             />
@@ -68,12 +92,13 @@ const LocationGraphic = () => {
                 filterYear={filterYear}
                 setFilterYear={(e: React.ChangeEvent<HTMLInputElement>) => setFilterYear(e.target.value)}
                 setIsFilterOpen={() => setIsFilterOpen((prev) => !prev)}
+                setOpenBar={() => setOpenBar(true)}
               />
             </Box>
             <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
               <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                  <TabList onChange={handleChange} aria-label="lab API tabs example">
+                  <TabList onChange={handleChange} aria-label="lab API tabs example" variant="scrollable">
                     {ARR.map((month, index) => (
                       <Tab
                         onClick={() => setPullingMonth(ARR[index])}
@@ -86,7 +111,7 @@ const LocationGraphic = () => {
                 </Box>
                 {ARR.map((month, index) => (
                   <TabPanel key={index} value={(index + 1).toString()}>
-                    <Grid sx={{ p: 1 }} container spacing={3}>
+                    <Grid sx={{ p: 1 }} container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
                       {locationsListData.locations.length !== 0 ? (
                         !locationLoading ? (
                           locationsListData.locations.map((loc, index) => (
@@ -122,6 +147,20 @@ const LocationGraphic = () => {
       <ModalBody isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)}>
         <LocationFilter onClose={() => setIsFilterOpen(false)} />
       </ModalBody>
+      <Dialog
+        open={openBar}
+        onClose={() => setOpenBar(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Бронь</DialogTitle>
+        <DialogContent>
+          <BarChart data={BAR_CHART_DATA} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenBar(false)}>Закрыть</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
