@@ -40,13 +40,11 @@ const RentHistoryList = () => {
     dispatch(fetchRentHistories(id));
   }, [dispatch, id]);
 
-  const removeRentHistory = async (id: string) => {
+  const removeRentHistory = async (rentId: string) => {
     if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную запись аренды?')) {
-      await dispatch(deleteRentHistory(id)).unwrap();
-      // window.location.reload(); почему то фетч запрос не работает
-      // и пока что пусть постоит этот комент
+      await dispatch(deleteRentHistory(rentId)).unwrap();
       await dispatch(fetchRentHistories(id));
-      await dispatch(openSnackbar({ status: true, parameter: 'delete_rentHistory' }));
+      dispatch(openSnackbar({ status: true, parameter: 'delete_rentHistory' }));
     } else {
       return;
     }
@@ -59,7 +57,7 @@ const RentHistoryList = () => {
       </Typography>
       <TableContainer>
         {rentHistories && rentHistories.length !== 0 ? (
-          <Table aria-label="simple table" sx={{ minWidth: 650 }}>
+          <Table aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell align="center">Фото локации</TableCell>
@@ -67,6 +65,7 @@ const RentHistoryList = () => {
                 <TableCell align="center">Клиент</TableCell>
                 <TableCell align="center">Старт даты:</TableCell>
                 <TableCell align="center">Конец даты:</TableCell>
+                <TableCell align="center">Цена за аренду</TableCell>
                 <TableCell align="center">Счет за аренду</TableCell>
                 <TableCell align="center">Управление</TableCell>
               </TableRow>
@@ -86,7 +85,8 @@ const RentHistoryList = () => {
                     <TableCell align="center">{item.client.companyName}</TableCell>
                     <TableCell align="center">{dayjs(item.rent_date.start).format('DD.MM.YYYY')}</TableCell>
                     <TableCell align="center">{dayjs(item.rent_date.end).format('DD.MM.YYYY')}</TableCell>
-                    <TableCell align="center">{item.price} сом</TableCell>
+                    <TableCell align="center">{item.rent_price} сом</TableCell>
+                    <TableCell align="center">{item.rent_cost} сом</TableCell>
                     <TableCell align="center">
                       <ButtonGroup variant="contained" aria-label="outlined success button group">
                         <IconButton

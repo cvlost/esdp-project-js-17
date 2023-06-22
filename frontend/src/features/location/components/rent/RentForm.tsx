@@ -17,9 +17,10 @@ interface Props {
   closeRentForm: React.MouseEventHandler;
   onSubmit: (rent: RentMutation) => void;
   locationId: string;
+  clearLocationRent: React.MouseEventHandler;
 }
 
-const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId }) => {
+const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId, clearLocationRent }) => {
   const dispatch = useAppDispatch();
   const clients = useAppSelector(selectClientsList);
   const loading = useAppSelector(selectCreateRentLoading);
@@ -35,7 +36,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
   const [state, setState] = useState<RentMutation>({
     date: null,
     client: '',
-    price: '',
+    rent_cost: '',
   });
 
   const submitFormHandler = async (event: React.FormEvent) => {
@@ -47,7 +48,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
         setState({
           date: null,
           client: '',
-          price: '',
+          rent_cost: '',
         });
       } catch (error) {
         console.error(error);
@@ -97,6 +98,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
               onChange={inputChangeHandler}
               error={Boolean(getFieldError('client'))}
               helperText={getFieldError('client')}
+              required
             >
               <MenuItem value="" disabled>
                 Выберите клиента
@@ -116,6 +118,21 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
             </Link>
           </Grid>
           <Grid item>
+            <TextField
+              fullWidth
+              label="Стоимость аренды"
+              type="text"
+              color="success"
+              name="rent_cost"
+              autoComplete="off"
+              value={state.rent_cost}
+              onChange={inputChangeHandler}
+              error={Boolean(getFieldError('rent_cost'))}
+              helperText={getFieldError('rent_cost')}
+              required
+            />
+          </Grid>
+          <Grid item>
             <DateRangePicker
               block
               style={{ zIndex: '1' }}
@@ -125,24 +142,12 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
               placeholder="Выберите дату аренды"
             />
           </Grid>
-          <Grid item>
-            <TextField
-              required
-              fullWidth
-              label="Стоимость аренды"
-              type="text"
-              color="success"
-              name="price"
-              autoComplete="off"
-              value={state.price}
-              onChange={inputChangeHandler}
-              error={Boolean(getFieldError('price'))}
-              helperText={getFieldError('price')}
-            />
-          </Grid>
-          <Grid item alignSelf="center">
+          <Grid item sx={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
             <Button type="submit" variant="contained" color="success" sx={{ mt: 3, mb: 2 }} disabled={loading}>
               {loading ? <CircularProgress size="small" color="success" /> : 'Обновить аренду'}
+            </Button>
+            <Button onClick={clearLocationRent} variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
+              Очистить
             </Button>
             <Button
               component={Link}
@@ -152,13 +157,12 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
               sx={{
                 mt: 3,
                 mb: 2,
-                ml: 1,
                 '&:hover': {
                   color: 'white',
                 },
               }}
             >
-              Истории аренды
+              История аренды
             </Button>
           </Grid>
         </Grid>

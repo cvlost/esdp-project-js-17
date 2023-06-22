@@ -12,11 +12,17 @@ import {
   TableRow,
 } from '@mui/material';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { selectOneLocation, selectOneLocationLoading, selectRemoveBookingLoading } from '../locationsSlice';
-import { getOneLocation, removeBooking } from '../locationsThunks';
+import {
+  selectLocationsFilter,
+  selectLocationsListData,
+  selectOneLocation,
+  selectOneLocationLoading,
+  selectRemoveBookingLoading,
+} from '../locationsSlice';
+import { getLocationsList, getOneLocation, removeBooking } from '../locationsThunks';
 import dayjs from 'dayjs';
 import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -32,6 +38,9 @@ const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
   const loading = useAppSelector(selectOneLocationLoading);
   const { confirm } = useConfirm();
   const loadingRemove = useAppSelector(selectRemoveBookingLoading);
+  const filter = useAppSelector(selectLocationsFilter);
+  const locationsListData = useAppSelector(selectLocationsListData);
+  const location = useLocation();
 
   useEffect(() => {
     if (isPage === undefined) {
@@ -42,7 +51,18 @@ const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
   const removeCardBooking = async (id: string) => {
     if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную локацию?')) {
       await dispatch(removeBooking({ idLoc: locationId, idBook: id })).unwrap();
-      await dispatch(getOneLocation(locationId));
+      if (location.pathname === `/${locationId}`) {
+        await dispatch(getOneLocation(locationId));
+      } else {
+        await dispatch(getOneLocation(locationId));
+        await dispatch(
+          getLocationsList({
+            page: locationsListData.page,
+            perPage: locationsListData.perPage,
+            filtered: filter.filtered,
+          }),
+        );
+      }
     } else {
       return;
     }

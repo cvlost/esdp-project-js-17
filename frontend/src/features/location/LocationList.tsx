@@ -41,6 +41,7 @@ import {
 import { MainColorGreen } from '../../constants';
 import {
   checkedLocation,
+  clearRent,
   getItems,
   getLocationsList,
   getToEditOneLocation,
@@ -190,6 +191,11 @@ const LocationList = () => {
     setLocationID(id);
   };
 
+  const clearLocRent = async () => {
+    await dispatch(clearRent(locationID));
+    setIsRentOpen(false);
+  };
+
   return (
     <Box sx={{ py: 2 }}>
       <Grid container alignItems="center" mb={2}>
@@ -221,18 +227,23 @@ const LocationList = () => {
         )}
         <Grid marginLeft="auto" item>
           {locationsListData.locations.filter((item) => item.checked).length > 3 && (
-            <Button sx={{ mr: 2 }} onClick={resetCardLocationId} size="large" variant="contained">
+            <Button sx={{ mr: 2 }} color="success" onClick={resetCardLocationId} size="large" variant="contained">
               Сбросить предложение
             </Button>
           )}
           <Button
             component={Link}
+            sx={{
+              mr: 1,
+              '&:hover': {
+                color: 'white',
+              },
+            }}
             disabled={listLocationId.length <= 0}
             size="large"
             variant="contained"
+            color="success"
             to={'constructor_link'}
-            color={'success'}
-            sx={{ marginRight: '5px', color: 'white' }}
           >
             Создать ссылку
           </Button>
@@ -329,6 +340,7 @@ const LocationList = () => {
         <BookingList locationId={locationID} />
       </ModalBody>
       <RentForm
+        clearLocationRent={clearLocRent}
         locationId={locationID}
         onSubmit={onRentUpdateSubmit}
         isOpen={isRentOpen}
