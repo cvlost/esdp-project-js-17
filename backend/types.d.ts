@@ -146,3 +146,13 @@ export interface AnalClientType {
   rentDay: number;
   numberOfBanners: number;
 }
+
+export interface INotification {
+  message: string;
+  subject: string;
+  event: string;
+  location: Types.ObjectId;
+  readBy: Types.ObjectId[];
+  deletedBy: Types.ObjectId[];
+  createdAt: Date;
+}

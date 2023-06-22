@@ -1,4 +1,4 @@
-import mongoose, { Types } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
@@ -13,6 +13,8 @@ import Area from './models/Area';
 import Lighting from './models/Lighting';
 import Size from './models/Size';
 import Client from './models/Client';
+import { ILocation } from './types';
+import dayjs from 'dayjs';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -180,8 +182,10 @@ const run = async () => {
     },
   );
 
+  const locations: HydratedDocument<ILocation>[] = [];
+
   for (let i = 0; i < 20; i++) {
-    await Location.create({
+    const loc = await Location.create({
       area: randElement(areas)._id,
       client: randElement(clients)._id,
       direction: randElement(directions)._id,
@@ -235,7 +239,15 @@ const run = async () => {
       status: null,
       booking: [],
     });
+
+    locations.push(loc);
   }
+
+  locations[0].rent = {
+    start: dayjs().subtract(60, 'days').toDate(),
+    end: dayjs().subtract(1, 'day').toDate(),
+  };
+  await locations[0].save();
 
   await db.close();
 };
