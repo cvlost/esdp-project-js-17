@@ -51,12 +51,12 @@ const combineFilterQuery = (filter: FilterState) => {
   return combinedQuery.length ? { $and: combinedQuery } : undefined;
 };
 
-type RequestParams = { page: number; perPage: number; filtered?: boolean } | undefined;
+type RequestParams = { page: number; perPage: number; filtered?: boolean; filterYear?: number } | undefined;
 
 export const getLocationsList = createAsyncThunk<LocationsListResponse, RequestParams, { state: RootState }>(
   'locations/getAll',
   async (params, { getState }) => {
-    const queryString = params ? `?page=${params.page}&perPage=${params.perPage}` : '';
+    const queryString = params ? `?page=${params.page}&perPage=${params.perPage}&filterYear=${params.filterYear}` : '';
     const filterQuery = params?.filtered ? combineFilterQuery(getState().locations.settings.filter) : undefined;
     const response = await axiosApi.post<LocationsListResponse>(`/locations${queryString}`, { filterQuery });
     return response.data;

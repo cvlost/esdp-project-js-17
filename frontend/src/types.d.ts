@@ -154,6 +154,8 @@ export interface ILocation {
   checked: boolean;
   status: string | null;
   booking: BookingListType[];
+  month: string;
+  year: number;
   __v?: number;
 }
 
@@ -455,6 +457,31 @@ export interface AnalClientType {
 
 export interface AnalClientList {
   clintAnalNew: AnalClientType[];
+  page: number;
+  pages: number;
+  perPage: number;
+  count: number;
+}
+
+export interface IData {
+  tooltip: AnalType[] | BookingListType[];
+  label: string;
+  value: number;
+  comp: JSX.Element | JSX.Element[];
+}
+
+export interface LocationGraphicType {
+  _id: string;
+  rent: null | IPeriod;
+  booking: BookingListType[];
+  client: string;
+  month: string;
+  year: number;
+  price: number;
+}
+
+export interface LocationGraphicDateType {
+  locations: LocationGraphicType[];
   page: number;
   pages: number;
   perPage: number;
