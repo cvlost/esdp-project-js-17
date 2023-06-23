@@ -6,7 +6,7 @@ interface CityState {
   cityList: CityList[];
   getAllListCityLoading: boolean;
   createCityLoading: boolean;
-  removeCityLoading: boolean;
+  removeCityLoading: string | false;
   cityError: null | ValidationError;
   errorRemove: GlobalError | null;
   modal: boolean;
@@ -86,8 +86,8 @@ export const citySlice = createSlice({
       state.cityError = error || null;
     });
 
-    builder.addCase(removeCity.pending, (state) => {
-      state.removeCityLoading = true;
+    builder.addCase(removeCity.pending, (state, { meta: { arg: id } }) => {
+      state.removeCityLoading = id;
     });
     builder.addCase(removeCity.fulfilled, (state) => {
       state.removeCityLoading = false;

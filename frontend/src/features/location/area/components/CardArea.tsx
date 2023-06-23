@@ -20,8 +20,13 @@ const CardArea: React.FC<Props> = ({ area, removeAreaCard, onEditing }) => {
       <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
         <TableCell align="left">{area.name}</TableCell>
         <TableCell align="right">
-          <IconButton disabled={removeLoading} onClick={removeAreaCard} aria-label="delete">
-            {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          <IconButton
+            disabled={removeLoading ? removeLoading === area._id : false}
+            onClick={removeAreaCard}
+            aria-label="delete"
+          >
+            {removeLoading && removeLoading === area._id && <CircularProgress />}
+            <DeleteIcon />
           </IconButton>
           <IconButton aria-label="success" onClick={onEditing}>
             <EditIcon />

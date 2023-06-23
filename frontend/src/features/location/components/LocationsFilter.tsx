@@ -286,8 +286,8 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                     }}
                   >
                     <ToggleButton value="all">Все</ToggleButton>
-                    <ToggleButton value="placementTrueOnly">По напрвлению</ToggleButton>
-                    <ToggleButton value="placementFalseOnly">Не по напрвлению</ToggleButton>
+                    <ToggleButton value="placementTrueOnly">По направлению</ToggleButton>
+                    <ToggleButton value="placementFalseOnly">Не по направлению</ToggleButton>
                   </ToggleButtonGroup>
                 </Grid>
                 <Grid item>

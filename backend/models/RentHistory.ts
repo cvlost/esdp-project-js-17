@@ -13,7 +13,15 @@ const RentHistorySchema = new Schema<RentHistoryType>({
     required: true,
     ref: 'Location',
   },
-  price: {
+  rent_price: {
+    type: Schema.Types.Decimal128,
+    required: true,
+    validate: {
+      validator: (value: Types.Decimal128) => value >= Types.Decimal128.fromString('0'),
+      message: 'Цена не может быть меньше нуля',
+    },
+  },
+  rent_cost: {
     type: Schema.Types.Decimal128,
     required: true,
     validate: {

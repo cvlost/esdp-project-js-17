@@ -31,7 +31,6 @@ const CommercialLinkOne = () => {
     <>
       {!locationLinkOneLoading ? (
         <Container>
-          <Chip sx={{ fontSize: '20px', p: 3, my: 2 }} label="Локация" variant="outlined" color="info" />
           <IconButton onClick={() => navigate(-1)} aria-label="delete">
             <ArrowCircleLeftIcon sx={{ fontSize: '50px' }} />
           </IconButton>

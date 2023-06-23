@@ -37,7 +37,8 @@ commercialLinksRouter.get('/:shortUrl', async (req, res, next) => {
     if (!commLink) {
       return res.status(404).send({ message: 'Ссылка недествительна !' });
     }
-    return res.status(302).redirect(`${config.clientUrl}/link/${commLink._id}`);
+    console.log(config);
+    return res.status(302).redirect(`http://95.85.35.4/link/${commLink._id}`);
   } catch (e) {
     return next(e);
   }
@@ -52,7 +53,7 @@ commercialLinksRouter.post('/', auth, async (req, res, next) => {
       description: req.body.description,
       title: req.body.title,
       shortUrl: randomShortUrl,
-      fullLink: `${config.apiUrl}/link/${randomShortUrl}`,
+      fullLink: `http://95.85.35.4:8000/link/${randomShortUrl}`,
     });
     return res.send(newCommLink);
   } catch (e) {

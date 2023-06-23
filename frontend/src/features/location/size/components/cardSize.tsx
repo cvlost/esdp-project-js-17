@@ -20,8 +20,13 @@ const CardSize: React.FC<Props> = ({ size, removeCardSize, onEditing }) => {
       <StyledTableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
         <TableCell align="left">{size.name}</TableCell>
         <TableCell align="right">
-          <IconButton disabled={removeLoading} onClick={removeCardSize} aria-label="delete">
-            {!removeLoading ? <DeleteIcon /> : <CircularProgress />}
+          <IconButton
+            disabled={removeLoading ? removeLoading === size._id : false}
+            onClick={removeCardSize}
+            aria-label="delete"
+          >
+            {removeLoading && removeLoading === size._id && <CircularProgress />}
+            <DeleteIcon />
           </IconButton>
           <IconButton aria-label="success" onClick={onEditing}>
             <EditIcon />

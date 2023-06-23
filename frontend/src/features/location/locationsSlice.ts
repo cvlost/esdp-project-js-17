@@ -23,6 +23,7 @@ import {
   createBooking,
   removeBooking,
   updateRent,
+  clearRent,
 } from './locationsThunks';
 
 interface LocationColumn {
@@ -57,9 +58,10 @@ interface LocationsState {
   getItemsListLoading: boolean;
   createRentLoading: boolean;
   createRentError: ValidationError | null;
+  clearRentLoading: boolean;
   createBookingLoading: boolean;
   createBookingError: ValidationError | null;
-  removeBookingLoading: boolean;
+  removeBookingLoading: string | false;
 }
 
 export const initialColumns: LocationColumn[] = [
@@ -67,7 +69,7 @@ export const initialColumns: LocationColumn[] = [
   { id: '1', name: 'address', prettyName: 'Полный адрес', show: true, type: 'location' },
   { id: '2', name: 'area', prettyName: 'Область', show: true, type: 'location' },
   { id: '3', name: 'city', prettyName: 'Город', show: true, type: 'location' },
-  { id: '4', name: 'region', prettyName: 'Регион', show: true, type: 'location' },
+  { id: '4', name: 'region', prettyName: 'Район', show: true, type: 'location' },
   { id: '5', name: 'streets', prettyName: 'Улица', show: true, type: 'location' },
   { id: '6', name: 'direction', prettyName: 'Направление', show: true, type: 'location' },
   { id: '7', name: 'legalEntity', prettyName: 'Юр. лицо', show: true, type: 'location' },
@@ -168,6 +170,7 @@ const initialState: LocationsState = {
   getItemsListLoading: false,
   createRentLoading: false,
   createRentError: null,
+  clearRentLoading: false,
   createBookingLoading: false,
   createBookingError: null,
   removeBookingLoading: false,
@@ -266,6 +269,22 @@ const locationsSlice = createSlice({
       state.createLocationLoading = false;
       state.createError = error || null;
     });
+    builder.addCase(clearRent.pending, (state) => {
+      state.clearRentLoading = true;
+    });
+    builder.addCase(clearRent.fulfilled, (state, { payload: location }) => {
+      state.clearRentLoading = false;
+      const locationId = location._id;
+      const foundLocationIndex = state.locationsListData.locations.findIndex((loc) => loc._id === locationId);
+      if (foundLocationIndex !== -1) {
+        state.locationsListData.locations[foundLocationIndex] = location;
+      } else {
+        return;
+      }
+    });
+    builder.addCase(clearRent.rejected, (state) => {
+      state.clearRentLoading = false;
+    });
     builder.addCase(removeLocation.pending, (state, { meta: { arg: id } }) => {
       state.locationDeleteLoading = id;
     });
@@ -328,8 +347,8 @@ const locationsSlice = createSlice({
       state.createBookingError = error || null;
     });
 
-    builder.addCase(removeBooking.pending, (state) => {
-      state.removeBookingLoading = true;
+    builder.addCase(removeBooking.pending, (state, { meta: { arg: id } }) => {
+      state.removeBookingLoading = id.idBook;
     });
     builder.addCase(removeBooking.fulfilled, (state) => {
       state.removeBookingLoading = false;
