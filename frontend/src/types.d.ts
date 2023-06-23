@@ -468,3 +468,21 @@ export interface IData {
   label: string;
   value: number;
 }
+
+export interface LocationGraphicType {
+  _id: string;
+  rent: null | IPeriod;
+  booking: BookingListType[];
+  client: string;
+  month: string;
+  year: number;
+  price: number;
+}
+
+export interface LocationGraphicDateType {
+  locations: LocationGraphicType[];
+  page: number;
+  pages: number;
+  perPage: number;
+  count: number;
+}
