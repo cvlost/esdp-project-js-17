@@ -17,6 +17,7 @@ import path from 'path';
 import Size from '../models/Size';
 import Lighting from '../models/Lighting';
 import RentHistory from '../models/RentHistory';
+import * as notificationsService from '../services/notifications-service';
 
 const locationsRouter = express.Router();
 
@@ -69,6 +70,7 @@ locationsRouter.post('/', async (req, res, next) => {
   perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
 
   try {
+    await notificationsService.checkRentExpiration();
     const filteredLocations = await Location.find(filter);
     const count = filteredLocations.length;
     let pages = Math.ceil(count / perPage);

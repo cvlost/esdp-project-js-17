@@ -19,6 +19,7 @@ export interface INotification {
   subject: string;
   event: string;
   createdAt: string;
+  location: string;
 }
 
 export interface UserResponse {

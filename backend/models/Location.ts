@@ -157,14 +157,6 @@ LocationSchema.set('toJSON', {
   },
 });
 
-LocationSchema.pre('save', function (next) {
-  const currentDate = new Date();
-  if (this.rent && this.rent.end < currentDate) {
-    this.rent = null;
-  }
-  next();
-});
-
 const Location = model<ILocation>('Location', LocationSchema);
 
 export default Location;

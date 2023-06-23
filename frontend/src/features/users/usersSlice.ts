@@ -17,6 +17,7 @@ import {
   getUsersList,
   login,
   getNotifications,
+  readNotification,
 } from './usersThunks';
 
 interface UsersState {
@@ -171,6 +172,17 @@ const usersSlice = createSlice({
       state.alerts = alerts;
     });
     builder.addCase(getNotifications.rejected, (state) => {
+      state.alertsLoading = false;
+    });
+
+    builder.addCase(readNotification.pending, (state) => {
+      state.alertsLoading = true;
+    });
+    builder.addCase(readNotification.fulfilled, (state, { payload: alerts }) => {
+      state.alertsLoading = false;
+      state.alerts = alerts;
+    });
+    builder.addCase(readNotification.rejected, (state) => {
       state.alertsLoading = false;
     });
   },

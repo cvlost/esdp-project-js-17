@@ -15,6 +15,7 @@ import Size from './models/Size';
 import Client from './models/Client';
 import { ILocation } from './types';
 import dayjs from 'dayjs';
+import RentHistory from './models/RentHistory';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -35,6 +36,7 @@ const run = async () => {
     await db.dropCollection('lightings');
     await db.dropCollection('clients');
     await db.dropCollection('renthistories');
+    await db.dropCollection('notifications');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -197,40 +199,6 @@ const run = async () => {
       lighting: randElement(lightings)._id,
       size: randElement(sizes)._id,
       price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
-      rent:
-        Math.random() > 0.5
-          ? null
-          : {
-              start: new Date(
-                `2023-${String(randNum(1, 3)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-              end: new Date(
-                `2023-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-            },
-      reserve:
-        Math.random() > 0.5
-          ? null
-          : {
-              start: new Date(
-                `2024-${String(randNum(1, 6)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-              end: new Date(
-                `2024-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-            },
       placement: Math.random() > 0.5,
       addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
       description: Math.random() > 0.5 ? fixtureDescription : null,
@@ -243,11 +211,27 @@ const run = async () => {
     locations.push(loc);
   }
 
-  locations[0].rent = {
-    start: dayjs().subtract(60, 'days').toDate(),
-    end: dayjs().subtract(1, 'day').toDate(),
+  const setRentAndHistoryFor = async (loc: HydratedDocument<ILocation>, start: Date, end: Date) => {
+    loc.rent = { start, end };
+    await loc.save();
+
+    await RentHistory.create({
+      client: randElement(clients)._id,
+      location: loc._id,
+      rent_price: loc.price,
+      rent_cost: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent_date: { start, end },
+    });
   };
-  await locations[0].save();
+
+  await Promise.all([
+    setRentAndHistoryFor(locations[0], dayjs().subtract(60, 'days').toDate(), dayjs().subtract(1, 'days').toDate()),
+    setRentAndHistoryFor(locations[1], dayjs().subtract(60, 'days').toDate(), dayjs().add(5, 'days').toDate()),
+    setRentAndHistoryFor(locations[2], dayjs().subtract(90, 'days').toDate(), dayjs().add(7, 'days').toDate()),
+    setRentAndHistoryFor(locations[3], dayjs().subtract(100, 'days').toDate(), dayjs().add(200, 'days').toDate()),
+    setRentAndHistoryFor(locations[4], dayjs().subtract(55, 'days').toDate(), dayjs().add(40, 'days').toDate()),
+    setRentAndHistoryFor(locations[5], dayjs().subtract(150, 'days').toDate(), dayjs().subtract(1, 'days').toDate()),
+  ]);
 
   await db.close();
 };

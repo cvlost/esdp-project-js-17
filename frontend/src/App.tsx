@@ -34,7 +34,7 @@ function App() {
   const user = useAppSelector(selectUser);
 
   useEffect(() => {
-    if (user) dispatch(getNotifications(user._id));
+    if (user) dispatch(getNotifications());
   }, [dispatch, user]);
 
   return (
@@ -55,6 +55,7 @@ function App() {
           <Route path="/:id" element={<LocationPage />} />
           <Route path="/clients-analytics" element={<AnalyticsClient />} />
           <Route path="/rentHistory/:id" element={<RentHistoryList />} />
+          <Route path="/location/:id" element={<LocationPage />} />
         </Route>
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/create_size" element={<CreateSize />} />

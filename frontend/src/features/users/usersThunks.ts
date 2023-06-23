@@ -32,10 +32,23 @@ export const login = createAsyncThunk<UserResponse, LoginMutation, { rejectValue
   },
 );
 
-export const getNotifications = createAsyncThunk<INotification[], string>('users/getNotifications', async (id) => {
-  const response = await axiosApi.get<INotification[]>(`/users/${id}/notifications`);
-  return response.data;
-});
+export const getNotifications = createAsyncThunk<INotification[], void, { state: RootState }>(
+  'users/getNotifications',
+  async (_, { getState }) => {
+    const id = getState().users.user?._id;
+    const response = await axiosApi.get<INotification[]>(`/users/${id}/notifications`);
+    return response.data;
+  },
+);
+
+export const readNotification = createAsyncThunk<INotification[], string, { state: RootState }>(
+  'users/readNotification',
+  async (notificationId, { getState }) => {
+    const id = getState().users.user?._id;
+    const response = await axiosApi.patch<INotification[]>(`/users/${id}/notifications/${notificationId}/read`);
+    return response.data;
+  },
+);
 
 export const createUser = createAsyncThunk<void, UserMutation, { rejectValue: ValidationError }>(
   'users/create',

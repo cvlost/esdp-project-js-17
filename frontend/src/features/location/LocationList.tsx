@@ -66,6 +66,7 @@ import { Link } from 'react-router-dom';
 import RentForm from './components/rent/RentForm';
 import BookingForm from './components/BookingForm/BookingForm';
 import BookingList from './components/BookingList';
+import { getNotifications } from '../users/usersThunks';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -100,6 +101,7 @@ const LocationList = () => {
 
   const onRentUpdateSubmit = async (rent: RentMutation) => {
     await dispatch(updateRent({ rent, id: locationID }));
+    await dispatch(getNotifications());
     await dispatch(
       getLocationsList({
         page: locationsListData.page,

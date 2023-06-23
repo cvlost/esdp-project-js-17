@@ -24,7 +24,7 @@ import {
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GroupIcon from '@mui/icons-material/Groups';
-import { getEditingUser, getUsersList, logout, updateUser } from '../../features/users/usersThunks';
+import { getEditingUser, getUsersList, logout, readNotification, updateUser } from '../../features/users/usersThunks';
 import ModalBody from '../ModalBody';
 import UserForm from '../../features/users/components/UserForm';
 import {
@@ -34,6 +34,7 @@ import {
   selectOneEditingUser,
   selectUser,
   selectUserAlerts,
+  selectUserAlertsLoading,
   selectUsersListData,
 } from '../../features/users/usersSlice';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
@@ -61,6 +62,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const alertsLoading = useAppSelector(selectUserAlertsLoading);
   const { confirm } = useConfirm();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -181,7 +183,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
                       aria-controls="panel1a-content"
                       id="panel1a-header"
                     >
-                      <Typography>
+                      <Typography component="div">
                         {alert.subject === 'rent' ? (
                           <>
                             <Chip
@@ -192,7 +194,11 @@ const UserMenu: React.FC<Props> = ({ user }) => {
                               color="info"
                             />
                             <Typography component="span" sx={{ fontSize: '0.8em', fontWeight: 'bold', mx: 1 }}>
-                              {alert.event === 'ended' ? 'Окончание аренды' : 'Неизвестное событие'}
+                              {alert.event === 'ended'
+                                ? 'Окончание аренды'
+                                : alert.event === 'expires'
+                                ? 'Срок аренды подходит к концу'
+                                : 'Неизвестное событие'}
                             </Typography>
                           </>
                         ) : (
@@ -207,8 +213,25 @@ const UserMenu: React.FC<Props> = ({ user }) => {
                     </AccordionDetails>
                     <Divider />
                     <AccordionActions>
-                      <Button size="small">Прочитано</Button>
-                      <Button size="small">Скрыть</Button>
+                      <Button
+                        disabled={alertsLoading}
+                        size="small"
+                        onClick={() => {
+                          navigate(`/location/${alert.location}`);
+                          setIsNotificationsOpen(false);
+                        }}
+                      >
+                        Локация
+                      </Button>
+                      <Button
+                        disabled={alertsLoading}
+                        size="small"
+                        onClick={async () => {
+                          await dispatch(readNotification(alert._id));
+                        }}
+                      >
+                        Скрыть
+                      </Button>
                     </AccordionActions>
                   </Accordion>
                 ))}
