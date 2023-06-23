@@ -464,9 +464,10 @@ export interface AnalClientList {
 }
 
 export interface IData {
-  tooltip: BookingListType[];
+  tooltip: AnalType[] | BookingListType[];
   label: string;
   value: number;
+  comp: JSX.Element | JSX.Element[];
 }
 
 export interface LocationGraphicType {

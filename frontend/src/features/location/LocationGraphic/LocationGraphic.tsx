@@ -13,6 +13,7 @@ import {
   Grid,
   Pagination,
   Paper,
+  Typography,
 } from '@mui/material';
 import { ARR, MainColorGreen } from '../../../constants';
 import TabContext from '@mui/lab/TabContext';
@@ -24,10 +25,11 @@ import dayjs from 'dayjs';
 import ru from 'dayjs/locale/ru';
 import PanelMenu from './compnents/PanelMenu';
 import PanelAccounts from './compnents/PanelAccounts';
-import BarChart from './compnents/BarChart/BarChart';
 import { fetchLocationGraphic } from './locationGraphicThunk';
 import { selectLocationGraphicFetch, selectLocationGraphicList, setCurrentPage } from './locationGraphicSlice';
 import LocationCardGrap from './compnents/LocationCardGrap';
+import BarChart from '../../../components/BarChart/BarChart';
+import { IData } from '../../../types';
 
 const LocationGraphic = () => {
   const [pullingMonth, setPullingMonth] = useState(
@@ -58,11 +60,23 @@ const LocationGraphic = () => {
     setValue(newValue);
   };
 
-  const BAR_CHART_DATA = locationGraphicList.locations.map((item, index) => {
+  const BAR_CHART_DATA: IData[] = locationGraphicList.locations.map((item, index) => {
     return {
       label: (index + 1).toString(),
       value: item.booking.length,
       tooltip: item.booking,
+      comp: item.booking.map((book) => (
+        <Box key={item._id}>
+          <Typography sx={{ color: '#fff', display: 'block', my: 1 }} component="span" color="inherit">
+            {`Занятость от ${dayjs(book.booking_date.start).format('DD.MM.YYYY')} до ${dayjs(
+              book.booking_date.end,
+            ).format('DD.MM.YYYY')}`}
+          </Typography>
+          <Typography sx={{ color: '#fff', display: 'block' }} component="span" color="inherit">
+            Клиент: {book.clientId}
+          </Typography>
+        </Box>
+      )),
     };
   });
 

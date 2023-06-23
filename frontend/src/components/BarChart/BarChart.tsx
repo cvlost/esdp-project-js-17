@@ -1,9 +1,9 @@
 import { scaleBand, scaleLinear } from 'd3';
-import { IData } from '../../../../../types';
 import React from 'react';
 import AxisBottom from './AxisBottom';
 import AxisLeft from './AxisLeft';
 import Bars from './Bars';
+import { IData } from '../../types';
 
 interface Props {
   data: IData[];

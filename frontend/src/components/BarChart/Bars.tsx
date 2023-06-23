@@ -1,8 +1,7 @@
 import React from 'react';
 import { ScaleBand, ScaleLinear } from 'd3';
-import { IData } from '../../../../../types';
-import { Box, Tooltip, Typography } from '@mui/material';
-import dayjs from 'dayjs';
+import { Box, Tooltip } from '@mui/material';
+import { IData } from '../../types';
 
 interface BarChartProps {
   data: IData[];
@@ -27,23 +26,14 @@ interface Props {
 const Bars: React.FC<Props> = ({ data, height, scaleY, scaleX }) => {
   return (
     <>
-      {data.map(({ value, label, tooltip }) => (
+      {data.map(({ value, label, tooltip, comp }) => (
         <Tooltip
           placement="right"
           key={`bar-${label}`}
           title={
             <>
-              {tooltip.map((book) => (
-                <Box key={book._id}>
-                  <Typography sx={{ color: '#fff', display: 'block', my: 1 }} component="span" color="inherit">
-                    {`Занятость от ${dayjs(book.booking_date.start).format('DD.MM.YYYY')} до ${dayjs(
-                      book.booking_date.end,
-                    ).format('DD.MM.YYYY')}`}
-                  </Typography>
-                  <Typography sx={{ color: '#fff', display: 'block' }} component="span" color="inherit">
-                    Клиент: {book.clientId}
-                  </Typography>
-                </Box>
+              {tooltip.map((_, index) => (
+                <Box key={index}>{comp}</Box>
               ))}
             </>
           }

@@ -1,14 +1,16 @@
 import React from 'react';
-import { Checkbox, Chip, FormControlLabel, FormGroup, Grid, MenuItem, TextField } from '@mui/material';
+import { Checkbox, Chip, FormControlLabel, FormGroup, Grid, IconButton, MenuItem, TextField } from '@mui/material';
 import { MainColorGreen, YEAR } from '../../../constants';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 interface Props {
   filterYearValue: string;
   setFilterYearValue: React.ChangeEventHandler;
   setFilterDate: React.MouseEventHandler;
+  setOpen: React.MouseEventHandler;
 }
 
-const ControlPanel: React.FC<Props> = ({ filterYearValue, setFilterYearValue, setFilterDate }) => {
+const ControlPanel: React.FC<Props> = ({ filterYearValue, setFilterYearValue, setFilterDate, setOpen }) => {
   return (
     <Grid container alignItems="center" mb={2}>
       <Grid item>
@@ -47,6 +49,11 @@ const ControlPanel: React.FC<Props> = ({ filterYearValue, setFilterYearValue, se
             labelPlacement="end"
           />
         </FormGroup>
+      </Grid>
+      <Grid item>
+        <IconButton onClick={setOpen} sx={{ ml: 1 }}>
+          <BarChartIcon />
+        </IconButton>
       </Grid>
     </Grid>
   );
