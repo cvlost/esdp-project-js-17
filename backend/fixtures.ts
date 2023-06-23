@@ -13,8 +13,6 @@ import Area from './models/Area';
 import Lighting from './models/Lighting';
 import Size from './models/Size';
 import Client from './models/Client';
-import dayjs from 'dayjs';
-import ru from 'dayjs/locale/ru';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -182,63 +180,80 @@ const run = async () => {
     },
   );
 
-  for (let i = 0; i < 20; i++) {
-    await Location.create({
-      area: randElement(areas)._id,
-      client: randElement(clients)._id,
-      direction: randElement(directions)._id,
-      city: randElement(cities)._id,
-      region: randElement(regions)._id,
-      streets: [randElement(streets)._id, randElement(streets)._id],
-      format: randElement(formats)._id,
-      legalEntity: randElement(legalEntities)._id,
-      lighting: randElement(lightings)._id,
-      size: randElement(sizes)._id,
-      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
-      rent:
-        Math.random() > 0.5
-          ? null
-          : {
-              start: new Date(
-                `2023-${String(randNum(1, 3)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-              end: new Date(
-                `2023-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-            },
-      reserve:
-        Math.random() > 0.5
-          ? null
-          : {
-              start: new Date(
-                `2024-${String(randNum(1, 6)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-              end: new Date(
-                `2024-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-            },
-      placement: Math.random() > 0.5,
-      addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
-      description: Math.random() > 0.5 ? fixtureDescription : null,
-      dayImage: `fixtures/${i + 1}.jpg`,
-      schemaImage: `fixtures/${i + 1}.png`,
-      status: null,
-      booking: [],
-      month: dayjs().locale(ru).format('MMMM'),
-      year: dayjs().year(),
-    });
+  const arr = [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+  ];
+
+  for (const month of arr) {
+    for (let i = 0; i < 5; i++) {
+      await Location.create({
+        area: randElement(areas)._id,
+        client: randElement(clients)._id,
+        direction: randElement(directions)._id,
+        city: randElement(cities)._id,
+        region: randElement(regions)._id,
+        streets: [randElement(streets)._id, randElement(streets)._id],
+        format: randElement(formats)._id,
+        legalEntity: randElement(legalEntities)._id,
+        lighting: randElement(lightings)._id,
+        size: randElement(sizes)._id,
+        price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+        rent:
+          Math.random() > 0.5
+            ? null
+            : {
+                start: new Date(
+                  `2023-${String(randNum(1, 3)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
+                    2,
+                    '0',
+                  )}T00:00:00.000Z`,
+                ),
+                end: new Date(
+                  `2023-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
+                    2,
+                    '0',
+                  )}T00:00:00.000Z`,
+                ),
+              },
+        reserve:
+          Math.random() > 0.5
+            ? null
+            : {
+                start: new Date(
+                  `2024-${String(randNum(1, 6)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
+                    2,
+                    '0',
+                  )}T00:00:00.000Z`,
+                ),
+                end: new Date(
+                  `2024-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
+                    2,
+                    '0',
+                  )}T00:00:00.000Z`,
+                ),
+              },
+        placement: Math.random() > 0.5,
+        addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
+        description: Math.random() > 0.5 ? fixtureDescription : null,
+        dayImage: `fixtures/${i + 1}.jpg`,
+        schemaImage: `fixtures/${i + 1}.png`,
+        status: null,
+        booking: [],
+        month: month,
+        year: 2023,
+      });
+    }
   }
 
   await db.close();

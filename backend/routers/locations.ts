@@ -63,7 +63,6 @@ export const flattenLookup: PipelineStage[] = [
 ];
 
 locationsRouter.post('/', async (req, res, next) => {
-  const filterYear = parseInt(req.query.filterYear as string) || dayjs().year();
   let perPage = parseInt(req.query.perPage as string);
   let page = parseInt(req.query.page as string);
   const filter: FilterQuery<ILocation> = req.body.filterQuery ? req.body.filterQuery : {};
@@ -86,7 +85,6 @@ locationsRouter.post('/', async (req, res, next) => {
       { $sort: { _id: -1 } },
       ...flattenLookup,
       { $project: { country: 0, description: 0 } },
-      { $match: { $or: [{ year: filterYear }] } },
     ]);
 
     return res.send({ locations, filtered: !!req.body.filterQuery, page, pages, count, perPage });
@@ -137,13 +135,38 @@ locationsRouter.post('/filter', async (req, res, next) => {
   }
 });
 
-// locationsRouter.get('/listGraphic', async (req, res, next) => {
-//   try {
-//     const location = await Location.find({});
-//   } catch (e) {
-//     return next(e);
-//   }
-// });
+locationsRouter.get('/list-graphic', async (req, res, next) => {
+  try {
+    const filterMonth = (req.query.filterMonth as string) || dayjs().locale(ru).format('MMMM');
+    const filterYear = parseInt(req.query.filterYear as string) || dayjs().year();
+
+    let perPage = parseInt(req.query.perPage as string);
+    let page = parseInt(req.query.page as string);
+
+    page = isNaN(page) || page <= 0 ? 1 : page;
+    perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
+    const locationFind = await Location.find({ month: filterMonth, year: filterYear });
+    const count = locationFind.length;
+    let pages = Math.ceil(locationFind.length / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
+
+    const locations = await Location.aggregate([
+      { $match: { _id: { $in: locationFind.map((loc) => loc._id) } } },
+      { $skip: (page - 1) * perPage },
+      { $limit: perPage },
+      { $sort: { _id: -1 } },
+      ...flattenLookup,
+      { $project: { rent: 1, booking: 1, client: 1, month: 1, year: 1, price: 1 } },
+    ]);
+
+    return res.send({ locations, page, pages, count, perPage });
+  } catch (e) {
+    return next(e);
+  }
+});
 
 locationsRouter.get('/getItems', async (req, res, next) => {
   try {
