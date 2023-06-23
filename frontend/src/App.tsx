@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import Login from './features/users/Login';
 import CreateUser from './features/users/CreateUser';
 import Users from './features/users/Users';
 import Protected from './components/Protected';
-import { useAppSelector } from './app/hooks';
+import { useAppDispatch, useAppSelector } from './app/hooks';
 import { selectUser } from './features/users/usersSlice';
 import Location from './features/location/Location';
 import CreateRegion from './features/location/region/CreateRegion';
@@ -27,9 +27,16 @@ import 'rsuite/dist/rsuite.min.css';
 import LinkList from './features/CommercialLink/LinkList';
 import RentHistoryList from './features/rentHistory/RentHistoryList';
 import AnalyticsClient from './features/AnalyticsClient/AnalyticsClient';
+import { getNotifications } from './features/users/usersThunks';
 
 function App() {
+  const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
+
+  useEffect(() => {
+    if (user) dispatch(getNotifications(user._id));
+  }, [dispatch, user]);
+
   return (
     <Layout>
       <Routes>

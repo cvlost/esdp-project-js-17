@@ -1,10 +1,28 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DeletedUserResponse, GlobalError, User, UserMutation, UsersListResponse, ValidationError } from '../../types';
+import {
+  DeletedUserResponse,
+  GlobalError,
+  INotification,
+  User,
+  UserMutation,
+  UsersListResponse,
+  ValidationError,
+} from '../../types';
 import { RootState } from '../../app/store';
-import { createUser, deleteUser, updateUser, getEditingUser, getUsersList, login } from './usersThunks';
+import {
+  createUser,
+  deleteUser,
+  updateUser,
+  getEditingUser,
+  getUsersList,
+  login,
+  getNotifications,
+} from './usersThunks';
 
 interface UsersState {
   user: User | null;
+  alerts: INotification[];
+  alertsLoading: boolean;
   usersListData: UsersListResponse;
   oneUser: User | null;
   oneEditUser: UserMutation | null;
@@ -26,6 +44,8 @@ interface UsersState {
 
 const initialState: UsersState = {
   user: null,
+  alerts: [],
+  alertsLoading: false,
   usersListData: {
     users: [],
     page: 1,
@@ -76,9 +96,10 @@ const usersSlice = createSlice({
       state.loginError = null;
       state.loginLoading = true;
     });
-    builder.addCase(login.fulfilled, (state, { payload: user }) => {
+    builder.addCase(login.fulfilled, (state, { payload }) => {
       state.loginLoading = false;
-      state.user = user;
+      state.user = payload.user;
+      state.alerts = payload.notifications;
     });
     builder.addCase(login.rejected, (state, { payload: error }) => {
       state.loginError = error || null;
@@ -141,6 +162,17 @@ const usersSlice = createSlice({
     builder.addCase(deleteUser.rejected, (state) => {
       state.deleteOneLoading = false;
     });
+
+    builder.addCase(getNotifications.pending, (state) => {
+      state.alertsLoading = true;
+    });
+    builder.addCase(getNotifications.fulfilled, (state, { payload: alerts }) => {
+      state.alertsLoading = false;
+      state.alerts = alerts;
+    });
+    builder.addCase(getNotifications.rejected, (state) => {
+      state.alertsLoading = false;
+    });
   },
 });
 
@@ -161,3 +193,5 @@ export const selectUsersListLoading = (state: RootState) => state.users.getAllLo
 export const selectRegisterLoading = (state: RootState) => state.users.registerLoading;
 export const selectRegisterError = (state: RootState) => state.users.registerError;
 export const selectSnackbarState = (state: RootState) => state.users.snackbar;
+export const selectUserAlerts = (state: RootState) => state.users.alerts;
+export const selectUserAlertsLoading = (state: RootState) => state.users.alertsLoading;

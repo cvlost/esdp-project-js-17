@@ -3,6 +3,7 @@ import axiosApi from '../../axios';
 import {
   DeletedUserResponse,
   GlobalError,
+  INotification,
   LoginMutation,
   RegisterResponse,
   User,
@@ -16,12 +17,12 @@ import { setUser, unsetUser } from './usersSlice';
 import { AppDispatch, RootState } from '../../app/store';
 import { handleAxiosError } from '../handleAxiosError';
 
-export const login = createAsyncThunk<User, LoginMutation, { rejectValue: GlobalError }>(
+export const login = createAsyncThunk<UserResponse, LoginMutation, { rejectValue: GlobalError }>(
   'users/login',
   async (loginMutation, { rejectWithValue }) => {
     try {
       const response = await axiosApi.post<UserResponse>('/users/sessions', loginMutation);
-      return response.data.user;
+      return response.data;
     } catch (e) {
       if (isAxiosError(e) && e.response && e.response.status === 400)
         return rejectWithValue(e.response.data as GlobalError);
@@ -30,6 +31,11 @@ export const login = createAsyncThunk<User, LoginMutation, { rejectValue: Global
     }
   },
 );
+
+export const getNotifications = createAsyncThunk<INotification[], string>('users/getNotifications', async (id) => {
+  const response = await axiosApi.get<INotification[]>(`/users/${id}/notifications`);
+  return response.data;
+});
 
 export const createUser = createAsyncThunk<void, UserMutation, { rejectValue: ValidationError }>(
   'users/create',

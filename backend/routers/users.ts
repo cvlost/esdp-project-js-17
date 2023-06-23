@@ -1,12 +1,9 @@
 import express from 'express';
 import User from '../models/Users';
-import Notification from '../models/Notification';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
-import mongoose, { HydratedDocument } from 'mongoose';
-import Location from '../models/Location';
-import { ILocation } from '../types';
-import Street from '../models/Street';
+import mongoose from 'mongoose';
+import * as notificationsService from '../services/notifications-service';
 
 const usersRouter = express.Router();
 
@@ -44,6 +41,21 @@ usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
       .skip((page - 1) * perPage)
       .limit(perPage);
     return res.send({ users, page, pages, count, perPage });
+  } catch (e) {
+    return next(e);
+  }
+});
+
+usersRouter.get('/:id/notifications', async (req, res, next) => {
+  const _id = req.params.id as string;
+
+  if (!mongoose.isValidObjectId(_id)) {
+    return res.status(422).send({ error: 'Некорректный id пользователя.' });
+  }
+
+  try {
+    const notifications = await notificationsService.getAll();
+    return res.send(notifications);
   } catch (e) {
     return next(e);
   }
@@ -155,30 +167,7 @@ usersRouter.post('/sessions', async (req, res, next) => {
     user.generateToken();
     await user.save();
 
-    const locations: HydratedDocument<ILocation>[] = await Location.find({ rent: { $ne: null } });
-
-    for (const loc of locations) {
-      if (loc.rent) {
-        if (loc.rent.end.getTime() < new Date().getTime()) {
-          const streets: string[] = await Promise.all(
-            loc.streets.map(async (street) => {
-              const streetObj = await Street.findById(street);
-              if (streetObj) return streetObj.name;
-              else return '';
-            }),
-          );
-          await Notification.deleteMany({ location: loc._id });
-          await Notification.create({
-            message: `Аренда локации ${streets.join(' / ')} закончилась`,
-            subject: 'rent',
-            event: 'ended',
-            location: loc._id,
-          });
-        }
-      }
-    }
-
-    const notifications = await Notification.find();
+    const notifications = await notificationsService.getAll();
 
     return res.send({
       message: 'Почта и пароль верные!',

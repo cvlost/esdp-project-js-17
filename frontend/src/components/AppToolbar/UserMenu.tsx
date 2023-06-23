@@ -2,7 +2,25 @@ import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router-dom';
 import { User, UserMutation } from '../../types';
-import { Button, Divider, Menu, MenuItem, Typography } from '@mui/material';
+import {
+  Accordion,
+  AccordionActions,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
+  Badge,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogContent,
+  Divider,
+  IconButton,
+  List,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GroupIcon from '@mui/icons-material/Groups';
@@ -15,12 +33,17 @@ import {
   selectEditOneUserLoading,
   selectOneEditingUser,
   selectUser,
+  selectUserAlerts,
   selectUsersListData,
 } from '../../features/users/usersSlice';
 import ShareLocationIcon from '@mui/icons-material/ShareLocation';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import useConfirm from '../Dialogs/Confirm/useConfirm';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import DateRangeIcon from '@mui/icons-material/DateRange';
 
 interface Props {
   user: User;
@@ -34,8 +57,10 @@ const UserMenu: React.FC<Props> = ({ user }) => {
   const usersListData = useAppSelector(selectUsersListData);
   const mainUser = useAppSelector(selectUser);
   const error = useAppSelector(selectEditingError);
+  const alerts = useAppSelector(selectUserAlerts);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { confirm } = useConfirm();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -71,6 +96,11 @@ const UserMenu: React.FC<Props> = ({ user }) => {
         <Typography mr={1}>{user.displayName}</Typography>
         <AccountCircleIcon />
       </Button>
+      <IconButton size="small" onClick={() => setIsNotificationsOpen(true)}>
+        <Badge badgeContent={alerts.length ? alerts.length : undefined} color="warning">
+          <NotificationsIcon sx={{ color: 'white' }} />
+        </Badge>
+      </IconButton>
       <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
         {user.role === 'admin' && [
           <MenuItem
@@ -135,6 +165,62 @@ const UserMenu: React.FC<Props> = ({ user }) => {
           <UserForm error={error} onSubmit={onFormSubmit} existingUser={editingUser} isEdit isLoading={editLoading} />
         </ModalBody>
       )}
+      <Dialog open={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} fullWidth={true}>
+        <DialogContent>
+          <>
+            <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
+              <NotificationsNoneIcon />
+              <Typography>Уведомления</Typography>
+            </Box>
+            {alerts.length ? (
+              <List>
+                {alerts.map((alert) => (
+                  <Accordion key={alert._id} sx={{ boxShadow: '0 0 .2em #cccccc', bgcolor: '#f6f8ff' }}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <Typography>
+                        {alert.subject === 'rent' ? (
+                          <>
+                            <Chip
+                              avatar={<DateRangeIcon />}
+                              label="Аренда"
+                              variant="outlined"
+                              size="small"
+                              color="info"
+                            />
+                            <Typography component="span" sx={{ fontSize: '0.8em', fontWeight: 'bold', mx: 1 }}>
+                              {alert.event === 'ended' ? 'Окончание аренды' : 'Неизвестное событие'}
+                            </Typography>
+                          </>
+                        ) : (
+                          'Неизвестный тип уведомления'
+                        )}
+                      </Typography>
+                    </AccordionSummary>
+                    <Divider />
+                    <AccordionDetails>
+                      <Typography sx={{ fontSize: '0.8em', fontWeight: 'bold', mb: 2 }}>Уведомление</Typography>
+                      <Typography>{alert.message}</Typography>
+                    </AccordionDetails>
+                    <Divider />
+                    <AccordionActions>
+                      <Button size="small">Прочитано</Button>
+                      <Button size="small">Скрыть</Button>
+                    </AccordionActions>
+                  </Accordion>
+                ))}
+              </List>
+            ) : (
+              <Alert severity="info" sx={{ width: '100%' }}>
+                Новых уведомлений нет.
+              </Alert>
+            )}
+          </>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
