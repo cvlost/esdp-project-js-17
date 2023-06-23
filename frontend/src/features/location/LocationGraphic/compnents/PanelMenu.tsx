@@ -1,19 +1,18 @@
 import React from 'react';
 import { Button, Grid, IconButton, MenuItem, TextField } from '@mui/material';
-import { resetFilter, selectLocationsListData, setPerPage } from '../../locationsSlice';
-import TuneIcon from '@mui/icons-material/Tune';
+import { resetFilter, selectLocationsListData } from '../../locationsSlice';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { YEAR } from '../../../../constants';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import { setPerPage } from '../locationGraphicSlice';
 
 interface Props {
-  setIsFilterOpen: React.MouseEventHandler;
+  setOpenBar: React.MouseEventHandler;
   setFilterYear: (e: React.ChangeEvent<HTMLInputElement>) => void;
   filterYear: string;
-  setOpenBar: React.MouseEventHandler;
 }
 
-const PanelMenu: React.FC<Props> = ({ setIsFilterOpen, setFilterYear, filterYear, setOpenBar }) => {
+const PanelMenu: React.FC<Props> = ({ setOpenBar, setFilterYear, filterYear }) => {
   const dispatch = useAppDispatch();
   const listData = useAppSelector(selectLocationsListData);
   const locationsListData = useAppSelector(selectLocationsListData);
@@ -40,9 +39,9 @@ const PanelMenu: React.FC<Props> = ({ setIsFilterOpen, setFilterYear, filterYear
           select
           size="small"
           variant="outlined"
-          value={filterYear}
-          onChange={setFilterYear}
           label="Выбрать год"
+          onChange={setFilterYear}
+          value={filterYear}
         >
           <MenuItem disabled value="">
             Выбрать год
@@ -53,11 +52,6 @@ const PanelMenu: React.FC<Props> = ({ setIsFilterOpen, setFilterYear, filterYear
             </MenuItem>
           ))}
         </TextField>
-      </Grid>
-      <Grid item>
-        <IconButton onClick={setIsFilterOpen} sx={{ ml: 1 }}>
-          <TuneIcon />
-        </IconButton>
       </Grid>
       <Grid item>
         <IconButton onClick={setOpenBar} sx={{ ml: 1 }}>

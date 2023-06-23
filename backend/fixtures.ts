@@ -13,6 +13,7 @@ import Area from './models/Area';
 import Lighting from './models/Lighting';
 import Size from './models/Size';
 import Client from './models/Client';
+import RentHistory from './models/RentHistory';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -197,7 +198,7 @@ const run = async () => {
 
   for (const month of arr) {
     for (let i = 0; i < 5; i++) {
-      await Location.create({
+      const loc = await Location.create({
         area: randElement(areas)._id,
         client: randElement(clients)._id,
         direction: randElement(directions)._id,
@@ -252,6 +253,30 @@ const run = async () => {
         booking: [],
         month: month,
         year: 2023,
+      });
+
+      await RentHistory.create({
+        client: randElement(clients)._id,
+        location: loc._id,
+        rend_date:
+          Math.random() > 0.5
+            ? null
+            : {
+                start: new Date(
+                  `2023-${String(randNum(1, 3)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
+                    2,
+                    '0',
+                  )}T00:00:00.000Z`,
+                ),
+                end: new Date(
+                  `2023-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
+                    2,
+                    '0',
+                  )}T00:00:00.000Z`,
+                ),
+              },
+        rent_price: 500,
+        rent_cost: 500,
       });
     }
   }

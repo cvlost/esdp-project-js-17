@@ -20,52 +20,45 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Tab from '@mui/material/Tab';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import {
-  selectLocationsFilter,
-  selectLocationsListData,
-  selectLocationsListLoading,
-  setCurrentPage,
-} from '../locationsSlice';
-import { getLocationsList } from '../locationsThunks';
 import dayjs from 'dayjs';
 import ru from 'dayjs/locale/ru';
-import ModalBody from '../../../components/ModalBody';
-import LocationFilter from '../components/LocationsFilter';
 import PanelMenu from './compnents/PanelMenu';
-import LocationCardGrap from './compnents/LocationCardGrap';
 import PanelAccounts from './compnents/PanelAccounts';
 import BarChart from './compnents/BarChart/BarChart';
+import { fetchLocationGraphic } from './locationGraphicThunk';
+import { selectLocationGraphicFetch, selectLocationGraphicList, setCurrentPage } from './locationGraphicSlice';
+import LocationCardGrap from './compnents/LocationCardGrap';
 
 const LocationGraphic = () => {
-  const [pullingMonth, setPullingMonth] = useState(ARR[0]);
-  const dispatch = useAppDispatch();
-  const locationsListData = useAppSelector(selectLocationsListData);
-  const filter = useAppSelector(selectLocationsFilter);
+  const [pullingMonth, setPullingMonth] = useState(
+    ARR[ARR.findIndex((item) => item === dayjs().locale(ru).format('MMMM'))],
+  );
   const [value, setValue] = useState(
     (ARR.findIndex((item) => item === dayjs().locale(ru).format('MMMM')) + 1).toString(),
   );
-  const [filterYear, setFilterYear] = useState(dayjs().year().toString());
-  const locationsListLoading = useAppSelector(selectLocationsListLoading);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const locationLoading = useAppSelector(selectLocationsListLoading);
   const [openBar, setOpenBar] = useState(false);
+  const [filterYear, setFilterYear] = useState(dayjs().year().toString());
+
+  const dispatch = useAppDispatch();
+  const locationGraphicList = useAppSelector(selectLocationGraphicList);
+  const locationGraphicLoading = useAppSelector(selectLocationGraphicFetch);
 
   useEffect(() => {
     dispatch(
-      getLocationsList({
-        page: locationsListData.page,
-        perPage: locationsListData.perPage,
+      fetchLocationGraphic({
+        page: locationGraphicList.page,
+        perPage: locationGraphicList.perPage,
         filterYear: parseInt(filterYear),
-        filtered: filter.filtered,
+        filterMonth: pullingMonth,
       }),
     );
-  }, [dispatch, filter.filtered, locationsListData.page, locationsListData.perPage, filterYear]);
+  }, [dispatch, locationGraphicList.page, locationGraphicList.perPage, pullingMonth, filterYear]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
-  const BAR_CHART_DATA = locationsListData.locations.map((item, index) => {
+  const BAR_CHART_DATA = locationGraphicList.locations.map((item, index) => {
     return {
       label: (index + 1).toString(),
       value: item.booking.length,
@@ -90,9 +83,8 @@ const LocationGraphic = () => {
             <Box sx={{ display: 'flex', mb: 1 }}>
               <PanelMenu
                 filterYear={filterYear}
-                setFilterYear={(e: React.ChangeEvent<HTMLInputElement>) => setFilterYear(e.target.value)}
-                setIsFilterOpen={() => setIsFilterOpen((prev) => !prev)}
                 setOpenBar={() => setOpenBar(true)}
+                setFilterYear={(e: React.ChangeEvent<HTMLInputElement>) => setFilterYear(e.target.value)}
               />
             </Box>
             <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden' }}>
@@ -103,7 +95,7 @@ const LocationGraphic = () => {
                       <Tab
                         onClick={() => setPullingMonth(ARR[index])}
                         key={month}
-                        label={`${month}, ${filterYear}`}
+                        label={`${month}, 2023`}
                         value={(index + 1).toString()}
                       />
                     ))}
@@ -112,16 +104,16 @@ const LocationGraphic = () => {
                 {ARR.map((month, index) => (
                   <TabPanel key={index} value={(index + 1).toString()}>
                     <Grid sx={{ p: 1 }} container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
-                      {locationsListData.locations.length !== 0 ? (
-                        !locationLoading ? (
-                          locationsListData.locations.map((loc, index) => (
+                      {locationGraphicList.locations.length !== 0 ? (
+                        !locationGraphicLoading ? (
+                          locationGraphicList.locations.map((loc, index) => (
                             <LocationCardGrap key={loc._id} loc={loc} month={month} index={index} />
                           ))
                         ) : (
                           <CircularProgress />
                         )
                       ) : (
-                        <Alert severity="info">Список локаций пуст</Alert>
+                        <Alert severity="info">В данный момент локаций нет</Alert>
                       )}
                     </Grid>
                   </TabPanel>
@@ -136,17 +128,14 @@ const LocationGraphic = () => {
             <Pagination
               size="small"
               sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
-              disabled={locationsListLoading}
-              count={locationsListData.pages}
-              page={locationsListData.page}
+              disabled={locationGraphicLoading}
+              count={locationGraphicList.pages}
+              page={locationGraphicList.page}
               onChange={(event, page) => dispatch(setCurrentPage(page))}
             />
           </Grid>
         </Grid>
       </Container>
-      <ModalBody isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)}>
-        <LocationFilter onClose={() => setIsFilterOpen(false)} />
-      </ModalBody>
       <Dialog
         open={openBar}
         onClose={() => setOpenBar(false)}
