@@ -208,6 +208,11 @@ const run = async () => {
       companyPhone: '+99655117852',
       companyEmail: 'orange@gmail.com',
     },
+    {
+      companyName: 'Ананас',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
   );
 
   const createOneLocation = async (i: number, month = 'май') => {
