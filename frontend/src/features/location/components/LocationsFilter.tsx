@@ -73,7 +73,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                 fontWeight="bold"
                 color={criteriaData.count ? '#1976d2' : 'darkorange'}
               >
-                {criteriaDataLoading ? <CircularProgress size={14} /> : criteriaData.count}
+                {criteriaDataLoading ? <CircularProgress color="success" size={14} /> : criteriaData.count}
               </Typography>
             </Typography>
           </Grid>
@@ -192,7 +192,7 @@ const LocationFilter: React.FC<Props> = ({ onClose }) => {
                   onChange={(event, value) => handleFilterChange({ directions: value })}
                   getOptionLabel={(option) => option.name}
                   renderInput={(params) => (
-                    <TextField {...params} variant="standard" label="Направления" placeholder="Направления" />
+                    <TextField {...params} variant="standard" label="Стороны" placeholder="Стороны" />
                   )}
                 />
               </Grid>

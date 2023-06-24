@@ -94,7 +94,7 @@ const RentHistoryList = () => {
                           onClick={() => removeRentHistory(item._id)}
                           aria-label="delete"
                         >
-                          {loadingRemove && loadingRemove === item._id && <CircularProgress />}
+                          {loadingRemove && loadingRemove === item._id && <CircularProgress color="success" />}
                           <DeleteIcon />
                         </IconButton>
                         <Link to={`/${item.location._id}`} style={{ textDecoration: 'none' }}>
@@ -109,7 +109,7 @@ const RentHistoryList = () => {
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
-                    <CircularProgress />
+                    <CircularProgress color="success" />
                   </TableCell>
                 </TableRow>
               )}

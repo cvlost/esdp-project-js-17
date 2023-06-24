@@ -40,10 +40,12 @@ clientsRouter.get('/anal', auth, async (req, res, next) => {
         const obj: AnalClientType = {
           client: item,
           anal: clientHistory.map((item) => {
+            const month = dayjs(item.rent_date.end).locale(ru).format('MMMM');
+            const capitalizedMonth = month.charAt(0).toLocaleUpperCase() + month.slice(1);
             return {
               date: item.rent_date,
               total: item.rent_cost.toString(),
-              month: dayjs(item.rent_date.end).locale(ru).format('MMMM'),
+              month: capitalizedMonth,
               locationId: item.location.toString(),
             };
           }),

@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import TimelineIcon from '@mui/icons-material/Timeline';
+
 interface Props {
   onDelete: React.MouseEventHandler;
   deleteLoading: false | string;
@@ -44,11 +45,17 @@ const CardLocation: React.FC<Props> = ({
   if (loc.rent) {
     const startDate = dayjs(loc.rent.start);
     const endDate = dayjs(loc.rent.end);
-    const day = endDate.diff(startDate, 'day');
-    const month = endDate.diff(startDate, 'month');
+    const currentDate = dayjs();
 
-    if (day > 30 || day > 31) duration = `Освободится через ${month} месяцев-(а)`;
-    else duration = `Освободится через ${day} дней`;
+    if (currentDate.isBefore(startDate)) {
+      const daysUntilStart = startDate.diff(currentDate, 'day');
+      duration = `Освободится через ${daysUntilStart} дней до начала аренды`;
+    } else if (currentDate.isSame(startDate) || currentDate.isAfter(startDate)) {
+      const daysRemaining = endDate.diff(currentDate, 'day');
+      duration = `Освободится через ${daysRemaining} дней`;
+    } else {
+      duration = 'Аренда завершена';
+    }
   }
 
   const cells: Record<string, React.ReactNode> = {
@@ -56,34 +63,76 @@ const CardLocation: React.FC<Props> = ({
       <Box onClick={() => navigate(`/${loc._id}`)}>
         {`${loc.city} ${loc.streets[0] + '/' + loc.streets[1]}, ${loc.direction}`}
         {loc.addressNote && (
-          <Typography color="gray" fontSize=".85em">
+          <Typography color="gray" fontSize="14px">
             ({loc.addressNote})
           </Typography>
         )}
       </Box>
     ),
-    area: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.area}</Typography>,
-    city: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.city}</Typography>,
-    region: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.region}</Typography>,
-    streets: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.streets[0] + '/' + loc.streets[1]}</Typography>,
-    direction: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.direction}</Typography>,
-    legalEntity: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.legalEntity}</Typography>,
-    size: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.size}</Typography>,
-    format: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.format}</Typography>,
-    lighting: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.lighting}</Typography>,
+    area: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.area}
+      </Typography>
+    ),
+    city: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.city}
+      </Typography>
+    ),
+    region: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.region}
+      </Typography>
+    ),
+    streets: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.streets[0] + '/' + loc.streets[1]}
+      </Typography>
+    ),
+    direction: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.direction}
+      </Typography>
+    ),
+    legalEntity: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.legalEntity}
+      </Typography>
+    ),
+    size: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.size}
+      </Typography>
+    ),
+    format: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.format}
+      </Typography>
+    ),
+    lighting: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.lighting}
+      </Typography>
+    ),
     placement: (
-      <Typography onClick={() => navigate(`/${loc._id}`)}>
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
         {loc.placement ? 'По направлению' : 'Не по направлению'}
       </Typography>
     ),
-    price: <Typography onClick={() => navigate(`/${loc._id}`)}>{loc.price}</Typography>,
+    price: (
+      <Typography fontSize="14px" onClick={() => navigate(`/${loc._id}`)}>
+        {loc.price}
+      </Typography>
+    ),
     rent: (
       <div onClick={rentOpen}>
         {loc.rent ? (
           <>
-            <Typography sx={{ color: 'green' }}>{loc.client}</Typography>
-            <Typography>{dayjs(loc.rent.start).format('DD.MM.YYYY')}</Typography>
-            <Typography>{dayjs(loc.rent.end).format('DD.MM.YYYY')}</Typography>
+            <Typography fontSize="14px" sx={{ color: 'green' }}>
+              {loc.client}
+            </Typography>
+            <Typography fontSize="14px">{dayjs(loc.rent.start).format('DD.MM.YYYY')}</Typography>
+            <Typography fontSize="14px">{dayjs(loc.rent.end).format('DD.MM.YYYY')}</Typography>
           </>
         ) : (
           'Свободен'
@@ -136,7 +185,9 @@ const CardLocation: React.FC<Props> = ({
             </Tooltip>
           </Box>
         ) : (
-          <Typography onClick={openBooking}>Нет</Typography>
+          <Typography fontSize="14px" onClick={openBooking}>
+            Нет
+          </Typography>
         )}
       </>
     ),
@@ -182,6 +233,7 @@ const CardLocation: React.FC<Props> = ({
           {open && (
             <Paper sx={{ ml: 1 }} elevation={3}>
               <Switch
+                color="success"
                 disabled={loadingCheck ? loadingCheck === loc._id : false}
                 onClick={checkedCardLocation}
                 checked={loc.checked}

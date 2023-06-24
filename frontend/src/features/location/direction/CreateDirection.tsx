@@ -93,7 +93,7 @@ const CreateDirection = () => {
   };
 
   const removeCardDirection = async (id: string) => {
-    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данное направление?')) {
+    if (await confirm('Запрос на удаление', 'Вы действительно хотите удалить данную сторону?')) {
       await dispatch(deleteDirection(id)).unwrap();
       await dispatch(getDirectionsList()).unwrap();
       dispatch(openSnackbar({ status: true, parameter: 'remove_direction' }));
@@ -136,10 +136,10 @@ const CreateDirection = () => {
         )}
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
           <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ minWidth: 150 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="left">Направление</StyledTableCell>
+                  <StyledTableCell align="left">Сторона</StyledTableCell>
                   <StyledTableCell align="right">Управление</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -164,7 +164,7 @@ const CreateDirection = () => {
                 ) : (
                   <TableRow>
                     <TableCell>
-                      <CircularProgress />
+                      <CircularProgress color="success" />
                     </TableCell>
                   </TableRow>
                 )}

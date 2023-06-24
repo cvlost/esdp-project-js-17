@@ -131,13 +131,15 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
               </Alert>
             )
           ) : (
-            <CircularProgress />
+            <CircularProgress color="success" />
           )}
         </Grid>
         <Grid item>
           <TextField
             value={valueClient}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValueClient(e.target.value)}
+            color="success"
+            autoComplete="off"
             fullWidth
             select
             name="client"
@@ -160,7 +162,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
                 <Alert severity="info">Список пуст</Alert>
               )
             ) : (
-              <CircularProgress />
+              <CircularProgress color="success" />
             )}
           </TextField>
           <Link to="/create_client" style={{ display: 'block', textAlign: 'center', margin: '10px 0', color: 'green' }}>
@@ -179,7 +181,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
         </Grid>
         <Grid item alignSelf="center">
           <Button disabled={createLoading} type="submit" color="success" variant="contained">
-            {!createLoading ? 'Бронировать' : <CircularProgress />}
+            {!createLoading ? 'Бронировать' : <CircularProgress color="success" />}
           </Button>
         </Grid>
       </Grid>

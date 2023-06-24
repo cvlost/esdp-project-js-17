@@ -61,7 +61,7 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit, existingRegion = initialS
         <SouthAmericaIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать район' : 'Создать район'}
+        {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать район' : 'Создать район'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -72,6 +72,7 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit, existingRegion = initialS
               value={state.city}
               name="city"
               label="Город"
+              color="success"
               onChange={inputChangeHandler}
               error={Boolean(getFieldError('city'))}
               helperText={getFieldError('city')}
@@ -92,6 +93,7 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit, existingRegion = initialS
             <TextField
               value={state.name}
               onChange={inputChangeHandler}
+              color="success"
               required
               fullWidth
               label="Название района"
@@ -104,7 +106,7 @@ const FormCreateRegion: React.FC<Props> = ({ onSubmit, existingRegion = initialS
           </Grid>
         </Grid>
         <Button disabled={Loading} color="success" type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
+          {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>

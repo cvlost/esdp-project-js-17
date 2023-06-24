@@ -104,7 +104,7 @@ const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
                       onClick={() => removeCardBooking(booking._id)}
                       aria-label="delete"
                     >
-                      {loadingRemove && loadingRemove === booking._id && <CircularProgress />}
+                      {loadingRemove && loadingRemove === booking._id && <CircularProgress color="success" />}
                       <DeleteIcon />
                     </IconButton>
                     <Link to={`/${booking.locationId}`}>
@@ -126,7 +126,7 @@ const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
         ) : (
           <TableRow>
             <TableCell>
-              <CircularProgress />
+              <CircularProgress color="success" />
             </TableCell>
           </TableRow>
         )}

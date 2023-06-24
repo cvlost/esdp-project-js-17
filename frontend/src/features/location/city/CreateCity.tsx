@@ -136,7 +136,7 @@ const CreateCity = () => {
           )}
           <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
             <TableContainer>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <Table sx={{ minWidth: 150 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
                     <StyledTableCell align="left">Город</StyledTableCell>
@@ -164,7 +164,7 @@ const CreateCity = () => {
                   ) : (
                     <TableRow>
                       <TableCell>
-                        <CircularProgress />
+                        <CircularProgress color="success" />
                       </TableCell>
                     </TableRow>
                   )}

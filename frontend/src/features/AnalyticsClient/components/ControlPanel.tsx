@@ -10,10 +10,10 @@ interface Props {
 
 const ControlPanel: React.FC<Props> = ({ filterYearValue, setFilterYearValue, setFilterDate }) => {
   return (
-    <Grid container alignItems="center" mb={2}>
+    <Grid container alignItems="center" justifyContent="space-evenly" mb={2}>
       <Grid item>
         <Chip
-          sx={{ fontSize: '20px', p: 3, color: MainColorGreen }}
+          sx={{ fontSize: '20px', p: 3, color: MainColorGreen, my: 2 }}
           label={`Аналитика клиентов за ${filterYearValue} год`}
           variant="outlined"
           color="success"
@@ -23,6 +23,7 @@ const ControlPanel: React.FC<Props> = ({ filterYearValue, setFilterYearValue, se
         <TextField
           select
           value={filterYearValue}
+          color="success"
           name="filterYear"
           label="Выбор года"
           onChange={setFilterYearValue}

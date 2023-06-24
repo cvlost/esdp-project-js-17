@@ -79,7 +79,7 @@ const AnalyticsClientMenuList = () => {
             </Typography>
           }
         >
-          <p style={{ cursor: 'pointer' }}>Колличество баннеров</p>
+          <p style={{ cursor: 'pointer' }}>Количество баннеров</p>
         </Tooltip>
       </StyledTableCell>
     </>

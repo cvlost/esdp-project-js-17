@@ -15,7 +15,7 @@ import {
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ILocationLink } from '../../../types';
 import { apiURL } from '../../../constants';
 
@@ -42,7 +42,6 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 const CommercialLinkCard: React.FC<Props> = ({ location, id }) => {
   const [expanded, setExpanded] = React.useState(false);
-  const navigate = useNavigate();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);

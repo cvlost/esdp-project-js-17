@@ -44,7 +44,7 @@ const CardLink: React.FC<Props> = ({ link, openModalLink, removeLinkOne }) => {
               {link.location.map((item, index) => (
                 <ListItem key={item}>
                   <ListItemText
-                    primary="Билборд"
+                    primary="Биллборд"
                     secondary={
                       <NavLink style={{ color: '#fff' }} to={`/${item}`}>
                         Локация №{index + 1}
@@ -57,7 +57,7 @@ const CardLink: React.FC<Props> = ({ link, openModalLink, removeLinkOne }) => {
           }
         >
           <Box sx={{ cursor: 'pointer', color: 'primary.dark' }} color="initial">
-            локации
+            Локации
           </Box>
         </Tooltip>
       </TableCell>
@@ -67,7 +67,7 @@ const CardLink: React.FC<Props> = ({ link, openModalLink, removeLinkOne }) => {
           onClick={removeLinkOne}
           aria-label="delete"
         >
-          {loadingRemove && loadingRemove === link._id && <CircularProgress />}
+          {loadingRemove && loadingRemove === link._id && <CircularProgress color="success" />}
           <DeleteIcon />
         </IconButton>
       </TableCell>

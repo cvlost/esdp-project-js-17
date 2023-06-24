@@ -97,23 +97,23 @@ const ConstructorLink = () => {
         <Avatar sx={{ m: 1 }}>
           <ConstructionIcon color="success" />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" sx={{ textAlign: 'center' }}>
           Конструктор предложения
         </Typography>
         <Chip
-          sx={{ fontSize: '20px', p: 3, marginRight: 'auto', mb: 2 }}
-          label={'Выберите поля '}
+          sx={{ fontSize: '20px', p: 3, marginRight: 'auto', my: 2 }}
+          label="Выберите поля "
           variant="outlined"
-          color="info"
+          color="success"
         />
-        <Grid spacing={2} container>
+        <Grid spacing={2} container sx={{ justifyContent: 'center' }}>
           <ConstructorCard />
           <Grid xs={12} item>
             <Chip
               sx={{ fontSize: '20px', p: 3, marginRight: 'auto', mt: 2 }}
-              label={'Ввести данные '}
+              label="Ввести данные "
               variant="outlined"
-              color="info"
+              color="success"
             />
             <Box component="form" sx={{ mt: 3, width: '100%' }}>
               <Grid container sx={{ flexDirection: 'column' }} spacing={3}>
@@ -149,7 +149,7 @@ const ConstructorLink = () => {
               </Grid>
             </Box>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item>
             <Button onClick={createCommercialLink} color="success" variant="contained" sx={{ mt: 3 }}>
               Создать предложение
             </Button>

@@ -44,7 +44,7 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit, existingDir = initialS
         <GpsFixedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать направление' : 'Создать направление'}
+        {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать сторону' : 'Создать сторону'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -52,9 +52,10 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit, existingDir = initialS
             <TextField
               value={value.name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue({ name: e.target.value })}
+              color="success"
               required
               fullWidth
-              label="Направление"
+              label="Сторона"
               type="text"
               name="name"
               autoComplete="off"
@@ -64,7 +65,7 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit, existingDir = initialS
           </Grid>
         </Grid>
         <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
-          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать направление' : 'Создать'}
+          {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать сторону' : 'Создать'}
         </Button>
       </Box>
     </Box>

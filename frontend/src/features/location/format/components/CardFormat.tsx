@@ -24,7 +24,7 @@ const CardFormat: React.FC<Props> = ({ removeFormat, format, onEditing }) => {
           onClick={removeFormat}
           aria-label="delete"
         >
-          {removeLoading && removeLoading === format._id && <CircularProgress />}
+          {removeLoading && removeLoading === format._id && <CircularProgress color="success" />}
           <DeleteIcon />
         </IconButton>
         <IconButton aria-label="success" onClick={onEditing}>

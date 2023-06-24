@@ -25,7 +25,7 @@ const CardSize: React.FC<Props> = ({ size, removeCardSize, onEditing }) => {
             onClick={removeCardSize}
             aria-label="delete"
           >
-            {removeLoading && removeLoading === size._id && <CircularProgress />}
+            {removeLoading && removeLoading === size._id && <CircularProgress color="success" />}
             <DeleteIcon />
           </IconButton>
           <IconButton aria-label="success" onClick={onEditing}>

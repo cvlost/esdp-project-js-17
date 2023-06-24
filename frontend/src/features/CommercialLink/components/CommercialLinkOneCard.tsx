@@ -132,7 +132,7 @@ const CommercialLinkOneCard = () => {
               )}
               {locationLinkOne.location.direction && (
                 <TableRow>
-                  <TableCell>Направление</TableCell>
+                  <TableCell>Сторона</TableCell>
                   <TableCell>{locationLinkOne.location.direction}</TableCell>
                 </TableRow>
               )}

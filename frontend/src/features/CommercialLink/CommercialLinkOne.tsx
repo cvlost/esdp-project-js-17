@@ -42,7 +42,7 @@ const CommercialLinkOne = () => {
                     component="img"
                     height="300"
                     image={apiURL + '/' + locationLinkOne.location?.schemaImage}
-                    alt="Paella dish"
+                    alt="schemaIm"
                   />
                 </SwiperSlide>
                 <SwiperSlide>
@@ -50,7 +50,7 @@ const CommercialLinkOne = () => {
                     component="img"
                     height="300"
                     image={apiURL + '/' + locationLinkOne.location?.dayImage}
-                    alt="Paella dish"
+                    alt="dayImage"
                   />
                 </SwiperSlide>
               </Swiper>
@@ -67,7 +67,7 @@ const CommercialLinkOne = () => {
           </Paper>
         </Container>
       ) : (
-        <CircularProgress />
+        <CircularProgress color="success" />
       )}
     </>
   );

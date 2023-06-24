@@ -62,7 +62,7 @@ const AnalyticsClient = () => {
                 ) : (
                   <TableRow>
                     <TableCell>
-                      <CircularProgress />
+                      <CircularProgress color="success" />
                     </TableCell>
                   </TableRow>
                 )

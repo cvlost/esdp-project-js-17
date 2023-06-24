@@ -335,7 +335,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             select
             value={state.direction}
             name="direction"
-            label="Направление"
+            label="Сторона"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('direction'))}
@@ -510,7 +510,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             variant="contained"
             fullWidth
           >
-            {isLoading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
+            {isLoading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать' : 'Создать'}
           </Button>
         </Grid>
       </Grid>

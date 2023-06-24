@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectFetchLocationLinkLoading, selectListLocationLink } from './commercialLinkSlice';
 import { fetchLocationLink } from './CommercialLinkThunk';
 import { useParams } from 'react-router-dom';
+
 const CommercialLink = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
@@ -37,7 +38,7 @@ const CommercialLink = () => {
             <Alert severity="error">Сcылка удалена!</Alert>
           )
         ) : (
-          <CircularProgress />
+          <CircularProgress color="success" />
         )}
       </Grid>
     </Container>
