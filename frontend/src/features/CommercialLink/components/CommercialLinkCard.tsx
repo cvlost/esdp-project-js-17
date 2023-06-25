@@ -50,8 +50,9 @@ const CommercialLinkCard: React.FC<Props> = ({ location, id }) => {
         component={Link}
         to={`/location/${id}/locationOne/${location._id}`}
         size="large"
-        sx={{ m: '0 auto', mt: 2, background: '#446DF6' }}
-        variant="contained"
+        sx={{ m: '0 auto', mt: 2 }}
+        color="success"
+        variant="outlined"
       >
         Подробнее
       </Button>

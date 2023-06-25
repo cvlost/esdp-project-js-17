@@ -186,7 +186,7 @@ const LocationList = () => {
       <Grid container alignItems="center" mb={2}>
         <Grid item>
           <Chip
-            sx={{ fontSize: '20px', p: 3, color: MainColorGreen }}
+            sx={{ fontSize: '20px', p: 3, color: MainColorGreen, mb: 2 }}
             label={
               (locationsListData.filtered ? `Подходящие локации: ` : `Общее количество локаций: `) +
               locationsListData.count
