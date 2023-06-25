@@ -37,7 +37,6 @@ commercialLinksRouter.get('/:shortUrl', async (req, res, next) => {
     if (!commLink) {
       return res.status(404).send({ message: 'Ссылка недествительна !' });
     }
-    console.log(config);
     return res.status(302).redirect(`http://95.85.35.4/link/${commLink._id}`);
   } catch (e) {
     return next(e);
