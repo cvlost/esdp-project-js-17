@@ -28,7 +28,7 @@ const usersPersistConfig = {
 const locationsPersistConfig = {
   key: 'ESDP-project-js-17:locations',
   storage,
-  whitelist: ['settings', 'selectedLocationId'],
+  whitelist: ['settings', 'selectedLocationId', 'locationsListData'],
 };
 
 const commercialLinkPersistConfig = {

@@ -37,10 +37,10 @@ import {
   selectSelectedLocationId,
   resetLocationId,
   selectGetItemsListLoading,
+  checkedLocation,
 } from './locationsSlice';
 import { MainColorGreen } from '../../constants';
 import {
-  checkedLocation,
   clearRent,
   getItems,
   getLocationsList,
@@ -161,28 +161,13 @@ const LocationList = () => {
     },
   }));
 
-  const checkedCardLocation = async (id: string) => {
-    await dispatch(checkedLocation({ id, allChecked: false })).unwrap();
-    await dispatch(
-      getLocationsList({
-        page: locationsListData.page,
-        perPage: locationsListData.perPage,
-        filtered: filter.filtered,
-      }),
-    );
+  const checkedCardLocation = (id: string) => {
+    dispatch(checkedLocation(id));
     dispatch(addLocationId());
   };
 
-  const resetCardLocationId = async () => {
-    await dispatch(checkedLocation({ id: undefined, allChecked: true })).unwrap();
+  const resetCardLocationId = () => {
     dispatch(resetLocationId());
-    await dispatch(
-      getLocationsList({
-        page: locationsListData.page,
-        perPage: locationsListData.perPage,
-        filtered: filter.filtered,
-      }),
-    );
   };
 
   const openBookingModal = (name: string, id: string) => {

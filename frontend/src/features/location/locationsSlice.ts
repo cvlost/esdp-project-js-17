@@ -18,7 +18,6 @@ import {
   removeLocation,
   updateLocation,
   getToEditOneLocation,
-  checkedLocation,
   getItems,
   createBooking,
   removeBooking,
@@ -36,6 +35,7 @@ interface LocationColumn {
 
 interface LocationsState {
   locationsListData: LocationsListResponse;
+  test: ILocation[];
   locationsListLoading: boolean;
   settings: {
     columns: LocationColumn[];
@@ -132,6 +132,7 @@ const initialFilterCriteria: FilterCriteriaResponse = {
 };
 
 const initialState: LocationsState = {
+  test: [],
   locationsListData: {
     locations: [],
     page: 1,
@@ -211,6 +212,15 @@ const locationsSlice = createSlice({
     },
     resetLocationId: (state) => {
       state.selectedLocationId = [];
+      state.locationsListData.locations.forEach((item) => {
+        item.checked = false;
+      });
+    },
+    checkedLocation: (state, id: PayloadAction<string>) => {
+      const index = state.locationsListData.locations.findIndex((item) => item._id === id.payload);
+      const loc = state.locationsListData.locations[index];
+
+      loc.checked = !loc.checked;
     },
   },
   extraReducers: (builder) => {
@@ -225,21 +235,25 @@ const locationsSlice = createSlice({
       state.getItemsListLoading = false;
     });
 
-    builder.addCase(checkedLocation.pending, (state, { meta: { arg: id } }) => {
-      state.checkedLocationLoading = id.id ? id.id : '';
-    });
-    builder.addCase(checkedLocation.fulfilled, (state) => {
-      state.checkedLocationLoading = false;
-    });
-    builder.addCase(checkedLocation.rejected, (state) => {
-      state.checkedLocationLoading = false;
-    });
-
     builder.addCase(getLocationsList.pending, (state) => {
       state.locationsListLoading = true;
     });
     builder.addCase(getLocationsList.fulfilled, (state, { payload }) => {
-      state.locationsListData = payload;
+      const initialAry = payload.locations.map((loc) => {
+        const locationOne = state.selectedLocationId.find((item) => item === loc._id);
+
+        if (locationOne) {
+          loc.checked = true;
+        }
+
+        return loc;
+      });
+
+      state.locationsListData = {
+        ...payload,
+        locations: initialAry,
+      };
+
       state.locationsListLoading = false;
     });
     builder.addCase(getLocationsList.rejected, (state) => {
@@ -361,8 +375,16 @@ const locationsSlice = createSlice({
 
 export const locationsReducer = locationsSlice.reducer;
 
-export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter, addLocationId, resetLocationId } =
-  locationsSlice.actions;
+export const {
+  setCurrentPage,
+  setPerPage,
+  toggleColumn,
+  setFilter,
+  resetFilter,
+  addLocationId,
+  resetLocationId,
+  checkedLocation,
+} = locationsSlice.actions;
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;

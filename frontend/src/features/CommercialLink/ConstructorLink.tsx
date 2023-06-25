@@ -14,7 +14,6 @@ import { createCommLink } from './CommercialLinkThunk';
 import ModalBody from '../../components/ModalBody';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
 import { openSnackbar } from '../users/usersSlice';
-import { checkedLocation } from '../location/locationsThunks';
 import { Navigate } from 'react-router-dom';
 import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
 
@@ -70,7 +69,6 @@ const ConstructorLink = () => {
   const handleCopy = async () => {
     try {
       if (link) {
-        await dispatch(checkedLocation({ id: undefined, allChecked: true }));
         dispatch(resetLocationId());
         await navigator.clipboard.writeText(link.fullLink as string);
         dispatch(openSnackbar({ status: true, parameter: 'copy_link' }));
