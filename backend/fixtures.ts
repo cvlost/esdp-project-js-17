@@ -178,10 +178,45 @@ const run = async () => {
       companyPhone: '+99655117852',
       companyEmail: 'orange@gmail.com',
     },
+    {
+      companyName: 'Ананас',
+      companyPhone: '+996551178715',
+      companyEmail: 'arbuz@gmail.com',
+    },
+    {
+      companyName: 'Персик',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
+    {
+      companyName: 'Груша',
+      companyPhone: '+996551178715',
+      companyEmail: 'arbuz@gmail.com',
+    },
+    {
+      companyName: 'Картошка',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
+    {
+      companyName: 'Лук',
+      companyPhone: '+996551178715',
+      companyEmail: 'arbuz@gmail.com',
+    },
+    {
+      companyName: 'Огурец',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
+    {
+      companyName: 'Ананас',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
   );
 
-  for (let i = 0; i < 20; i++) {
-    await Location.create({
+  const createOneLocation = async (i: number, month = 'май') => {
+    return await Location.create({
       area: randElement(areas)._id,
       client: randElement(clients)._id,
       direction: randElement(directions)._id,
@@ -234,7 +269,30 @@ const run = async () => {
       schemaImage: `fixtures/${i + 1}.png`,
       status: null,
       booking: [],
+      month: month,
+      year: 2023,
     });
+  };
+
+  const arr = [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+  ];
+
+  for (const month of arr) {
+    for (let i = 0; i < 5; i++) {
+      await createOneLocation(i, month);
+    }
   }
 
   await db.close();

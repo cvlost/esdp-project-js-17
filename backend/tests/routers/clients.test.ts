@@ -85,7 +85,7 @@ describe('clientsRouter', () => {
       const body = res.body;
       expect(res.statusCode).toBe(200);
       expect(Array.isArray(body.clintAnalNew)).toBe(true);
-      expect(body.clintAnalNew.length).toBe(length);
+      expect(body.clintAnalNew.filter.length).toBe(length);
       expect(body.pages).toBe(expectedPages);
       expect(body.perPage).toBe(expectedPerPage);
     });

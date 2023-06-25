@@ -58,6 +58,8 @@ export interface ILocation {
   schemaImage: string | null;
   checked?: boolean;
   status?: string | null;
+  month: string;
+  year: number;
 }
 
 export interface AreaType {
@@ -142,6 +144,7 @@ export interface AnalClientType {
     total: string;
     month: string;
     locationId: string;
+    year: number;
   }[];
   overallBudget: number;
   rentDay: number;

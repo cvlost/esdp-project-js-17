@@ -207,6 +207,39 @@ locationsRouter.post('/filter', async (req, res, next) => {
   }
 });
 
+locationsRouter.get('/list-graphic', async (req, res, next) => {
+  try {
+    const filterMonth = (req.query.filterMonth as string) || dayjs().locale(ru).format('MMMM');
+    const filterYear = parseInt(req.query.filterYear as string) || dayjs().year();
+
+    let perPage = parseInt(req.query.perPage as string);
+    let page = parseInt(req.query.page as string);
+
+    page = isNaN(page) || page <= 0 ? 1 : page;
+    perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
+    const locationFind = await Location.find({ month: filterMonth, year: filterYear });
+    const count = locationFind.length;
+    let pages = Math.ceil(locationFind.length / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
+
+    const locations = await Location.aggregate([
+      { $match: { _id: { $in: locationFind.map((loc) => loc._id) } } },
+      { $skip: (page - 1) * perPage },
+      { $limit: perPage },
+      { $sort: { _id: -1 } },
+      ...flattenLookup,
+      { $project: { rent: 1, booking: 1, client: 1, month: 1, year: 1, price: 1 } },
+    ]);
+
+    return res.send({ locations, page, pages, count, perPage });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 locationsRouter.get('/getItems', async (req, res, next) => {
   try {
     const [areas, regions, formats, legalEntity, directions, sizes, lighting] = await Promise.all([
@@ -292,6 +325,8 @@ locationsRouter.post(
       description: req.body.description,
       dayImage: req.files && files['dayImage'][0] ? 'images/day/' + files['dayImage'][0].filename : null,
       schemaImage: req.files && files['schemaImage'][0] ? 'images/schema/' + files['schemaImage'][0].filename : null,
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
     };
 
     try {
@@ -429,36 +464,6 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
-  } catch (e) {
-    return next(e);
-  }
-});
-
-locationsRouter.patch('/checked', auth, async (req, res, next) => {
-  try {
-    if (req.query.allChecked !== undefined) {
-      await Location.updateMany({ checked: false });
-      return res.send({ patch: false });
-    } else if (req.query.checked !== undefined) {
-      if (!mongoose.isValidObjectId(req.query.checked)) {
-        return res.status(422).send({ error: 'Некорректный id локации.' });
-      }
-
-      const locationOne = await Location.findOne({ _id: req.query.checked });
-
-      if (!locationOne) {
-        return res.status(404).send({ error: 'Локации не существует в базе.' });
-      }
-
-      if (!locationOne.checked) {
-        locationOne.checked = req.body.checked;
-      } else {
-        locationOne.checked = !req.body.checked;
-      }
-
-      await locationOne.save();
-      return res.sendStatus(204);
-    }
   } catch (e) {
     return next(e);
   }

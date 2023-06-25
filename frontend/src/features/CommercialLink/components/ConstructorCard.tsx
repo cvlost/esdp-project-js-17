@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 const ConstructorCard = () => {
   const constructorLocation = useAppSelector(selectConstructor);
   const dispatch = useAppDispatch();
+
   return (
     <>
       {constructorLocation.map((item) => (

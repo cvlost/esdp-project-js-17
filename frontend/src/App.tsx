@@ -28,6 +28,7 @@ import LinkList from './features/CommercialLink/LinkList';
 import RentHistoryList from './features/rentHistory/RentHistoryList';
 import AnalyticsClient from './features/AnalyticsClient/AnalyticsClient';
 import LocationsAnalytics from './features/AnalyticsLocation/LocationsAnalytics';
+import LocationGraphic from './features/location/LocationGraphic/LocationGraphic';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -49,6 +50,7 @@ function App() {
           <Route path="/:id" element={<LocationPage />} />
           <Route path="/locations-analytics" element={<LocationsAnalytics />} />
           <Route path="/clients-analytics" element={<AnalyticsClient />} />
+          <Route path="/location-graphic" element={<LocationGraphic />} />
           <Route path="/rentHistory/:id" element={<RentHistoryList />} />
         </Route>
         <Route element={<Protected userRole={user?.role} priority="admin" />}>

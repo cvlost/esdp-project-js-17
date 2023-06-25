@@ -1,33 +1,35 @@
 import React from 'react';
-import { Checkbox, Chip, FormControlLabel, FormGroup, Grid, MenuItem, TextField } from '@mui/material';
+import { Checkbox, Chip, FormControlLabel, FormGroup, Grid, IconButton, MenuItem, TextField } from '@mui/material';
 import { MainColorGreen, YEAR } from '../../../constants';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 interface Props {
   filterYearValue: string;
   setFilterYearValue: React.ChangeEventHandler;
   setFilterDate: React.MouseEventHandler;
+  setOpen: React.MouseEventHandler;
 }
 
-const ControlPanel: React.FC<Props> = ({ filterYearValue, setFilterYearValue, setFilterDate }) => {
+const ControlPanel: React.FC<Props> = ({ filterYearValue, setFilterYearValue, setFilterDate, setOpen }) => {
   return (
-    <Grid container alignItems="center" justifyContent="space-evenly" mb={2}>
-      <Grid item>
+    <Grid spacing={1} container alignItems="center" mb={2}>
+      <Grid xs={12} md={2} item>
         <Chip
-          sx={{ fontSize: '20px', p: 3, color: MainColorGreen, my: 2 }}
+          sx={{ fontSize: '20px', p: 3, color: MainColorGreen }}
           label={`Аналитика клиентов за ${filterYearValue} год`}
           variant="outlined"
           color="success"
         />
       </Grid>
-      <Grid item>
+      <Grid xs={8} lg={2} item>
         <TextField
           select
+          fullWidth
           value={filterYearValue}
-          color="success"
           name="filterYear"
+          color="success"
           label="Выбор года"
           onChange={setFilterYearValue}
-          sx={{ width: '300px', ml: 1 }}
         >
           <MenuItem value="" disabled>
             Выберите год
@@ -48,6 +50,11 @@ const ControlPanel: React.FC<Props> = ({ filterYearValue, setFilterYearValue, se
             labelPlacement="end"
           />
         </FormGroup>
+      </Grid>
+      <Grid item>
+        <IconButton onClick={setOpen} sx={{ ml: 1 }}>
+          <BarChartIcon />
+        </IconButton>
       </Grid>
     </Grid>
   );

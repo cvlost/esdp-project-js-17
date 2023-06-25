@@ -6,7 +6,7 @@ import { ILocation } from '../../../types';
 import { StyledTableRow } from '../../../constants';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../../app/hooks';
-import { selectCheckedLocationLoading, selectLocationsColumnSettings } from '../locationsSlice';
+import { selectLocationsColumnSettings } from '../locationsSlice';
 import { useNavigate } from 'react-router-dom';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -39,7 +39,6 @@ const CardLocation: React.FC<Props> = ({
 }) => {
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
-  const loadingCheck = useAppSelector(selectCheckedLocationLoading);
   let duration: string | null = null;
 
   if (loc.rent) {
@@ -232,12 +231,7 @@ const CardLocation: React.FC<Props> = ({
           </Tooltip>
           {open && (
             <Paper sx={{ ml: 1 }} elevation={3}>
-              <Switch
-                color="success"
-                disabled={loadingCheck ? loadingCheck === loc._id : false}
-                onClick={checkedCardLocation}
-                checked={loc.checked}
-              />
+              <Switch color="success" onClick={checkedCardLocation} checked={loc.checked} />
             </Paper>
           )}
         </ButtonGroup>
