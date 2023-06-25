@@ -42,7 +42,7 @@ const AnalyticsClientMenuList = () => {
               </Typography>
             }
           >
-            <p style={{ cursor: 'pointer' }}>{month}</p>
+            <p style={{ cursor: 'pointer' }}>{month.toLocaleUpperCase()}</p>
           </Tooltip>
         </StyledTableCell>
       ))}
