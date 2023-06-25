@@ -24,7 +24,7 @@ import {
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GroupIcon from '@mui/icons-material/Groups';
-import { getEditingUser, getUsersList, logout, readNotification, updateUser } from '../../features/users/usersThunks';
+import { getEditingUser, getUsersList, logout, updateUser } from '../../features/users/usersThunks';
 import ModalBody from '../ModalBody';
 import UserForm from '../../features/users/components/UserForm';
 import {
@@ -47,6 +47,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { wsReadNotification } from '../../app/middleware/notificationsActions';
 
 interface Props {
   user: User;
@@ -251,7 +252,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
                         disabled={alertsLoading}
                         size="small"
                         onClick={async () => {
-                          await dispatch(readNotification(alert._id));
+                          dispatch(wsReadNotification(alert._id));
                         }}
                       >
                         Скрыть

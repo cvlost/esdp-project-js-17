@@ -27,14 +27,20 @@ import 'rsuite/dist/rsuite.min.css';
 import LinkList from './features/CommercialLink/LinkList';
 import RentHistoryList from './features/rentHistory/RentHistoryList';
 import AnalyticsClient from './features/AnalyticsClient/AnalyticsClient';
-import { getNotifications } from './features/users/usersThunks';
+import { wsConnect, wsDisconnect } from './app/middleware/notificationsActions';
 
 function App() {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
 
   useEffect(() => {
-    if (user) dispatch(getNotifications());
+    if (user) {
+      dispatch(wsConnect(user._id));
+
+      return () => {
+        dispatch(wsDisconnect);
+      };
+    }
   }, [dispatch, user]);
 
   return (

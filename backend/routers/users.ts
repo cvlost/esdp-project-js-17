@@ -46,44 +46,6 @@ usersRouter.get('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
-usersRouter.get('/:id/notifications', auth, async (req, res, next) => {
-  const _id = req.params.id as string;
-
-  if (!mongoose.isValidObjectId(_id)) {
-    return res.status(422).send({ error: 'Некорректный id пользователя.' });
-  }
-
-  try {
-    const notifications = await notificationsService.getAll(_id);
-    return res.send(notifications);
-  } catch (e) {
-    return next(e);
-  }
-});
-
-usersRouter.patch('/:id/notifications/:notificationId/read', auth, async (req, res, next) => {
-  const userId = req.params.id as string;
-
-  if (!mongoose.isValidObjectId(userId)) {
-    return res.status(422).send({ error: 'Некорректный id пользователя.' });
-  }
-
-  const notificationId = req.params.notificationId as string;
-
-  if (!mongoose.isValidObjectId(notificationId)) {
-    return res.status(422).send({ error: 'Некорректный id уведомления.' });
-  }
-
-  try {
-    await notificationsService.readOne(userId, notificationId);
-
-    const notifications = await notificationsService.getAll(userId);
-    return res.send(notifications);
-  } catch (e) {
-    return next(e);
-  }
-});
-
 usersRouter.get('/:id', auth, async (req, res, next) => {
   const _id = req.params.id;
   if (!mongoose.isValidObjectId(_id)) {

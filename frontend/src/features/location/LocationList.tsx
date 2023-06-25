@@ -23,8 +23,11 @@ import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
-  selectEditLocationError,
+  addLocationId,
   resetFilter,
+  resetLocationId,
+  selectEditLocationError,
+  selectGetItemsListLoading,
   selectLocationsColumnSettings,
   selectLocationsDeleteLoading,
   selectLocationsFilter,
@@ -32,11 +35,8 @@ import {
   selectLocationsListLoading,
   selectOneLocationEditLoading,
   selectOneLocationToEdit,
-  setCurrentPage,
-  addLocationId,
   selectSelectedLocationId,
-  resetLocationId,
-  selectGetItemsListLoading,
+  setCurrentPage,
 } from './locationsSlice';
 import { MainColorGreen } from '../../constants';
 import {
@@ -66,7 +66,6 @@ import { Link } from 'react-router-dom';
 import RentForm from './components/rent/RentForm';
 import BookingForm from './components/BookingForm/BookingForm';
 import BookingList from './components/BookingList';
-import { getNotifications } from '../users/usersThunks';
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
@@ -101,7 +100,6 @@ const LocationList = () => {
 
   const onRentUpdateSubmit = async (rent: RentMutation) => {
     await dispatch(updateRent({ rent, id: locationID }));
-    await dispatch(getNotifications());
     await dispatch(
       getLocationsList({
         page: locationsListData.page,
@@ -195,7 +193,6 @@ const LocationList = () => {
 
   const clearLocRent = async () => {
     await dispatch(clearRent(locationID));
-    await dispatch(getNotifications());
     setIsRentOpen(false);
   };
 

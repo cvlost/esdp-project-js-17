@@ -17,6 +17,7 @@ import { lightingReducer } from '../features/location/lighting/lightingsSlice';
 import { clientReducer } from '../features/location/client/clientSlice';
 import { rentHistoryReducer } from '../features/rentHistory/rentHistorySlice';
 import { analyticsClientReducer } from '../features/AnalyticsClient/AnalyticsClientSlice';
+import notificationsMiddleware from './middleware/notificationsMiddleware';
 
 const usersPersistConfig = {
   key: 'ESDP-project-js-17:users',
@@ -61,7 +62,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).prepend(notificationsMiddleware),
 });
 
 export const persistor = persistStore(store);

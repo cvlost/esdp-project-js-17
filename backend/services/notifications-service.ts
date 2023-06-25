@@ -7,6 +7,9 @@ import dayjs from 'dayjs';
 import Client from '../models/Client';
 import Direction from '../models/Direction';
 import City from '../models/City';
+import { Server, Socket } from 'socket.io';
+import { Server as HttpServer } from 'http';
+import config from '../config';
 
 interface IBookingLocation {
   _id: Types.ObjectId;
@@ -19,6 +22,51 @@ interface IBookingLocation {
     booking_date: IPeriod;
   };
 }
+
+type SocketWithUserId = Socket & { userId: string };
+
+let io: Server;
+
+export const setupWebSocket = (server: HttpServer) => {
+  io = new Server(server, {
+    path: '/notifications',
+    cors: {
+      origin: config.clientUrl,
+    },
+  });
+
+  io.on('connection', async (socket: Socket) => {
+    console.log('New client connected');
+
+    const { userId } = socket.handshake.query as { userId: string };
+
+    const socketWithUserId = socket as SocketWithUserId;
+    socketWithUserId.userId = userId;
+
+    try {
+      const notifications = await getAll(userId);
+      socketWithUserId.emit('notifications', notifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+
+    socketWithUserId.on('notifications/read', async (data) => {
+      try {
+        console.log('reading 1 notification: ', data.notificationId);
+
+        await readOne(userId, data.notificationId);
+        const notifications = await getAll(userId);
+        socketWithUserId.emit('notifications', notifications);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    });
+
+    socketWithUserId.on('disconnect', () => {
+      console.log('Client disconnected');
+    });
+  });
+};
 
 const getDayLabel = (number: number) => {
   if (number > 10 && [11, 12, 13, 14].includes(number % 100)) return 'дней';
@@ -39,12 +87,41 @@ export const readOne = async (userId: string, notificationId: string) => {
   await Notification.updateOne({ _id: notificationId }, { $push: { readBy: userId } });
 };
 
-export const removePreExpired = async (locId: string) => {
+export const removeRent = async (locId: string) => {
   await Notification.deleteOne({ $and: [{ location: locId }, { event: 'rent/expires' }] });
+  await notifySpecificUsers();
+};
+
+export const notifySpecificUsers = async () => {
+  const sockets = Array.from(io.sockets.sockets.values());
+
+  for (const socket of sockets) {
+    const userId = (socket as SocketWithUserId).userId;
+    const notifications = await getAll(userId);
+    socket.emit('notifications', notifications);
+  }
+};
+
+export const updateRent = async () => {
+  await notifySpecificUsers();
+};
+
+export const updateBooking = async () => {
+  await notifySpecificUsers();
+};
+
+export const removeBooking = async (locId: string) => {
+  await Notification.deleteOne({ $and: [{ location: locId }, { event: 'booking/oncoming' }] });
+  await notifySpecificUsers();
 };
 
 export const checkBookingOncoming = async () => {
   try {
+    const locationsWithoutBooking = await Location.find({ booking: { $size: 0 } });
+    const locationIds: Types.ObjectId[] = locationsWithoutBooking.map((loc) => loc._id);
+
+    await Notification.deleteMany({ $and: [{ location: { $in: locationIds } }, { event: 'booking/oncoming' }] });
+
     const oncomingBookingDays = 7;
     const oncomingBookingDate = dayjs().add(oncomingBookingDays, 'days').toDate();
     const bookedLocations: IBookingLocation[] = await Location.aggregate([
@@ -162,6 +239,8 @@ export const checkRentExpiration = async () => {
       const dayLabel = getDayLabel(daysLeft);
       const message = `Срок аренды локации ${locationPrettyName} истекает через ${daysLeft} ${dayLabel}!`;
       const notification = await Notification.findOne({ $and: [{ location: loc._id }, { event: 'rent/expires' }] });
+
+      console.log(JSON.stringify(preExpiredLocationRents, null, 2));
 
       if (notification && notification.message === message) continue;
 

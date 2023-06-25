@@ -70,7 +70,6 @@ locationsRouter.post('/', async (req, res, next) => {
   perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
 
   try {
-    await notificationsService.checkAll();
     const filteredLocations = await Location.find(filter);
     const count = filteredLocations.length;
     let pages = Math.ceil(count / perPage);
@@ -418,6 +417,9 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
       rent_price: location.price,
       rent_cost: mongoose.Types.Decimal128.fromString(rentData.rent_cost),
     });
+
+    await notificationsService.updateRent();
+
     return res.send(location);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -441,12 +443,12 @@ locationsRouter.patch('/clearRent/:id', auth, async (req, res, next) => {
       return res.status(404).send({ error: 'Данная локация не найдена!' });
     }
 
-    await notificationsService.removePreExpired(location._id.toString());
-
     location.rent = null;
     location.client = null;
     await location.save();
     const [updatedLocation] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(id) } }, ...flattenLookup]);
+
+    await notificationsService.removeRent(location._id.toString());
 
     return res.send(updatedLocation);
   } catch (e) {

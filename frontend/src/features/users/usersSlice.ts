@@ -9,16 +9,7 @@ import {
   ValidationError,
 } from '../../types';
 import { RootState } from '../../app/store';
-import {
-  createUser,
-  deleteUser,
-  updateUser,
-  getEditingUser,
-  getUsersList,
-  login,
-  getNotifications,
-  readNotification,
-} from './usersThunks';
+import { createUser, deleteUser, getEditingUser, getUsersList, login, updateUser } from './usersThunks';
 
 interface UsersState {
   user: User | null;
@@ -90,6 +81,12 @@ const usersSlice = createSlice({
     },
     openSnackbar: (state, { payload: obj }: PayloadAction<{ status: boolean; parameter: string }>) => {
       state.snackbar = obj;
+    },
+    setNotifications: (state, { payload: notifications }: PayloadAction<INotification[]>) => {
+      state.alerts = notifications;
+    },
+    unsetNotifications: (state) => {
+      state.alerts = [];
     },
   },
   extraReducers: (builder) => {
@@ -163,33 +160,19 @@ const usersSlice = createSlice({
     builder.addCase(deleteUser.rejected, (state) => {
       state.deleteOneLoading = false;
     });
-
-    builder.addCase(getNotifications.pending, (state) => {
-      state.alertsLoading = true;
-    });
-    builder.addCase(getNotifications.fulfilled, (state, { payload: alerts }) => {
-      state.alertsLoading = false;
-      state.alerts = alerts;
-    });
-    builder.addCase(getNotifications.rejected, (state) => {
-      state.alertsLoading = false;
-    });
-
-    builder.addCase(readNotification.pending, (state) => {
-      state.alertsLoading = true;
-    });
-    builder.addCase(readNotification.fulfilled, (state, { payload: alerts }) => {
-      state.alertsLoading = false;
-      state.alerts = alerts;
-    });
-    builder.addCase(readNotification.rejected, (state) => {
-      state.alertsLoading = false;
-    });
   },
 });
 
 export const usersReducer = usersSlice.reducer;
-export const { unsetUser, setUser, resetLoginError, setCurrentPage, openSnackbar } = usersSlice.actions;
+export const {
+  unsetUser,
+  setUser,
+  resetLoginError,
+  setCurrentPage,
+  openSnackbar,
+  setNotifications,
+  unsetNotifications,
+} = usersSlice.actions;
 
 export const selectUser = (state: RootState) => state.users.user;
 export const selectLoginLoading = (state: RootState) => state.users.loginLoading;

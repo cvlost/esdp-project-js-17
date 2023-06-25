@@ -3,7 +3,6 @@ import axiosApi from '../../axios';
 import {
   DeletedUserResponse,
   GlobalError,
-  INotification,
   LoginMutation,
   RegisterResponse,
   User,
@@ -13,7 +12,7 @@ import {
   ValidationError,
 } from '../../types';
 import { isAxiosError } from 'axios';
-import { setUser, unsetUser } from './usersSlice';
+import { setUser, unsetNotifications, unsetUser } from './usersSlice';
 import { AppDispatch, RootState } from '../../app/store';
 import { handleAxiosError } from '../handleAxiosError';
 
@@ -32,24 +31,6 @@ export const login = createAsyncThunk<UserResponse, LoginMutation, { rejectValue
   },
 );
 
-export const getNotifications = createAsyncThunk<INotification[], void, { state: RootState }>(
-  'users/getNotifications',
-  async (_, { getState }) => {
-    const id = getState().users.user?._id;
-    const response = await axiosApi.get<INotification[]>(`/users/${id}/notifications`);
-    return response.data;
-  },
-);
-
-export const readNotification = createAsyncThunk<INotification[], string, { state: RootState }>(
-  'users/readNotification',
-  async (notificationId, { getState }) => {
-    const id = getState().users.user?._id;
-    const response = await axiosApi.patch<INotification[]>(`/users/${id}/notifications/${notificationId}/read`);
-    return response.data;
-  },
-);
-
 export const createUser = createAsyncThunk<void, UserMutation, { rejectValue: ValidationError }>(
   'users/create',
   async (registerMutation, { rejectWithValue }) => {
@@ -63,6 +44,7 @@ export const createUser = createAsyncThunk<void, UserMutation, { rejectValue: Va
 
 export const logout = createAsyncThunk<void, void, { state: RootState }>('users/logout', async (_, { dispatch }) => {
   dispatch(unsetUser());
+  dispatch(unsetNotifications());
   await axiosApi.delete('/users/sessions');
 });
 
