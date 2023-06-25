@@ -147,3 +147,14 @@ export interface AnalClientType {
   rentDay: number;
   numberOfBanners: number;
 }
+
+export interface AnalyticsLocationType {
+  _id: Types.ObjectId;
+  locationName: string;
+  dayImage: string;
+  overallBudget: number;
+  overallPrice: number;
+  rentDay: number;
+  rentPercent: number;
+  financePercent: number;
+}
