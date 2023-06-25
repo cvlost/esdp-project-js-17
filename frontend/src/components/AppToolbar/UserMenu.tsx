@@ -45,6 +45,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import DateRangeIcon from '@mui/icons-material/DateRange';
+import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 interface Props {
   user: User;
@@ -184,7 +186,20 @@ const UserMenu: React.FC<Props> = ({ user }) => {
                       id="panel1a-header"
                     >
                       <Typography component="div">
-                        {alert.subject === 'rent' ? (
+                        {alert.event === 'rent/ended' ? (
+                          <>
+                            <Chip
+                              avatar={<ErrorOutlineIcon />}
+                              label="Аренда"
+                              variant="outlined"
+                              size="small"
+                              color="info"
+                            />
+                            <Typography component="span" sx={{ fontSize: '0.8em', fontWeight: 'bold', mx: 1 }}>
+                              Окончание аренды
+                            </Typography>
+                          </>
+                        ) : alert.event === 'rent/expires' ? (
                           <>
                             <Chip
                               avatar={<DateRangeIcon />}
@@ -194,11 +209,20 @@ const UserMenu: React.FC<Props> = ({ user }) => {
                               color="info"
                             />
                             <Typography component="span" sx={{ fontSize: '0.8em', fontWeight: 'bold', mx: 1 }}>
-                              {alert.event === 'ended'
-                                ? 'Окончание аренды'
-                                : alert.event === 'expires'
-                                ? 'Срок аренды подходит к концу'
-                                : 'Неизвестное событие'}
+                              Срок аренды подходит к концу
+                            </Typography>
+                          </>
+                        ) : alert.event === 'booking/oncoming' ? (
+                          <>
+                            <Chip
+                              avatar={<PlaylistAddCheckCircleIcon />}
+                              label="Бронирование"
+                              variant="outlined"
+                              size="small"
+                              color="info"
+                            />
+                            <Typography component="span" sx={{ fontSize: '0.8em', fontWeight: 'bold', mx: 1 }}>
+                              Близжайшая дата бронирования
                             </Typography>
                           </>
                         ) : (

@@ -16,7 +16,6 @@ export interface LoginMutation {
 export interface INotification {
   message: string;
   _id: string;
-  subject: string;
   event: string;
   createdAt: string;
   location: string;

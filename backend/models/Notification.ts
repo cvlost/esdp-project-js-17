@@ -1,13 +1,10 @@
 import { model, Schema } from 'mongoose';
 import { INotification } from '../types';
+import { PeriodSchema } from './Period';
 
 const NotificationSchema = new Schema<INotification>(
   {
     message: {
-      type: String,
-      required: true,
-    },
-    subject: {
       type: String,
       required: true,
     },
@@ -19,6 +16,15 @@ const NotificationSchema = new Schema<INotification>(
       type: Schema.Types.ObjectId,
       required: true,
     },
+    client: {
+      type: Schema.Types.ObjectId,
+      required: true,
+    },
+    locationPrettyName: {
+      type: String,
+      required: true,
+    },
+    date: PeriodSchema,
     readBy: [Schema.Types.ObjectId],
     deletedBy: [Schema.Types.ObjectId],
     createdAt: {

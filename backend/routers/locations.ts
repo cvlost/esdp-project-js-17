@@ -70,7 +70,7 @@ locationsRouter.post('/', async (req, res, next) => {
   perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
 
   try {
-    await notificationsService.checkRentExpiration();
+    await notificationsService.checkAll();
     const filteredLocations = await Location.find(filter);
     const count = filteredLocations.length;
     let pages = Math.ceil(count / perPage);
@@ -440,6 +440,8 @@ locationsRouter.patch('/clearRent/:id', auth, async (req, res, next) => {
     if (!location) {
       return res.status(404).send({ error: 'Данная локация не найдена!' });
     }
+
+    await notificationsService.removePreExpired(location._id.toString());
 
     location.rent = null;
     location.client = null;

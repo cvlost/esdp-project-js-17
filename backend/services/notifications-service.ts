@@ -1,9 +1,24 @@
-import { HydratedDocument } from 'mongoose';
-import { ILocation } from '../types';
+import { HydratedDocument, Types } from 'mongoose';
+import { ILocation, IPeriod } from '../types';
 import Location from '../models/Location';
 import Street from '../models/Street';
 import Notification from '../models/Notification';
 import dayjs from 'dayjs';
+import Client from '../models/Client';
+import Direction from '../models/Direction';
+import City from '../models/City';
+
+interface IBookingLocation {
+  _id: Types.ObjectId;
+  streets: string[];
+  city: string;
+  direction: string;
+  closestBookingDate: Date;
+  booking: {
+    client: Types.ObjectId;
+    booking_date: IPeriod;
+  };
+}
 
 const getDayLabel = (number: number) => {
   if (number > 10 && [11, 12, 13, 14].includes(number % 100)) return 'дней';
@@ -14,12 +29,83 @@ const getDayLabel = (number: number) => {
 };
 
 export const getAll = async (userId: string) => {
-  await checkRentExpiration();
-  return Notification.find({ readBy: { $nin: [userId] } }).sort({ createdAt: -1 });
+  await checkAll();
+  return Notification.find({ readBy: { $nin: [userId] } })
+    .sort({ createdAt: -1 })
+    .populate({ path: 'client', model: Client });
 };
 
 export const readOne = async (userId: string, notificationId: string) => {
   await Notification.updateOne({ _id: notificationId }, { $push: { readBy: userId } });
+};
+
+export const removePreExpired = async (locId: string) => {
+  await Notification.deleteOne({ $and: [{ location: locId }, { event: 'rent/expires' }] });
+};
+
+export const checkBookingOncoming = async () => {
+  try {
+    const oncomingBookingDays = 7;
+    const oncomingBookingDate = dayjs().add(oncomingBookingDays, 'days').toDate();
+    const bookedLocations: IBookingLocation[] = await Location.aggregate([
+      { $match: { booking: { $not: { $size: 0 } } } },
+      { $lookup: { from: 'streets', localField: 'streets', foreignField: '_id', as: 'streets' } },
+      { $lookup: { from: 'cities', localField: 'city', foreignField: '_id', as: 'city' } },
+      { $lookup: { from: 'directions', localField: 'direction', foreignField: '_id', as: 'direction' } },
+      {
+        $lookup: {
+          from: 'bookings',
+          localField: 'booking',
+          foreignField: '_id',
+          as: 'booking',
+          pipeline: [
+            { $lookup: { from: 'clients', localField: 'clientId', foreignField: '_id', as: 'client' } },
+            { $set: { client: { $first: '$client' } } },
+          ],
+        },
+      },
+      { $set: { streets: { $map: { input: '$streets', as: 'street', in: '$$street.name' } } } },
+      { $set: { city: { $first: '$city.name' } } },
+      { $set: { direction: { $first: '$direction.name' } } },
+      { $unwind: '$booking' },
+      { $sort: { 'booking.booking_date.start': 1 } },
+      {
+        $group: {
+          _id: '$_id',
+          closestBookingDate: { $min: '$booking.booking_date.start' },
+          booking: { $first: '$booking' },
+          streets: { $first: '$streets' },
+          city: { $first: '$city' },
+          direction: { $first: '$direction' },
+        },
+      },
+      { $match: { closestBookingDate: { $lt: oncomingBookingDate } } },
+    ]);
+
+    for (const loc of bookedLocations) {
+      const currDate = dayjs();
+      const bookingDate = dayjs(loc.closestBookingDate);
+      const locationPrettyName = `${loc.city} ${loc.streets.sort().join(' / ')}, ${loc.direction}`;
+      const daysLeft = bookingDate.diff(currDate, 'day') + 1;
+      const dayLabel = getDayLabel(daysLeft);
+      const message = `Близжайшая дата бронирования локации "${locationPrettyName}" через ${daysLeft} ${dayLabel}!`;
+      const notification = await Notification.findOne({ $and: [{ location: loc._id }, { event: 'booking/oncoming' }] });
+
+      if (notification && notification.message === message) continue;
+
+      await Notification.deleteOne({ $and: [{ location: loc._id }, { event: 'booking/oncoming' }] });
+      await Notification.create({
+        message,
+        event: 'booking/oncoming',
+        locationPrettyName,
+        client: loc.booking.client._id,
+        date: loc.booking.booking_date,
+        location: loc._id,
+      });
+    }
+  } catch (error) {
+    console.error('Ошибка проверки приближающихся сроков бронирования для создания уведомлений:', error);
+  }
 };
 
 export const checkRentExpiration = async () => {
@@ -42,11 +128,16 @@ export const checkRentExpiration = async () => {
           else return '';
         }),
       );
-      await Notification.deleteOne({ $and: [{ location: loc._id }, { event: 'ended' }] });
+      const direction = (await Direction.findById(loc.direction))?.name;
+      const city = (await City.findById(loc.city))?.name;
+      const locationPrettyName = `${city} ${streets.sort().join(' / ')}, ${direction}`;
+      await Notification.deleteOne({ $and: [{ location: loc._id }, { event: 'rent/ended' }] });
       await Notification.create({
-        message: `Срок аренды локации ${streets.join(' / ')} истек!`,
-        subject: 'rent',
-        event: 'ended',
+        message: `Срок аренды локации ${locationPrettyName} истек!`,
+        event: 'rent/ended',
+        locationPrettyName,
+        client: loc.client,
+        date: loc.rent,
         location: loc._id,
       });
 
@@ -62,30 +153,34 @@ export const checkRentExpiration = async () => {
           else return '';
         }),
       );
-
+      const city = (await City.findById(loc.city))?.name;
+      const direction = (await Direction.findById(loc.direction))?.name;
+      const locationPrettyName = `${city} ${streets.sort().join(' / ')}, ${direction}`;
       const currDate = dayjs();
       const rentEndDate = dayjs(loc.rent?.end);
-      const daysLeft = rentEndDate.diff(currDate, 'day');
-      const message = `Срок аренды локации ${streets.join(' / ')} истекает через ${daysLeft} ${getDayLabel(daysLeft)}!`;
-
-      const notification = await Notification.findOne({
-        $and: [{ location: loc._id }, { event: 'expires' }],
-      });
+      const daysLeft = rentEndDate.diff(currDate, 'day') + 1;
+      const dayLabel = getDayLabel(daysLeft);
+      const message = `Срок аренды локации ${locationPrettyName} истекает через ${daysLeft} ${dayLabel}!`;
+      const notification = await Notification.findOne({ $and: [{ location: loc._id }, { event: 'rent/expires' }] });
 
       if (notification && notification.message === message) continue;
 
-      await Notification.deleteOne({
-        $and: [{ location: loc._id }, { event: 'expires' }],
-      });
-
+      await Notification.deleteOne({ $and: [{ location: loc._id }, { event: 'rent/expires' }] });
       await Notification.create({
         message,
-        subject: 'rent',
-        event: 'expires',
+        event: 'rent/expires',
+        locationPrettyName,
+        client: loc.client,
+        date: loc.rent,
         location: loc._id,
       });
     }
   } catch (error) {
     console.error('Ошибка проверки сроков аренды для создания уведомлений:', error);
   }
+};
+
+export const checkAll = async () => {
+  await checkRentExpiration();
+  await checkBookingOncoming();
 };

@@ -150,8 +150,10 @@ export interface AnalClientType {
 
 export interface INotification {
   message: string;
-  subject: string;
   event: string;
+  date: IPeriod;
+  locationPrettyName: string;
+  client: Types.ObjectId;
   location: Types.ObjectId;
   readBy: Types.ObjectId[];
   deletedBy: Types.ObjectId[];

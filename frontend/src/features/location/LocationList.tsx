@@ -195,6 +195,7 @@ const LocationList = () => {
 
   const clearLocRent = async () => {
     await dispatch(clearRent(locationID));
+    await dispatch(getNotifications());
     setIsRentOpen(false);
   };
 

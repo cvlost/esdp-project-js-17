@@ -13,9 +13,10 @@ import Area from './models/Area';
 import Lighting from './models/Lighting';
 import Size from './models/Size';
 import Client from './models/Client';
-import { ILocation } from './types';
+import { ILocation, IPeriod } from './types';
 import dayjs from 'dayjs';
 import RentHistory from './models/RentHistory';
+import Booking from './models/Booking';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -36,6 +37,7 @@ const run = async () => {
     await db.dropCollection('lightings');
     await db.dropCollection('clients');
     await db.dropCollection('renthistories');
+    await db.dropCollection('bookings');
     await db.dropCollection('notifications');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
@@ -224,6 +226,21 @@ const run = async () => {
     });
   };
 
+  const setBookingFor = async (loc: HydratedDocument<ILocation>, ...periods: IPeriod[]) => {
+    const ids: Types.ObjectId[] = [];
+    for (const booking_date of periods) {
+      const newBooking = await Booking.create({
+        clientId: randElement(clients)._id,
+        locationId: loc._id,
+        booking_date,
+      });
+
+      ids.push(newBooking._id);
+    }
+
+    await Location.updateOne({ _id: loc._id }, { $push: { booking: { $each: ids } } });
+  };
+
   await Promise.all([
     setRentAndHistoryFor(locations[0], dayjs().subtract(60, 'days').toDate(), dayjs().subtract(1, 'days').toDate()),
     setRentAndHistoryFor(locations[1], dayjs().subtract(60, 'days').toDate(), dayjs().add(5, 'days').toDate()),
@@ -231,6 +248,28 @@ const run = async () => {
     setRentAndHistoryFor(locations[3], dayjs().subtract(100, 'days').toDate(), dayjs().add(200, 'days').toDate()),
     setRentAndHistoryFor(locations[4], dayjs().subtract(55, 'days').toDate(), dayjs().add(40, 'days').toDate()),
     setRentAndHistoryFor(locations[5], dayjs().subtract(150, 'days').toDate(), dayjs().subtract(1, 'days').toDate()),
+  ]);
+
+  await Promise.all([
+    setBookingFor(
+      locations[0],
+      { start: dayjs().add(1, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
+      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
+      { start: dayjs().add(210, 'days').toDate(), end: dayjs().add(300, 'days').toDate() },
+    ),
+    setBookingFor(
+      locations[1],
+      { start: dayjs().add(210, 'days').toDate(), end: dayjs().add(300, 'days').toDate() },
+      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
+      { start: dayjs().add(2, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
+    ),
+    setBookingFor(locations[2], { start: dayjs().add(3, 'days').toDate(), end: dayjs().add(100, 'days').toDate() }),
+    setBookingFor(locations[3], { start: dayjs().add(4, 'days').toDate(), end: dayjs().add(100, 'days').toDate() }),
+    setBookingFor(
+      locations[4],
+      { start: dayjs().add(10, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
+      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
+    ),
   ]);
 
   await db.close();
