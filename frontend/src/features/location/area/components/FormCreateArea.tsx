@@ -49,7 +49,7 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit, existingArea = initialState
         <SouthAmericaOutlinedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать область' : 'Создать область'}
+        {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать область' : 'Создать область'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -61,6 +61,7 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit, existingArea = initialState
               type="text"
               name="name"
               autoComplete="off"
+              color="success"
               value={state.name}
               onChange={onChange}
               error={Boolean(getFieldError('name'))}
@@ -69,7 +70,7 @@ const FormCreateArea: React.FC<Props> = ({ onSubmit, existingArea = initialState
           </Grid>
         </Grid>
         <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
-          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
+          {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>

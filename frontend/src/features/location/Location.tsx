@@ -20,7 +20,7 @@ const link_options: LinkOption[] = [
   { label: 'Создать Область', link: '/create_area' },
   { label: 'Создать Район', link: '/create_region' },
   { label: 'Создать Город', link: '/create_city' },
-  { label: 'Создать Направление', link: '/create_direction' },
+  { label: 'Создать Сторону', link: '/create_direction' },
   { label: 'Создать Размер', link: '/create_size' },
   { label: 'Создать Формат', link: '/create_format' },
   { label: 'Создать Юр.лицо', link: '/create_legal_entity' },
@@ -79,7 +79,7 @@ const Location = () => {
             <ExportToExcel data={locationsList ? locationsList : []} />
           </Grid>
         ) : (
-          <CircularProgress sx={{ ml: 1 }} />
+          <CircularProgress color="success" sx={{ ml: 1 }} />
         )}
         {user?.role === 'admin' ? (
           <>
@@ -92,7 +92,7 @@ const Location = () => {
                 }}
                 options={link_options}
                 noOptionsText={'Нет совпадений'}
-                sx={{ width: 250 }}
+                sx={{ width: 250, my: 1 }}
                 renderInput={(params) => <TextField {...params} label="Создание" />}
               />
             </Grid>

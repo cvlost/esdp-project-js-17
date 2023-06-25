@@ -6,7 +6,7 @@ import Region from '../models/Region';
 import City from '../models/City';
 import Direction from '../models/Direction';
 import { imagesUpload } from '../multer';
-import { ILocation, RentData } from '../types';
+import { AnalyticsLocationType, ILocation, RentData, RentHistoryListType } from '../types';
 import Street from '../models/Street';
 import Area from '../models/Area';
 import Format from '../models/Format';
@@ -90,6 +90,78 @@ locationsRouter.post('/', async (req, res, next) => {
     return res.send({ locations, filtered: !!req.body.filterQuery, page, pages, count, perPage });
   } catch (e) {
     return next(e);
+  }
+});
+
+locationsRouter.get('/analytics', auth, async (req, res, next) => {
+  let perPage = parseInt(req.query.perPage as string);
+  let page = parseInt(req.query.page as string);
+  const filter = parseInt(req.query.filter as string) || dayjs().year();
+
+  page = isNaN(page) || page <= 0 ? 1 : page;
+  perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
+  try {
+    const locations = await Location.aggregate([
+      { $skip: (page - 1) * perPage },
+      { $limit: perPage },
+      { $sort: { _id: -1 } },
+      ...flattenLookup,
+      { $project: { country: 0, description: 0 } },
+    ]);
+
+    const history: RentHistoryListType[] = await RentHistory.find();
+
+    const locationsAnalytics: AnalyticsLocationType[] = [];
+
+    locations.forEach((item) => {
+      const locationHistory = history.filter(
+        (his) => his.location.toString() === item._id.toString() && dayjs(his.rent_date.end).year() === filter,
+      );
+
+      if (locationHistory.length > 0) {
+        const obj: AnalyticsLocationType = {
+          _id: item._id,
+          dayImage: item.dayImage,
+          locationName: item.city + ', ' + item.streets[0] + '/' + item.streets[1] + ', ' + item.direction,
+          overallBudget: locationHistory.reduce(
+            (accumulator, currentValue) => accumulator + parseInt(currentValue.rent_cost.toString()),
+            0,
+          ),
+          overallPrice: parseInt(locationHistory[0].rent_price.toString()) * 12,
+          rentDay: locationHistory.reduce((accumulator, currentValue) => {
+            return accumulator + dayjs(currentValue.rent_date.end).diff(dayjs(currentValue.rent_date.start), 'day');
+          }, 0),
+          rentPercent: Math.ceil(
+            (locationHistory.reduce((accumulator, currentValue) => {
+              return accumulator + dayjs(currentValue.rent_date.end).diff(dayjs(currentValue.rent_date.start), 'day');
+            }, 0) /
+              365) *
+              100,
+          ),
+          financePercent: Math.ceil(
+            (locationHistory.reduce(
+              (accumulator, currentValue) => accumulator + parseInt(currentValue.rent_cost.toString()),
+              0,
+            ) /
+              (parseInt(locationHistory[0].rent_price.toString()) * 12)) *
+              100,
+          ),
+        };
+        locationsAnalytics.push(obj);
+      }
+      return;
+    });
+
+    const count = locationsAnalytics.length;
+    let pages = Math.ceil(count / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
+
+    return res.send({ locationsAnalytics, page, pages, count, perPage });
+  } catch (e) {
+    next(e);
   }
 });
 

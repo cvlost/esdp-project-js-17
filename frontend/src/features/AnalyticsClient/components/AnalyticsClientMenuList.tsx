@@ -42,7 +42,7 @@ const AnalyticsClientMenuList = () => {
               </Typography>
             }
           >
-            <p style={{ cursor: 'pointer' }}>{month}</p>
+            <p style={{ cursor: 'pointer' }}>{month.toLocaleUpperCase()}</p>
           </Tooltip>
         </StyledTableCell>
       ))}
@@ -67,7 +67,7 @@ const AnalyticsClientMenuList = () => {
             </Typography>
           }
         >
-          <p style={{ cursor: 'pointer' }}>Дни аредны</p>
+          <p style={{ cursor: 'pointer' }}>Дни аренды</p>
         </Tooltip>
       </StyledTableCell>
       <StyledTableCell align="center">
@@ -79,7 +79,7 @@ const AnalyticsClientMenuList = () => {
             </Typography>
           }
         >
-          <p style={{ cursor: 'pointer' }}>Колличество баннеров</p>
+          <p style={{ cursor: 'pointer' }}>Количество баннеров</p>
         </Tooltip>
       </StyledTableCell>
     </>

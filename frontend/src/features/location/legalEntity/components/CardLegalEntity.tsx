@@ -5,8 +5,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { StyledTableRow } from '../../../../constants';
 import { LegalEntityList } from '../../../../types';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
-import { selectOneLegalEntityLoading, selectRemoveLegalEntityLoading } from '../legalEntitySlice';
-import { openSnackbar, selectEditOneUserLoading } from '../../../users/usersSlice';
+import { selectRemoveLegalEntityLoading } from '../legalEntitySlice';
+import { openSnackbar } from '../../../users/usersSlice';
 import { fetchLegalEntity, fetchOneLegalEntity, removeLegalEntity } from '../legalEntityThunk';
 import useConfirm from '../../../../components/Dialogs/Confirm/useConfirm';
 
@@ -32,7 +32,7 @@ const CardLegalEntity: React.FC<LegalEntityList> = ({ name, _id }) => {
       <TableCell align="left">{name}</TableCell>
       <TableCell align="right">
         <IconButton disabled={removeLoading ? removeLoading === _id : false} onClick={removeEntity}>
-          {removeLoading && removeLoading === _id && <CircularProgress />}
+          {removeLoading && removeLoading === _id && <CircularProgress color="success" />}
           <DeleteIcon />
         </IconButton>
         <IconButton onClick={editEntity}>

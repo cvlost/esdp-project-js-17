@@ -39,7 +39,15 @@ const FileInput: React.FC<Props> = ({ onChange, name, label, error, value }) => 
       />
       <Grid container direction="row" spacing={2} alignItems="center">
         <Grid item xs>
-          <TextField error={error} fullWidth disabled label={label} value={value || filename} onClick={activateInput} />
+          <TextField
+            color="success"
+            error={error}
+            fullWidth
+            disabled
+            label={label}
+            value={value || filename}
+            onClick={activateInput}
+          />
         </Grid>
         <Grid item>
           <Button variant="contained" color="success" onClick={activateInput}>

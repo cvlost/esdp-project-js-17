@@ -70,7 +70,7 @@ export const initialColumns: LocationColumn[] = [
   { id: '3', name: 'city', prettyName: 'Город', show: true, type: 'location' },
   { id: '4', name: 'region', prettyName: 'Район', show: true, type: 'location' },
   { id: '5', name: 'streets', prettyName: 'Улица', show: true, type: 'location' },
-  { id: '6', name: 'direction', prettyName: 'Направление', show: true, type: 'location' },
+  { id: '6', name: 'direction', prettyName: 'Сторона', show: true, type: 'location' },
   { id: '7', name: 'legalEntity', prettyName: 'Юр. лицо', show: true, type: 'location' },
   { id: '8', name: 'size', prettyName: 'Размер', show: true, type: 'billboard' },
   { id: '9', name: 'format', prettyName: 'Формат', show: true, type: 'billboard' },

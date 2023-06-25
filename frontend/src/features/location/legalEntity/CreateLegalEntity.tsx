@@ -121,7 +121,7 @@ const CreateLegalEntity = () => {
                 ) : (
                   <TableRow>
                     <TableCell>
-                      <CircularProgress />
+                      <CircularProgress color="success" />
                     </TableCell>
                   </TableRow>
                 )}

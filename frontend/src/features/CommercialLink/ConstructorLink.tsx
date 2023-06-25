@@ -114,18 +114,18 @@ const ConstructorLink = () => {
         </Typography>
         <Chip
           sx={{ fontSize: '20px', p: 3, marginRight: 'auto', mb: 2, width: !matches_500 ? '100%' : null }}
-          label={'Выберите поля '}
+          label="Выберите поля "
           variant="outlined"
-          color="info"
+          color="success"
         />
-        <Grid spacing={2} container>
+        <Grid spacing={2} container justifyContent="center">
           <ConstructorCard />
           <Grid xs={12} item>
             <Chip
               sx={{ fontSize: '20px', p: 3, marginRight: 'auto', mt: 2 }}
-              label={'Ввести данные '}
+              label="Ввести данные "
               variant="outlined"
-              color="info"
+              color="success"
             />
             <Box component="form" sx={{ mt: 3, width: '100%' }}>
               <Grid container sx={{ flexDirection: 'column' }} spacing={3}>
@@ -140,6 +140,7 @@ const ConstructorLink = () => {
                       label="Название организации"
                       name="title"
                       type="text"
+                      color="success"
                       autoComplete="current-password"
                       fullWidth
                       variant="outlined"
@@ -165,7 +166,7 @@ const ConstructorLink = () => {
               </Grid>
             </Box>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item>
             <Button onClick={createCommercialLink} color="success" variant="contained" sx={{ mt: 3 }}>
               Создать предложение
             </Button>
@@ -175,14 +176,14 @@ const ConstructorLink = () => {
       <ModalBody isOpen={open} onClose={() => setOpen(true)}>
         <Grid container>
           <Grid item xs={12}>
-            <Paper sx={{ p: 1 }} elevation={3}>
-              <Link target="_blank" href={link?.fullLink || ''} underline="none">
+            <Paper color="success" sx={{ p: 1 }} elevation={3}>
+              <Link style={{ color: 'green' }} target="_blank" href={link?.fullLink || ''} underline="none">
                 {link ? link.fullLink : 'Ссылка'}
               </Link>
             </Paper>
           </Grid>
           <Grid sx={{ mt: 2 }} item>
-            <Button onClick={handleCopy} variant="outlined">
+            <Button color="success" onClick={handleCopy} variant="outlined">
               Скопировать
             </Button>
           </Grid>

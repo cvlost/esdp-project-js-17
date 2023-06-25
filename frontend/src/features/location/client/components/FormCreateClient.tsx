@@ -79,7 +79,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
         <FolderSharedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать клиента' : 'Создать клиента'}
+        {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать клиента' : 'Создать клиента'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -90,6 +90,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.companyName}
               onChange={inputChangeHandler}
+              color="success"
               required
               fullWidth
               label="Имя организации"
@@ -104,6 +105,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.companyPhone}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="Номер организации"
               type="number"
@@ -117,6 +119,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.companyEmail}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="Email организации"
               type="email"
@@ -130,6 +133,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.companyKindOfActivity}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="Вид деятельности организации"
               type="text"
@@ -143,6 +147,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.companyAddress}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="Адрес организации"
               type="text"
@@ -156,6 +161,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.companySite}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="Сайт организации"
               type="url"
@@ -172,6 +178,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.companyBirthday}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               type="date"
               name="companyBirthday"
@@ -187,6 +194,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.CompanyManagementName}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="ФИО"
               type="text"
@@ -200,6 +208,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.CompanyManagementJobTitle}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="должность"
               type="text"
@@ -216,6 +225,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.CompanyManagementBirthday}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               type="date"
               name="CompanyManagementBirthday"
@@ -231,6 +241,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.contactPersonName}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="ФИО"
               type="text"
@@ -244,6 +255,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.contactPersonJobTitle}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               label="Должность"
               type="text"
@@ -260,6 +272,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
             <TextField
               value={state.contactPersonBirthday}
               onChange={inputChangeHandler}
+              color="success"
               fullWidth
               type="date"
               name="contactPersonBirthday"
@@ -276,6 +289,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
               fullWidth
               multiline
               rows={5}
+              color="success"
               label=" рекомендация знакомых, реклама в интернете итд..."
               value={state.advertisingChannel}
               onChange={inputChangeHandler}
@@ -286,7 +300,7 @@ const FormCreateClient: React.FC<Props> = ({ onSubmit, existingClient = initialS
           </Grid>
         </Grid>
         <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
-          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
+          {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>

@@ -25,7 +25,7 @@ const CardDirection: React.FC<Props> = ({ direction, removeCardDirection, onEdit
             onClick={removeCardDirection}
             aria-label="delete"
           >
-            {removeLoading && removeLoading === direction._id && <CircularProgress />}
+            {removeLoading && removeLoading === direction._id && <CircularProgress color="success" />}
             <DeleteIcon />
           </IconButton>
           <IconButton aria-label="success" onClick={onEditing}>

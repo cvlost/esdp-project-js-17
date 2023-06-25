@@ -33,7 +33,7 @@ const PanelMenu: React.FC<Props> = ({ setOpenBar, setFilterYear, filterYear }) =
           <MenuItem value="50">50</MenuItem>
         </TextField>
       </Grid>
-      <Grid xs={3} item>
+      <Grid xs={3} item sx={{ ml: 1 }}>
         <TextField
           fullWidth
           select

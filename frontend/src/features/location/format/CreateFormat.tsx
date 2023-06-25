@@ -136,7 +136,7 @@ const CreateFormat = () => {
         )}
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
           <TableContainer>
-            <Table sx={{ minWidth: 650 }}>
+            <Table sx={{ minWidth: 200 }}>
               <TableHead>
                 <TableRow>
                   <StyledTableCell align="left">Формат</StyledTableCell>
@@ -164,7 +164,7 @@ const CreateFormat = () => {
                 ) : (
                   <TableRow>
                     <TableCell>
-                      <CircularProgress />
+                      <CircularProgress color="success" />
                     </TableCell>
                   </TableRow>
                 )}

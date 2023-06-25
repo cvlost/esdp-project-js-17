@@ -23,17 +23,17 @@ const ConstructorCard = () => {
   return (
     <>
       {constructorLocation.map((item) => (
-        <Grid key={item.id} item xs>
+        <Grid key={item.id} item xs={12} md={6}>
           <Card elevation={3} sx={{ display: 'flex', alignItems: 'center' }}>
             <Box>
               <CardContent sx={{ flex: '1 0 auto' }}>
-                <Typography component="div" variant="h5">
+                <Typography component="div" variant="h5" sx={{ m: 0, fontSize: '22px' }}>
                   {item.name === 'addressNote' && 'Адрес'}
                   {item.name === 'area' && 'Область'}
                   {item.name === 'city' && 'Город'}
                   {item.name === 'region' && 'Район'}
                   {item.name === 'street' && 'Улица'}
-                  {item.name === 'direction' && 'Направление'}
+                  {item.name === 'direction' && 'Сторона'}
                   {item.name === 'legalEntity' && 'Юр.лицо'}
                   {item.name === 'size' && 'Размер'}
                   {item.name === 'format' && 'Формат'}
@@ -45,21 +45,26 @@ const ConstructorCard = () => {
                 </Typography>
               </CardContent>
             </Box>
-            {item.name === 'addressNote' && <ShareLocationIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'area' && <SouthAmericaIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'city' && <ApartmentIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'region' && <SouthAmericaIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'street' && <SignpostIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'direction' && <GpsFixedIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'legalEntity' && <BadgeIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'size' && <AspectRatioIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'format' && <FormatAlignCenterIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'lighting' && <LightModeIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'placement' && <LocationCityIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'price' && <LocalOfferIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'rent' && <DateRangeIcon sx={{ fontSize: '50px' }} />}
-            {item.name === 'reserve' && <SettingsBackupRestoreIcon sx={{ fontSize: '50px' }} />}
-            <Switch onClick={() => dispatch(isToggleShow(item.id))} sx={{ marginLeft: 'auto' }} checked={item.show} />
+            {item.name === 'addressNote' && <ShareLocationIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'area' && <SouthAmericaIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'city' && <ApartmentIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'region' && <SouthAmericaIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'street' && <SignpostIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'direction' && <GpsFixedIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'legalEntity' && <BadgeIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'size' && <AspectRatioIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'format' && <FormatAlignCenterIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'lighting' && <LightModeIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'placement' && <LocationCityIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'price' && <LocalOfferIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'rent' && <DateRangeIcon sx={{ fontSize: '35px' }} />}
+            {item.name === 'reserve' && <SettingsBackupRestoreIcon sx={{ fontSize: '35px' }} />}
+            <Switch
+              color="success"
+              onClick={() => dispatch(isToggleShow(item.id))}
+              sx={{ marginLeft: 'auto' }}
+              checked={item.show}
+            />
           </Card>
         </Grid>
       ))}

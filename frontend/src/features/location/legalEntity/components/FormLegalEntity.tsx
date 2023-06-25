@@ -76,6 +76,7 @@ const FormLegalEntity: React.FC<Props> = ({ isEdit = false }) => {
             <TextField
               value={value}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+              color="success"
               required
               fullWidth
               label="Юридическое лицо"
@@ -96,9 +97,9 @@ const FormLegalEntity: React.FC<Props> = ({ isEdit = false }) => {
           sx={{ mt: 3, mb: 2 }}
         >
           {isEdit ? (
-            <>{!updateLoading ? 'Редактировать' : <CircularProgress />}</>
+            <>{!updateLoading ? 'Редактировать' : <CircularProgress color="success" />}</>
           ) : (
-            <>{!createLoading ? 'Создать Юр. лицо' : <CircularProgress />}</>
+            <>{!createLoading ? 'Создать Юр. лицо' : <CircularProgress color="success" />}</>
           )}
         </Button>
       </Box>

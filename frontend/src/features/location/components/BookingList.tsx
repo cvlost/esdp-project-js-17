@@ -11,7 +11,6 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { Link, useLocation } from 'react-router-dom';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
@@ -104,7 +103,7 @@ const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
                       onClick={() => removeCardBooking(booking._id)}
                       aria-label="delete"
                     >
-                      {loadingRemove && loadingRemove === booking._id && <CircularProgress />}
+                      {loadingRemove && loadingRemove === booking._id && <CircularProgress color="success" />}
                       <DeleteIcon />
                     </IconButton>
                     <Link to={`/${booking.locationId}`}>
@@ -126,7 +125,7 @@ const BookingList: React.FC<Props> = ({ locationId, isPage }) => {
         ) : (
           <TableRow>
             <TableCell>
-              <CircularProgress />
+              <CircularProgress color="success" />
             </TableCell>
           </TableRow>
         )}

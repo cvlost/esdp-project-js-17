@@ -133,7 +133,7 @@ describe('commercialLinkRouter', () => {
       const res = await request.get('/link/randomId');
       const body = res.body;
       expect(res.statusCode).toBe(404);
-      expect(body).toStrictEqual({ message: 'Ссылка недествительна !' });
+      expect(body).toStrictEqual({ message: 'Ссылка недействительна !' });
     });
   });
   describe('post /link', () => {
