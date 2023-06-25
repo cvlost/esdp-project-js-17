@@ -26,10 +26,10 @@ interface Props {
 const Bars: React.FC<Props> = ({ data, height, scaleY, scaleX }) => {
   return (
     <>
-      {data.map(({ value, label, tooltip, comp }) => (
+      {data.map(({ value, label, tooltip, comp }, index) => (
         <Tooltip
           placement="right"
-          key={`bar-${label}`}
+          key={index}
           title={
             <>
               {tooltip.map((_, index) => (
