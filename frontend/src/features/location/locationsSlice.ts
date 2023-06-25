@@ -35,7 +35,6 @@ interface LocationColumn {
 
 interface LocationsState {
   locationsListData: LocationsListResponse;
-  test: ILocation[];
   locationsListLoading: boolean;
   settings: {
     columns: LocationColumn[];
@@ -53,7 +52,6 @@ interface LocationsState {
   locationDeleteLoading: false | string;
   selectedLocationId: string[];
   openSelected: boolean;
-  checkedLocationLoading: false | string;
   itemsList: GetItemsListType;
   getItemsListLoading: boolean;
   createRentLoading: boolean;
@@ -132,7 +130,6 @@ const initialFilterCriteria: FilterCriteriaResponse = {
 };
 
 const initialState: LocationsState = {
-  test: [],
   locationsListData: {
     locations: [],
     page: 1,
@@ -158,7 +155,6 @@ const initialState: LocationsState = {
   oneLocationEditError: null,
   selectedLocationId: [],
   openSelected: false,
-  checkedLocationLoading: false,
   itemsList: {
     areas: [],
     regions: [],
@@ -399,7 +395,6 @@ export const selectLocationsDeleteLoading = (state: RootState) => state.location
 export const selectLocationsFilter = (state: RootState) => state.locations.settings.filter;
 export const selectLocationsFilterCriteriaData = (state: RootState) => state.locations.filterCriteriaData;
 export const selectLocationsFilterCriteriaLoading = (state: RootState) => state.locations.filterCriteriaLoading;
-export const selectCheckedLocationLoading = (state: RootState) => state.locations.checkedLocationLoading;
 export const selectSelectedLocationId = (state: RootState) => state.locations.selectedLocationId;
 export const selectItemsList = (state: RootState) => state.locations.itemsList;
 export const selectGetItemsListLoading = (state: RootState) => state.locations.getItemsListLoading;
