@@ -163,23 +163,6 @@ export const getFilterCriteriaData = createAsyncThunk<FilterCriteriaResponse, vo
   },
 );
 
-interface CheckedLocationType {
-  id: string | undefined;
-  allChecked: boolean;
-}
-
-export const checkedLocation = createAsyncThunk<void, CheckedLocationType>('locations/check_location', async (arg) => {
-  let url = '/';
-
-  if (arg.id) {
-    url = `/locations/checked?checked=${arg.id}`;
-  } else if (arg.allChecked) {
-    url = `/locations/checked?allChecked=true`;
-  }
-
-  await axiosApi.patch(url, { checked: true });
-});
-
 interface UpdateRentParams {
   id: string;
   rent: RentMutation;

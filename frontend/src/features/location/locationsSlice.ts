@@ -18,7 +18,6 @@ import {
   removeLocation,
   updateLocation,
   getToEditOneLocation,
-  checkedLocation,
   getItems,
   createBooking,
   removeBooking,
@@ -35,6 +34,7 @@ interface LocationColumn {
 }
 
 interface LocationsState {
+  isUserLink: boolean;
   locationsListData: LocationsListResponse;
   locationsListLoading: boolean;
   settings: {
@@ -53,7 +53,6 @@ interface LocationsState {
   locationDeleteLoading: false | string;
   selectedLocationId: string[];
   openSelected: boolean;
-  checkedLocationLoading: false | string;
   itemsList: GetItemsListType;
   getItemsListLoading: boolean;
   createRentLoading: boolean;
@@ -132,6 +131,7 @@ const initialFilterCriteria: FilterCriteriaResponse = {
 };
 
 const initialState: LocationsState = {
+  isUserLink: false,
   locationsListData: {
     locations: [],
     page: 1,
@@ -157,7 +157,6 @@ const initialState: LocationsState = {
   oneLocationEditError: null,
   selectedLocationId: [],
   openSelected: false,
-  checkedLocationLoading: false,
   itemsList: {
     areas: [],
     regions: [],
@@ -180,6 +179,9 @@ const locationsSlice = createSlice({
   name: 'locations',
   initialState,
   reducers: {
+    isEditUserLink: (state) => {
+      state.isUserLink = true;
+    },
     setCurrentPage: (state, { payload: page }: PayloadAction<number>) => {
       state.locationsListData.page = page;
     },
@@ -211,6 +213,15 @@ const locationsSlice = createSlice({
     },
     resetLocationId: (state) => {
       state.selectedLocationId = [];
+      state.locationsListData.locations.forEach((item) => {
+        item.checked = false;
+      });
+    },
+    checkedLocation: (state, id: PayloadAction<string>) => {
+      const index = state.locationsListData.locations.findIndex((item) => item._id === id.payload);
+      const loc = state.locationsListData.locations[index];
+
+      loc.checked = !loc.checked;
     },
   },
   extraReducers: (builder) => {
@@ -225,21 +236,25 @@ const locationsSlice = createSlice({
       state.getItemsListLoading = false;
     });
 
-    builder.addCase(checkedLocation.pending, (state, { meta: { arg: id } }) => {
-      state.checkedLocationLoading = id.id ? id.id : '';
-    });
-    builder.addCase(checkedLocation.fulfilled, (state) => {
-      state.checkedLocationLoading = false;
-    });
-    builder.addCase(checkedLocation.rejected, (state) => {
-      state.checkedLocationLoading = false;
-    });
-
     builder.addCase(getLocationsList.pending, (state) => {
       state.locationsListLoading = true;
     });
     builder.addCase(getLocationsList.fulfilled, (state, { payload }) => {
-      state.locationsListData = payload;
+      const initialAry = payload.locations.map((loc) => {
+        const locationOne = state.selectedLocationId.find((item) => item === loc._id);
+
+        if (locationOne) {
+          loc.checked = true;
+        }
+
+        return loc;
+      });
+
+      state.locationsListData = {
+        ...payload,
+        locations: initialAry,
+      };
+
       state.locationsListLoading = false;
     });
     builder.addCase(getLocationsList.rejected, (state) => {
@@ -361,8 +376,17 @@ const locationsSlice = createSlice({
 
 export const locationsReducer = locationsSlice.reducer;
 
-export const { setCurrentPage, setPerPage, toggleColumn, setFilter, resetFilter, addLocationId, resetLocationId } =
-  locationsSlice.actions;
+export const {
+  setCurrentPage,
+  setPerPage,
+  toggleColumn,
+  setFilter,
+  resetFilter,
+  addLocationId,
+  resetLocationId,
+  checkedLocation,
+  isEditUserLink,
+} = locationsSlice.actions;
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
 export const selectLocationsColumnSettings = (state: RootState) => state.locations.settings.columns;
@@ -377,7 +401,6 @@ export const selectLocationsDeleteLoading = (state: RootState) => state.location
 export const selectLocationsFilter = (state: RootState) => state.locations.settings.filter;
 export const selectLocationsFilterCriteriaData = (state: RootState) => state.locations.filterCriteriaData;
 export const selectLocationsFilterCriteriaLoading = (state: RootState) => state.locations.filterCriteriaLoading;
-export const selectCheckedLocationLoading = (state: RootState) => state.locations.checkedLocationLoading;
 export const selectSelectedLocationId = (state: RootState) => state.locations.selectedLocationId;
 export const selectItemsList = (state: RootState) => state.locations.itemsList;
 export const selectGetItemsListLoading = (state: RootState) => state.locations.getItemsListLoading;
@@ -386,3 +409,4 @@ export const selectCreateRentError = (state: RootState) => state.locations.creat
 export const selectCreateBookingLoading = (state: RootState) => state.locations.createBookingLoading;
 export const selectCreateBookingError = (state: RootState) => state.locations.createBookingError;
 export const selectRemoveBookingLoading = (state: RootState) => state.locations.removeBookingLoading;
+export const selectIsUserLink = (state: RootState) => state.locations.isUserLink;

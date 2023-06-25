@@ -397,36 +397,6 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
   }
 });
 
-locationsRouter.patch('/checked', auth, async (req, res, next) => {
-  try {
-    if (req.query.allChecked !== undefined) {
-      await Location.updateMany({ checked: false });
-      return res.send({ patch: false });
-    } else if (req.query.checked !== undefined) {
-      if (!mongoose.isValidObjectId(req.query.checked)) {
-        return res.status(422).send({ error: 'Некорректный id локации.' });
-      }
-
-      const locationOne = await Location.findOne({ _id: req.query.checked });
-
-      if (!locationOne) {
-        return res.status(404).send({ error: 'Локации не существует в базе.' });
-      }
-
-      if (!locationOne.checked) {
-        locationOne.checked = req.body.checked;
-      } else {
-        locationOne.checked = !req.body.checked;
-      }
-
-      await locationOne.save();
-      return res.sendStatus(204);
-    }
-  } catch (e) {
-    return next(e);
-  }
-});
-
 locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
   const id = req.params.id;
 
