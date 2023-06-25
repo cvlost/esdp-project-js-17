@@ -58,7 +58,7 @@ const CommercialLink = () => {
                 <Alert severity="error">Сcылка удалена!</Alert>
               )
             ) : (
-              <CircularProgress />
+              <CircularProgress color="success" />
             )}
           </Grid>
         </Box>

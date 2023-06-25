@@ -28,7 +28,7 @@ const SnackbarCard = () => {
       txt += 'Сторона успешно создана';
       break;
     case 'remove_direction':
-      txt += 'Сторона успешно удалено';
+      txt += 'Сторона успешно удалена';
       break;
     case 'create_size':
       txt += 'Размер успешно создан';

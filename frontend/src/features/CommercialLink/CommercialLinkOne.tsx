@@ -46,7 +46,7 @@ const CommercialLinkOne = () => {
                     component="img"
                     height="500"
                     image={apiURL + '/' + locationLinkOne.location?.schemaImage}
-                    alt="Paella dish"
+                    alt="shamdagai"
                     sx={{ borderRadius: '20px' }}
                   />
                 </SwiperSlide>
@@ -55,7 +55,7 @@ const CommercialLinkOne = () => {
                     component="img"
                     height="500"
                     image={apiURL + '/' + locationLinkOne.location?.dayImage}
-                    alt="Paella dish"
+                    alt="shamdagai"
                     sx={{ borderRadius: '20px' }}
                   />
                 </SwiperSlide>

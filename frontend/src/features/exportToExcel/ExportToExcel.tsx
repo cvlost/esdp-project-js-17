@@ -15,12 +15,12 @@ const ExportToExcel: React.FC<Props> = ({ data }) => {
 
   const changedData = data.map((obj) => {
     return {
-      Направление: obj.direction,
+      Сторона: obj.direction,
       Область: obj.area,
       Район: obj.region,
       Улица: obj.streets,
       Город: obj.city,
-      Адресс: obj.addressNote,
+      Адрес: obj.addressNote,
       Аренда: obj.booking,
       Цена: obj.price,
       Бронь: obj.rent,
