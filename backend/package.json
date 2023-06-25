@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "cd .. && husky install backend/.husky",
-    "test:unit": "jest --config jest.config.json --runInBand"
+    "test:unit": "jest --config jest.config.json --runInBand",
+    "seed:real": "ts-node real-fixtures.ts"
   },
   "keywords": [],
   "author": "",
