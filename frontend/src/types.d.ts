@@ -460,3 +460,22 @@ export interface AnalClientList {
   perPage: number;
   count: number;
 }
+
+export interface AnalyticsLocationType {
+  _id: string;
+  locationName: string;
+  dayImage: string;
+  overallBudget: number;
+  overallPrice: number;
+  rentDay: number;
+  rentPercent: number;
+  financePercent: number;
+}
+
+export interface AnalyticsLocationList {
+  locationsAnalytics: AnalyticsLocationType[];
+  page: number;
+  pages: number;
+  perPage: number;
+  count: number;
+}
