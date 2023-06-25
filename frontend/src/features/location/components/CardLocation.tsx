@@ -220,7 +220,7 @@ const CardLocation: React.FC<Props> = ({
             </Button>
           </Tooltip>
           <Tooltip title="История Аренды">
-            <Button onClick={() => navigate('/rentHistory/' + loc._id)} size="small" color="info">
+            <Button onClick={() => navigate('/rentHistory/' + loc._id)} size="small" color="warning">
               <TimelineIcon />
             </Button>
           </Tooltip>

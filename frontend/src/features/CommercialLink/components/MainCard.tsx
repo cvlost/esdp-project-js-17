@@ -24,11 +24,7 @@ const MainCard = () => {
               На сегодняшний день наружная реклама в Кыргызстане представляет собой один из главных инструментов
               информационного воздействия на аудиторию.
             </p>
-            <Button
-              sx={{ padding: '15px 50px', background: '#446DF6' }}
-              variant="contained"
-              href="https://www.shamdagai.kg/"
-            >
+            <Button sx={{ padding: '15px 50px' }} variant="outlined" color="success" href="https://www.shamdagai.kg/">
               Подробнее
             </Button>
           </Box>
