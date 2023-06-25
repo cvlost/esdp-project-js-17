@@ -186,6 +186,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.area}
             name="area"
             label="Область"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('area'))}
@@ -209,6 +210,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.city}
             name="city"
             label="Город/село"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('city'))}
@@ -241,6 +243,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.region}
             name="region"
             label="Район"
+            color="success"
             required={cities.find((item) => item._id === state.city)?.name === 'Бишкек'}
             onChange={inputChangeHandler}
             error={Boolean(getFieldError('region'))}
@@ -264,6 +267,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.streets[0]}
             name="street1"
             label="Улица"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('streets'))}
@@ -287,6 +291,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.streets[1]}
             name="street2"
             label="Улица 2"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('streets'))}
@@ -310,6 +315,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             rows={3}
             label="Заметка к адресу"
             name="addressNote"
+            color="success"
             value={state.addressNote}
             onChange={inputChangeHandler}
             error={Boolean(getFieldError('addressNote'))}
@@ -322,6 +328,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             multiline
             rows={5}
             label="Описание"
+            color="success"
             value={state.description}
             onChange={inputChangeHandler}
             name="description"
@@ -336,13 +343,14 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.direction}
             name="direction"
             label="Сторона"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('direction'))}
             helperText={getFieldError('direction')}
           >
             <MenuItem value="" disabled>
-              Выберите направление
+              Выберите сторону
             </MenuItem>
             {itemsList.directions &&
               itemsList.directions.map((direction) => (
@@ -359,6 +367,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.legalEntity}
             name="legalEntity"
             label="Юридическое лицо"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('legalEntity'))}
@@ -382,6 +391,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.size}
             name="size"
             label="Размер"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('size'))}
@@ -405,6 +415,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.format}
             name="format"
             label="Формат"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('format'))}
@@ -428,6 +439,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             value={state.lighting}
             name="lighting"
             label="Освещение"
+            color="success"
             onChange={inputChangeHandler}
             required
             error={Boolean(getFieldError('lighting'))}
@@ -448,6 +460,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
           <FormControlLabel
             control={<Checkbox checked={state.placement} onChange={placementInputChangHandler} />}
             label="По направление / не по направлению"
+            color="success"
           />
           <Chip label={state.placement ? 'по направлению' : 'не по направлению'} variant="outlined" />
         </Grid>
@@ -457,6 +470,7 @@ const LocationForm: React.FC<Props> = ({ onSubmit, isLoading, error, existingLoc
             type="number"
             label="Цена"
             name="price"
+            color="success"
             value={state.price}
             onChange={inputChangeHandler}
             required

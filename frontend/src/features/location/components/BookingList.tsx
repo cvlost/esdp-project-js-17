@@ -11,7 +11,6 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { Link, useLocation } from 'react-router-dom';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';

@@ -67,7 +67,7 @@ const AnalyticsClientMenuList = () => {
             </Typography>
           }
         >
-          <p style={{ cursor: 'pointer' }}>Дни аредны</p>
+          <p style={{ cursor: 'pointer' }}>Дни аренды</p>
         </Tooltip>
       </StyledTableCell>
       <StyledTableCell align="center">

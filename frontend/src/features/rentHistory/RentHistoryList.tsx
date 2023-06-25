@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   ButtonGroup,
   CircularProgress,
   IconButton,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -24,9 +23,10 @@ import {
   selectRentHistories,
 } from './rentHistorySlice';
 import { deleteRentHistory, fetchRentHistories } from './rentHistoryThunk';
-import { apiURL } from '../../constants';
+import { apiURL, StyledTableCell, StyledTableRow } from '../../constants';
 import { openSnackbar } from '../users/usersSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ModalBody from '../../components/ModalBody';
 
 const RentHistoryList = () => {
   const dispatch = useAppDispatch();
@@ -35,6 +35,15 @@ const RentHistoryList = () => {
   const loadingRemove = useAppSelector(selectDeleteRentHistoryLoading);
   const rentHistories = useAppSelector(selectRentHistories);
   const { id } = useParams() as { id: string };
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+  const openImageModal = () => {
+    setIsImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+  };
 
   useEffect(() => {
     dispatch(fetchRentHistories(id));
@@ -51,8 +60,8 @@ const RentHistoryList = () => {
   };
 
   return (
-    <Paper elevation={3} sx={{ width: '100%', minHeight: '600px', overflowX: 'hidden', marginTop: '20px' }}>
-      <Typography component="h1" variant="h5" sx={{ my: 2, textAlign: 'center' }}>
+    <>
+      <Typography component="h1" variant="h4" sx={{ my: 3, textAlign: 'center' }}>
         История аренды
       </Typography>
       <TableContainer>
@@ -60,22 +69,27 @@ const RentHistoryList = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="center">Фото локации</TableCell>
-                <TableCell align="center">Локация</TableCell>
-                <TableCell align="center">Клиент</TableCell>
-                <TableCell align="center">Старт даты:</TableCell>
-                <TableCell align="center">Конец даты:</TableCell>
-                <TableCell align="center">Цена за аренду</TableCell>
-                <TableCell align="center">Счет за аренду</TableCell>
-                <TableCell align="center">Управление</TableCell>
+                <StyledTableCell align="center">Фото локации</StyledTableCell>
+                <StyledTableCell align="center">Локация</StyledTableCell>
+                <StyledTableCell align="center">Клиент</StyledTableCell>
+                <StyledTableCell align="center">Старт даты:</StyledTableCell>
+                <StyledTableCell align="center">Конец даты:</StyledTableCell>
+                <StyledTableCell align="center">Цена за аренду</StyledTableCell>
+                <StyledTableCell align="center">Счет за аренду</StyledTableCell>
+                <StyledTableCell align="center">Управление</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {!loading ? (
                 rentHistories.map((item) => (
-                  <TableRow key={item._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <StyledTableRow key={item._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell align="center">
-                      <img width="150px" src={apiURL + '/' + item.location.dayImage} alt={item.location._id} />
+                      <img
+                        onClick={openImageModal}
+                        width="180px"
+                        src={apiURL + '/' + item.location.dayImage}
+                        alt={item.location._id}
+                      />
                     </TableCell>
                     <TableCell align="center">
                       {`${item.location.city} ${item.location.streets[0] + '/' + item.location.streets[1]}, ${
@@ -104,14 +118,21 @@ const RentHistoryList = () => {
                         </Link>
                       </ButtonGroup>
                     </TableCell>
-                  </TableRow>
+                    <ModalBody isOpen={isImageModalOpen} onClose={closeImageModal}>
+                      <img
+                        src={apiURL + '/' + item.location.dayImage}
+                        alt={item.location._id}
+                        style={{ width: '100%' }}
+                      />
+                    </ModalBody>
+                  </StyledTableRow>
                 ))
               ) : (
-                <TableRow>
+                <StyledTableRow>
                   <TableCell colSpan={7} align="center">
                     <CircularProgress color="success" />
                   </TableCell>
-                </TableRow>
+                </StyledTableRow>
               )}
             </TableBody>
           </Table>
@@ -119,7 +140,7 @@ const RentHistoryList = () => {
           <Alert severity="info">История аренды по данной локации отсутствует</Alert>
         )}
       </TableContainer>
-    </Paper>
+    </>
   );
 };
 
