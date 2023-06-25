@@ -23,7 +23,7 @@ const ConstructorCard = () => {
   return (
     <>
       {constructorLocation.map((item) => (
-        <Grid key={item.id} item xs={6}>
+        <Grid key={item.id} item xs>
           <Card elevation={3} sx={{ display: 'flex', alignItems: 'center' }}>
             <Box>
               <CardContent sx={{ flex: '1 0 auto' }}>

@@ -1,5 +1,17 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Avatar, Box, Chip, Container, Typography, Grid, TextField, Button, Paper, Link } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Chip,
+  Container,
+  Typography,
+  Grid,
+  TextField,
+  Button,
+  Paper,
+  Link,
+  useMediaQuery,
+} from '@mui/material';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { resetLocationId, selectSelectedLocationId } from '../location/locationsSlice';
@@ -28,6 +40,8 @@ const ConstructorLink = () => {
   });
   const link = useAppSelector(selectUrl);
   const { confirm } = useConfirm();
+  const matches = useMediaQuery('(min-width:600px)');
+  const matches_500 = useMediaQuery('(min-width:500px)');
 
   const options = useMemo(() => {
     return {
@@ -95,11 +109,11 @@ const ConstructorLink = () => {
         <Avatar sx={{ m: 1 }}>
           <ConstructionIcon color="success" />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant={matches_500 ? 'h5' : 'h6'}>
           Конструктор предложения
         </Typography>
         <Chip
-          sx={{ fontSize: '20px', p: 3, marginRight: 'auto', mb: 2 }}
+          sx={{ fontSize: '20px', p: 3, marginRight: 'auto', mb: 2, width: !matches_500 ? '100%' : null }}
           label={'Выберите поля '}
           variant="outlined"
           color="info"
@@ -117,9 +131,11 @@ const ConstructorLink = () => {
               <Grid container sx={{ flexDirection: 'column' }} spacing={3}>
                 <Grid item xs={12}>
                   <Box sx={{ display: 'flex' }}>
-                    <Avatar sx={{ bgcolor: green[500], mr: 3, mb: 'auto' }}>
-                      <TitleIcon />
-                    </Avatar>
+                    {matches ? (
+                      <Avatar sx={{ bgcolor: green[500], mr: 3, mb: 'auto' }}>
+                        <TitleIcon />
+                      </Avatar>
+                    ) : null}
                     <TextField
                       label="Название организации"
                       name="title"
@@ -134,9 +150,11 @@ const ConstructorLink = () => {
                   </Box>
                 </Grid>
                 <Grid item xs={12} display="flex">
-                  <Avatar sx={{ bgcolor: green[500], mr: 3, mb: 'auto' }}>
-                    <ChatBubbleOutlineIcon />
-                  </Avatar>
+                  {matches ? (
+                    <Avatar sx={{ bgcolor: green[500], mr: 3, mb: 'auto' }}>
+                      <ChatBubbleOutlineIcon />
+                    </Avatar>
+                  ) : null}
                   <SimpleMdeReact
                     options={options}
                     style={{ width: '100%' }}
