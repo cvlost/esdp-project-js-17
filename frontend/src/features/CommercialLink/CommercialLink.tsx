@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectFetchLocationLinkLoading, selectListLocationLink } from './commercialLinkSlice';
 import { fetchLocationLink } from './CommercialLinkThunk';
 import { useParams } from 'react-router-dom';
+import { isEditUserLink } from '../location/locationsSlice';
 const CommercialLink = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
@@ -16,6 +17,7 @@ const CommercialLink = () => {
   useEffect(() => {
     if (id) {
       dispatch(fetchLocationLink(id));
+      dispatch(isEditUserLink());
     }
   }, [dispatch, id]);
 

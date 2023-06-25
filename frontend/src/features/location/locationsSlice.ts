@@ -34,6 +34,7 @@ interface LocationColumn {
 }
 
 interface LocationsState {
+  isUserLink: boolean;
   locationsListData: LocationsListResponse;
   locationsListLoading: boolean;
   settings: {
@@ -130,6 +131,7 @@ const initialFilterCriteria: FilterCriteriaResponse = {
 };
 
 const initialState: LocationsState = {
+  isUserLink: false,
   locationsListData: {
     locations: [],
     page: 1,
@@ -177,6 +179,9 @@ const locationsSlice = createSlice({
   name: 'locations',
   initialState,
   reducers: {
+    isEditUserLink: (state) => {
+      state.isUserLink = true;
+    },
     setCurrentPage: (state, { payload: page }: PayloadAction<number>) => {
       state.locationsListData.page = page;
     },
@@ -380,6 +385,7 @@ export const {
   addLocationId,
   resetLocationId,
   checkedLocation,
+  isEditUserLink,
 } = locationsSlice.actions;
 export const selectLocationsListData = (state: RootState) => state.locations.locationsListData;
 export const selectLocationsListLoading = (state: RootState) => state.locations.locationsListLoading;
@@ -403,3 +409,4 @@ export const selectCreateRentError = (state: RootState) => state.locations.creat
 export const selectCreateBookingLoading = (state: RootState) => state.locations.createBookingLoading;
 export const selectCreateBookingError = (state: RootState) => state.locations.createBookingError;
 export const selectRemoveBookingLoading = (state: RootState) => state.locations.removeBookingLoading;
+export const selectIsUserLink = (state: RootState) => state.locations.isUserLink;
