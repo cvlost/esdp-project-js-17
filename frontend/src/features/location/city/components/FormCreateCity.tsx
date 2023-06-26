@@ -66,7 +66,7 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit, existingCity = initialState
         <LocationCityIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать город' : 'Создать город'}
+        {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать город' : 'Создать город'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -75,6 +75,7 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit, existingCity = initialState
               fullWidth
               select
               value={state.area}
+              color="success"
               name="area"
               label="Область"
               onChange={inputChangeHandler}
@@ -100,6 +101,7 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit, existingCity = initialState
               required
               fullWidth
               label="Название города"
+              color="success"
               type="text"
               name="name"
               autoComplete="off"
@@ -109,7 +111,7 @@ const FormCreateCity: React.FC<Props> = ({ onSubmit, existingCity = initialState
           </Grid>
         </Grid>
         <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
-          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать' : 'Создать'}
+          {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать' : 'Создать'}
         </Button>
       </Box>
     </Box>

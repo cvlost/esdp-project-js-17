@@ -93,7 +93,7 @@ const LinkList = () => {
               ) : (
                 <StyledTableRow>
                   <TableCell>
-                    <CircularProgress />
+                    <CircularProgress color="success" />
                   </TableCell>
                 </StyledTableRow>
               )}

@@ -6,7 +6,7 @@ import Region from '../models/Region';
 import City from '../models/City';
 import Direction from '../models/Direction';
 import { imagesUpload } from '../multer';
-import { ILocation, RentData } from '../types';
+import { AnalyticsLocationType, ILocation, RentData, RentHistoryListType } from '../types';
 import Street from '../models/Street';
 import Area from '../models/Area';
 import Format from '../models/Format';
@@ -18,6 +18,8 @@ import Size from '../models/Size';
 import Lighting from '../models/Lighting';
 import RentHistory from '../models/RentHistory';
 import * as notificationsService from '../services/notifications-service';
+import dayjs from 'dayjs';
+import ru from 'dayjs/locale/ru';
 
 const locationsRouter = express.Router();
 
@@ -92,6 +94,78 @@ locationsRouter.post('/', async (req, res, next) => {
   }
 });
 
+locationsRouter.get('/analytics', auth, async (req, res, next) => {
+  let perPage = parseInt(req.query.perPage as string);
+  let page = parseInt(req.query.page as string);
+  const filter = parseInt(req.query.filter as string) || dayjs().year();
+
+  page = isNaN(page) || page <= 0 ? 1 : page;
+  perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
+  try {
+    const locations = await Location.aggregate([
+      { $skip: (page - 1) * perPage },
+      { $limit: perPage },
+      { $sort: { _id: -1 } },
+      ...flattenLookup,
+      { $project: { country: 0, description: 0 } },
+    ]);
+
+    const history: RentHistoryListType[] = await RentHistory.find();
+
+    const locationsAnalytics: AnalyticsLocationType[] = [];
+
+    locations.forEach((item) => {
+      const locationHistory = history.filter(
+        (his) => his.location.toString() === item._id.toString() && dayjs(his.rent_date.end).year() === filter,
+      );
+
+      if (locationHistory.length > 0) {
+        const obj: AnalyticsLocationType = {
+          _id: item._id,
+          dayImage: item.dayImage,
+          locationName: item.city + ', ' + item.streets[0] + '/' + item.streets[1] + ', ' + item.direction,
+          overallBudget: locationHistory.reduce(
+            (accumulator, currentValue) => accumulator + parseInt(currentValue.rent_cost.toString()),
+            0,
+          ),
+          overallPrice: parseInt(locationHistory[0].rent_price.toString()) * 12,
+          rentDay: locationHistory.reduce((accumulator, currentValue) => {
+            return accumulator + dayjs(currentValue.rent_date.end).diff(dayjs(currentValue.rent_date.start), 'day');
+          }, 0),
+          rentPercent: Math.ceil(
+            (locationHistory.reduce((accumulator, currentValue) => {
+              return accumulator + dayjs(currentValue.rent_date.end).diff(dayjs(currentValue.rent_date.start), 'day');
+            }, 0) /
+              365) *
+              100,
+          ),
+          financePercent: Math.ceil(
+            (locationHistory.reduce(
+              (accumulator, currentValue) => accumulator + parseInt(currentValue.rent_cost.toString()),
+              0,
+            ) /
+              (parseInt(locationHistory[0].rent_price.toString()) * 12)) *
+              100,
+          ),
+        };
+        locationsAnalytics.push(obj);
+      }
+      return;
+    });
+
+    const count = locationsAnalytics.length;
+    let pages = Math.ceil(count / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
+
+    return res.send({ locationsAnalytics, page, pages, count, perPage });
+  } catch (e) {
+    next(e);
+  }
+});
+
 locationsRouter.post('/filter', async (req, res, next) => {
   const filter: FilterQuery<ILocation> = req.body.filterQuery ? req.body.filterQuery : {};
 
@@ -129,6 +203,39 @@ locationsRouter.post('/filter', async (req, res, next) => {
         lightings,
       },
     });
+  } catch (e) {
+    return next(e);
+  }
+});
+
+locationsRouter.get('/list-graphic', async (req, res, next) => {
+  try {
+    const filterMonth = (req.query.filterMonth as string) || dayjs().locale(ru).format('MMMM');
+    const filterYear = parseInt(req.query.filterYear as string) || dayjs().year();
+
+    let perPage = parseInt(req.query.perPage as string);
+    let page = parseInt(req.query.page as string);
+
+    page = isNaN(page) || page <= 0 ? 1 : page;
+    perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
+
+    const locationFind = await Location.find({ month: filterMonth, year: filterYear });
+    const count = locationFind.length;
+    let pages = Math.ceil(locationFind.length / perPage);
+
+    if (pages === 0) pages = 1;
+    if (page > pages) page = pages;
+
+    const locations = await Location.aggregate([
+      { $match: { _id: { $in: locationFind.map((loc) => loc._id) } } },
+      { $skip: (page - 1) * perPage },
+      { $limit: perPage },
+      { $sort: { _id: -1 } },
+      ...flattenLookup,
+      { $project: { rent: 1, booking: 1, client: 1, month: 1, year: 1, price: 1 } },
+    ]);
+
+    return res.send({ locations, page, pages, count, perPage });
   } catch (e) {
     return next(e);
   }
@@ -219,6 +326,8 @@ locationsRouter.post(
       description: req.body.description,
       dayImage: req.files && files['dayImage'][0] ? 'images/day/' + files['dayImage'][0].filename : null,
       schemaImage: req.files && files['schemaImage'][0] ? 'images/schema/' + files['schemaImage'][0].filename : null,
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
     };
 
     try {
@@ -356,36 +465,6 @@ locationsRouter.delete('/:id', auth, async (req, res, next) => {
 
     const result = await Location.deleteOne({ _id }).populate('city direction region');
     return res.send(result);
-  } catch (e) {
-    return next(e);
-  }
-});
-
-locationsRouter.patch('/checked', auth, async (req, res, next) => {
-  try {
-    if (req.query.allChecked !== undefined) {
-      await Location.updateMany({ checked: false });
-      return res.send({ patch: false });
-    } else if (req.query.checked !== undefined) {
-      if (!mongoose.isValidObjectId(req.query.checked)) {
-        return res.status(422).send({ error: 'Некорректный id локации.' });
-      }
-
-      const locationOne = await Location.findOne({ _id: req.query.checked });
-
-      if (!locationOne) {
-        return res.status(404).send({ error: 'Локации не существует в базе.' });
-      }
-
-      if (!locationOne.checked) {
-        locationOne.checked = req.body.checked;
-      } else {
-        locationOne.checked = !req.body.checked;
-      }
-
-      await locationOne.save();
-      return res.sendStatus(204);
-    }
   } catch (e) {
     return next(e);
   }

@@ -45,17 +45,18 @@ clientsRouter.get('/anal', auth, async (req, res, next) => {
               total: item.rent_cost.toString(),
               month: dayjs(item.rent_date.end).locale(ru).format('MMMM'),
               locationId: item.location.toString(),
+              year: dayjs(item.createdAt).year(),
             };
           }),
           overallBudget: clientHistory
-            .filter((item) => dayjs(item.rent_date.end).year() === filter)
+            .filter((item) => dayjs(item.createdAt).year() === filter)
             .reduce((accumulator, currentValue) => accumulator + parseInt(currentValue.rent_cost.toString()), 0),
           rentDay: clientHistory
-            .filter((item) => dayjs(item.rent_date.end).year() === filter)
+            .filter((item) => dayjs(item.createdAt).year() === filter)
             .reduce((accumulator, currentValue) => {
               return accumulator + dayjs(currentValue.rent_date.end).diff(dayjs(currentValue.rent_date.start), 'day');
             }, 0),
-          numberOfBanners: clientHistory.filter((item) => dayjs(item.rent_date.end).year() === filter).length,
+          numberOfBanners: clientHistory.filter((item) => dayjs(item.createdAt).year() === filter).length,
         };
 
         clintAnal.push(obj);
@@ -68,11 +69,8 @@ clientsRouter.get('/anal', auth, async (req, res, next) => {
       return {
         client: item.client,
         anal: item.anal.filter((el) => {
-          const date = dayjs(el.date.start).year();
-          if (date === filter) {
+          if (el.year === filter) {
             return item;
-          } else if (constantClient && constantClient === 'true') {
-            if (Math.max(parseInt(el.total)) && Math.max(item.numberOfBanners)) return item;
           }
         }),
         overallBudget: item.overallBudget,
@@ -80,6 +78,11 @@ clientsRouter.get('/anal', auth, async (req, res, next) => {
         numberOfBanners: item.numberOfBanners,
       };
     });
+
+    if (constantClient && constantClient === 'true') {
+      const filter = clintAnalNew.filter((item) => Math.max(item.numberOfBanners));
+      return res.send({ clintAnalNew: filter, page, pages, count, perPage });
+    }
 
     return res.send({ clintAnalNew, page, pages, count, perPage });
   } catch (e) {

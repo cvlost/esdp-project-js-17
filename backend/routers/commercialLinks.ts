@@ -6,7 +6,6 @@ import * as crypto from 'crypto';
 import { flattenLookup } from './locations';
 import mongoose, { Types } from 'mongoose';
 import auth from '../middleware/auth';
-import config from '../config';
 
 const commercialLinksRouter = express.Router();
 
@@ -35,9 +34,8 @@ commercialLinksRouter.get('/:shortUrl', async (req, res, next) => {
   try {
     const commLink = await CommercialLink.findOne({ shortUrl: req.params.shortUrl });
     if (!commLink) {
-      return res.status(404).send({ message: 'Ссылка недествительна !' });
+      return res.status(404).send({ message: 'Ссылка недействительна !' });
     }
-    console.log(config);
     return res.status(302).redirect(`http://95.85.35.4/link/${commLink._id}`);
   } catch (e) {
     return next(e);

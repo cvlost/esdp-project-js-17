@@ -3,7 +3,6 @@ import { Alert, Box, Grid, Tab, Table, TableBody, TableCell, TableRow, Typograph
 import { LoadingButton, TabContext, TabList, TabPanel } from '@mui/lab';
 import { useAppSelector } from '../../../app/hooks';
 import { selectOneLocation } from '../locationsSlice';
-import useConfirm from '../../../components/Dialogs/Confirm/useConfirm';
 import { selectUser } from '../../users/usersSlice';
 import dayjs from 'dayjs';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
@@ -16,7 +15,6 @@ interface Props {
 
 const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingList }) => {
   const user = useAppSelector(selectUser);
-  const { confirm } = useConfirm();
   const [value, setValue] = React.useState('1');
   const loc = useAppSelector(selectOneLocation);
 
@@ -125,7 +123,7 @@ const LocationPageTabs: React.FC<Props> = ({ openModalBooking, openModalBookingL
                 <TableCell>{loc.area}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Направление</TableCell>
+                <TableCell>Сторона</TableCell>
                 <TableCell>{loc.direction}</TableCell>
               </TableRow>
               <TableRow>

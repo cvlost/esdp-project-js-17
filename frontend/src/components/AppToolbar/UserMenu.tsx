@@ -150,6 +150,19 @@ const UserMenu: React.FC<Props> = ({ user }) => {
           </MenuItem>,
           <Divider key="user-divider" />,
         ]}
+        {user && [
+          <MenuItem
+            key="loc-management"
+            onClick={() => {
+              handleClose();
+              navigate('/locations-analytics');
+            }}
+          >
+            <AnalyticsIcon sx={{ mr: 1 }} />
+            Аналитика локаций
+          </MenuItem>,
+          <Divider key="user-divider" />,
+        ]}
         <MenuItem onClick={openDialog}>
           <AccountBoxIcon sx={{ mr: 1 }} />
           Редактировать профиль

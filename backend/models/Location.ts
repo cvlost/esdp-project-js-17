@@ -9,6 +9,7 @@ import Format from './Format';
 import Size from './Size';
 import Lighting from './Lighting';
 import { PeriodSchema } from './Period';
+import dayjs from 'dayjs';
 
 const LocationSchema = new Schema<ILocation>({
   client: {
@@ -147,6 +148,14 @@ const LocationSchema = new Schema<ILocation>({
     type: String,
     enum: ['Занят', 'Свободный', null],
     default: null,
+  },
+  month: {
+    type: String,
+    default: dayjs().format('MMMM'),
+  },
+  year: {
+    type: Number,
+    default: dayjs().year(),
   },
 });
 

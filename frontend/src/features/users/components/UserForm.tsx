@@ -63,6 +63,7 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
               fullWidth
               label="Email пользователя"
               type="email"
+              color="success"
               name="email"
               autoComplete="off"
               value={state.email}
@@ -73,6 +74,7 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
             <TextField
               required
               fullWidth
+              color="success"
               label="Имя пользователя"
               name="displayName"
               autoComplete="off"
@@ -86,6 +88,7 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
                 select
                 required
                 fullWidth
+                color="success"
                 label="Роль пользователя"
                 name="role"
                 value={state.role}
@@ -106,6 +109,7 @@ const UserForm: React.FC<Props> = ({ onSubmit, existingUser = initialState, isEd
             <TextField
               required={!isEdit}
               fullWidth
+              color="success"
               label="Пароль пользователя"
               name="password"
               type="password"

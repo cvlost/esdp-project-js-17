@@ -10,6 +10,7 @@ interface Props {
   Loading: boolean;
   error: ValidationError | null;
 }
+
 const initialState: FormatMutation = {
   name: '',
 };
@@ -43,7 +44,7 @@ const FormCreateFormat: React.FC<Props> = ({ onSubmit, existingFormat = initialS
         <DashboardIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать Формат' : 'Создать Формат'}
+        {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать Формат' : 'Создать Формат'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -51,6 +52,7 @@ const FormCreateFormat: React.FC<Props> = ({ onSubmit, existingFormat = initialS
             <TextField
               value={value.name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue({ name: e.target.value })}
+              color="success"
               required
               fullWidth
               label="Название формата"
@@ -63,7 +65,7 @@ const FormCreateFormat: React.FC<Props> = ({ onSubmit, existingFormat = initialS
           </Grid>
         </Grid>
         <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
-          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать Формат' : 'Создать'}
+          {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать Формат' : 'Создать'}
         </Button>
       </Box>
     </Box>

@@ -25,10 +25,10 @@ const SnackbarCard = () => {
       txt += 'Регион успешно удален';
       break;
     case 'create_direction':
-      txt += 'Направление успешно создано';
+      txt += 'Сторона успешно создана';
       break;
     case 'remove_direction':
-      txt += 'Направление успешно удалено';
+      txt += 'Сторона успешно удалена';
       break;
     case 'create_size':
       txt += 'Размер успешно создан';
@@ -84,14 +84,11 @@ const SnackbarCard = () => {
     case 'edit_location':
       txt += 'Локация успешно отредактирована';
       break;
-    case 'copy_link':
-      txt += 'Ссылка скопирована';
-      break;
     case 'remove_client':
-      txt += 'клиент успешно удален';
+      txt += 'Клиент успешно удален';
       break;
     case 'create_client':
-      txt += 'клиент успешно сохранен';
+      txt += 'Клиент успешно сохранен';
       break;
     case 'create_booking':
       txt += 'Бронь успешно добавлена';
@@ -105,8 +102,11 @@ const SnackbarCard = () => {
     case 'Main_Edit':
       txt += ' успешно сохранено';
       break;
+    case 'copy_link':
+      txt += 'Ссылка скопирована';
+      break;
     case 'remove_link':
-      txt += ' ссылка успешно удалена';
+      txt += ' Ссылка успешно удалена';
       break;
   }
 

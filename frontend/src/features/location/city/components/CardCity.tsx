@@ -25,7 +25,7 @@ const CardCity: React.FC<Props> = ({ city, removeCardCity, onEditing }) => {
             onClick={removeCardCity}
             aria-label="delete"
           >
-            {removeLoading && removeLoading === city._id && <CircularProgress />}
+            {removeLoading && removeLoading === city._id && <CircularProgress color="success" />}
             <DeleteIcon />
           </IconButton>
           <IconButton aria-label="success" onClick={onEditing}>

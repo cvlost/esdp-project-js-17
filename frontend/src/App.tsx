@@ -28,6 +28,8 @@ import LinkList from './features/CommercialLink/LinkList';
 import RentHistoryList from './features/rentHistory/RentHistoryList';
 import AnalyticsClient from './features/AnalyticsClient/AnalyticsClient';
 import { wsConnect, wsDisconnect } from './app/middleware/notificationsActions';
+import LocationsAnalytics from './features/AnalyticsLocation/LocationsAnalytics';
+import LocationGraphic from './features/location/LocationGraphic/LocationGraphic';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -59,7 +61,9 @@ function App() {
         <Route element={<Protected userRole={user?.role} priority="user" />}>
           <Route path="/" element={<Location />} />
           <Route path="/:id" element={<LocationPage />} />
+          <Route path="/locations-analytics" element={<LocationsAnalytics />} />
           <Route path="/clients-analytics" element={<AnalyticsClient />} />
+          <Route path="/location-graphic" element={<LocationGraphic />} />
           <Route path="/rentHistory/:id" element={<RentHistoryList />} />
           <Route path="/location/:id" element={<LocationPage />} />
         </Route>

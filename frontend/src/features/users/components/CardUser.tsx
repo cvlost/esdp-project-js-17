@@ -31,7 +31,7 @@ const CardUser: React.FC<Props> = ({ user, onDelete, onEditing }) => {
             onClick={onDelete}
             disabled={deleteLoading ? deleteLoading === user._id : false}
           >
-            {deleteLoading && deleteLoading === user._id && <CircularProgress />}
+            {deleteLoading && deleteLoading === user._id && <CircularProgress color="success" />}
             <DeleteIcon />
           </Button>
           <Button size="small" color="success" onClick={onEditing}>

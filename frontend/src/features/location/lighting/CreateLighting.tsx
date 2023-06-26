@@ -136,7 +136,7 @@ const CreateLighting = () => {
         )}
         <Paper elevation={3} sx={{ width: '100%', height: '500px', overflowX: 'hidden' }}>
           <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ minWidth: 200 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <StyledTableCell align="left">Направление</StyledTableCell>
@@ -164,7 +164,7 @@ const CreateLighting = () => {
                 ) : (
                   <TableRow>
                     <TableCell>
-                      <CircularProgress />
+                      <CircularProgress color="success" />
                     </TableCell>
                   </TableRow>
                 )}

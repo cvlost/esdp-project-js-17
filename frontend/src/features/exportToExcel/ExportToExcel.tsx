@@ -15,12 +15,12 @@ const ExportToExcel: React.FC<Props> = ({ data }) => {
 
   const changedData = data.map((obj) => {
     return {
-      Направление: obj.direction,
+      Сторона: obj.direction,
       Область: obj.area,
       Район: obj.region,
       Улица: obj.streets,
       Город: obj.city,
-      Адресс: obj.addressNote,
+      Адрес: obj.addressNote,
       Аренда: obj.booking,
       Цена: obj.price,
       Бронь: obj.rent,
@@ -77,7 +77,7 @@ const ExportToExcel: React.FC<Props> = ({ data }) => {
 
     const workbook: WorkBook = utils.book_new();
     utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    writeFile(workbook, fileName.trim() !== '' ? fileName : 'Шамдагай документ' + '.xlsx');
+    writeFile(workbook, fileName.trim() !== '' ? fileName.trim() + '.xlsx' : 'Шамдагай документ.xlsx');
     handleClose();
   };
 
@@ -96,6 +96,7 @@ const ExportToExcel: React.FC<Props> = ({ data }) => {
           <TextField
             color="success"
             label="Имя документа"
+            autoComplete="off"
             onChange={handleFileNameChange}
             onKeyDown={handleEnterPress}
             type="text"

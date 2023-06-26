@@ -58,6 +58,8 @@ export interface ILocation {
   schemaImage: string | null;
   checked?: boolean;
   status?: string | null;
+  month: string;
+  year: number;
 }
 
 export interface AreaType {
@@ -142,10 +144,22 @@ export interface AnalClientType {
     total: string;
     month: string;
     locationId: string;
+    year: number;
   }[];
   overallBudget: number;
   rentDay: number;
   numberOfBanners: number;
+}
+
+export interface AnalyticsLocationType {
+  _id: Types.ObjectId;
+  locationName: string;
+  dayImage: string;
+  overallBudget: number;
+  overallPrice: number;
+  rentDay: number;
+  rentPercent: number;
+  financePercent: number;
 }
 
 export interface INotification {

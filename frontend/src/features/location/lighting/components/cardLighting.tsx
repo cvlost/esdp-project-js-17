@@ -25,7 +25,7 @@ const CardLighting: React.FC<Props> = ({ lighting, removeCardLighting, onEditing
             onClick={removeCardLighting}
             aria-label="delete"
           >
-            {removeLoading && removeLoading === lighting._id && <CircularProgress />}
+            {removeLoading && removeLoading === lighting._id && <CircularProgress color="success" />}
             <DeleteIcon />
           </IconButton>
           <IconButton aria-label="success" onClick={onEditing}>

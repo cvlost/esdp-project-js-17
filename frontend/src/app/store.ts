@@ -18,6 +18,8 @@ import { clientReducer } from '../features/location/client/clientSlice';
 import { rentHistoryReducer } from '../features/rentHistory/rentHistorySlice';
 import { analyticsClientReducer } from '../features/AnalyticsClient/AnalyticsClientSlice';
 import notificationsMiddleware from './middleware/notificationsMiddleware';
+import { analyticsLocationReducer } from '../features/AnalyticsLocation/LocationAnalyticsSlice';
+import { locationGraphicReducer } from '../features/location/LocationGraphic/locationGraphicSlice';
 
 const usersPersistConfig = {
   key: 'ESDP-project-js-17:users',
@@ -28,7 +30,7 @@ const usersPersistConfig = {
 const locationsPersistConfig = {
   key: 'ESDP-project-js-17:locations',
   storage,
-  whitelist: ['settings', 'selectedLocationId'],
+  whitelist: ['settings', 'selectedLocationId', 'locationsListData'],
 };
 
 const commercialLinkPersistConfig = {
@@ -53,6 +55,8 @@ const rootReducer = combineReducers({
   clients: clientReducer,
   rentHistories: rentHistoryReducer,
   analyticClient: analyticsClientReducer,
+  analyticLocation: analyticsLocationReducer,
+  locationGraphic: locationGraphicReducer,
 });
 
 export const store = configureStore({

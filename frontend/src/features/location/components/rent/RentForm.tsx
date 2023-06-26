@@ -92,6 +92,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
               fullWidth
               select
               value={state.client}
+              autoComplete="off"
               name="client"
               label="Клиент"
               color="success"

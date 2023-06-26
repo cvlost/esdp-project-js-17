@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import FormatSizeOutlinedIcon from '@mui/icons-material/FormatSizeOutlined';
 import { SizeMutation, ValidationError } from '../../../../types';
+
 interface Props {
   onSubmit: (size: SizeMutation) => void;
   existingSize?: SizeMutation;
@@ -44,7 +45,7 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit, existingSize = initial
         <FormatSizeOutlinedIcon color="success" />
       </Avatar>
       <Typography component="h1" variant="h5">
-        {Loading ? <CircularProgress /> : isEdit ? 'Редактировать размер' : 'Создать размер'}
+        {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать размер' : 'Создать размер'}
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%' }} onSubmit={onFormSubmit}>
         <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
@@ -57,6 +58,7 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit, existingSize = initial
               label="Размер"
               type="text"
               name="name"
+              color="success"
               autoComplete="off"
               inputProps={{
                 pattern: '^\\d+(,\\d+)?x\\d+(,\\d+)?$',
@@ -68,7 +70,7 @@ const FormCreateDirection: React.FC<Props> = ({ onSubmit, existingSize = initial
           </Grid>
         </Grid>
         <Button disabled={Loading} type="submit" fullWidth variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
-          {Loading ? <CircularProgress /> : isEdit ? 'Редактировать размер' : 'Создать'}
+          {Loading ? <CircularProgress color="success" /> : isEdit ? 'Редактировать размер' : 'Создать'}
         </Button>
       </Box>
     </Box>

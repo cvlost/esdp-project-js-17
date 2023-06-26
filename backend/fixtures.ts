@@ -184,33 +184,87 @@ const run = async () => {
       companyPhone: '+99655117852',
       companyEmail: 'orange@gmail.com',
     },
+    {
+      companyName: 'Ананас',
+      companyPhone: '+996551178715',
+      companyEmail: 'arbuz@gmail.com',
+    },
+    {
+      companyName: 'Персик',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
+    {
+      companyName: 'Груша',
+      companyPhone: '+996551178715',
+      companyEmail: 'arbuz@gmail.com',
+    },
+    {
+      companyName: 'Картошка',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
+    {
+      companyName: 'Лук',
+      companyPhone: '+996551178715',
+      companyEmail: 'arbuz@gmail.com',
+    },
+    {
+      companyName: 'Огурец',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
+    {
+      companyName: 'Ананас',
+      companyPhone: '+99655117852',
+      companyEmail: 'orange@gmail.com',
+    },
   );
+
+  const arr = [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+  ];
 
   const locations: HydratedDocument<ILocation>[] = [];
 
-  for (let i = 0; i < 20; i++) {
-    const loc = await Location.create({
-      area: randElement(areas)._id,
-      client: randElement(clients)._id,
-      direction: randElement(directions)._id,
-      city: randElement(cities)._id,
-      region: randElement(regions)._id,
-      streets: [randElement(streets)._id, randElement(streets)._id],
-      format: randElement(formats)._id,
-      legalEntity: randElement(legalEntities)._id,
-      lighting: randElement(lightings)._id,
-      size: randElement(sizes)._id,
-      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
-      placement: Math.random() > 0.5,
-      addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
-      description: Math.random() > 0.5 ? fixtureDescription : null,
-      dayImage: `fixtures/${i + 1}.jpg`,
-      schemaImage: `fixtures/${i + 1}.png`,
-      status: null,
-      booking: [],
-    });
+  for (const month of arr) {
+    for (let i = 0; i < 5; i++) {
+      const loc = await Location.create({
+        area: randElement(areas)._id,
+        client: randElement(clients)._id,
+        direction: randElement(directions)._id,
+        city: randElement(cities)._id,
+        region: randElement(regions)._id,
+        streets: [randElement(streets)._id, randElement(streets)._id],
+        format: randElement(formats)._id,
+        legalEntity: randElement(legalEntities)._id,
+        lighting: randElement(lightings)._id,
+        size: randElement(sizes)._id,
+        price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+        placement: Math.random() > 0.5,
+        addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
+        description: Math.random() > 0.5 ? fixtureDescription : null,
+        dayImage: `fixtures/${i + 1}.jpg`,
+        schemaImage: `fixtures/${i + 1}.png`,
+        status: null,
+        booking: [],
+        month: month,
+        year: 2023,
+      });
 
-    locations.push(loc);
+      locations.push(loc);
+    }
   }
 
   const setRentAndHistoryFor = async (loc: HydratedDocument<ILocation>, start: Date, end: Date) => {

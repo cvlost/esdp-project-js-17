@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, CardMedia, Chip, CircularProgress, Container, Grid, IconButton, Paper } from '@mui/material';
+import { Box, Button, CardMedia, CircularProgress, Container, Paper } from '@mui/material';
 import CommercialLinkOneCard from './components/CommercialLinkOneCard';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -10,8 +10,10 @@ import { selectFetchLocationLinkLoading, selectLocationLinkOne } from './commerc
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchLocationLinkOne } from './CommercialLinkThunk';
 import { apiURL } from '../../constants';
-import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import ReactMarkdown from 'react-markdown';
+import AppBarCard from './components/AppBarCard';
+import { isEditUserLink } from '../location/locationsSlice';
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 
 const CommercialLinkOne = () => {
   const navigate = useNavigate();
@@ -24,50 +26,57 @@ const CommercialLinkOne = () => {
   useEffect(() => {
     if (idLink && idLoc) {
       dispatch(fetchLocationLinkOne({ idLink, idLoc }));
+      dispatch(isEditUserLink());
     }
   }, [dispatch, idLink, idLoc]);
 
   return (
     <>
+      <AppBarCard />
       {!locationLinkOneLoading ? (
         <Container>
-          <IconButton onClick={() => navigate(-1)} aria-label="delete">
-            <ArrowCircleLeftIcon sx={{ fontSize: '50px' }} />
-          </IconButton>
-          <Grid container spacing={1}>
-            <Grid item xs md={6}>
+          <Button onClick={() => navigate(-1)} sx={{ mt: 1 }} color="success">
+            <ArrowCircleLeftIcon fontSize="large" />
+          </Button>
+          <Paper elevation={5} sx={{ background: 'rgba(181,181,187,0.17)', p: 1, borderRadius: '20px', mt: 3 }}>
+            <Paper
+              elevation={3}
+              sx={{
+                borderRadius: '20px',
+              }}
+            >
               <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
                 <SwiperSlide>
                   <CardMedia
                     component="img"
-                    height="300"
+                    height="500"
                     image={apiURL + '/' + locationLinkOne.location?.schemaImage}
-                    alt="Paella dish"
+                    alt="shamdagai"
+                    sx={{ borderRadius: '20px' }}
                   />
                 </SwiperSlide>
                 <SwiperSlide>
                   <CardMedia
                     component="img"
-                    height="300"
+                    height="500"
                     image={apiURL + '/' + locationLinkOne.location?.dayImage}
-                    alt="Paella dish"
+                    alt="shamdagai"
+                    sx={{ borderRadius: '20px' }}
                   />
                 </SwiperSlide>
               </Swiper>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Box>
-                <CommercialLinkOneCard />
-              </Box>
-            </Grid>
-          </Grid>
-          <Paper sx={{ mt: 3, p: 1 }} elevation={3}>
-            <Chip sx={{ fontSize: '20px', p: 3, my: 2 }} label="Информация" variant="outlined" color="info" />
+            </Paper>
+          </Paper>
+          <Box sx={{ mt: 3 }}>
+            <CommercialLinkOneCard />
+          </Box>
+
+          <Paper elevation={3}>
             <ReactMarkdown>{locationLinkOne.description}</ReactMarkdown>
           </Paper>
         </Container>
       ) : (
-        <CircularProgress />
+        <CircularProgress color="success" />
       )}
     </>
   );

@@ -107,7 +107,7 @@ const CardClient: React.FC<Props> = ({ client, removeClientCard, onEditing }) =>
             onClick={removeClientCard}
             aria-label="delete"
           >
-            {removeLoading && removeLoading === client._id && <CircularProgress />}
+            {removeLoading && removeLoading === client._id && <CircularProgress color="success" />}
             <DeleteIcon />
           </IconButton>
           <IconButton onClick={onEditing} aria-label="success">
