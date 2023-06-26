@@ -14,11 +14,16 @@ export interface LoginMutation {
 }
 
 export interface INotification {
-  message: string;
   _id: string;
+  message: string;
   event: string;
   createdAt: string;
   location: string;
+  locationPrettyName: string;
+  client: {
+    companyName: string;
+  };
+  date: IPeriod;
 }
 
 export interface UserResponse {

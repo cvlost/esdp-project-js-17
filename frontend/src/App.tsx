@@ -35,7 +35,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      dispatch(wsConnect(user._id));
+      dispatch(wsConnect(user.token));
 
       return () => {
         dispatch(wsDisconnect);

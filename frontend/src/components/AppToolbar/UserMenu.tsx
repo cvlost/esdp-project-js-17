@@ -48,6 +48,10 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { wsReadNotification } from '../../app/middleware/notificationsActions';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
+
+dayjs.locale('ru');
 
 interface Props {
   user: User;
@@ -233,8 +237,20 @@ const UserMenu: React.FC<Props> = ({ user }) => {
                     </AccordionSummary>
                     <Divider />
                     <AccordionDetails>
-                      <Typography sx={{ fontSize: '0.8em', fontWeight: 'bold', mb: 2 }}>Уведомление</Typography>
-                      <Typography>{alert.message}</Typography>
+                      <Typography sx={{ fontWeight: 'bold', my: 2 }}>{alert.message}</Typography>
+                      <Divider sx={{ my: 2 }} />
+                      <Typography sx={{ fontSize: '0.8em' }}>Локация: {alert.locationPrettyName}</Typography>
+                      <Typography sx={{ fontSize: '0.8em' }}>Клиент: {alert.client.companyName}</Typography>
+                      <Typography sx={{ fontSize: '0.8em' }}>
+                        Дата начала: {dayjs(alert.date.start).format('DD MMMM YYYY')}
+                      </Typography>
+                      <Typography sx={{ fontSize: '0.8em' }}>
+                        Дата окончания: {dayjs(alert.date.end).format('DD MMMM YYYY')}
+                      </Typography>
+                      <Divider sx={{ my: 2 }} />
+                      <Typography sx={{ fontSize: '0.8em', mb: 2 }}>
+                        Уведомление создано {dayjs(alert.createdAt).format('DD MMMM YYYY')}
+                      </Typography>
                     </AccordionDetails>
                     <Divider />
                     <AccordionActions>

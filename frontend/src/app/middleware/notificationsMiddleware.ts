@@ -9,15 +9,14 @@ import { ClientAction, wsConnect, wsDisconnect, wsReadNotification } from './not
 const initSocketMiddleware: () => Middleware = () => {
   let socket: null | Socket = null;
 
-  const connectSocket = (dispatch: Dispatch, getState: () => RootState, userId: string) => {
+  const connectSocket = (dispatch: Dispatch, getState: () => RootState, token: string) => {
     socket = io(apiURL, {
       path: '/notifications',
-      query: { userId },
+      query: { token },
     });
 
     socket.on('notifications', (data) => {
       const notifications = data as INotification[];
-      console.log('Received notification:', notifications);
       dispatch(setNotifications(notifications));
     });
   };

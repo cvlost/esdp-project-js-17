@@ -1,5 +1,5 @@
 import { HydratedDocument, Types } from 'mongoose';
-import { ILocation, IPeriod } from '../types';
+import { ILocation, IPeriod, IUser } from '../types';
 import Location from '../models/Location';
 import Street from '../models/Street';
 import Notification from '../models/Notification';
@@ -10,6 +10,7 @@ import City from '../models/City';
 import { Server, Socket } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import config from '../config';
+import User from '../models/Users';
 
 interface IBookingLocation {
   _id: Types.ObjectId;
@@ -23,7 +24,9 @@ interface IBookingLocation {
   };
 }
 
-type SocketWithUserId = Socket & { userId: string };
+export interface SocketWithUser extends Socket {
+  user: HydratedDocument<IUser>;
+}
 
 let io: Server;
 
@@ -35,35 +38,40 @@ export const setupWebSocket = (server: HttpServer) => {
     },
   });
 
+  io.use(async (socket, next) => {
+    try {
+      const socketWithUser = socket as SocketWithUser;
+      const { token } = socket.handshake.query as { token: string };
+      const user = await User.findOne({ token });
+
+      if (!user) return next(new Error('Неавторизованный пользователь.'));
+
+      socketWithUser.user = user;
+      next();
+    } catch (e) {
+      return next(new Error('Непредвиденная ошибка во время проверки пользователя.'));
+    }
+  });
+
   io.on('connection', async (socket: Socket) => {
-    console.log('New client connected');
-
-    const { userId } = socket.handshake.query as { userId: string };
-
-    const socketWithUserId = socket as SocketWithUserId;
-    socketWithUserId.userId = userId;
+    const socketWithUser = socket as SocketWithUser;
+    const userId = socketWithUser.user._id.toString();
 
     try {
       const notifications = await getAll(userId);
-      socketWithUserId.emit('notifications', notifications);
+      socketWithUser.emit('notifications', notifications);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error('Ошибка при получении уведомлений при подключении пользователя:', error);
     }
 
-    socketWithUserId.on('notifications/read', async (data) => {
+    socketWithUser.on('notifications/read', async (data) => {
       try {
-        console.log('reading 1 notification: ', data.notificationId);
-
         await readOne(userId, data.notificationId);
         const notifications = await getAll(userId);
-        socketWithUserId.emit('notifications', notifications);
+        socketWithUser.emit('notifications', notifications);
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error('Ошибка при получении уведомлений после прочтения одного уведомления:', error);
       }
-    });
-
-    socketWithUserId.on('disconnect', () => {
-      console.log('Client disconnected');
     });
   });
 };
@@ -96,7 +104,7 @@ export const notifySpecificUsers = async () => {
   const sockets = Array.from(io.sockets.sockets.values());
 
   for (const socket of sockets) {
-    const userId = (socket as SocketWithUserId).userId;
+    const userId = (socket as SocketWithUser).user._id.toString();
     const notifications = await getAll(userId);
     socket.emit('notifications', notifications);
   }
@@ -163,9 +171,16 @@ export const checkBookingOncoming = async () => {
       const currDate = dayjs();
       const bookingDate = dayjs(loc.closestBookingDate);
       const locationPrettyName = `${loc.city} ${loc.streets.sort().join(' / ')}, ${loc.direction}`;
-      const daysLeft = bookingDate.diff(currDate, 'day') + 1;
-      const dayLabel = getDayLabel(daysLeft);
-      const message = `Близжайшая дата бронирования локации "${locationPrettyName}" через ${daysLeft} ${dayLabel}!`;
+      const daysLeft = bookingDate.diff(currDate, 'day');
+      const dayLabel = getDayLabel(Math.abs(daysLeft));
+      let message: string;
+      if (daysLeft < 0) {
+        message = `Срок бронирования локации ${locationPrettyName} прошел ${Math.abs(daysLeft)} ${dayLabel} назад!`;
+      } else if (daysLeft === 0) {
+        message = `Близжайшая дата бронирования локации ${locationPrettyName} сегодня!`;
+      } else {
+        message = `Близжайшая дата бронирования локации "${locationPrettyName}" через ${daysLeft} ${dayLabel}!`;
+      }
       const notification = await Notification.findOne({ $and: [{ location: loc._id }, { event: 'booking/oncoming' }] });
 
       if (notification && notification.message === message) continue;
@@ -239,8 +254,6 @@ export const checkRentExpiration = async () => {
       const dayLabel = getDayLabel(daysLeft);
       const message = `Срок аренды локации ${locationPrettyName} истекает через ${daysLeft} ${dayLabel}!`;
       const notification = await Notification.findOne({ $and: [{ location: loc._id }, { event: 'rent/expires' }] });
-
-      console.log(JSON.stringify(preExpiredLocationRents, null, 2));
 
       if (notification && notification.message === message) continue;
 
