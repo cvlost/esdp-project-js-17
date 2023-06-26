@@ -119,7 +119,10 @@ export interface SizeType {
 }
 
 export interface RentData {
-  date: DateRange | null;
+  date: {
+    start: Date;
+    end: Date;
+  };
   client: Schema.Types.ObjectId | null;
   rent_cost: string;
 }

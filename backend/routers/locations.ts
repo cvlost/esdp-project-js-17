@@ -468,9 +468,14 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
       return res.status(404).send({ error: 'Данная локация не найдена!' });
     }
 
-    location.rent = rentData.date !== null ? rentData.date : null;
-    location.client = rentData.client !== null ? rentData.client : null;
-    await location.save();
+    const currentDate = dayjs();
+
+    if (dayjs(rentData.date.end) > currentDate) {
+      location.rent = rentData.date;
+      location.client = rentData.client;
+      await location.save();
+    }
+
     await RentHistory.create({
       client: rentData.client,
       location: id,

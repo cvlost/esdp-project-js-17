@@ -167,9 +167,10 @@ LocationSchema.set('toJSON', {
 });
 
 LocationSchema.pre('save', function (next) {
-  const currentDate = new Date();
-  if (this.rent && this.rent.end < currentDate) {
+  const currentDate = dayjs();
+  if (this.rent && dayjs(this.rent.end) < currentDate) {
     this.rent = null;
+    this.client = null;
   }
   next();
 });
