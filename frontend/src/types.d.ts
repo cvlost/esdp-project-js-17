@@ -491,6 +491,7 @@ export interface LocationGraphicDateType {
 export interface AnalyticsLocationType {
   _id: string;
   locationName: string;
+  locationAddressNote: string;
   dayImage: string;
   overallBudget: number;
   overallPrice: number;
@@ -501,8 +502,4 @@ export interface AnalyticsLocationType {
 
 export interface AnalyticsLocationList {
   locationsAnalytics: AnalyticsLocationType[];
-  page: number;
-  pages: number;
-  perPage: number;
-  count: number;
 }
