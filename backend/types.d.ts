@@ -154,6 +154,7 @@ export interface AnalClientType {
 export interface AnalyticsLocationType {
   _id: Types.ObjectId;
   locationName: string;
+  locationAddressNote: string;
   dayImage: string;
   overallBudget: number;
   overallPrice: number;
