@@ -125,7 +125,10 @@ export interface SizeType {
 }
 
 export interface RentData {
-  date: DateRange | null;
+  date: {
+    start: Date;
+    end: Date;
+  };
   client: Schema.Types.ObjectId | null;
   rent_cost: string;
 }
@@ -160,10 +163,23 @@ export interface AnalClientType {
 export interface AnalyticsLocationType {
   _id: Types.ObjectId;
   locationName: string;
+  locationAddressNote: string;
   dayImage: string;
   overallBudget: number;
   overallPrice: number;
   rentDay: number;
   rentPercent: number;
   financePercent: number;
+}
+
+export interface INotification {
+  message: string;
+  event: string;
+  date: IPeriod;
+  locationPrettyName: string;
+  client: Types.ObjectId;
+  location: Types.ObjectId;
+  readBy: Types.ObjectId[];
+  deletedBy: Types.ObjectId[];
+  createdAt: Date;
 }

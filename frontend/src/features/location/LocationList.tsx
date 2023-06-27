@@ -23,8 +23,11 @@ import ModalBody from '../../components/ModalBody';
 import CardLocation from './components/CardLocation';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
-  selectEditLocationError,
+  addLocationId,
   resetFilter,
+  resetLocationId,
+  selectEditLocationError,
+  selectGetItemsListLoading,
   selectLocationsColumnSettings,
   selectLocationsDeleteLoading,
   selectLocationsFilter,
@@ -32,11 +35,8 @@ import {
   selectLocationsListLoading,
   selectOneLocationEditLoading,
   selectOneLocationToEdit,
-  setCurrentPage,
-  addLocationId,
   selectSelectedLocationId,
-  resetLocationId,
-  selectGetItemsListLoading,
+  setCurrentPage,
   checkedLocation,
 } from './locationsSlice';
 import { MainColorGreen } from '../../constants';

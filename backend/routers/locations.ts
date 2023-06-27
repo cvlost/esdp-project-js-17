@@ -17,6 +17,7 @@ import path from 'path';
 import Size from '../models/Size';
 import Lighting from '../models/Lighting';
 import RentHistory from '../models/RentHistory';
+import * as notificationsService from '../services/notifications-service';
 import dayjs from 'dayjs';
 import ru from 'dayjs/locale/ru';
 
@@ -94,36 +95,25 @@ locationsRouter.post('/', async (req, res, next) => {
 });
 
 locationsRouter.get('/analytics', auth, async (req, res, next) => {
-  let perPage = parseInt(req.query.perPage as string);
-  let page = parseInt(req.query.page as string);
   const filter = parseInt(req.query.filter as string) || dayjs().year();
 
-  page = isNaN(page) || page <= 0 ? 1 : page;
-  perPage = isNaN(perPage) || perPage <= 0 ? 10 : perPage;
-
   try {
-    const locations = await Location.aggregate([
-      { $skip: (page - 1) * perPage },
-      { $limit: perPage },
-      { $sort: { _id: -1 } },
-      ...flattenLookup,
-      { $project: { country: 0, description: 0 } },
-    ]);
+    const locations = await Location.aggregate([...flattenLookup, { $project: { country: 0, description: 0 } }]);
 
     const history: RentHistoryListType[] = await RentHistory.find();
+    const filteredHistory = history.filter((his) => dayjs(his.rent_date.end).year() === filter);
 
     const locationsAnalytics: AnalyticsLocationType[] = [];
 
     locations.forEach((item) => {
-      const locationHistory = history.filter(
-        (his) => his.location.toString() === item._id.toString() && dayjs(his.rent_date.end).year() === filter,
-      );
+      const locationHistory = filteredHistory.filter((his) => his.location.toString() === item._id.toString());
 
       if (locationHistory.length > 0) {
         const obj: AnalyticsLocationType = {
           _id: item._id,
           dayImage: item.dayImage,
           locationName: item.city + ', ' + item.streets[0] + '/' + item.streets[1] + ', ' + item.direction,
+          locationAddressNote: item.addressNote,
           overallBudget: locationHistory.reduce(
             (accumulator, currentValue) => accumulator + parseInt(currentValue.rent_cost.toString()),
             0,
@@ -153,13 +143,7 @@ locationsRouter.get('/analytics', auth, async (req, res, next) => {
       return;
     });
 
-    const count = locationsAnalytics.length;
-    let pages = Math.ceil(count / perPage);
-
-    if (pages === 0) pages = 1;
-    if (page > pages) page = pages;
-
-    return res.send({ locationsAnalytics, page, pages, count, perPage });
+    return res.send({ locationsAnalytics });
   } catch (e) {
     next(e);
   }
@@ -485,9 +469,10 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
       return res.status(404).send({ error: 'Данная локация не найдена!' });
     }
 
-    location.rent = rentData.date !== null ? rentData.date : null;
-    location.client = rentData.client !== null ? rentData.client : null;
+    location.rent = rentData.date;
+    location.client = rentData.client;
     await location.save();
+
     await RentHistory.create({
       client: rentData.client,
       location: id,
@@ -495,6 +480,9 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
       rent_price: location.price,
       rent_cost: mongoose.Types.Decimal128.fromString(rentData.rent_cost),
     });
+
+    await notificationsService.updateRent();
+
     return res.send(location);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -522,6 +510,8 @@ locationsRouter.patch('/clearRent/:id', auth, async (req, res, next) => {
     location.client = null;
     await location.save();
     const [updatedLocation] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(id) } }, ...flattenLookup]);
+
+    await notificationsService.removeRent(location._id.toString());
 
     return res.send(updatedLocation);
   } catch (e) {

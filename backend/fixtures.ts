@@ -1,4 +1,4 @@
-import mongoose, { Types } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
@@ -13,6 +13,10 @@ import Area from './models/Area';
 import Lighting from './models/Lighting';
 import Size from './models/Size';
 import Client from './models/Client';
+import { ILocation, IPeriod } from './types';
+import dayjs from 'dayjs';
+import RentHistory from './models/RentHistory';
+import Booking from './models/Booking';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -33,6 +37,8 @@ const run = async () => {
     await db.dropCollection('lightings');
     await db.dropCollection('clients');
     await db.dropCollection('renthistories');
+    await db.dropCollection('bookings');
+    await db.dropCollection('notifications');
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -215,65 +221,6 @@ const run = async () => {
     },
   );
 
-  const createOneLocation = async (i: number, month = 'май') => {
-    return await Location.create({
-      area: randElement(areas)._id,
-      client: randElement(clients)._id,
-      direction: randElement(directions)._id,
-      city: randElement(cities)._id,
-      region: randElement(regions)._id,
-      streets: [randElement(streets)._id, randElement(streets)._id],
-      format: randElement(formats)._id,
-      legalEntity: randElement(legalEntities)._id,
-      lighting: randElement(lightings)._id,
-      size: randElement(sizes)._id,
-      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
-      rent:
-        Math.random() > 0.5
-          ? null
-          : {
-              start: new Date(
-                `2023-${String(randNum(1, 3)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-              end: new Date(
-                `2023-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-            },
-      reserve:
-        Math.random() > 0.5
-          ? null
-          : {
-              start: new Date(
-                `2024-${String(randNum(1, 6)).padStart(2, '0')}-${String(randNum(1, 14)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-              end: new Date(
-                `2024-${String(randNum(7, 12)).padStart(2, '0')}-${String(randNum(15, 28)).padStart(
-                  2,
-                  '0',
-                )}T00:00:00.000Z`,
-              ),
-            },
-      placement: Math.random() > 0.5,
-      addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
-      description: Math.random() > 0.5 ? fixtureDescription : null,
-      dayImage: `fixtures/${i + 1}.jpg`,
-      schemaImage: `fixtures/${i + 1}.png`,
-      status: null,
-      booking: [],
-      month: month,
-      year: 2023,
-    });
-  };
-
   const arr = [
     'январь',
     'февраль',
@@ -289,11 +236,95 @@ const run = async () => {
     'декабрь',
   ];
 
+  const locations: HydratedDocument<ILocation>[] = [];
+
   for (const month of arr) {
     for (let i = 0; i < 5; i++) {
-      await createOneLocation(i, month);
+      const loc = await Location.create({
+        area: randElement(areas)._id,
+        client: randElement(clients)._id,
+        direction: randElement(directions)._id,
+        city: randElement(cities)._id,
+        region: randElement(regions)._id,
+        streets: [randElement(streets)._id, randElement(streets)._id],
+        format: randElement(formats)._id,
+        legalEntity: randElement(legalEntities)._id,
+        lighting: randElement(lightings)._id,
+        size: randElement(sizes)._id,
+        price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+        placement: Math.random() > 0.5,
+        addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
+        description: Math.random() > 0.5 ? fixtureDescription : null,
+        dayImage: `fixtures/${i + 1}.jpg`,
+        schemaImage: `fixtures/${i + 1}.png`,
+        status: null,
+        booking: [],
+        month: month,
+        year: 2023,
+      });
+
+      locations.push(loc);
     }
   }
+
+  const setRentAndHistoryFor = async (loc: HydratedDocument<ILocation>, start: Date, end: Date) => {
+    loc.rent = { start, end };
+    await loc.save();
+
+    await RentHistory.create({
+      client: randElement(clients)._id,
+      location: loc._id,
+      rent_price: loc.price,
+      rent_cost: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent_date: { start, end },
+    });
+  };
+
+  const setBookingFor = async (loc: HydratedDocument<ILocation>, ...periods: IPeriod[]) => {
+    const ids: Types.ObjectId[] = [];
+    for (const booking_date of periods) {
+      const newBooking = await Booking.create({
+        clientId: randElement(clients)._id,
+        locationId: loc._id,
+        booking_date,
+      });
+
+      ids.push(newBooking._id);
+    }
+
+    await Location.updateOne({ _id: loc._id }, { $push: { booking: { $each: ids } } });
+  };
+
+  await Promise.all([
+    setRentAndHistoryFor(locations[0], dayjs().subtract(60, 'days').toDate(), dayjs().subtract(1, 'days').toDate()),
+    setRentAndHistoryFor(locations[1], dayjs().subtract(60, 'days').toDate(), dayjs().add(5, 'days').toDate()),
+    setRentAndHistoryFor(locations[2], dayjs().subtract(90, 'days').toDate(), dayjs().add(7, 'days').toDate()),
+    setRentAndHistoryFor(locations[3], dayjs().subtract(100, 'days').toDate(), dayjs().add(200, 'days').toDate()),
+    setRentAndHistoryFor(locations[4], dayjs().subtract(55, 'days').toDate(), dayjs().add(40, 'days').toDate()),
+    setRentAndHistoryFor(locations[5], dayjs().subtract(150, 'days').toDate(), dayjs().subtract(1, 'days').toDate()),
+  ]);
+
+  await Promise.all([
+    setBookingFor(
+      locations[0],
+      { start: dayjs().add(1, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
+      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
+      { start: dayjs().add(210, 'days').toDate(), end: dayjs().add(300, 'days').toDate() },
+    ),
+    setBookingFor(
+      locations[1],
+      { start: dayjs().add(210, 'days').toDate(), end: dayjs().add(300, 'days').toDate() },
+      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
+      { start: dayjs().add(2, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
+    ),
+    setBookingFor(locations[2], { start: dayjs().add(3, 'days').toDate(), end: dayjs().add(100, 'days').toDate() }),
+    setBookingFor(locations[3], { start: dayjs().add(4, 'days').toDate(), end: dayjs().add(100, 'days').toDate() }),
+    setBookingFor(
+      locations[4],
+      { start: dayjs().add(10, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
+      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
+    ),
+  ]);
 
   await db.close();
 };

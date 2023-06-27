@@ -17,9 +17,13 @@ import lightingRouter from './routers/lightings';
 import clientsRouter from './routers/clients';
 import bookingsRouter from './routers/bookings';
 import rentHistoryRouter from './routers/rentHistory';
+import { createServer } from 'http';
+import * as notificationsService from './services/notifications-service';
 import path from 'path';
 
 const app = express();
+const server = createServer(app);
+notificationsService.setupWebSocket(server);
 
 app.use(cors());
 app.use(express.static('public'));
@@ -46,7 +50,7 @@ const run = async () => {
   mongoose.set('strictQuery', false);
   await mongoose.connect(config.db);
 
-  app.listen(config.port, () => console.log(`We are live on ${config.port}`));
+  server.listen(config.port, () => console.log(`We are live on ${config.port}`));
   process.on('exit', () => mongoose.disconnect());
 };
 

@@ -3,6 +3,7 @@ import User from '../models/Users';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
+import * as notificationsService from '../services/notifications-service';
 
 const usersRouter = express.Router();
 
@@ -150,7 +151,14 @@ usersRouter.post('/sessions', async (req, res, next) => {
   try {
     user.generateToken();
     await user.save();
-    return res.send({ message: 'Почта и пароль верные!', user });
+
+    const notifications = await notificationsService.getAll(user._id.toString());
+
+    return res.send({
+      message: 'Почта и пароль верные!',
+      user,
+      notifications,
+    });
   } catch (e) {
     return next(e);
   }

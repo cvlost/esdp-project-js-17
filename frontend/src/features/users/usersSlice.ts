@@ -1,10 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DeletedUserResponse, GlobalError, User, UserMutation, UsersListResponse, ValidationError } from '../../types';
+import {
+  DeletedUserResponse,
+  GlobalError,
+  INotification,
+  User,
+  UserMutation,
+  UsersListResponse,
+  ValidationError,
+} from '../../types';
 import { RootState } from '../../app/store';
-import { createUser, deleteUser, updateUser, getEditingUser, getUsersList, login } from './usersThunks';
+import { createUser, deleteUser, getEditingUser, getUsersList, login, updateUser } from './usersThunks';
 
 interface UsersState {
   user: User | null;
+  alerts: INotification[];
+  alertsLoading: boolean;
   usersListData: UsersListResponse;
   oneUser: User | null;
   oneEditUser: UserMutation | null;
@@ -26,6 +36,8 @@ interface UsersState {
 
 const initialState: UsersState = {
   user: null,
+  alerts: [],
+  alertsLoading: false,
   usersListData: {
     users: [],
     page: 1,
@@ -70,15 +82,22 @@ const usersSlice = createSlice({
     openSnackbar: (state, { payload: obj }: PayloadAction<{ status: boolean; parameter: string }>) => {
       state.snackbar = obj;
     },
+    setNotifications: (state, { payload: notifications }: PayloadAction<INotification[]>) => {
+      state.alerts = notifications;
+    },
+    unsetNotifications: (state) => {
+      state.alerts = [];
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => {
       state.loginError = null;
       state.loginLoading = true;
     });
-    builder.addCase(login.fulfilled, (state, { payload: user }) => {
+    builder.addCase(login.fulfilled, (state, { payload }) => {
       state.loginLoading = false;
-      state.user = user;
+      state.user = payload.user;
+      state.alerts = payload.notifications;
     });
     builder.addCase(login.rejected, (state, { payload: error }) => {
       state.loginError = error || null;
@@ -145,7 +164,15 @@ const usersSlice = createSlice({
 });
 
 export const usersReducer = usersSlice.reducer;
-export const { unsetUser, setUser, resetLoginError, setCurrentPage, openSnackbar } = usersSlice.actions;
+export const {
+  unsetUser,
+  setUser,
+  resetLoginError,
+  setCurrentPage,
+  openSnackbar,
+  setNotifications,
+  unsetNotifications,
+} = usersSlice.actions;
 
 export const selectUser = (state: RootState) => state.users.user;
 export const selectLoginLoading = (state: RootState) => state.users.loginLoading;
@@ -161,3 +188,5 @@ export const selectUsersListLoading = (state: RootState) => state.users.getAllLo
 export const selectRegisterLoading = (state: RootState) => state.users.registerLoading;
 export const selectRegisterError = (state: RootState) => state.users.registerError;
 export const selectSnackbarState = (state: RootState) => state.users.snackbar;
+export const selectUserAlerts = (state: RootState) => state.users.alerts;
+export const selectUserAlertsLoading = (state: RootState) => state.users.alertsLoading;
