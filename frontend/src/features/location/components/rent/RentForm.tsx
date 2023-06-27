@@ -8,9 +8,10 @@ import { selectClientsList } from '../../client/clientSlice';
 import { fetchClients } from '../../client/clientThunk';
 import { DateRange } from 'rsuite/DateRangePicker';
 import { Link } from 'react-router-dom';
-import { selectCreateRentError, selectCreateRentLoading } from '../../locationsSlice';
+import { selectCreateRentError, selectCreateRentLoading, selectOneLocation } from '../../locationsSlice';
 import { openSnackbar } from '../../../users/usersSlice';
 import useConfirm from '../../../../components/Dialogs/Confirm/useConfirm';
+import { getOneLocation } from '../../locationsThunks';
 
 interface Props {
   isOpen: boolean;
@@ -26,12 +27,14 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
   const loading = useAppSelector(selectCreateRentLoading);
   const error = useAppSelector(selectCreateRentError);
   const { confirm } = useConfirm();
+  const onLocation = useAppSelector(selectOneLocation);
 
   useEffect(() => {
     if (isOpen) {
       dispatch(fetchClients());
+      dispatch(getOneLocation(locationId));
     }
-  }, [dispatch, isOpen]);
+  }, [dispatch, isOpen, locationId]);
 
   const [state, setState] = useState<RentMutation>({
     date: null,
@@ -105,11 +108,13 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
                 Выберите клиента
               </MenuItem>
               {clients &&
-                clients.map((client) => (
-                  <MenuItem key={client._id} value={client._id}>
-                    {client.companyName}
-                  </MenuItem>
-                ))}
+                clients
+                  .filter((item) => item.companyName !== onLocation?.client)
+                  .map((client) => (
+                    <MenuItem key={client._id} value={client._id}>
+                      {client.companyName}
+                    </MenuItem>
+                  ))}
             </TextField>
             <Link
               to="/create_client"
@@ -144,7 +149,13 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
             />
           </Grid>
           <Grid item sx={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
-            <Button type="submit" variant="contained" color="success" sx={{ mt: 3, mb: 2 }} disabled={loading}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="success"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={loading || state.date === null}
+            >
               {loading ? <CircularProgress size="small" color="success" /> : 'Обновить аренду'}
             </Button>
             <Button onClick={clearLocationRent} variant="contained" color="success" sx={{ mt: 3, mb: 2 }}>
