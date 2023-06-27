@@ -234,6 +234,7 @@ export const checkRentExpiration = async () => {
       });
 
       loc.rent = null;
+      loc.client = null;
       await loc.save();
     }
 
