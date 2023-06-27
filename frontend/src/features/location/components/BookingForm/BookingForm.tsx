@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Collapse,
   Divider,
   Grid,
   MenuItem,
@@ -29,6 +30,8 @@ import {
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import dayjs from 'dayjs';
 import { openSnackbar } from '../../../users/usersSlice';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface Props {
   locationId: string;
@@ -49,6 +52,7 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
   const filter = useAppSelector(selectLocationsFilter);
   const locationsListData = useAppSelector(selectLocationsListData);
   const location = useLocation();
+  const [openModalError, setOpenModalError] = useState(false);
 
   useEffect(() => {
     dispatch(fetchClients());
@@ -73,7 +77,9 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
       },
     };
 
+    setOpenModalError(true);
     await dispatch(createBooking(obj)).unwrap();
+    setOpenModalError(false);
     if (location.pathname === `/${locationId}`) {
       await dispatch(getOneLocation(locationId)).unwrap();
     } else {
@@ -105,7 +111,29 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
         Добавление бронирования
       </Typography>
       <Grid direction="column" spacing={2} container component="form" onSubmit={onSubmit}>
-        <Grid item>{error && <Alert severity="error">{error.message}</Alert>}</Grid>
+        <Grid item>
+          <Collapse in={openModalError}>
+            {error && (
+              <Alert
+                severity="error"
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      setOpenModalError(false);
+                    }}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+              >
+                {error.message}
+              </Alert>
+            )}
+          </Collapse>
+        </Grid>
         <Grid item>
           {!loadingOneLocation ? (
             oneLocation && oneLocation.booking.length !== 0 ? (
@@ -119,6 +147,8 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
                       </Typography>
                       <Divider />
                       <Typography component="p">Конец: {dayjs(item.booking_date.end).format('DD.MM.YYYY')}</Typography>
+                      <Divider />
+                      <Typography component="p">Клиент: {item.clientId}</Typography>
                     </>
                   }
                 >
@@ -153,11 +183,13 @@ const BookingForm: React.FC<Props> = ({ locationId, isPage, closeModal }) => {
             </MenuItem>
             {!loading ? (
               clientList.length !== 0 ? (
-                clientList.map((item) => (
-                  <MenuItem key={item._id} value={item._id}>
-                    {item.companyName}
-                  </MenuItem>
-                ))
+                clientList
+                  .filter((el) => !oneLocation?.booking.map((item) => item.clientId).includes(el.companyName))
+                  .map((item) => (
+                    <MenuItem key={item._id} value={item._id}>
+                      {item.companyName}
+                    </MenuItem>
+                  ))
               ) : (
                 <Alert severity="info">Список пуст</Alert>
               )

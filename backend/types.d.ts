@@ -101,6 +101,12 @@ export interface BookingType {
   booking_date: [Schema.Types.Date];
 }
 
+export interface BookingListType {
+  clientId: Schema.Types.ObjectId;
+  locationId: Schema.Types.ObjectId;
+  booking_date: IPeriod;
+}
+
 export interface CommercialLinkType {
   location: string[];
   settings: {
