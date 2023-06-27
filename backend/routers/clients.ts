@@ -45,18 +45,18 @@ clientsRouter.get('/anal', auth, async (req, res, next) => {
               total: item.rent_cost.toString(),
               month: dayjs(item.rent_date.end).locale(ru).format('MMMM'),
               locationId: item.location.toString(),
-              year: dayjs(item.createdAt).year(),
+              year: dayjs(item.rent_date.end).year(),
             };
           }),
           overallBudget: clientHistory
-            .filter((item) => dayjs(item.createdAt).year() === filter)
+            .filter((item) => dayjs(item.rent_date.end).year() === filter)
             .reduce((accumulator, currentValue) => accumulator + parseInt(currentValue.rent_cost.toString()), 0),
           rentDay: clientHistory
-            .filter((item) => dayjs(item.createdAt).year() === filter)
+            .filter((item) => dayjs(item.rent_date.end).year() === filter)
             .reduce((accumulator, currentValue) => {
               return accumulator + dayjs(currentValue.rent_date.end).diff(dayjs(currentValue.rent_date.start), 'day');
             }, 0),
-          numberOfBanners: clientHistory.filter((item) => dayjs(item.createdAt).year() === filter).length,
+          numberOfBanners: clientHistory.filter((item) => dayjs(item.rent_date.end).year() === filter).length,
         };
 
         clintAnal.push(obj);

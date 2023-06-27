@@ -4,7 +4,6 @@ import {
   Alert,
   Box,
   CircularProgress,
-  Pagination,
   Paper,
   Table,
   TableBody,
@@ -15,7 +14,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { fetchAnalyticLocList } from './LocationAnalyticsThunk';
-import { selectAnalyticsLocationsFetch, selectAnalyticsLocationsList, setCurrentPage } from './LocationAnalyticsSlice';
+import { selectAnalyticsLocationsFetch, selectAnalyticsLocationsList } from './LocationAnalyticsSlice';
 import ControlPanelLocAn from './components/ControlPanelLocAn';
 import AnalyticsLocationsCard from './components/LocationAnalyticsCard';
 import AnalyticsLocMenuList from './components/AnalyticsLocMenuList';
@@ -29,12 +28,10 @@ const AnalyticsClient = () => {
   useEffect(() => {
     dispatch(
       fetchAnalyticLocList({
-        page: locationsData.page,
-        perPage: locationsData.perPage,
         filter: parseInt(filterYearValue),
       }),
     );
-  }, [dispatch, locationsData.page, locationsData.perPage, filterYearValue]);
+  }, [dispatch, filterYearValue]);
 
   return (
     <Box sx={{ py: 2 }}>
@@ -72,14 +69,6 @@ const AnalyticsClient = () => {
           </Table>
         </TableContainer>
       </Paper>
-      <Pagination
-        disabled={loading}
-        size="small"
-        sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
-        count={locationsData.pages}
-        page={locationsData.page}
-        onChange={(event, page) => dispatch(setCurrentPage(page))}
-      />
     </Box>
   );
 };

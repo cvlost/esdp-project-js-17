@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { fetchAnalyticLocList } from './LocationAnalyticsThunk';
 import { AnalyticsLocationList } from '../../types';
@@ -11,10 +11,6 @@ interface AnalyticsLocationType {
 const initialState: AnalyticsLocationType = {
   analyticsLocationList: {
     locationsAnalytics: [],
-    page: 1,
-    pages: 1,
-    count: 0,
-    perPage: 10,
   },
   analyticsLocationFetch: false,
 };
@@ -22,11 +18,7 @@ const initialState: AnalyticsLocationType = {
 export const analyticsLocationsSlice = createSlice({
   name: 'analyticLocation',
   initialState,
-  reducers: {
-    setCurrentPage: (state, { payload: page }: PayloadAction<number>) => {
-      state.analyticsLocationList.page = page;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchAnalyticLocList.pending, (state) => {
       state.analyticsLocationFetch = true;
@@ -43,6 +35,5 @@ export const analyticsLocationsSlice = createSlice({
 
 export const analyticsLocationReducer = analyticsLocationsSlice.reducer;
 
-export const { setCurrentPage } = analyticsLocationsSlice.actions;
 export const selectAnalyticsLocationsList = (state: RootState) => state.analyticLocation.analyticsLocationList;
 export const selectAnalyticsLocationsFetch = (state: RootState) => state.analyticLocation.analyticsLocationFetch;
