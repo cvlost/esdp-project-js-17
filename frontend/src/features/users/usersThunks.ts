@@ -12,16 +12,16 @@ import {
   ValidationError,
 } from '../../types';
 import { isAxiosError } from 'axios';
-import { setUser, unsetUser } from './usersSlice';
+import { setUser, unsetNotifications, unsetUser } from './usersSlice';
 import { AppDispatch, RootState } from '../../app/store';
 import { handleAxiosError } from '../handleAxiosError';
 
-export const login = createAsyncThunk<User, LoginMutation, { rejectValue: GlobalError }>(
+export const login = createAsyncThunk<UserResponse, LoginMutation, { rejectValue: GlobalError }>(
   'users/login',
   async (loginMutation, { rejectWithValue }) => {
     try {
       const response = await axiosApi.post<UserResponse>('/users/sessions', loginMutation);
-      return response.data.user;
+      return response.data;
     } catch (e) {
       if (isAxiosError(e) && e.response && e.response.status === 422)
         return rejectWithValue(e.response.data as GlobalError);
@@ -44,6 +44,7 @@ export const createUser = createAsyncThunk<void, UserMutation, { rejectValue: Va
 
 export const logout = createAsyncThunk<void, void, { state: RootState }>('users/logout', async (_, { dispatch }) => {
   dispatch(unsetUser());
+  dispatch(unsetNotifications());
   await axiosApi.delete('/users/sessions');
 });
 

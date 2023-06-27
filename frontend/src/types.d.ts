@@ -13,9 +13,23 @@ export interface LoginMutation {
   password: string;
 }
 
+export interface INotification {
+  _id: string;
+  message: string;
+  event: string;
+  createdAt: string;
+  location: string;
+  locationPrettyName: string;
+  client: {
+    companyName: string;
+  };
+  date: IPeriod;
+}
+
 export interface UserResponse {
   message: string;
   user: User;
+  notifications: INotification[];
 }
 
 export interface RegisterResponse {

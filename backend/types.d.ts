@@ -165,3 +165,15 @@ export interface AnalyticsLocationType {
   rentPercent: number;
   financePercent: number;
 }
+
+export interface INotification {
+  message: string;
+  event: string;
+  date: IPeriod;
+  locationPrettyName: string;
+  client: Types.ObjectId;
+  location: Types.ObjectId;
+  readBy: Types.ObjectId[];
+  deletedBy: Types.ObjectId[];
+  createdAt: Date;
+}

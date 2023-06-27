@@ -3,6 +3,7 @@ import Booking from '../models/Booking';
 import Location from '../models/Location';
 import mongoose from 'mongoose';
 import auth from '../middleware/auth';
+import * as notificationsService from '../services/notifications-service';
 
 const bookingsRouter = express.Router();
 
@@ -28,6 +29,7 @@ bookingsRouter.post('/', auth, async (req, res, next) => {
     };
     const create = await Booking.create(data);
     await Location.updateOne({ _id: req.body.locationId }, { $push: { booking: create._id } });
+    await notificationsService.updateBooking();
     return res.send(create);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -47,6 +49,7 @@ bookingsRouter.delete('/:loc/:book', auth, async (req, res) => {
     }
     await Booking.deleteOne({ _id: bookId });
     await Location.updateOne({ _id: locId }, { $pull: { booking: bookId } });
+    await notificationsService.removeBooking(locationOne._id.toString());
     return res.send({ removeLoc: locId, removeBook: bookId });
   } catch (e) {
     return res.sendStatus(500);

@@ -166,15 +166,6 @@ LocationSchema.set('toJSON', {
   },
 });
 
-LocationSchema.pre('save', function (next) {
-  const currentDate = dayjs();
-  if (this.rent && dayjs(this.rent.end) < currentDate) {
-    this.rent = null;
-    this.client = null;
-  }
-  next();
-});
-
 const Location = model<ILocation>('Location', LocationSchema);
 
 export default Location;

@@ -17,6 +17,7 @@ import path from 'path';
 import Size from '../models/Size';
 import Lighting from '../models/Lighting';
 import RentHistory from '../models/RentHistory';
+import * as notificationsService from '../services/notifications-service';
 import dayjs from 'dayjs';
 import ru from 'dayjs/locale/ru';
 
@@ -468,13 +469,9 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
       return res.status(404).send({ error: 'Данная локация не найдена!' });
     }
 
-    const currentDate = dayjs();
-
-    if (dayjs(rentData.date.end) > currentDate) {
-      location.rent = rentData.date;
-      location.client = rentData.client;
-      await location.save();
-    }
+    location.rent = rentData.date;
+    location.client = rentData.client;
+    await location.save();
 
     await RentHistory.create({
       client: rentData.client,
@@ -483,6 +480,9 @@ locationsRouter.patch('/updateRent/:id', auth, async (req, res, next) => {
       rent_price: location.price,
       rent_cost: mongoose.Types.Decimal128.fromString(rentData.rent_cost),
     });
+
+    await notificationsService.updateRent();
+
     return res.send(location);
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -510,6 +510,8 @@ locationsRouter.patch('/clearRent/:id', auth, async (req, res, next) => {
     location.client = null;
     await location.save();
     const [updatedLocation] = await Location.aggregate([{ $match: { _id: new Types.ObjectId(id) } }, ...flattenLookup]);
+
+    await notificationsService.removeRent(location._id.toString());
 
     return res.send(updatedLocation);
   } catch (e) {

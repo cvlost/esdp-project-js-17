@@ -18,6 +18,7 @@ import locationsRouter, { flattenLookup } from '../../routers/locations';
 import { ILocation } from '../../types';
 import Client from '../../models/Client';
 import RentHistory from '../../models/RentHistory';
+import dayjs from 'dayjs';
 
 export interface BookingListType {
   _id: string;
@@ -875,13 +876,14 @@ describe('locationsRouter', () => {
         companyEmail: 'arbuz@gmail.com',
       });
       loc.rent = null;
+      loc.client = null;
       await loc.save();
       const rentUpdateDto = {
         rent_price: loc.price,
         rent_cost: '5500',
         date: {
-          start: '2023-06-17T04:46:29.958Z',
-          end: '2023-11-18T04:46:29.958Z',
+          start: dayjs().toISOString(),
+          end: dayjs().add(60, 'days').toISOString(),
         },
         client: client._id.toString(),
       };
