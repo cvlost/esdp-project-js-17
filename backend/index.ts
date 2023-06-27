@@ -17,11 +17,13 @@ import lightingRouter from './routers/lightings';
 import clientsRouter from './routers/clients';
 import bookingsRouter from './routers/bookings';
 import rentHistoryRouter from './routers/rentHistory';
+import path from 'path';
 
 const app = express();
 
 app.use(cors());
 app.use(express.static('public'));
+app.use('/images', express.static(path.join(config.publicPath, 'images')));
 app.use(express.json());
 
 app.use('/users', usersRouter);

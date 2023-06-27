@@ -3,6 +3,8 @@ import Booking from '../models/Booking';
 import Location from '../models/Location';
 import mongoose from 'mongoose';
 import auth from '../middleware/auth';
+import dayjs from 'dayjs';
+import { BookingListType } from '../types';
 
 const bookingsRouter = express.Router();
 
@@ -26,6 +28,27 @@ bookingsRouter.post('/', auth, async (req, res, next) => {
       locationId: req.body.locationId,
       booking_date: req.body.booking_date,
     };
+
+    const bookingList: BookingListType[] = await Booking.find({ locationId: data.locationId });
+
+    const date = {
+      end: dayjs(data.booking_date.end).format('DD/MM/YYYY'),
+      start: dayjs(data.booking_date.start).format('DD/MM/YYYY'),
+    };
+
+    const isError = bookingList.some((item) => {
+      const dateLoc = {
+        end: dayjs(item.booking_date.end).format('DD/MM/YYYY'),
+        start: dayjs(item.booking_date.start).format('DD/MM/YYYY'),
+      };
+
+      return date.end === dateLoc.end && date.start === dateLoc.start;
+    });
+
+    if (isError) {
+      return res.status(400).send({ message: 'Перид занят !' });
+    }
+
     const create = await Booking.create(data);
     await Location.updateOne({ _id: req.body.locationId }, { $push: { booking: create._id } });
     return res.send(create);

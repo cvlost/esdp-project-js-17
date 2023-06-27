@@ -207,7 +207,7 @@ export const createBooking = createAsyncThunk<void, BookingMutation, { rejectVal
     try {
       await axiosApi.post('/bookings', bookingMutation);
     } catch (e) {
-      handleAxiosError(e, rejectWithValue);
+      return handleAxiosError(e, rejectWithValue);
     }
   },
 );
