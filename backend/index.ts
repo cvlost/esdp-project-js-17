@@ -19,6 +19,7 @@ import bookingsRouter from './routers/bookings';
 import rentHistoryRouter from './routers/rentHistory';
 import { createServer } from 'http';
 import * as notificationsService from './services/notifications-service';
+import path from 'path';
 
 const app = express();
 const server = createServer(app);
@@ -26,6 +27,7 @@ notificationsService.setupWebSocket(server);
 
 app.use(cors());
 app.use(express.static('public'));
+app.use('/images', express.static(path.join(config.publicPath, 'images')));
 app.use(express.json());
 
 app.use('/users', usersRouter);
