@@ -31,22 +31,24 @@ bookingsRouter.post('/', auth, async (req, res, next) => {
 
     const bookingList: BookingListType[] = await Booking.find({ locationId: data.locationId });
 
-    const date = {
-      end: dayjs(data.booking_date.end).format('DD/MM/YYYY'),
-      start: dayjs(data.booking_date.start).format('DD/MM/YYYY'),
-    };
-
-    const isError = bookingList.some((item) => {
-      const dateLoc = {
-        end: dayjs(item.booking_date.end).format('DD/MM/YYYY'),
-        start: dayjs(item.booking_date.start).format('DD/MM/YYYY'),
+    if (bookingList.length !== 0) {
+      const date = {
+        end: dayjs(data.booking_date.end).format('DD/MM/YYYY'),
+        start: dayjs(data.booking_date.start).format('DD/MM/YYYY'),
       };
 
-      return date.end === dateLoc.end && date.start === dateLoc.start;
-    });
+      const isError = bookingList.some((item) => {
+        const dateLoc = {
+          end: dayjs(item.booking_date.end).format('DD/MM/YYYY'),
+          start: dayjs(item.booking_date.start).format('DD/MM/YYYY'),
+        };
 
-    if (isError) {
-      return res.status(400).send({ message: 'Перид занят !' });
+        return date.end === dateLoc.end && date.start === dateLoc.start;
+      });
+
+      if (isError) {
+        return res.status(400).send({ message: 'Данный период дат занят !' });
+      }
     }
 
     const create = await Booking.create(data);
