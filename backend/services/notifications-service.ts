@@ -177,9 +177,9 @@ export const checkBookingOncoming = async () => {
       if (daysLeft < 0) {
         message = `Срок бронирования локации ${locationPrettyName} прошел ${Math.abs(daysLeft)} ${dayLabel} назад!`;
       } else if (daysLeft === 0) {
-        message = `Близжайшая дата бронирования локации ${locationPrettyName} сегодня!`;
+        message = `Ближайшая дата бронирования локации ${locationPrettyName} сегодня!`;
       } else {
-        message = `Близжайшая дата бронирования локации "${locationPrettyName}" через ${daysLeft} ${dayLabel}!`;
+        message = `Ближайшая дата бронирования локации "${locationPrettyName}" через ${daysLeft} ${dayLabel}!`;
       }
       const notification = await Notification.findOne({ $and: [{ location: loc._id }, { event: 'booking/oncoming' }] });
 

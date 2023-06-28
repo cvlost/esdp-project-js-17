@@ -20,6 +20,7 @@ import RentHistory from '../models/RentHistory';
 import * as notificationsService from '../services/notifications-service';
 import dayjs from 'dayjs';
 import ru from 'dayjs/locale/ru';
+import permit from '../middleware/permit';
 
 const locationsRouter = express.Router();
 
@@ -420,7 +421,7 @@ locationsRouter.put(
   },
 );
 
-locationsRouter.delete('/:id', auth, async (req, res, next) => {
+locationsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
   const _id = req.params.id as string;
 
   if (!mongoose.isValidObjectId(_id)) {

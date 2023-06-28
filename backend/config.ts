@@ -9,7 +9,7 @@ const rootPath = __dirname;
 const config = {
   rootPath,
   publicPath: path.join(rootPath, 'public'),
-  db: process.env.DB_URL || 'mongodb://localhost/ESDP-17',
+  db: process.env.DB_URL || 'mongodb://localhost/shamdagai-db',
   imgDirName: process.env.IMG_DIR_NAME || 'images',
   port: Number(process.env.PORT) || 8000,
   apiUrl: process.env.API_URL || 'http://localhost:8000',

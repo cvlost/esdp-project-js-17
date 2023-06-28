@@ -1,4 +1,4 @@
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import config from './config';
 import User from './models/Users';
 import { randomUUID } from 'crypto';
@@ -13,10 +13,8 @@ import Area from './models/Area';
 import Lighting from './models/Lighting';
 import Size from './models/Size';
 import Client from './models/Client';
-import { ILocation, IPeriod } from './types';
 import dayjs from 'dayjs';
-import RentHistory from './models/RentHistory';
-import Booking from './models/Booking';
+import ru from 'dayjs/locale/ru';
 
 const run = async () => {
   mongoose.set('strictQuery', false);
@@ -36,9 +34,16 @@ const run = async () => {
     await db.dropCollection('sizes');
     await db.dropCollection('lightings');
     await db.dropCollection('clients');
-    await db.dropCollection('renthistories');
-    await db.dropCollection('bookings');
-    await db.dropCollection('notifications');
+
+    const collectionNames = ['renthistories', 'notifications', 'commerciallinks', 'bookings'];
+
+    for (const collectionName of collectionNames) {
+      const collectionExists = (await db.collection(collectionName).countDocuments()) !== 0;
+
+      if (collectionExists) {
+        await db.dropCollection(collectionName);
+      }
+    }
   } catch (e) {
     console.log('Collections were not present, skipping drop...');
   }
@@ -53,8 +58,8 @@ const run = async () => {
 
   let role = 'user';
 
-  for (let i = 0; i <= 50; i++) {
-    if (i >= 45) {
+  for (let i = 0; i <= 20; i++) {
+    if (i >= 15) {
       role = 'admin';
     }
     await User.create({
@@ -111,22 +116,23 @@ const run = async () => {
   );
 
   const streets = await Street.create(
+    { name: 'Айни', city: cities[0]._id },
     { name: 'Киевская', city: cities[0]._id },
     { name: 'Ахунбаева', city: cities[0]._id },
-    { name: 'Ибраимова', city: cities[0]._id },
+    { name: 'пр. Чынгыза Айтматова', city: cities[0]._id },
     { name: 'Манаса', city: cities[0]._id },
+    { name: 'Асаналиева', city: cities[0]._id },
+    { name: 'Боконбаева ', city: cities[0]._id },
+    { name: 'Гагарина', city: cities[0]._id },
+    { name: 'Льва Толстого', city: cities[0]._id },
     { name: 'Московская', city: cities[0]._id },
-    { name: 'Горького', city: cities[0]._id },
-    { name: 'Логвиненко', city: cities[0]._id },
-    { name: 'Боконбаева', city: cities[0]._id },
-    { name: 'Исанова', city: cities[0]._id },
-    { name: 'Тыныстанова', city: cities[0]._id },
+    { name: 'Тыныбекова', city: cities[0]._id },
+    { name: '7 апреля', city: cities[0]._id },
     { name: 'Юнусалиева', city: cities[0]._id },
-    { name: 'Фучика', city: cities[0]._id },
-    { name: 'Медерова', city: cities[0]._id },
-    { name: 'Токтогула', city: cities[0]._id },
-    { name: 'Жибек-Жолу', city: cities[0]._id },
-    { name: 'пр. Манаса', city: cities[0]._id },
+    { name: 'Бакаева', city: cities[0]._id },
+    { name: ' Байтик Баатыра', city: cities[0]._id },
+    { name: 'Садырбаева', city: cities[0]._id },
+    { name: 'Токомбаева', city: cities[0]._id },
     { name: 'Шабдан-Баатыра', city: cities[0]._id },
   );
 
@@ -142,23 +148,11 @@ const run = async () => {
     { name: 'Трехсторонний' },
   );
 
-  const fixtureAddressNotes = [
-    'ТРЦ "Bishkek Park", поликлиника',
-    'супермаркет "Фрунзе"',
-    'Ортосайский р/к, БЦ "Колизей"',
-    'с. Маевка',
-    'кафе "Гренки"',
-  ];
-
-  const fixtureDescription =
-    'Объект расположен на перекрестке улиц, соединяющих западную и центральную часть города, охватывая мини рынок, аптеки, магазины, места общественного питания. ';
-
-  const randNum = (from: number, to: number) => Math.floor(Math.random() * (to - from + 1) + from);
-
   const randElement = <T>(arr: T[]): T => {
     if (!Array.isArray(arr) || arr.length === 0) throw new Error('Значением параметра должен быть непустой массив');
     return arr[Math.floor(Math.random() * arr.length)];
   };
+  const randNum = (from: number, to: number) => Math.floor(Math.random() * (to - from + 1) + from);
 
   const sizes = await Size.create(
     { name: '2,7x5,7' },
@@ -180,151 +174,529 @@ const run = async () => {
       companyEmail: 'arbuz@gmail.com',
     },
     {
-      companyName: 'Апельсин',
+      companyName: 'Global',
       companyPhone: '+99655117852',
-      companyEmail: 'orange@gmail.com',
+      companyEmail: 'global@gmail.com',
     },
     {
-      companyName: 'Ананас',
+      companyName: 'Jenkins',
       companyPhone: '+996551178715',
-      companyEmail: 'arbuz@gmail.com',
+      companyEmail: 'jenkins@gmail.com',
     },
     {
-      companyName: 'Персик',
+      companyName: 'AdvertGroup',
       companyPhone: '+99655117852',
-      companyEmail: 'orange@gmail.com',
+      companyEmail: 'adv@gmail.com',
     },
     {
-      companyName: 'Груша',
+      companyName: 'Блитц',
       companyPhone: '+996551178715',
-      companyEmail: 'arbuz@gmail.com',
+      companyEmail: 'blitz@gmail.com',
     },
     {
-      companyName: 'Картошка',
+      companyName: 'Аттрактор',
       companyPhone: '+99655117852',
-      companyEmail: 'orange@gmail.com',
+      companyEmail: 'attractor@gmail.com',
     },
     {
-      companyName: 'Лук',
+      companyName: 'Бронкинс',
       companyPhone: '+996551178715',
-      companyEmail: 'arbuz@gmail.com',
+      companyEmail: 'bron@gmail.com',
     },
     {
-      companyName: 'Огурец',
+      companyName: 'Aqua',
       companyPhone: '+99655117852',
-      companyEmail: 'orange@gmail.com',
+      companyEmail: 'aqua@gmail.com',
     },
     {
-      companyName: 'Ананас',
+      companyName: 'Fusion',
       companyPhone: '+99655117852',
-      companyEmail: 'orange@gmail.com',
+      companyEmail: 'fusion@gmail.com',
     },
   );
 
-  const arr = [
-    'январь',
-    'февраль',
-    'март',
-    'апрель',
-    'май',
-    'июнь',
-    'июль',
-    'август',
-    'сентябрь',
-    'октябрь',
-    'ноябрь',
-    'декабрь',
-  ];
-
-  const locations: HydratedDocument<ILocation>[] = [];
-
-  for (const month of arr) {
-    for (let i = 0; i < 5; i++) {
-      const loc = await Location.create({
-        area: randElement(areas)._id,
-        client: randElement(clients)._id,
-        direction: randElement(directions)._id,
-        city: randElement(cities)._id,
-        region: randElement(regions)._id,
-        streets: [randElement(streets)._id, randElement(streets)._id],
-        format: randElement(formats)._id,
-        legalEntity: randElement(legalEntities)._id,
-        lighting: randElement(lightings)._id,
-        size: randElement(sizes)._id,
-        price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
-        placement: Math.random() > 0.5,
-        addressNote: Math.random() > 0.7 ? randElement(fixtureAddressNotes) : null,
-        description: Math.random() > 0.5 ? fixtureDescription : null,
-        dayImage: `fixtures/${i + 1}.jpg`,
-        schemaImage: `fixtures/${i + 1}.png`,
-        status: null,
-        booking: [],
-        month: month,
-        year: 2023,
-      });
-
-      locations.push(loc);
-    }
-  }
-
-  const setRentAndHistoryFor = async (loc: HydratedDocument<ILocation>, start: Date, end: Date) => {
-    loc.rent = { start, end };
-    await loc.save();
-
-    await RentHistory.create({
+  await Location.create(
+    {
+      area: areas[0]._id,
       client: randElement(clients)._id,
-      location: loc._id,
-      rent_price: loc.price,
-      rent_cost: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
-      rent_date: { start, end },
-    });
-  };
-
-  const setBookingFor = async (loc: HydratedDocument<ILocation>, ...periods: IPeriod[]) => {
-    const ids: Types.ObjectId[] = [];
-    for (const booking_date of periods) {
-      const newBooking = await Booking.create({
-        clientId: randElement(clients)._id,
-        locationId: loc._id,
-        booking_date,
-      });
-
-      ids.push(newBooking._id);
-    }
-
-    await Location.updateOne({ _id: loc._id }, { $push: { booking: { $each: ids } } });
-  };
-
-  await Promise.all([
-    setRentAndHistoryFor(locations[0], dayjs().subtract(60, 'days').toDate(), dayjs().subtract(1, 'days').toDate()),
-    setRentAndHistoryFor(locations[1], dayjs().subtract(60, 'days').toDate(), dayjs().add(5, 'days').toDate()),
-    setRentAndHistoryFor(locations[2], dayjs().subtract(90, 'days').toDate(), dayjs().add(7, 'days').toDate()),
-    setRentAndHistoryFor(locations[3], dayjs().subtract(100, 'days').toDate(), dayjs().add(200, 'days').toDate()),
-    setRentAndHistoryFor(locations[4], dayjs().subtract(55, 'days').toDate(), dayjs().add(40, 'days').toDate()),
-    setRentAndHistoryFor(locations[5], dayjs().subtract(150, 'days').toDate(), dayjs().subtract(1, 'days').toDate()),
-  ]);
-
-  await Promise.all([
-    setBookingFor(
-      locations[0],
-      { start: dayjs().add(1, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
-      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
-      { start: dayjs().add(210, 'days').toDate(), end: dayjs().add(300, 'days').toDate() },
-    ),
-    setBookingFor(
-      locations[1],
-      { start: dayjs().add(210, 'days').toDate(), end: dayjs().add(300, 'days').toDate() },
-      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
-      { start: dayjs().add(2, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
-    ),
-    setBookingFor(locations[2], { start: dayjs().add(3, 'days').toDate(), end: dayjs().add(100, 'days').toDate() }),
-    setBookingFor(locations[3], { start: dayjs().add(4, 'days').toDate(), end: dayjs().add(100, 'days').toDate() }),
-    setBookingFor(
-      locations[4],
-      { start: dayjs().add(10, 'days').toDate(), end: dayjs().add(100, 'days').toDate() },
-      { start: dayjs().add(110, 'days').toDate(), end: dayjs().add(200, 'days').toDate() },
-    ),
-  ]);
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[0]._id, streets[3]._id],
+      format: formats[2]._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Айни / пр. Чынгыза Айтматова восточная плоскость',
+      description:
+        'Проспект имени Чынгыза Айтматова - правительственная трасса, которая связывает центральную часть города с его южной частью. В зоне охвата – Кыргызско-Турецкий университет «Манас», БГУ, Политех, супермаркет «Globus». Плотные потоки автомобилей и общественного транспорта, магазины, торговые центры, аптеки и места общественного питания.',
+      dayImage: `fixtures/1.jpg`,
+      schemaImage: `fixtures/1s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[0]._id, streets[3]._id],
+      format: formats[2]._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Айни / пр. Чынгыза Айтматова западная плоскость',
+      description:
+        'Проспект имени Чынгыза Айтматова - правительственная трасса, которая связывает центральную часть города с его южной частью. В зоне охвата – Кыргызско-Турецкий университет «Манас», БГУ, Политех, супермаркет «Globus». Плотные потоки автомобилей и общественного транспорта, магазины, торговые центры, аптеки и места общественного питания.',
+      dayImage: `fixtures/2.jpg`,
+      schemaImage: `fixtures/2s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[6]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[6]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Боконбаева северная плоскость',
+      description:
+        'Дорога, ведущая в центральную часть города. В зоне охвата Ошский рынок, строительный Баткенский рынок, банкетные залы, аптеки, места общественного питания, магазины. ',
+      dayImage: `fixtures/3.jpg`,
+      schemaImage: `fixtures/3s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[6]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[6]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Боконбаева южная плоскость',
+      description:
+        'Дорога, ведущая в центральную часть города. В зоне охвата Ошский рынок, строительный Баткенский рынок, банкетные залы, аптеки, места общественного питания, магазины.',
+      dayImage: `fixtures/4.jpg`,
+      schemaImage: `fixtures/4s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[6]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Боконбаева северная плоскость',
+      description:
+        'Дорога, ведущая в центральную часть города. В зоне охвата Ошский рынок, строительный Баткенский рынок, банкетные залы, аптеки, места общественного питания, магазины.',
+      dayImage: `fixtures/5.jpg`,
+      schemaImage: `fixtures/5s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[6]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Боконбаева южная плоскость',
+      description:
+        'Дорога, ведущая в центральную часть города. В зоне охвата Ошский рынок, строительный Баткенский рынок, банкетные залы, аптеки, места общественного питания, магазины.',
+      dayImage: `fixtures/6.jpg`,
+      schemaImage: `fixtures/6s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[4]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[7]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Гагарина ',
+      description:
+        'Объект расположен на перекрестке улиц, соединяющих западную и центральную часть города, охватывая мини рынок, аптеки, магазины, места общественного питания. ',
+      dayImage: `fixtures/7.jpg`,
+      schemaImage: `fixtures/7s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[5]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[7]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева /  ул. Гагарина  северная плоскость',
+      description:
+        'Объект расположен на перекрестке улиц, соединяющих западную и центральную часть города, охватывая мини рынок, аптеки, магазины, места общественного питания.',
+      dayImage: `fixtures/8.jpg`,
+      schemaImage: `fixtures/8s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[5]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[7]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Гагарина  южная плоскость',
+      description:
+        'Объект расположен на перекрестке улиц, соединяющих западную и центральную часть города, охватывая мини рынок, аптеки, магазины, места общественного питания. ',
+      dayImage: `fixtures/9.jpg`,
+      schemaImage: `fixtures/9s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[0]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[8]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Льва Толстого  северная плоскость',
+      description:
+        'Дорога, ведущая в спальные районы города. В зоне охвата - Ошский рынок, строительный рынок «Баткен», банкетные залы, аптеки, места общественного питания, магазины.',
+      dayImage: `fixtures/10.jpg`,
+      schemaImage: `fixtures/10s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[0]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[8]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Льва Толстого  южная плоскость',
+      description:
+        'Дорога, ведущая в центральную часть города. В зоне охвата - Ошский рынок, строительный рынок «Баткен», банкетные залы, аптеки, места общественного питания, магазины.',
+      dayImage: `fixtures/11.jpg`,
+      schemaImage: `fixtures/11s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[9]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул.  Московская  северная плоскость',
+      description:
+        'Улица Асаналиева связывает два крупных рынка в северо-западной части города (Ошский и рынок «Баткен»). По ней проходит несколько маршрутов общественного транспорта. Плотный поток автомобилей. Множество точек общественного питания. Аптеки, родильный дом №2.',
+      dayImage: `fixtures/12.jpg`,
+      schemaImage: `fixtures/12s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[9]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Московская , южная плоскость ',
+      description:
+        'Улица Асаналиева связывает два крупных рынка в северо-западной части города (Ошский и рынок «Баткен»). По ней проходит несколько маршрутов общественного транспорта. Плотный поток автомобилей. Множество точек общественного питания. Аптеки, родильный дом №2.',
+      dayImage: `fixtures/13.jpg`,
+      schemaImage: `fixtures/13s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[5]._id, streets[10]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Тыныбекова , северная плоскость  ',
+      description:
+        'Улица, ведущая в микрорайон Джал. Охватывает спальные районы города, магазины, аптеки, места общественного питания.',
+      dayImage: `fixtures/14.jpg`,
+      schemaImage: `fixtures/14s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[2]._id, streets[10]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Асаналиева / ул. Тыныбекова , южная плоскость',
+      description:
+        'Улица, ведущая в центральную часть города. Охватывает спальные районы города, магазины, аптеки, места общественного питания.',
+      dayImage: `fixtures/15.jpg`,
+      schemaImage: `fixtures/15s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[4]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[2]._id, streets[11]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Ахунбаева / ул. 7 апреля восточная плоскость',
+      description:
+        'Крупный кольцевой перекрёсток в юго-восточной части города. В зоне охвата щита – насыщенные автомобильные потоки, супермаркет «Globus», АЗС, аптеки, магазины, банки, школы, места общественного питания.',
+      dayImage: `fixtures/16.jpg`,
+      schemaImage: `fixtures/16s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[4]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[2]._id, streets[11]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Ахунбаева / ул. 7 апреля (супермаркет «Globus»), западная плоскость',
+      description:
+        'Крупный кольцевой перекрёсток в юго-восточной части города. В зоне охвата щита – насыщенные автомобильные потоки, супермаркет «Globus», АЗС, аптеки, магазины, банки, школы, места общественного питания.',
+      dayImage: `fixtures/17.jpg`,
+      schemaImage: `fixtures/17s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[2]._id, streets[15]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Ахунбаева / ул. Садырбаева, супермаркет "Фрунзе" , восточная плоскость',
+      description:
+        'Крупный перекрёсток в западной части города. Дорога, ведущая в новые жилые массивы. В зоне охвата щита – насыщенные автомобильные потоки, крупный супермаркет «Фрунзе», аптеки, места общественного питания.',
+      dayImage: `fixtures/18.jpg`,
+      schemaImage: `fixtures/18s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[7]._id,
+      city: cities[0]._id,
+      region: regions[2]._id,
+      streets: [streets[2]._id, streets[15]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Ахунбаева / ул. Садырбаева, супермаркет "Фрунзе"  западная плоскость',
+      description:
+        'Крупный перекрёсток в западной части города. Дорога, ведущая в новые жилые массивы. В зоне охвата щита – насыщенные автомобильные потоки, крупный супермаркет «Фрунзе», аптеки, места общественного питания.',
+      dayImage: `fixtures/19.jpg`,
+      schemaImage: `fixtures/19s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+    {
+      area: areas[0]._id,
+      client: randElement(clients)._id,
+      direction: directions[4]._id,
+      city: cities[0]._id,
+      region: regions[3]._id,
+      streets: [streets[17]._id, streets[16]._id],
+      format: randElement(formats)._id,
+      legalEntity: randElement(legalEntities)._id,
+      lighting: randElement(lightings)._id,
+      size: randElement(sizes)._id,
+      price: Types.Decimal128.fromString(randNum(10000, 40000).toString()),
+      rent: null,
+      placement: Math.random() > 0.5,
+      addressNote: 'г. Бишкек, ул. Байтик Баатыра / ул. Токомбаева (северо-восток), северная плоскость',
+      description:
+        'Улица Байтик Баатыра - крупная магистраль города, она связывает центральную часть города с его южной частью. Плотные автомобильные потоки, супермаркеты, аптеки, бизнес-среда.',
+      dayImage: `fixtures/20.jpg`,
+      schemaImage: `fixtures/20s.png`,
+      status: null,
+      booking: [],
+      month: dayjs().locale(ru).format('MMMM'),
+      year: dayjs().year(),
+    },
+  );
 
   await db.close();
 };
