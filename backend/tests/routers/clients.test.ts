@@ -104,11 +104,12 @@ describe('clientsRouter', () => {
       expect(res.statusCode).toBe(401);
       expect(error).toBe('Предоставлен неверный токен авторизации.');
     });
-    test('если пользователь с ролью "user" пытается получить список клиентов, то должен возвращаться statusCode 403 и ошибка', async () => {
+    test('если пользователь с ролью "user" пытается получить список клиентов, то должен возвращаться statusCode 200 и массив клиентов длинной 1', async () => {
       const res = await request.get('/clients').set({ Authorization: userToken });
-      const body = res.body.error;
-      expect(res.statusCode).toBe(403);
-      expect(body).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
+      const clientsList = res.body;
+      expect(res.statusCode).toBe(200);
+      expect(Array.isArray(clientsList)).toBe(true);
+      expect(clientsList.length).toBe(1);
     });
     test('если пользователь с ролью "admin" пытается получить список клиентов, то должен возвращаться statusCode 200 и массив клиентов длинной 1', async () => {
       const res = await request.get('/clients').set({ Authorization: adminToken });
@@ -132,12 +133,13 @@ describe('clientsRouter', () => {
       expect(res.statusCode).toBe(401);
       expect(error).toBe('Предоставлен неверный токен авторизации.');
     });
-    test('если пользователь с ролью "user" пытается получить одного клиента, то должен возвращаться statusCode 403 и ошибка', async () => {
+    test('если пользователь с ролью "user" пытается получить одного клиента, то должен возвращаться statusCode 200 и обьект клиента', async () => {
       const client = await createClients();
       const res = await request.get(`/clients/${client._id}`).set({ Authorization: userToken });
-      const body = res.body.error;
-      expect(res.statusCode).toBe(403);
-      expect(body).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
+      const body = res.body;
+      expect(res.statusCode).toBe(200);
+      expect(body._id).not.toBeUndefined();
+      expect(body.companyName).not.toBeUndefined();
     });
     test('если пользователь с ролью "admin" пытается получить одного клиента, то должен возвращаться statusCode 200 и обьект клиента', async () => {
       const client = await createClients();
@@ -196,11 +198,15 @@ describe('clientsRouter', () => {
         expect(res.statusCode).toBe(401);
         expect(error).toBe('Предоставлен неверный токен авторизации.');
       });
-      test('если пользователь с ролью "user" пытается редактировать одного клиента, то должен возвращаться statusCode 403 и ошибка', async () => {
-        const res = await request.put(`/clients/id`).set({ Authorization: userToken });
-        const body = res.body.error;
-        expect(res.statusCode).toBe(403);
-        expect(body).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
+      test('если пользователь с ролью "user" пытается редактировать одного клиента, то должен возвращаться statusCode 200', async () => {
+        const client = await createClients();
+        const res = await request.put(`/clients/${client._id}`).set({ Authorization: userToken }).send({
+          companyName: 'test edit',
+        });
+        const body = res.body;
+        const newClient = await Client.findOne({ _id: body._id });
+        expect(res.statusCode).toBe(200);
+        if (newClient) expect(body.companyName).toBe(newClient.companyName);
       });
       test('если пользователь с ролью "admin" пытается редактировать одного клиента, то должен возвращаться statusCode 200', async () => {
         const client = await createClients();

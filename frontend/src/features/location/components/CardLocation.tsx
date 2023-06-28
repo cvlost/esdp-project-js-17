@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import { selectUser } from '../../users/usersSlice';
 
 interface Props {
   onDelete: React.MouseEventHandler;
@@ -40,6 +41,7 @@ const CardLocation: React.FC<Props> = ({
   const columns = useAppSelector(selectLocationsColumnSettings);
   const navigate = useNavigate();
   let duration: string | null = null;
+  const user = useAppSelector(selectUser);
 
   if (loc.rent) {
     const startDate = dayjs(loc.rent.start);
@@ -204,16 +206,18 @@ const CardLocation: React.FC<Props> = ({
         ))}
       <TableCell align="right">
         <ButtonGroup sx={{ mr: 1 }} variant="contained">
-          <Tooltip title="Удалить">
-            <Button
-              size="small"
-              color="error"
-              onClick={onDelete}
-              disabled={deleteLoading ? deleteLoading === loc._id : false}
-            >
-              <DeleteIcon />
-            </Button>
-          </Tooltip>
+          {user && user.role === 'admin' && (
+            <Tooltip title="Удалить">
+              <Button
+                size="small"
+                color="error"
+                onClick={onDelete}
+                disabled={deleteLoading ? deleteLoading === loc._id : false}
+              >
+                <DeleteIcon />
+              </Button>
+            </Tooltip>
+          )}
           <Tooltip title="Редактировать">
             <Button size="small" color="success" onClick={onEdit}>
               <EditIcon />

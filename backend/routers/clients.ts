@@ -117,7 +117,7 @@ clientsRouter.post('/', auth, async (req, res, next) => {
   }
 });
 
-clientsRouter.get('/', auth, permit('admin'), async (req, res, next) => {
+clientsRouter.get('/', auth, async (req, res, next) => {
   try {
     const clients = await Client.find().sort({ _id: -1 });
     return res.send(clients);
@@ -126,7 +126,7 @@ clientsRouter.get('/', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
-clientsRouter.get('/:id', auth, permit('admin'), async (req, res, next) => {
+clientsRouter.get('/:id', auth, async (req, res, next) => {
   try {
     const client = await Client.findOne({ _id: req.params.id });
     return res.send(client);
@@ -135,7 +135,7 @@ clientsRouter.get('/:id', auth, permit('admin'), async (req, res, next) => {
   }
 });
 
-clientsRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
+clientsRouter.put('/:id', auth, async (req, res, next) => {
   const clientEdit = {
     companyName: req.body.companyName,
     companyKindOfActivity: req.body.companyKindOfActivity,

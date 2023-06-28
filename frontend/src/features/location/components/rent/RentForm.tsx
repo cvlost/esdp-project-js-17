@@ -127,7 +127,7 @@ const RentForm: React.FC<Props> = ({ isOpen, closeRentForm, onSubmit, locationId
             <TextField
               fullWidth
               label="Стоимость аренды"
-              type="text"
+              type="number"
               color="success"
               name="rent_cost"
               autoComplete="off"

@@ -28,7 +28,7 @@ const LocationCardGrap: React.FC<Props> = ({ loc, month, index }) => {
       <Tooltip
         title={
           <>
-            <Link style={{ color: '#fff', fontSize: '25px' }} to={`/${loc._id}`}>
+            <Link style={{ color: '#fff', fontSize: '18px' }} to={`/${loc._id}`}>
               Перейти к локации...
             </Link>
             <Typography sx={{ color: '#fff', display: 'block', my: 1 }} component="span" color="inherit">

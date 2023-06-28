@@ -66,6 +66,9 @@ function App() {
           <Route path="/location-graphic" element={<LocationGraphic />} />
           <Route path="/rentHistory/:id" element={<RentHistoryList />} />
           <Route path="/location/:id" element={<LocationPage />} />
+          <Route path="/constructor_link" element={<ConstructorLink />} />
+          <Route path="/list_link" element={<LinkList />} />
+          <Route path="/create_client" element={<CreateClient />} />
         </Route>
         <Route element={<Protected userRole={user?.role} priority="admin" />}>
           <Route path="/create_size" element={<CreateSize />} />
@@ -78,9 +81,6 @@ function App() {
           <Route path="/create_area" element={<CreateArea />} />
           <Route path="/create_legal_entity" element={<CreateLegalEntity />} />
           <Route path="/create_street" element={<CreateStreet />} />
-          <Route path="/create_client" element={<CreateClient />} />
-          <Route path="/constructor_link" element={<ConstructorLink />} />
-          <Route path="/list_link" element={<LinkList />} />
         </Route>
       </Routes>
     </Layout>
