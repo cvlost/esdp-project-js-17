@@ -818,14 +818,13 @@ describe('locationsRouter', () => {
       expect(errorMessage).toBe('Отсутствует токен авторизации.');
     });
 
-    test('пользователь с ролью "user" пытается удалить локацию по id, должен возвращать statusCode 200', async () => {
+    test('пользователь с ролью "user" пытается удалить локацию по id, должен возвращать statusCode 403 и сообщение о недостаточных правах', async () => {
       const loc = await createOneLocation();
       const id = loc._id.toString();
       const res = await request.delete(`/locations/${id}`).set({ Authorization: userToken });
-      const result = res.body;
-
-      expect(res.statusCode).toBe(200);
-      expect(result.deletedCount).toBe(1);
+      const errorMessage = res.body.error;
+      expect(res.statusCode).toBe(403);
+      expect(errorMessage).toBe('Неавторизованный пользователь. Нет прав на совершение действия.');
     });
 
     test('пользователь с ролью "admin" пытается удалить локацию по id, должен возвращать statusCode 200', async () => {

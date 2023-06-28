@@ -25,7 +25,6 @@ import 'easymde/dist/easymde.min.css';
 import { createCommLink } from './CommercialLinkThunk';
 import ModalBody from '../../components/ModalBody';
 import SnackbarCard from '../../components/SnackbarCard/SnackbarCard';
-import { openSnackbar } from '../users/usersSlice';
 import { Navigate } from 'react-router-dom';
 import useConfirm from '../../components/Dialogs/Confirm/useConfirm';
 
@@ -80,16 +79,8 @@ const ConstructorLink = () => {
     }
   };
 
-  const handleCopy = async () => {
-    try {
-      if (link) {
-        dispatch(resetLocationId());
-        await navigator.clipboard.writeText(link.fullLink as string);
-        dispatch(openSnackbar({ status: true, parameter: 'copy_link' }));
-      }
-    } catch (e) {
-      console.log(e);
-    }
+  const handleExit = () => {
+    dispatch(resetLocationId());
   };
 
   if (listLocationId.length === 0) {
@@ -174,7 +165,7 @@ const ConstructorLink = () => {
         </Grid>
       </Box>
       <ModalBody isOpen={open} onClose={() => setOpen(true)}>
-        <Grid container>
+        <Grid container justifyContent="center">
           <Grid item xs={12}>
             <Paper color="success" sx={{ p: 1 }} elevation={3}>
               <Link style={{ color: 'green' }} target="_blank" href={link?.fullLink || ''} underline="none">
@@ -183,8 +174,8 @@ const ConstructorLink = () => {
             </Paper>
           </Grid>
           <Grid sx={{ mt: 2 }} item>
-            <Button color="success" onClick={handleCopy} variant="outlined">
-              Скопировать
+            <Button color="success" onClick={handleExit} variant="outlined">
+              Вернуться в главное
             </Button>
           </Grid>
         </Grid>

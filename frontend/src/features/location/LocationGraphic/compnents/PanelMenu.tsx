@@ -1,18 +1,16 @@
 import React from 'react';
-import { Button, Grid, IconButton, MenuItem, TextField } from '@mui/material';
+import { Button, Grid, MenuItem, TextField } from '@mui/material';
 import { resetFilter, selectLocationsListData } from '../../locationsSlice';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { YEAR } from '../../../../constants';
-import BarChartIcon from '@mui/icons-material/BarChart';
 import { setPerPage } from '../locationGraphicSlice';
 
 interface Props {
-  setOpenBar: React.MouseEventHandler;
   setFilterYear: (e: React.ChangeEvent<HTMLInputElement>) => void;
   filterYear: string;
 }
 
-const PanelMenu: React.FC<Props> = ({ setOpenBar, setFilterYear, filterYear }) => {
+const PanelMenu: React.FC<Props> = ({ setFilterYear, filterYear }) => {
   const dispatch = useAppDispatch();
   const listData = useAppSelector(selectLocationsListData);
   const locationsListData = useAppSelector(selectLocationsListData);
@@ -52,11 +50,6 @@ const PanelMenu: React.FC<Props> = ({ setOpenBar, setFilterYear, filterYear }) =
             </MenuItem>
           ))}
         </TextField>
-      </Grid>
-      <Grid item>
-        <IconButton onClick={setOpenBar} sx={{ ml: 1 }}>
-          <BarChartIcon />
-        </IconButton>
       </Grid>
       <Grid item>
         {locationsListData.filtered && <Button onClick={() => dispatch(resetFilter())}>Сбросить фильтр</Button>}

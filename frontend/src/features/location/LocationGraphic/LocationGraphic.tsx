@@ -1,20 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Pagination,
-  Paper,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Chip, CircularProgress, Container, Grid, Pagination, Paper } from '@mui/material';
 import { ARR, MainColorGreen } from '../../../constants';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -28,8 +13,6 @@ import PanelAccounts from './compnents/PanelAccounts';
 import { fetchLocationGraphic } from './locationGraphicThunk';
 import { selectLocationGraphicFetch, selectLocationGraphicList, setCurrentPage } from './locationGraphicSlice';
 import LocationCardGrap from './compnents/LocationCardGrap';
-import BarChart from '../../../components/BarChart/BarChart';
-import { IData } from '../../../types';
 
 const LocationGraphic = () => {
   const [pullingMonth, setPullingMonth] = useState(
@@ -38,7 +21,6 @@ const LocationGraphic = () => {
   const [value, setValue] = useState(
     (ARR.findIndex((item) => item === dayjs().locale(ru).format('MMMM')) + 1).toString(),
   );
-  const [openBar, setOpenBar] = useState(false);
   const [filterYear, setFilterYear] = useState(dayjs().year().toString());
 
   const dispatch = useAppDispatch();
@@ -60,26 +42,6 @@ const LocationGraphic = () => {
     setValue(newValue);
   };
 
-  const BAR_CHART_DATA: IData[] = locationGraphicList.locations.map((item, index) => {
-    return {
-      label: (index + 1).toString(),
-      value: item.booking.length,
-      tooltip: item.booking,
-      comp: item.booking.map((book) => (
-        <Box key={item._id}>
-          <Typography sx={{ color: '#fff', display: 'block', my: 1 }} component="span" color="inherit">
-            {`Занятость от ${dayjs(book.booking_date.start).format('DD.MM.YYYY')} до ${dayjs(
-              book.booking_date.end,
-            ).format('DD.MM.YYYY')}`}
-          </Typography>
-          <Typography sx={{ color: '#fff', display: 'block' }} component="span" color="inherit">
-            Клиент: {book.clientId}
-          </Typography>
-        </Box>
-      )),
-    };
-  });
-
   return (
     <Box sx={{ py: 2 }}>
       <Container>
@@ -97,7 +59,6 @@ const LocationGraphic = () => {
             <Box sx={{ display: 'flex', mb: 1 }}>
               <PanelMenu
                 filterYear={filterYear}
-                setOpenBar={() => setOpenBar(true)}
                 setFilterYear={(e: React.ChangeEvent<HTMLInputElement>) => setFilterYear(e.target.value)}
               />
             </Box>
@@ -150,20 +111,6 @@ const LocationGraphic = () => {
           </Grid>
         </Grid>
       </Container>
-      <Dialog
-        open={openBar}
-        onClose={() => setOpenBar(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Бронь</DialogTitle>
-        <DialogContent>
-          <BarChart data={BAR_CHART_DATA} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenBar(false)}>Закрыть</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };

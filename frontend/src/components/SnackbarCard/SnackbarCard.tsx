@@ -102,9 +102,6 @@ const SnackbarCard = () => {
     case 'Main_Edit':
       txt += ' успешно сохранено';
       break;
-    case 'copy_link':
-      txt += 'Ссылка скопирована';
-      break;
     case 'remove_link':
       txt += ' Ссылка успешно удалена';
       break;
