@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-cd ./frontend && npm run typecheck && npm run lint
+echo "Frontend pre-commit: "
+
+cd ./frontend && npm run typecheck && npm run lint && cd ../backend && npm run typecheck && npm run lint
